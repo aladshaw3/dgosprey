@@ -1,238 +1,457 @@
-//----------------------------------------
-//  Created by Austin Ladshaw on 10/14/14
-//  Copyright (c) 2014
-//	Austin Ladshaw
-//	All rights reserved
-//----------------------------------------
-
-/*
- LARK = Linear Algebra Residual Kernels
- 
- The functions contained within are designed to solve generic linear and
- non-linear square systems of equations given a function argument and
- data from the user. Optionally, the user can also provide a function to
- return a preconditioning result that will be applied to the system.
- 
- Having the user define how the preconditioning is carried out provides
- two major advantages: (1) we do not need to store and large, sparse
- preconditioning matrices and instead only store the preconditioned
- vector result and (2) this allows the user to use any kind of preconditioner
- they see fit for their problem.
- 
- The Arnoldi function is typically not called by the user, but can be if
- desired. It accepts the function arguments and a residual vector to form
- an orthonormal basis of the Krylov subspace using the Modified Gram-Schmidt
- process (aka Arnoldi Iteration). This function is called by GMRES to iteratively
- solve a linear system of equations. Note that you can use this function to
- directly solve the linear system as long as that system is not too large.
- Construction of the basis is expensive, which is why this is used as a sub-function
- of an iterative method.
- 
- The Restarted GMRES function will accept function arguments for a linear system
- and attempt to solve said system iteratively by constructing an orthonormal
- basis from the Krylov function. Note that this GMRES function does support
- restarting and will use restarting by default if the linear system is too
- large.
- 
- Also included is a GMRES algorithm without restarting. This will directly solve
- the linear system within residual tolerance using a Full Orthogonal basis set
- of that system. It is equivalent to calling the Krylov method with the k parameter
- equal to N (i.e. the number of equations). This method is nick-named the Full
- Othogonalization Method (FOM), although the true FOM algorithm in literature is
- slightly different.
- 
- The PJFNK function will accept function arguments for a square, non-linear
- system of equations and attempt to solve it iteratively using both the
- GMRES and Krylov functions with Newton's method to convert the non-linear
- system into a linear system.
- 
- Also built here is a PCG implementation for solving symmetric linear systems.
- Can also be called by PJFNK if we know that the linear system (i.e. the
- Jacobian) is symmetric. This algorithm is significantly more efficient
- than GMRES, but is only valid if the system of equations is symmetric.
- 
- Other linear solvers implemented in this work are the BiCGSTAB and CGS algorithms
- for non-symmetric, positive definite matrices. These algorithms are significantly
- more computationally efficient than GMRES or FOM. However, they can both break down
- if the linear system is poorly conditioned. In general, you only want to use these
- methods if you have preconditioning available and your linear system is very, very
- large. Otherwise, you will be better suited to using GMRES or FOM.
- 
- There is also an implementation of the Generalized Conjugate Residual (GCR) method
- with and without restarting. This is a GMRES-like method that should give the
- exact solution within N iterations, where N is the original size of the matrix.
- 
- NOTE: There are three GMRES implementations: (i) gmresLP, (ii) fom, and
- (iii) gmresRP. GMRESLP is a restarted GMRES implementation that is left
- preconditioned and only checks the residual on the outer loops. This may
- be less efficient than GMRESRP, which can check both outer and inner loop
- residuals. However, GMRESRP has to use right preconditioning, which also
- slightly changes the convergence behavior of the linear system. GMRES with
- left preconditioning and without restarting will just build the full
- subspace by default, thus solving the system exactly, but may require too
- much memory. You can do a GMRESRP unrestarted by specifying that the
- restart parameter be equal to the size of the problem.
+/*!
+ *  \file lark.cpp lark.h
+ *	\brief Linear Algebra Residual Kernels
+ *  \author Austin Ladshaw
+ *	\date 10/14/2014
+ *	\copyright This software was designed and built at the Georgia Institute
+ *             of Technology by Austin Ladshaw for PhD research in the area
+ *             of adsorption and surface science. Copyright (c) 2015, all
+ *             rights reserved.
  */
 
 #include "lark.h"
 
+/// \cond
+
+//Example matrix vector product function
+int matvec_ex01(const Matrix<double>& v, Matrix<double>& w, const void *data)
+{
+	int success = 0;
+	EX01_DATA *dat = (EX01_DATA *) data;
+	
+	w = dat->M * v;
+	
+	return success;
+}
+
+//Example for preconditioning
+int precon_ex01(const Matrix<double>& b, Matrix<double>& p, const void *data)
+{
+	int success = 0;
+	EX01_DATA *dat = (EX01_DATA *) data;
+	
+	//Example 1.1: Symmetric Gauss-Siedel Preconditioning (Slowest, but improves convergence)
+	//Matrix<double> interim;
+	//p.lowerTriangularSolve(dat->M, interim.upperTriangularSolve(dat->M, b));
+	
+	//Example 1.2: Upper Triangular Preconditioning
+	//p.upperTriangularSolve(dat->M, b);
+	
+	//Example 1.3: Lower Triangular Precondtioning
+	//p.lowerTriangularSolve(dat->M, b);
+	
+	//Example 1.4: Jacobi Preconditioning (Fastest, but requires more iterations)
+	p.diagonalSolve(dat->M, b);
+	
+	//Example 1.5: Tridiagonal Preconditioning
+	//p.ladshawSolve(dat->M, b);
+	
+	return success;
+}
+
+//Example matrix vector product function
+int matvec_ex02(const Matrix<double>& v, Matrix<double>& w, const void *data)
+{
+	int success = 0;
+	EX02_DATA *dat = (EX02_DATA *) data;
+	
+	w = dat->M * v;
+	
+	return success;
+}
+
+//Example matrix vector product function
+int matvec_ex04(const Matrix<double>& v, Matrix<double>& w, const void *data)
+{
+	int success = 0;
+	EX04_DATA *dat = (EX04_DATA *) data;
+	w = dat->M * v;
+	return success;
+}
+
+//Tridiagonal preconditioning for a 3D Laplacian
+int precon_ex04(const Matrix<double>& b, Matrix<double>& p, const void *data)
+{
+	int success = 0;
+	EX04_DATA *dat = (EX04_DATA *) data;
+	
+	//Example 1.1: Symmetric Gauss-Siedel Preconditioning (Slowest, but improves convergence)
+	Matrix<double> interim;
+	p.lowerTriangularSolve(dat->M, interim.upperTriangularSolve(dat->M, b));
+	
+	//Example 1.2: Upper Triangular Preconditioning
+	//p.upperTriangularSolve(dat->M, b);
+	
+	//Example 1.3: Lower Triangular Precondtioning
+	//p.lowerTriangularSolve(dat->M, b);
+	
+	//Example 1.4: Jacobi Preconditioning (Fastest, but requires more iterations)
+	//p.diagonalSolve(dat->M, b);
+	
+	//Example 1.5: Tridiagonal Preconditioning
+	//p.ladshawSolve(dat->M, b);
+	
+	return success;
+}
+
+//Function to approximate the solution to x for the Picard Iteration
+int evalx_ex09(const Matrix<double> &x, Matrix<double>& G, const void *data)
+{
+	int success = 0;
+	EX09_DATA *dat = (EX09_DATA *) data;
+	
+	if (G.rows() != dat->N)
+	{
+		mError(dim_mis_match);
+		return -1;
+	}
+	
+	for (int i=0; i<dat->N; i++)
+	{
+		if (i == 0)
+		{
+			G(i,0) = 0.5*x(i+1,0) + 0.5*dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+		else if (i==dat->N-1)
+		{
+			G(i,0) = 0.5*x(i-1,0) + 0.5*dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+		else
+		{
+			G(i,0) = 0.5*x(i+1,0) + 0.5*x(i-1,0) + 0.5*dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+	}
+	
+	return success;
+}
+
+//Function evaluation for Picard example 9
+int funeval_ex09(const Matrix<double> &x, Matrix<double>& F, const void *data)
+{
+	int success = 0;
+	EX09_DATA *dat = (EX09_DATA *) data;
+	if (F.rows() != dat->N)
+	{
+		mError(dim_mis_match);
+		return -1;
+	}
+	
+	for (int i=0; i<dat->N; i++)
+	{
+		if (i == 0)
+		{
+			F(i,0) = -x(i+1,0) + 2*x(i,0) - dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+		else if (i==dat->N-1)
+		{
+			F(i,0) = 2*x(i,0) - x(i-1,0) - dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+		else
+		{
+			F(i,0) = -x(i+1,0) + 2*x(i,0) - x(i-1,0) - dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+	}
+	
+	return success;
+}
+
+//Function evaluation for PJFNK method example 10
+int funeval_ex10(const Matrix<double> &x, Matrix<double>& F, const void *data)
+{
+	int success = 0;
+	EX09_DATA *dat = (EX09_DATA *) data;
+	if (F.rows() != dat->N)
+	{
+		mError(dim_mis_match);
+		return -1;
+	}
+	
+	for (int i=0; i<dat->N; i++)
+	{
+		if (i == 0)
+		{
+			F(i,0) = -x(i+1,0) + 2*x(i,0) - dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+		else if (i==dat->N-1)
+		{
+			F(i,0) = 2*x(i,0) - x(i-1,0) - dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+		else
+		{
+			F(i,0) = -x(i+1,0) + 2*x(i,0) - x(i-1,0) - dat->h*dat->h*dat->k*exp(x(i,0));
+		}
+	}
+	
+	return success;
+}
+
+//Preconditioner for the inner linear iterates for PJFNK example 10
+int precon_ex10(const Matrix<double> &r, Matrix<double>& p, const void *data)
+{
+	int success = 0;
+	EX09_DATA *dat = (EX09_DATA *) data;
+	p.ladshawSolve(dat->M, r);
+	return success;
+}
+
+int matvec_ex15(const Matrix<double>& v, Matrix<double>& w, const void *data)
+{
+	int success = 0;
+	EX15_DATA *dat = (EX15_DATA *) data;
+	int r = dat->m;
+	int r2 = dat->m*dat->m;
+	int r3 = r2;
+	int r4 = 0;
+	//Perform action A*v and store in vector w
+	if (dat->N != w.rows())
+	{
+		mError(matvec_mis_match);
+		return -1;
+	}
+	for (int i=0; i<dat->N; i++)
+	{
+		//If statements for tridiagonal portion
+		w.edit(i, 0, 6*v(i,0));
+		if (i == 0)
+		{
+			w.edit(i, 0, w(i,0)-1*v(i+1,0));
+		}
+		else if (i == dat->N-1)
+		{
+			w.edit(i, 0, w(i,0)-1*v(i-1,0));
+		}
+		else if (i == r-1)
+		{
+			w.edit(i, 0, w(i,0)-1*v(i-1,0));
+		}
+		else if (i == r)
+		{
+			w.edit(i, 0, w(i,0)-1*v(i+1,0));
+			r = r + dat->m;
+		}
+		else
+		{
+			w.edit(i, 0, w(i,0)-1*v(i-1,0));
+			w.edit(i, 0, w(i,0)-1*v(i+1,0));
+		}
+		
+		//If statements for 2nd diagonal bands
+		if (i > dat->m-1)
+		{
+			if (i <= r3-1)
+			{
+				w.edit(i, 0, w(i,0)-1*v(i-dat->m,0));
+			}
+			else if (i > r3-1)
+			{
+				r4 = r4+1;
+				if (r4 == dat->m-1)
+				{
+					r3 = r2;
+					r4 = 0;
+				}
+			}
+		}
+		if (i <= dat->N-dat->m-1 && i <= r2-dat->m-1)
+		{
+			w.edit(i, 0, w(i,0)-1*v(i+dat->m,0));
+		}
+		if (i == r2-1)
+		{
+			r2 = r2+(dat->m*dat->m);
+		}
+		
+		//If statements for 3rd diagonal bands
+		if (i > (dat->m*dat->m)-1)
+		{
+			w.edit(i, 0, w(i,0)-1*v(i-(dat->m*dat->m),0));
+		}
+		if (i <= dat->N-(dat->m*dat->m)-1)
+		{
+			w.edit(i, 0, w(i,0)-1*v(i+(dat->m*dat->m),0));
+		}
+	}
+	return success;
+}
+
+int precon_ex15(const Matrix<double>& w, Matrix<double>& p, const void *data)
+{
+	int success = 0;
+	EX15_DATA *dat = (EX15_DATA *) data;
+	if (dat->N != p.rows())
+	{
+		mError(matvec_mis_match);
+		return -1;
+	}
+	for (int i=0; i<dat->N; i++)
+	{
+		p.edit(i, 0, w(i,0)/6.0);
+	}
+	return success;
+}
+
+/// \endcond
+
 //Function to compute the updated solution given the matrix-vector arguments
 int update_arnoldi_solution(Matrix<double>& x, Matrix<double>& x0, ARNOLDI_DATA *arnoldi_dat)
 {
-  	int success = 0;
+	int success = 0;
 	
-  	//Check for wrong matrix sizes
-  	if (arnoldi_dat->Vk.size() == 0 || arnoldi_dat->Vk.size() != arnoldi_dat->yk.rows() || arnoldi_dat->Vk[0].rows() != x0.rows())
-    {
-      	mError(dim_mis_match);
-      	return -1;
-    }
-  	if (x.rows() != x0.rows())
-    {
-      	x.set_size(x0.rows(), 1);
-    }
+	//Check for wrong matrix sizes
+	if (arnoldi_dat->Vk.size() == 0 || arnoldi_dat->Vk.size() != arnoldi_dat->yk.rows() || arnoldi_dat->Vk[0].rows() != x0.rows())
+	{
+		mError(dim_mis_match);
+		return -1;
+	}
+	if (x.rows() != x0.rows())
+	{
+		x.set_size(x0.rows(), 1);
+	}
 	
 	//perform transformations to get the search direction yk
 	arnoldi_dat->Hkp1.upperHessenberg2Triangular(arnoldi_dat->e1);
-    arnoldi_dat->Hkp1.rowShrink();
-    arnoldi_dat->e1.rowShrink();
-  	arnoldi_dat->yk.upperTriangularSolve(arnoldi_dat->Hkp1, arnoldi_dat->e1);
+	arnoldi_dat->Hkp1.rowShrink();
+	arnoldi_dat->e1.rowShrink();
+	arnoldi_dat->yk.upperTriangularSolve(arnoldi_dat->Hkp1, arnoldi_dat->e1);
 	
-  	//Loop over all rows
-  	double sum = 0.0;
-  	for (int i=0; i<x.rows(); i++)
-  	{
-      	sum = 0.0;
-      	for (int k=0; k<arnoldi_dat->Vk.size(); k++)
-      	{
-          	sum = sum + (arnoldi_dat->Vk[k](i,0) * arnoldi_dat->yk(k,0));
-      	}
-      	x.edit(i, 0, sum + x0(i,0));
-  	}
+	//Loop over all rows
+	double sum = 0.0;
+	for (int i=0; i<x.rows(); i++)
+	{
+		sum = 0.0;
+		for (int k=0; k<arnoldi_dat->Vk.size(); k++)
+		{
+			if (i >= arnoldi_dat->Vk[k].rows())
+				sum = sum + 0.0;
+			else
+				sum = sum + (arnoldi_dat->Vk[k](i,0) * arnoldi_dat->yk(k,0));
+		}
+		x.edit(i, 0, sum + x0(i,0));
+	}
 	
-  	return success;
+	return success;
 }
 
 //Function to construct the orthonormal basis with optional preconditioning
 int arnoldi( int (*matvec) (const Matrix<double>& v, Matrix<double> &w, const void *data),
-            int (*precon) (const Matrix<double>& b, Matrix<double> &p, const void *data),
-            Matrix<double> &r0, ARNOLDI_DATA *arnoldi_dat, const void *matvec_data,
-		    const void *precon_data )
+			int (*precon) (const Matrix<double>& b, Matrix<double> &p, const void *data),
+			Matrix<double> &r0, ARNOLDI_DATA *arnoldi_dat, const void *matvec_data,
+			const void *precon_data )
 {
-    int success = 0;
+	int success = 0;
 	double h = 0;
-    
-    //Initialize the krylov data
-    if (arnoldi_dat->k < 2 || arnoldi_dat->k > r0.rows())
-        arnoldi_dat->k = r0.rows();
-    if (r0.rows() < 2)
-    {
-        success = -1;
-      	mError(matrix_too_small);
-        return success;
-    }
-  	if ( (*matvec) == NULL)
-    {
-      	success = -1;
-      	mError(nullptr_func);
-      	return success;
-    }
-  	if ( arnoldi_dat->Vk.size() != arnoldi_dat->k )
-    {
-      	arnoldi_dat->Vk.resize(arnoldi_dat->k);
-    }
-  	if ( arnoldi_dat->w.rows() != r0.rows() )
-  	{
+	
+	//Initialize the krylov data
+	if (arnoldi_dat->k < 2 || arnoldi_dat->k > r0.rows())
+		arnoldi_dat->k = r0.rows();
+	if (r0.rows() < 2)
+	{
+		success = -1;
+		mError(matrix_too_small);
+		return success;
+	}
+	if ( (*matvec) == NULL)
+	{
+		success = -1;
+		mError(nullptr_func);
+		return success;
+	}
+	if ( arnoldi_dat->Vk.size() != arnoldi_dat->k )
+	{
+		arnoldi_dat->Vk.resize(arnoldi_dat->k);
+	}
+	if ( arnoldi_dat->w.rows() != r0.rows() )
+	{
 		arnoldi_dat->w.set_size(r0.rows(), 1);
-  	}
-  	if ( arnoldi_dat->v.rows() != r0.rows() )
-  	{
+	}
+	if ( arnoldi_dat->v.rows() != r0.rows() )
+	{
 		arnoldi_dat->v.set_size(r0.rows(), 1);
-  	}
-  	if ( arnoldi_dat->sum.rows() != r0.rows() )
-  	{
+	}
+	if ( arnoldi_dat->sum.rows() != r0.rows() )
+	{
 		arnoldi_dat->sum.set_size(r0.rows(), 1);
-  	}
-  	if ( arnoldi_dat->Hkp1.rows() != arnoldi_dat->k+1 )
-    {
-      	arnoldi_dat->Hkp1.set_size(arnoldi_dat->k+1, arnoldi_dat->k);
-    }
-  	if ( arnoldi_dat->e1.rows() != arnoldi_dat->k+1)
-    {
-      	arnoldi_dat->e1.set_size(arnoldi_dat->k+1, 1);
-    }
-  	if ( arnoldi_dat->yk.rows() != arnoldi_dat->k )
-    {
-      	arnoldi_dat->yk.set_size(arnoldi_dat->k, 1);
-    }
+	}
+	if ( arnoldi_dat->Hkp1.rows() != arnoldi_dat->k+1 )
+	{
+		arnoldi_dat->Hkp1.set_size(arnoldi_dat->k+1, arnoldi_dat->k);
+	}
+	if ( arnoldi_dat->e1.rows() != arnoldi_dat->k+1)
+	{
+		arnoldi_dat->e1.set_size(arnoldi_dat->k+1, 1);
+	}
+	if ( arnoldi_dat->yk.rows() != arnoldi_dat->k )
+	{
+		arnoldi_dat->yk.set_size(arnoldi_dat->k, 1);
+	}
 	
-    //Check for and apply preconditioning
-    if ( (*precon) != NULL)
-    {
-      	success = (*precon) (r0, arnoldi_dat->v, precon_data);
-        if (success != 0)
-        {
-            mError(simulation_fail);
-            return success;
-        }
-    }
-    else
-    {
-        arnoldi_dat->v = r0;
-    }
+	//Check for and apply preconditioning
+	if ( (*precon) != NULL)
+	{
+		success = (*precon) (r0, arnoldi_dat->v, precon_data);
+		if (success != 0)
+		{
+			mError(simulation_fail);
+			return success;
+		}
+	}
+	else
+	{
+		arnoldi_dat->v = r0;
+	}
 	
-  	//Initialize data before loop
-    arnoldi_dat->beta = arnoldi_dat->v.norm();
-    arnoldi_dat->e1.edit(0, 0, arnoldi_dat->beta);
+	//Initialize data before loop
+	arnoldi_dat->beta = arnoldi_dat->v.norm();
+	arnoldi_dat->e1.edit(0, 0, arnoldi_dat->beta);
 	if (arnoldi_dat->Vk[0].rows() != r0.rows())
 		arnoldi_dat->Vk[0].set_size(r0.rows(), 1);
 	for (int n=0; n<r0.rows(); n++)
 		arnoldi_dat->Vk[0].edit(n, 0, arnoldi_dat->v(n,0)/arnoldi_dat->beta);
 	
-    //Begin looping for the size of the subspace
-    arnoldi_dat->iter = 0;
-    for (int j=0; j<arnoldi_dat->k; j++)
-    {
+	//Begin looping for the size of the subspace
+	arnoldi_dat->iter = 0;
+	for (int j=0; j<arnoldi_dat->k; j++)
+	{
 		if (arnoldi_dat->Output == true)
 		{
 			std::cout << "Arnoldi vector " << j+1 << " being built..." << std::endl;
 		}
-      	arnoldi_dat->sum.zeros();
-        success = (*matvec) (arnoldi_dat->Vk[j], arnoldi_dat->w, matvec_data);
-        if (success != 0)
-        {
-            mError(simulation_fail);
-            return success;
-        }
-        if ( (*precon) != NULL)
-        {
-          	arnoldi_dat->v = arnoldi_dat->w;
-          	success = (*precon) (arnoldi_dat->v, arnoldi_dat->w, precon_data);
-            if (success != 0)
-            {
-                mError(simulation_fail);
-                return success;
-            }
-        }
-        else {/* No change to w */}
-        
-        //Inner loop for formation of Hessenberg matrix
-        for (int i=0; i<=j; i++)
-        {
+		arnoldi_dat->sum.zeros();
+		success = (*matvec) (arnoldi_dat->Vk[j], arnoldi_dat->w, matvec_data);
+		if (success != 0)
+		{
+			mError(simulation_fail);
+			return success;
+		}
+		if ( (*precon) != NULL)
+		{
+			arnoldi_dat->v = arnoldi_dat->w;
+			success = (*precon) (arnoldi_dat->v, arnoldi_dat->w, precon_data);
+			if (success != 0)
+			{
+				mError(simulation_fail);
+				return success;
+			}
+		}
+		else {/* No change to w */}
+		
+		//Inner loop for formation of Hessenberg matrix
+		for (int i=0; i<=j; i++)
+		{
 			h = arnoldi_dat->w.inner_product(arnoldi_dat->Vk[i]);
 			arnoldi_dat->Hkp1.edit(i, j, h);
 			for (int n=0; n<r0.rows(); n++)
 				arnoldi_dat->sum.edit(n, 0, arnoldi_dat->sum(n,0) + (arnoldi_dat->Vk[i](n,0)*h));
 			
-        } //END inner loop
-        
-        arnoldi_dat->w = arnoldi_dat->w - arnoldi_dat->sum;
-        arnoldi_dat->hp1 = arnoldi_dat->w.norm();
+		} //END inner loop
+		
+		arnoldi_dat->w = arnoldi_dat->w - arnoldi_dat->sum;
+		arnoldi_dat->hp1 = arnoldi_dat->w.norm();
 		arnoldi_dat->Hkp1.edit(j+1, j, arnoldi_dat->hp1);
 		if (j<arnoldi_dat->k-1 && arnoldi_dat->Vk[j+1].rows() != r0.rows())
 			arnoldi_dat->Vk[j+1].set_size(r0.rows(), 1);
 		
-        if (arnoldi_dat->hp1 == 0.0)
+		if (arnoldi_dat->hp1 == 0.0)
 		{
 			if (j==0 && arnoldi_dat->Hkp1(j,j)==0.0)
 				arnoldi_dat->Hkp1.edit(j, j, 1.0);
@@ -244,28 +463,28 @@ int arnoldi( int (*matvec) (const Matrix<double>& v, Matrix<double> &w, const vo
 			}
 			break;
 		}
-        else
+		else
 		{
-        	if (j<arnoldi_dat->k-1)
-        	{
+			if (j<arnoldi_dat->k-1)
+			{
 				for (int n=0; n<r0.rows(); n++)
 					arnoldi_dat->Vk[j+1].edit(n, 0, arnoldi_dat->w(n,0)/arnoldi_dat->hp1);
-        	}
+			}
 			else
 				arnoldi_dat->v = arnoldi_dat->w/arnoldi_dat->hp1;
 		}
 		
-        arnoldi_dat->iter++;
-        
-    } //END Subspace loop
-    
-    //Solve the resulting least squares problem
+		arnoldi_dat->iter++;
+		
+	} //END Subspace loop
+	
+	//Solve the resulting least squares problem
 	if (arnoldi_dat->Output == true)
 	{
 		std::cout << "Krylov subspace construction complete!\n" << std::endl;
 	}
-    
-    return success;
+	
+	return success;
 }
 
 //Function to perform the Restarted GMRES algorithm for iteratively solving a linear system
@@ -274,124 +493,122 @@ int gmresLeftPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<doub
 							Matrix<double> &b, GMRESLP_DATA *gmreslp_dat, const void *matvec_data,
 							const void *precon_data )
 {
-  	int success = 0;
+	int success = 0;
 	double res_old;
 	
-  	//Check arguments
-  	if ( (*matvec) == NULL)
-    {
-      	mError(nullptr_func);
-      	success = -1;
-      	return success;
-    }
-  	if (b.rows() < 2)
-    {
-      	success = -1;
-      	mError(matrix_too_small);
-      	return success;
-    }
+	//Check arguments
+	if ( (*matvec) == NULL)
+	{
+		mError(nullptr_func);
+		success = -1;
+		return success;
+	}
+	if (b.rows() < 2)
+	{
+		success = -1;
+		mError(matrix_too_small);
+		return success;
+	}
 	
-  	//Initialize Krylov Data and GMRES Data
-  	if (gmreslp_dat->restart < 2 || gmreslp_dat->restart > b.rows())
-    {
-      	gmreslp_dat->restart = std::min(20,b.rows());
-    }
-  	if (gmreslp_dat->maxit < 1 || gmreslp_dat->maxit > b.rows())
-    {
-      	gmreslp_dat->maxit = std::min(1000,b.rows());
-    }
-  	if (gmreslp_dat->x.rows() != b.rows())
-    {
+	//Initialize Krylov Data and GMRES Data
+	if (gmreslp_dat->restart < 2 || gmreslp_dat->restart > b.rows())
+	{
+		gmreslp_dat->restart = std::min(20,b.rows());
+	}
+	if (gmreslp_dat->maxit < 1 || gmreslp_dat->maxit > b.rows())
+	{
+		gmreslp_dat->maxit = std::min(1000,b.rows());
+	}
+	if (gmreslp_dat->x.rows() != b.rows())
+	{
 		gmreslp_dat->x.set_size(b.rows(), 1);
-		//Apply preconditioner as intial guess if available
-		if ( (*precon) != NULL)
-        {
-          	success = (*precon) (b, gmreslp_dat->x, precon_data);
-            if (success != 0)
-            {
-                mError(simulation_fail);
-                return success;
-            }
-        }
-    }
-  	if (gmreslp_dat->tol_rel < DBL_EPSILON || gmreslp_dat->tol_rel >= 1)
-    {
-      	gmreslp_dat->tol_rel = 1.0e-6;
-    }
-	if (gmreslp_dat->tol_abs < DBL_EPSILON)
-    {
-      	gmreslp_dat->tol_abs = 1.0e-6;
-    }
-  	gmreslp_dat->arnoldi_dat.k = gmreslp_dat->restart;
+	}
+	if (gmreslp_dat->tol_rel >= 1)
+	{
+		gmreslp_dat->tol_rel = 1e-6;
+	}
+	if (gmreslp_dat->tol_abs >= 1)
+	{
+		gmreslp_dat->tol_abs = 1e-6;
+	}
+	if (gmreslp_dat->tol_rel < MIN_TOL)
+	{
+		gmreslp_dat->tol_rel = MIN_TOL;
+	}
+	if (gmreslp_dat->tol_abs < MIN_TOL)
+	{
+		gmreslp_dat->tol_abs = MIN_TOL;
+	}
+	gmreslp_dat->arnoldi_dat.k = gmreslp_dat->restart;
 	gmreslp_dat->arnoldi_dat.Output = gmreslp_dat->Output;
 	
-  	//Check to see if the data has been properly initialized
-  	if (gmreslp_dat->arnoldi_dat.Vk.size() != gmreslp_dat->arnoldi_dat.k)
-    {
-      	gmreslp_dat->arnoldi_dat.Vk.resize(gmreslp_dat->arnoldi_dat.k);
-    }
-  	if ( gmreslp_dat->arnoldi_dat.w.rows() != b.rows() )
-  	{
+	//Check to see if the data has been properly initialized
+	if (gmreslp_dat->arnoldi_dat.Vk.size() != gmreslp_dat->arnoldi_dat.k)
+	{
+		gmreslp_dat->arnoldi_dat.Vk.resize(gmreslp_dat->arnoldi_dat.k);
+	}
+	if ( gmreslp_dat->arnoldi_dat.w.rows() != b.rows() )
+	{
 		gmreslp_dat->arnoldi_dat.w.set_size(b.rows(), 1);
-  	}
-  	if ( gmreslp_dat->arnoldi_dat.v.rows() != b.rows() )
-  	{
+	}
+	if ( gmreslp_dat->arnoldi_dat.v.rows() != b.rows() )
+	{
 		gmreslp_dat->arnoldi_dat.v.set_size(b.rows(), 1);
-  	}
-  	if ( gmreslp_dat->arnoldi_dat.sum.rows() != b.rows() )
-  	{
+	}
+	if ( gmreslp_dat->arnoldi_dat.sum.rows() != b.rows() )
+	{
 		gmreslp_dat->arnoldi_dat.sum.set_size(b.rows(), 1);
-  	}
-  	if ( gmreslp_dat->arnoldi_dat.Hkp1.rows() != gmreslp_dat->arnoldi_dat.k+1 )
-  	{
+	}
+	if ( gmreslp_dat->arnoldi_dat.Hkp1.rows() != gmreslp_dat->arnoldi_dat.k+1 )
+	{
 		gmreslp_dat->arnoldi_dat.Hkp1.set_size(gmreslp_dat->arnoldi_dat.k+1, gmreslp_dat->arnoldi_dat.k);
-  	}
-  	if ( gmreslp_dat->arnoldi_dat.e1.rows() != gmreslp_dat->arnoldi_dat.k+1)
-  	{
+	}
+	if ( gmreslp_dat->arnoldi_dat.e1.rows() != gmreslp_dat->arnoldi_dat.k+1)
+	{
 		gmreslp_dat->arnoldi_dat.e1.set_size(gmreslp_dat->arnoldi_dat.k+1, 1);
-  	}
-  	if ( gmreslp_dat->arnoldi_dat.yk.rows() != gmreslp_dat->arnoldi_dat.k )
-  	{
+	}
+	if ( gmreslp_dat->arnoldi_dat.yk.rows() != gmreslp_dat->arnoldi_dat.k )
+	{
 		gmreslp_dat->arnoldi_dat.yk.set_size(gmreslp_dat->arnoldi_dat.k, 1);
-  	}
-  	gmreslp_dat->iter = 0;
-  	gmreslp_dat->steps = 0;
+	}
+	gmreslp_dat->iter = 0;
+	gmreslp_dat->steps = 0;
 	
-  	//Form first matrix vector product
-  	success = (*matvec) (gmreslp_dat->x, gmreslp_dat->arnoldi_dat.w, matvec_data);
-  	if (success != 0)
-  	{
+	//Form first matrix vector product
+	success = (*matvec) (gmreslp_dat->x, gmreslp_dat->arnoldi_dat.w, matvec_data);
+	if (success != 0)
+	{
 		mError(simulation_fail);
 		return success;
-  	}
-  	gmreslp_dat->r = b - gmreslp_dat->arnoldi_dat.w;
-  	gmreslp_dat->relres_base = gmreslp_dat->r.norm();
-  	gmreslp_dat->res = gmreslp_dat->relres_base;
+	}
+	gmreslp_dat->r = b - gmreslp_dat->arnoldi_dat.w;
+	gmreslp_dat->relres_base = gmreslp_dat->r.norm();
+	gmreslp_dat->res = gmreslp_dat->relres_base;
 	gmreslp_dat->bestres = gmreslp_dat->res;
 	gmreslp_dat->bestx = gmreslp_dat->x;
-  	gmreslp_dat->relres = 1.0;
-  	res_old = gmreslp_dat->res;
+	gmreslp_dat->relres = 1.0;
+	res_old = gmreslp_dat->res;
 	if (gmreslp_dat->Output == true)
 		std::cout << "\nRelRes[" << 0 << "] =\t" << gmreslp_dat->relres << std::endl;
 	
-  	//Check for imediate convergence
-  	if (gmreslp_dat->res < gmreslp_dat->tol_abs)
-    {
+	//Check for imediate convergence
+	if (gmreslp_dat->res < gmreslp_dat->tol_abs)
+	{
 		if (gmreslp_dat->Output == true)
 		{
 			std::cout << "\nSolution converged after 0 GMRES iterations witin residual tolerance!" << std::endl;
 			std::cout << "AbsRes[0] =\t" << gmreslp_dat->res << std::endl << std::endl;
 		}
-      	return success;
-    }
+		return success;
+	}
 	
-  	//If no solution found imediately, begin looping to search for solution
-  	for (int m=0; m<gmreslp_dat->maxit; m++)
-  	{
+	//If no solution found imediately, begin looping to search for solution
+	for (int m=0; m<gmreslp_dat->maxit; m++)
+	{
 		//Call the Krylov Function
-      	success = arnoldi(matvec,precon,gmreslp_dat->r,&gmreslp_dat->arnoldi_dat,matvec_data,precon_data);
-      	if (success != 0)
-      	{
+		success = arnoldi(matvec,precon,gmreslp_dat->r,&gmreslp_dat->arnoldi_dat,matvec_data,precon_data);
+		if (success != 0)
+		{
 			mError(simulation_fail);
 			std::cout << "Vk = \n";
 			for (int n=0; n<b.rows(); n++)
@@ -414,57 +631,57 @@ int gmresLeftPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<doub
 			std::cout << "AbsRes at stop = \t" << gmreslp_dat->res << std::endl << std::endl;
 			success = -1;
 			return success;
-      	}
+		}
 		
-      	//From the new solution and residual vector
-      	success = update_arnoldi_solution(gmreslp_dat->x, gmreslp_dat->x, &gmreslp_dat->arnoldi_dat);
-      	if (success != 0)
-      	{
+		//From the new solution and residual vector
+		success = update_arnoldi_solution(gmreslp_dat->x, gmreslp_dat->x, &gmreslp_dat->arnoldi_dat);
+		if (success != 0)
+		{
 			mError(simulation_fail);
 			return success;
 		}
-      	success = (*matvec) (gmreslp_dat->x, gmreslp_dat->arnoldi_dat.w, matvec_data);
-      	if (success != 0)
-      	{
+		success = (*matvec) (gmreslp_dat->x, gmreslp_dat->arnoldi_dat.w, matvec_data);
+		if (success != 0)
+		{
 			mError(simulation_fail);
 			return success;
-      	}
-      	gmreslp_dat->r = b - gmreslp_dat->arnoldi_dat.w;
-      	gmreslp_dat->res = gmreslp_dat->r.norm();
-      	gmreslp_dat->relres = gmreslp_dat->res / gmreslp_dat->relres_base;
-      	gmreslp_dat->iter++;
-      	gmreslp_dat->steps = gmreslp_dat->steps + gmreslp_dat->iter + gmreslp_dat->arnoldi_dat.iter;
+		}
+		gmreslp_dat->r = b - gmreslp_dat->arnoldi_dat.w;
+		gmreslp_dat->res = gmreslp_dat->r.norm();
+		gmreslp_dat->relres = gmreslp_dat->res / gmreslp_dat->relres_base;
+		gmreslp_dat->iter++;
+		gmreslp_dat->steps = gmreslp_dat->steps + gmreslp_dat->iter + gmreslp_dat->arnoldi_dat.iter;
 		if (gmreslp_dat->Output == true)
 			std::cout << "RelRes[" << m+1 << "] =\t" << gmreslp_dat->relres << std::endl;
 		
-      	//Check residual for convergence
-      	if (gmreslp_dat->res < gmreslp_dat->tol_abs)
-        {
+		//Check residual for convergence
+		if (gmreslp_dat->res < gmreslp_dat->tol_abs)
+		{
 			if (gmreslp_dat->Output == true)
 			{
 				std::cout << "\nSolution converged after " << m+1 << " GMRES restart(s) witin residual tolerance!" << std::endl;
 				std::cout << "AbsRes[" << m+1 << "] =\t" << gmreslp_dat->res << std::endl << std::endl;
 			}
-          	return success;
-        }
+			return success;
+		}
 		else if ( gmreslp_dat->relres < gmreslp_dat->tol_rel)
-        {
+		{
 			if (gmreslp_dat->Output == true)
 			{
 				std::cout << "\nSolution converged after " << m+1 << " GMRES restart(s) witin relative residual tolerance!" << std::endl;
 				std::cout << "AbsRes[" << m+1 << "] =\t" << gmreslp_dat->res << std::endl << std::endl;
 			}
-          	return success;
-        }
-      	else
-        {
+			return success;
+		}
+		else
+		{
 			if (gmreslp_dat->res < gmreslp_dat->bestres)
 			{
 				gmreslp_dat->bestres = gmreslp_dat->res;
 				gmreslp_dat->bestx = gmreslp_dat->x;
 			}
 			res_old = gmreslp_dat->res;
-        }
+		}
 		
 		//Check for failures
 		if (isnan(gmreslp_dat->res) || isinf(gmreslp_dat->res))
@@ -474,11 +691,11 @@ int gmresLeftPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<doub
 			success = -1;
 			break;
 		}
-  	}
+	}
 	
-  	//Post Loop messages
-  	if (gmreslp_dat->iter >= gmreslp_dat->maxit)
-    {
+	//Post Loop messages
+	if (gmreslp_dat->iter >= gmreslp_dat->maxit)
+	{
 		gmreslp_dat->res = gmreslp_dat->bestres;
 		gmreslp_dat->x = gmreslp_dat->bestx;
 		if (gmreslp_dat->Output == true)
@@ -487,8 +704,8 @@ int gmresLeftPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<doub
 			std::cout << "Returning the best found solution..." << std::endl;
 			std::cout << "Best absolute residual =\t" << gmreslp_dat->res << std::endl << std::endl;
 		}
-      	success = 0;
-    }
+		success = 0;
+	}
 	if (success == -1)
 	{
 		gmreslp_dat->res = gmreslp_dat->bestres;
@@ -501,7 +718,7 @@ int gmresLeftPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<doub
 		}
 		success = 0;
 	}
-  	return success;
+	return success;
 }
 
 //Function to perform the Unrestarted GMRES for directly solving a linear system using krylov function
@@ -510,7 +727,7 @@ int fom( int (*matvec) (const Matrix<double>& v, Matrix<double> &w, const void *
 		Matrix<double> &b, GMRESLP_DATA *gmreslp_dat, const void *matvec_data,
 		const void *precon_data )
 {
-  	/*
+	/*
 	 NOTE: This implementation is the Restarted GMRES without any restarting. Thus, this
 	 method is gaurenteed to converge to the exact (or machine precision) solution
 	 to the linear system as long as (i) the linear system is non-singular and (ii)
@@ -524,12 +741,12 @@ int fom( int (*matvec) (const Matrix<double>& v, Matrix<double> &w, const void *
 	 different algorithms all together. FOM and GMRES are the same only if the full orthogonal
 	 subspace is constructed, as is the case here.
 	 */
-  	int success = 0;
-  	gmreslp_dat->restart = b.rows();
-  	gmreslp_dat->maxit = 1;
-  	success = gmresLeftPreconditioned(matvec,precon,b,gmreslp_dat,matvec_data,precon_data);
-  	if (success != 0) {mError(simulation_fail); return success;}
-  	return success;
+	int success = 0;
+	gmreslp_dat->restart = b.rows();
+	gmreslp_dat->maxit = 1;
+	success = gmresLeftPreconditioned(matvec,precon,b,gmreslp_dat,matvec_data,precon_data);
+	if (success != 0) {mError(simulation_fail); return success;}
+	return success;
 }
 
 //Implementation of the Compact GMRES algorithm
@@ -572,27 +789,25 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 	{
 		gmresrp_dat->maxit = std::min(b.rows(),1000);
 	}
-	if (gmresrp_dat->tol_rel < DBL_EPSILON || gmresrp_dat->tol_rel >= 1)
+	if (gmresrp_dat->tol_rel >= 1)
 	{
-		gmresrp_dat->tol_rel = 1.0e-6;
+		gmresrp_dat->tol_rel = 1e-6;
 	}
-	if (gmresrp_dat->tol_abs < DBL_EPSILON)
+	if (gmresrp_dat->tol_abs >= 1)
 	{
-		gmresrp_dat->tol_abs = 1.0e-6;
+		gmresrp_dat->tol_abs = 1e-6;
+	}
+	if (gmresrp_dat->tol_rel < MIN_TOL)
+	{
+		gmresrp_dat->tol_rel = MIN_TOL;
+	}
+	if (gmresrp_dat->tol_abs < MIN_TOL)
+	{
+		gmresrp_dat->tol_abs = MIN_TOL;
 	}
 	if (gmresrp_dat->x.rows() != b.rows())
 	{
 		gmresrp_dat->x.set_size(b.rows(), 1);
-		//Apply preconditioner as intial guess if available
-		if ( (*precon) != NULL)
-		{
-			success = (*precon) (b, gmresrp_dat->x, precon_data);
-			if (success != 0)
-			{
-				mError(simulation_fail);
-				return success;
-			}
-		}
 	}
 	if (gmresrp_dat->w.rows() != b.rows())
 	{
@@ -658,7 +873,6 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 			gmresrp_dat->e0.push_back(beta);
 		else
 			gmresrp_dat->e0[0] = beta;
-		gmresrp_dat->e0_bar = gmresrp_dat->e0;
 		
 		if (m == 0)
 		{
@@ -668,7 +882,6 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 				gmresrp_dat->H.push_back(temp);
 			else
 				gmresrp_dat->H[0] = temp;
-			gmresrp_dat->H_bar = gmresrp_dat->H;
 		}
 		
 		//Normalize and prepare vector space
@@ -697,6 +910,11 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 			{
 				gmresrp_dat->v = gmresrp_dat->Vk[j];
 			}
+			//Store result in growing preconditioned vector space
+			if (gmresrp_dat->Zk.size() < j+1)
+				gmresrp_dat->Zk.push_back(gmresrp_dat->v);
+			else
+				gmresrp_dat->Zk[j] = gmresrp_dat->v;
 			success = (*matvec) (gmresrp_dat->v, gmresrp_dat->w, matvec_data);
 			if (success != 0)
 			{
@@ -714,11 +932,6 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 				else
 					gmresrp_dat->H[j][i] = h;
 				
-				if (gmresrp_dat->H_bar[j].size() < i+1)
-					gmresrp_dat->H_bar[j].push_back(h);
-				else
-					gmresrp_dat->H_bar[j][i] = h;
-				
 				for (int n=0; n<b.rows(); n++)
 					gmresrp_dat->sum.edit(n, 0, gmresrp_dat->sum(n,0) + (gmresrp_dat->Vk[i](n,0)*h));
 				
@@ -731,11 +944,6 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 				gmresrp_dat->H[j].push_back(h);
 			else
 				gmresrp_dat->H[j][j+1] = h;
-			
-			if (gmresrp_dat->H_bar[j].size() < j+2)
-				gmresrp_dat->H_bar[j].push_back(h);
-			else
-				gmresrp_dat->H_bar[j][j+1] = h;
 			
 			if (gmresrp_dat->e0.size() < j+2)
 				gmresrp_dat->e0.push_back(0.0);
@@ -786,6 +994,7 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 			
 			beta1 = fabs(gmresrp_dat->e0_bar[j+1]);
 			eta = beta1/beta0;
+			gmresrp_dat->relres = eta;
 			if (gmresrp_dat->Output == true)
 				std::cout << "RelRes[" << step+m+1 << "] =\t" << eta << std::endl;
 			
@@ -810,11 +1019,6 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 						gmresrp_dat->H.push_back(gmresrp_dat->H[j]);
 					else
 						gmresrp_dat->H[j+1] = gmresrp_dat->H[j];
-					
-					if (gmresrp_dat->H_bar.size() < j+2)
-						gmresrp_dat->H_bar.push_back(gmresrp_dat->H[j]);
-					else
-						gmresrp_dat->H_bar[j+1] = gmresrp_dat->H[j];
 					
 				}
 			}
@@ -856,28 +1060,15 @@ int gmresRightPreconditioned( int (*matvec) (const Matrix<double>& v, Matrix<dou
 			}
 		}
 		
-		//Form the new solution vector (x = x0 + M^-1*Vk*y)
+		//Form the new solution vector (x = x0 + Zk*y)
 		for (int n=0; n<b.rows(); n++)
 		{
 			sum = 0.0;
 			for (int i=0; i<gmresrp_dat->iter_inner; i++)
 			{
-				sum = sum + (gmresrp_dat->Vk[i](n,0) * gmresrp_dat->y[i]);
+				sum = sum + (gmresrp_dat->Zk[i](n,0) * gmresrp_dat->y[i]);
 			}
-			gmresrp_dat->v.edit(n, 0, sum);
-		}
-		if ( (*precon) != NULL)
-		{
-			success = (*precon) (gmresrp_dat->v, gmresrp_dat->w, precon_data);
-			if (success != 0)
-			{
-				mError(simulation_fail);
-				return success;
-			}
-		}
-		else
-		{
-			gmresrp_dat->w = gmresrp_dat->v;
+			gmresrp_dat->w.edit(n, 0, sum);
 		}
 		gmresrp_dat->x = gmresrp_dat->x + gmresrp_dat->w;
 		
@@ -971,48 +1162,47 @@ int pcg( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 		Matrix<double> &b, PCG_DATA *pcg_dat, const void *matvec_data,
 		const void *precon_data )
 {
-  	int success = 0;
+	int success = 0;
 	double res_old;
 	
-  	//Check input arguments
-  	if ( (*matvec) == NULL)
-  	{
+	//Check input arguments
+	if ( (*matvec) == NULL)
+	{
 		mError(nullptr_func);
 		success = -1;
 		return success;
-  	}
-  	if (b.rows() < 2)
-  	{
+	}
+	if (b.rows() < 2)
+	{
 		success = -1;
 		mError(matrix_too_small);
 		return success;
-  	}
+	}
 	
 	//Setup the working space and start the method
 	if (pcg_dat->maxit <= 0 || pcg_dat->maxit > b.rows())
 	{
 		pcg_dat->maxit = std::min(1000,b.rows());
 	}
-	if (pcg_dat->tol_rel >= 1.0 || pcg_dat->tol_rel <= DBL_EPSILON)
+	if (pcg_dat->tol_rel >= 1)
 	{
-		pcg_dat->tol_rel = 1.0e-6;
+		pcg_dat->tol_rel = 1e-6;
 	}
-	if (pcg_dat->tol_abs <= DBL_EPSILON)
+	if (pcg_dat->tol_abs >= 1)
 	{
-		pcg_dat->tol_abs = 1.0e-6;
+		pcg_dat->tol_abs = 1e-6;
+	}
+	if (pcg_dat->tol_rel < MIN_TOL)
+	{
+		pcg_dat->tol_rel = MIN_TOL;
+	}
+	if (pcg_dat->tol_abs < MIN_TOL)
+	{
+		pcg_dat->tol_abs = MIN_TOL;
 	}
 	if (pcg_dat->x.rows() != b.rows())
 	{
 		pcg_dat->x.set_size(b.rows(), 1);
-		if ( (*precon) != NULL)
-        {
-          	success = (*precon) (b, pcg_dat->x, precon_data);
-            if (success != 0)
-            {
-                mError(simulation_fail);
-                return success;
-            }
-        }
 	}
 	if (pcg_dat->r.rows() != b.rows())
 	{
@@ -1062,7 +1252,7 @@ int pcg( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 			std::cout << "\nSolution converged after 0 PCG iterations within residual tolerance!\n";
 			std::cout << "AbsRes[0] =\t" << pcg_dat->res << std::endl << std::endl;
 		}
-      	return success;
+		return success;
 	}
 	
 	//Otherwise, begin the PCG algorithm
@@ -1163,7 +1353,7 @@ int pcg( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 	
 	//Post loop messages
 	if (pcg_dat->iter >= pcg_dat->maxit)
-    {
+	{
 		pcg_dat->res = pcg_dat->bestres;
 		pcg_dat->x = pcg_dat->bestx;
 		if (pcg_dat->Output == true)
@@ -1171,8 +1361,8 @@ int pcg( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 			std::cout << "\nPCG did not find a solution within " << pcg_dat->maxit << " iterations!" << std::endl;
 			std::cout << "Best absolute residual =\t" << pcg_dat->res << std::endl << std::endl;
 		}
-      	success = 0;
-    }
+		success = 0;
+	}
 	if (success == -1)
 	{
 		pcg_dat->res = pcg_dat->bestres;
@@ -1182,7 +1372,7 @@ int pcg( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 		success = 0;
 	}
 	
-  	return success;
+	return success;
 }
 
 //Implementation of the BiCGSTAB iterative method with preconditioning
@@ -1194,44 +1384,43 @@ int bicgstab( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const 
 	int success = 0;
 	
 	//Check input arguments
-  	if ( (*matvec) == NULL)
-  	{
+	if ( (*matvec) == NULL)
+	{
 		mError(nullptr_func);
 		success = -1;
 		return success;
-  	}
-  	if (b.rows() < 2)
-  	{
+	}
+	if (b.rows() < 2)
+	{
 		success = -1;
 		mError(matrix_too_small);
 		return success;
-  	}
+	}
 	
 	//Setup the working space and start the method
 	if (bicg_dat->maxit <= 0)
 	{
 		bicg_dat->maxit = std::min(1000,2*b.rows());
 	}
-	if (bicg_dat->tol_rel >= 1.0 || bicg_dat->tol_rel <= DBL_EPSILON)
+	if (bicg_dat->tol_rel >= 1)
 	{
-		bicg_dat->tol_rel = 1.0e-6;
+		bicg_dat->tol_rel = 1e-6;
 	}
-	if (bicg_dat->tol_abs <= DBL_EPSILON)
+	if (bicg_dat->tol_abs >= 1)
 	{
-		bicg_dat->tol_abs = 1.0e-6;
+		bicg_dat->tol_abs = 1e-6;
+	}
+	if (bicg_dat->tol_rel < MIN_TOL)
+	{
+		bicg_dat->tol_rel = MIN_TOL;
+	}
+	if (bicg_dat->tol_abs < MIN_TOL)
+	{
+		bicg_dat->tol_abs = MIN_TOL;
 	}
 	if (bicg_dat->x.rows() != b.rows())
 	{
 		bicg_dat->x.set_size(b.rows(), 1);
-		if ( (*precon) != NULL)
-        {
-          	success = (*precon) (b, bicg_dat->x, precon_data);
-            if (success != 0)
-            {
-                mError(simulation_fail);
-                return success;
-            }
-        }
 	}
 	if (bicg_dat->r.rows() != b.rows())
 	{
@@ -1420,7 +1609,7 @@ int bicgstab( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const 
 	
 	//Post loop messages
 	if (bicg_dat->iter >= bicg_dat->maxit)
-    {
+	{
 		if (bicg_dat->Output == true)
 		{
 			std::cout << "\nBiCGSTAB did not find a solution within " << bicg_dat->maxit << " iterations!" << std::endl;
@@ -1428,8 +1617,8 @@ int bicgstab( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const 
 		}
 		bicg_dat->x = bicg_dat->bestx;
 		bicg_dat->res = bicg_dat->bestres;
-      	success = 0;
-    }
+		success = 0;
+	}
 	if (bicg_dat->breakdown == true)
 	{
 		if (bicg_dat->Output == true)
@@ -1451,44 +1640,43 @@ int cgs( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 	int success = 0;
 	
 	//Check input arguments
-  	if ( (*matvec) == NULL)
-  	{
+	if ( (*matvec) == NULL)
+	{
 		mError(nullptr_func);
 		success = -1;
 		return success;
-  	}
-  	if (b.rows() < 2)
-  	{
+	}
+	if (b.rows() < 2)
+	{
 		success = -1;
 		mError(matrix_too_small);
 		return success;
-  	}
+	}
 	
 	//Setup the working space and start the method
 	if (cgs_dat->maxit <= 0)
 	{
 		cgs_dat->maxit = std::min(1000,2*b.rows());
 	}
-	if (cgs_dat->tol_rel >= 1.0 || cgs_dat->tol_rel <= DBL_EPSILON)
+	if (cgs_dat->tol_rel >= 1)
 	{
-		cgs_dat->tol_rel = 1.0e-6;
+		cgs_dat->tol_rel = 1e-6;
 	}
-	if (cgs_dat->tol_abs <= DBL_EPSILON)
+	if (cgs_dat->tol_abs >= 1)
 	{
-		cgs_dat->tol_abs = 1.0e-6;
+		cgs_dat->tol_abs = 1e-6;
+	}
+	if (cgs_dat->tol_rel < MIN_TOL)
+	{
+		cgs_dat->tol_rel = MIN_TOL;
+	}
+	if (cgs_dat->tol_abs < MIN_TOL)
+	{
+		cgs_dat->tol_abs = MIN_TOL;
 	}
 	if (cgs_dat->x.rows() != b.rows())
 	{
 		cgs_dat->x.set_size(b.rows(), 1);
-		if ( (*precon) != NULL)
-        {
-          	success = (*precon) (b, cgs_dat->x, precon_data);
-            if (success != 0)
-            {
-                mError(simulation_fail);
-                return success;
-            }
-        }
 	}
 	if (cgs_dat->r.rows() != b.rows())
 	{
@@ -1669,7 +1857,7 @@ int cgs( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 	
 	//Post loop messages
 	if (cgs_dat->iter >= cgs_dat->maxit)
-    {
+	{
 		if (cgs_dat->Output == true)
 		{
 			std::cout << "\nCGS did not find a solution within " << cgs_dat->maxit << " iterations!" << std::endl;
@@ -1677,8 +1865,8 @@ int cgs( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 		}
 		cgs_dat->x = cgs_dat->bestx;
 		cgs_dat->res = cgs_dat->bestres;
-      	success = 0;
-    }
+		success = 0;
+	}
 	if (cgs_dat->breakdown == true)
 	{
 		if (cgs_dat->Output == true)
@@ -1688,6 +1876,60 @@ int cgs( int (*matvec) (const Matrix<double>& p, Matrix<double> &Ap, const void 
 		cgs_dat->x = cgs_dat->bestx;
 		cgs_dat->res = cgs_dat->bestres;
 		success = 0;
+	}
+	
+	return success;
+}
+
+//Function for forming the tranpose multiplication operation for a given linear operator
+int operatorTranspose(int(*matvec) (const Matrix<double>& v, Matrix<double> &Av, const void *data),
+					  Matrix<double> &r, Matrix<double> &u, OPTRANS_DATA *transpose_dat,
+					  const void *matvec_data)
+{
+	int success = 0;
+	
+	//Check arguments
+	if ((*matvec) == NULL)
+	{
+		mError(nullptr_error);
+		return -1;
+	}
+	if (r.rows() < 2)
+	{
+		mError(matrix_too_small);
+		return -1;
+	}
+	if (u.rows() != r.rows())
+	{
+		u.set_size(r.rows(), 1);
+	}
+	if (transpose_dat->Ai.rows() != u.rows())
+	{
+		transpose_dat->Ai.set_size(u.rows(), 1);
+	}
+	if (transpose_dat->Ii.rows() != u.rows())
+	{
+		transpose_dat->Ii.set_size(u.rows(), 1);
+	}
+	transpose_dat->Ii.zeros();
+	
+	//Form the matrix elements of u as r^T*A*Ii == A^T*r @ i
+	transpose_dat->Ii.edit(0, 0, 1.0);
+	for (int i = 0; i < u.rows(); i++)
+	{
+		//Form the matrix-vector product of A with the identity vector
+		success = (*matvec) (transpose_dat->Ii, transpose_dat->Ai, matvec_data);
+		if (success != 0)
+		{
+			mError(simulation_fail);
+			return success;
+		}
+		u.edit(i, 0, r.inner_product(transpose_dat->Ai));
+		
+		//Reset the identity vector for next loop
+		transpose_dat->Ii.edit(i, 0, 0.0);
+		if (i < (u.rows()-1)) transpose_dat->Ii.edit(i+1, 0, 1.0);
+		
 	}
 	
 	return success;
@@ -1733,27 +1975,25 @@ int gcr( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const void 
 	{
 		gcr_dat->maxit = std::min(b.rows(),1000);
 	}
-	if (gcr_dat->tol_rel < DBL_EPSILON || gcr_dat->tol_rel >= 1)
+	if (gcr_dat->tol_rel >= 1)
 	{
-		gcr_dat->tol_rel = 1.0e-6;
+		gcr_dat->tol_rel = 1e-6;
 	}
-	if (gcr_dat->tol_abs < DBL_EPSILON)
+	if (gcr_dat->tol_abs >= 1)
 	{
-		gcr_dat->tol_abs = 1.0e-6;
+		gcr_dat->tol_abs = 1e-6;
+	}
+	if (gcr_dat->tol_rel < MIN_TOL)
+	{
+		gcr_dat->tol_rel = MIN_TOL;
+	}
+	if (gcr_dat->tol_abs < MIN_TOL)
+	{
+		gcr_dat->tol_abs = MIN_TOL;
 	}
 	if (gcr_dat->x.rows() != b.rows())
 	{
 		gcr_dat->x.set_size(b.rows(), 1);
-		//Apply preconditioner as intial guess if available
-		if ( (*precon) != NULL)
-		{
-			success = (*precon) (b, gcr_dat->x, precon_data);
-			if (success != 0)
-			{
-				mError(simulation_fail);
-				return success;
-			}
-		}
 	}
 	if (gcr_dat->c_temp.rows() != b.rows())
 	{
@@ -1819,10 +2059,12 @@ int gcr( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const void 
 			//Check for a breakdown of the algorithm
 			if (gcr_dat->u_temp.norm() == 0.0)
 			{
-				gcr_dat->breakdown = true;
-				if (gcr_dat->Output == true)
-					std::cout << "\nGCR may have broken down at the " << m+step+1 << " iterate...\n" << std::endl;
-				break;
+				success = operatorTranspose(matvec, gcr_dat->r, gcr_dat->u_temp, &gcr_dat->transpose_dat, matvec_data);
+				if (success != 0)
+				{
+					mError(simulation_fail);
+					return success;
+				}
 			}
 			
 			//Form initial c vector
@@ -1983,7 +2225,7 @@ int gcr( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const void 
 	
 	//Post loop messages
 	if (gcr_dat->iter_outer >= gcr_dat->maxit)
-    {
+	{
 		if (gcr_dat->Output == true)
 		{
 			std::cout << "\nGCR did not find a solution within " << step+gcr_dat->maxit << " iterations!" << std::endl;
@@ -1991,8 +2233,8 @@ int gcr( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const void 
 		}
 		gcr_dat->x = gcr_dat->bestx;
 		gcr_dat->res = gcr_dat->bestres;
-      	success = 0;
-    }
+		success = 0;
+	}
 	if (gcr_dat->breakdown == true)
 	{
 		if (gcr_dat->Output == true)
@@ -2006,7 +2248,7 @@ int gcr( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const void 
 }
 
 //Function for preconditioning GCR in the GMRESR application
-int gmresPreconditioner( const Matrix<double>& r, Matrix<double> &Mr, const void *data)
+int gmresrPreconditioner( const Matrix<double>& r, Matrix<double> &Mr, const void *data)
 {
 	int success = 0;
 	GMRESR_DATA *dat = (GMRESR_DATA *) data;
@@ -2076,17 +2318,33 @@ int gmresr( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const vo
 	}
 	gmresr_dat->gmres_dat.Output = gmresr_dat->GMRES_Output;
 	gmresr_dat->gcr_dat.Output = gmresr_dat->GCR_Output;
-	if (gmresr_dat->gmres_tol >= 1.0 || gmresr_dat->gmres_tol <= DBL_EPSILON)
+	
+	//GMRESR Precondtioner Tolerance
+	if (gmresr_dat->gmres_tol >= 1)
 	{
 		gmresr_dat->gmres_tol = 0.1;
 	}
-	if (gmresr_dat->gcr_abs_tol >= 1.0 || gmresr_dat->gcr_abs_tol <= DBL_EPSILON)
+	if (gmresr_dat->gmres_tol < 1e-4)
+	{
+		gmresr_dat->gmres_tol = 1e-4;
+	}
+	
+	//GCR Tolerances
+	if (gmresr_dat->gcr_rel_tol >= 1)
+	{
+		gmresr_dat->gcr_rel_tol = 1e-6;
+	}
+	if (gmresr_dat->gcr_abs_tol >= 1)
 	{
 		gmresr_dat->gcr_abs_tol = 1e-6;
 	}
-	if (gmresr_dat->gcr_rel_tol >= 1.0 || gmresr_dat->gcr_rel_tol <= DBL_EPSILON)
+	if (gmresr_dat->gcr_abs_tol < MIN_TOL)
 	{
-		gmresr_dat->gcr_rel_tol = 1e-6;
+		gmresr_dat->gcr_abs_tol = MIN_TOL;
+	}
+	if (gmresr_dat->gcr_rel_tol < MIN_TOL)
+	{
+		gmresr_dat->gcr_rel_tol = MIN_TOL;
 	}
 	gmresr_dat->gcr_dat.tol_abs = gmresr_dat->gcr_abs_tol;
 	gmresr_dat->gcr_dat.tol_rel = gmresr_dat->gcr_rel_tol;
@@ -2131,10 +2389,190 @@ int gmresr( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const vo
 	gmresr_dat->iter_outer = 0;
 	
 	//Call GCR with the GMRES preconditioner
-	success = gcr(gmresr_dat->matvec, gmresPreconditioner, b, &gmresr_dat->gcr_dat, gmresr_dat->matvec_data, (void *)gmresr_dat);
+	success = gcr(gmresr_dat->matvec, gmresrPreconditioner, b, &gmresr_dat->gcr_dat, gmresr_dat->matvec_data, (void *)gmresr_dat);
 	if (success != 0) {mError(simulation_fail); return -1;}
 	gmresr_dat->iter_outer = gmresr_dat->gcr_dat.total_iter;
 	gmresr_dat->total_iter = gmresr_dat->iter_outer + gmresr_dat->iter_inner;
+	
+	return success;
+}
+
+// Preconditioner function for the Krylov Multi-Space
+int kmsPreconditioner( const Matrix<double>& r, Matrix<double> &Mr, const void *data)
+{
+	int success = 0;
+	KMS_DATA * kms_dat = (KMS_DATA *) data;
+	
+	//Check for errors
+	if ( kms_dat->matvec == NULL)
+	{
+		mError(nullptr_func);
+		return -1;
+	}
+	kms_dat->level++;
+	kms_dat->gmres_in[kms_dat->level-1].Output = kms_dat->Output_in;
+	
+	//Formulate the best number of inner and outer preconditioning iterates based on current status
+	double inner_par = 0;
+	
+	if (kms_dat->level == 1)
+		inner_par += 3;
+	else if (kms_dat->level > 1 && kms_dat->level <= 2)
+		inner_par += 5;
+	else if (kms_dat->level > 2 && kms_dat->level <= 3)
+		inner_par += 8;
+	else if (kms_dat->level > 3 && kms_dat->level <= 4)
+		inner_par += 12;
+	else
+		inner_par += 20;
+	
+	if (kms_dat->max_level == 1)
+		inner_par += 20;
+	else if (kms_dat->max_level > 1 && kms_dat->max_level <= 2)
+		inner_par += 12;
+	else if (kms_dat->max_level > 2 && kms_dat->max_level <= 3)
+		inner_par += 8;
+	else if (kms_dat->max_level > 3 && kms_dat->max_level <= 4)
+		inner_par += 5;
+	else
+		inner_par += 3;
+	
+	kms_dat->gmres_in[kms_dat->level - 1].restart = (int) (inner_par / 2.0);
+	
+	if (kms_dat->gmres_in[kms_dat->level - 1].restart <= 20 && kms_dat->gmres_in[kms_dat->level - 1].restart > 10)
+		kms_dat->gmres_in[kms_dat->level - 1].maxit = 1;
+	else
+		kms_dat->gmres_in[kms_dat->level - 1].maxit = 2;
+	
+	if (kms_dat->level > 1)
+	{
+		kms_dat->gmres_in[kms_dat->level-1].tol_abs = kms_dat->gmres_in[kms_dat->level-2].res * kms_dat->inner_reltol;
+		kms_dat->gmres_in[kms_dat->level-1].tol_rel = kms_dat->inner_reltol;
+	}
+	else
+	{
+		kms_dat->gmres_in[kms_dat->level-1].tol_abs = kms_dat->gmres_out.res * kms_dat->inner_reltol;
+		kms_dat->gmres_in[kms_dat->level-1].tol_rel = kms_dat->inner_reltol;
+	}
+	
+	Matrix<double> temp = r;
+	if (kms_dat->gmres_in[kms_dat->level - 1].x.rows() != Mr.rows())
+		kms_dat->gmres_in[kms_dat->level - 1].x.set_size(Mr.rows(), 1);
+	else
+		kms_dat->gmres_in[kms_dat->level - 1].x.zeros();
+	if (kms_dat->level == kms_dat->max_level)
+		success = gmresRightPreconditioned(kms_dat->matvec, kms_dat->terminal_precon, temp, &kms_dat->gmres_in[kms_dat->level-1], kms_dat->matvec_data, kms_dat->term_precon);
+	else
+		success = gmresRightPreconditioned(kms_dat->matvec, kmsPreconditioner, temp, &kms_dat->gmres_in[kms_dat->level-1], kms_dat->matvec_data, (void *)kms_dat);
+	kms_dat->inner_iter += kms_dat->gmres_in[kms_dat->level-1].iter_total;
+	Mr = kms_dat->gmres_in[kms_dat->level-1].x;
+	kms_dat->level--;
+	
+	return success;
+}
+
+// Function to iteratively solve a non-symmetric, indefinite linear system with KMS
+int krylovMultiSpace( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const void *data),
+					 int (*terminal_precon) (const Matrix<double>& r, Matrix<double> &Mr, const void *data),
+					 Matrix<double> &b, KMS_DATA *kms_dat, const void *matvec_data,
+					 const void *term_precon_data )
+{
+	int success = 0;
+	
+	//Check input args for errors
+	if ( (*matvec) == NULL)
+	{
+		mError(nullptr_func);
+		return -1;
+	}
+	else
+	{
+		kms_dat->matvec = (*matvec);
+	}
+	kms_dat->matvec_data = matvec_data;
+	kms_dat->terminal_precon = terminal_precon;
+	kms_dat->term_precon = term_precon_data;
+	if (b.rows() < 2)
+	{
+		success = -1;
+		mError(matrix_too_small);
+		return success;
+	}
+	kms_dat->gmres_out.Output = kms_dat->Output_out;
+	
+	//Preconditioner Tolerances
+	if (kms_dat->inner_reltol >= 0.5)
+	{
+		kms_dat->inner_reltol = 0.5;
+	}
+	if (kms_dat->inner_reltol < 1e-4)
+	{
+		kms_dat->inner_reltol = 1e-4;
+	}
+	
+	//Outer Step Tolerances
+	if (kms_dat->outer_reltol >= 1)
+	{
+		kms_dat->outer_reltol = 1e-6;
+	}
+	if (kms_dat->outer_abstol >= 1)
+	{
+		kms_dat->outer_abstol = 1e-6;
+	}
+	if (kms_dat->outer_abstol < MIN_TOL)
+	{
+		kms_dat->outer_abstol = MIN_TOL;
+	}
+	if (kms_dat->outer_reltol < MIN_TOL)
+	{
+		kms_dat->outer_reltol = MIN_TOL;
+	}
+	kms_dat->gmres_out.tol_abs = kms_dat->outer_abstol;
+	kms_dat->gmres_out.tol_rel = kms_dat->outer_reltol;
+	
+	//Method Parameters
+	if (kms_dat->restart <= 0)
+	{
+		kms_dat->restart = std::min(b.rows(),20);
+	}
+	else if (kms_dat->restart > b.rows() && b.rows() <= 1000)
+	{
+		kms_dat->restart = b.rows();
+	}
+	if (kms_dat->restart == b.rows())
+	{
+		kms_dat->maxit = 1;
+	}
+	else if (kms_dat->maxit <= 0 || kms_dat->maxit > b.rows())
+	{
+		kms_dat->maxit = std::min(b.rows(),1000);
+	}
+	if (kms_dat->max_level < 0)
+		kms_dat->max_level = 0;
+	if (kms_dat->max_level > 5)
+		kms_dat->max_level = 5;
+	kms_dat->gmres_out.restart = kms_dat->restart;
+	kms_dat->gmres_out.maxit = kms_dat->maxit;
+	kms_dat->level = 0;
+	kms_dat->total_iter = 0;
+	kms_dat->inner_iter = 0;
+	kms_dat->outer_iter = 0;
+	
+	if (kms_dat->gmres_in.size() != kms_dat->max_level)
+		kms_dat->gmres_in.resize(kms_dat->max_level);
+	
+	if (kms_dat->max_level == 0)
+	{
+		success = gmresRightPreconditioned(kms_dat->matvec, kms_dat->terminal_precon, b, &kms_dat->gmres_out, kms_dat->matvec_data, kms_dat->term_precon);
+		if (success != 0) { mError(simulation_fail); return -1; }
+	}
+	else
+	{
+		success = gmresRightPreconditioned(kms_dat->matvec, kmsPreconditioner, b, &kms_dat->gmres_out, kms_dat->matvec_data, (void *)kms_dat);
+		if (success != 0) { mError(simulation_fail); return -1; }
+	}
+	kms_dat->outer_iter = kms_dat->gmres_out.iter_total;
+	kms_dat->total_iter = kms_dat->outer_iter + kms_dat->inner_iter;
 	
 	return success;
 }
@@ -2167,13 +2605,21 @@ int picard( int (*res) (const Matrix<double>& x, Matrix<double> &r, const void *
 	{
 		picard_dat->maxit = std::min(3*x.rows(),1000);
 	}
-	if (picard_dat->tol_rel >= 1.0 || picard_dat->tol_rel <= DBL_EPSILON)
+	if (picard_dat->tol_rel >= 1.0)
 	{
 		picard_dat->tol_rel = 1e-6;
 	}
-	if (picard_dat->tol_abs <= DBL_EPSILON)
+	if (picard_dat->tol_abs >= 1.0)
 	{
 		picard_dat->tol_abs = 1e-6;
+	}
+	if (picard_dat->tol_rel < MIN_TOL)
+	{
+		picard_dat->tol_rel = MIN_TOL;
+	}
+	if (picard_dat->tol_abs < MIN_TOL)
+	{
+		picard_dat->tol_abs = MIN_TOL;
 	}
 	if ( picard_dat->x0.rows() != x.rows() )
 	{
@@ -2368,6 +2814,7 @@ int backtrackLineSearch( int (*feval) (const Matrix<double>& x, Matrix<double> &
 	{
 		backtrack_dat->lambdaMin = DBL_EPSILON;
 	}
+	backtrack_dat->fun_call = 0;
 	
 	//Start the backtracking algorithm
 	backtrack_dat->xk = xkp1;
@@ -2400,6 +2847,7 @@ int backtrackLineSearch( int (*feval) (const Matrix<double>& x, Matrix<double> &
 	{
 		xkp1 = backtrack_dat->xk - (pk*lambda);
 		success = (*feval) (xkp1,Fkp1,feval_data);
+		backtrack_dat->fun_call++;
 		if (success != 0) {mError(simulation_fail); return -1;}
 		backtrack_dat->normFkp1 = Fkp1.norm();
 		norm_old = backtrack_dat->normFkp1;
@@ -2439,6 +2887,7 @@ int backtrackLineSearch( int (*feval) (const Matrix<double>& x, Matrix<double> &
 		{
 			xkp1 = backtrack_dat->xk - (pk*lambda);
 			success = (*feval) (xkp1,Fkp1,feval_data);
+			backtrack_dat->fun_call++;
 			if (success != 0) {mError(simulation_fail); return -1;}
 			backtrack_dat->normFkp1 = Fkp1.norm();
 			
@@ -2483,7 +2932,7 @@ int backtrackLineSearch( int (*feval) (const Matrix<double>& x, Matrix<double> &
 			{
 				lambda_temp = backtrack_dat->rho * lambda;
 			}
-			if (lambda_temp < 0.1*lambda)
+			if (lambda_temp < 0.1*lambda || isnan(lambda_temp))
 				lambda = 0.1 * lambda;
 			else
 				lambda = lambda_temp;
@@ -2494,6 +2943,7 @@ int backtrackLineSearch( int (*feval) (const Matrix<double>& x, Matrix<double> &
 				lambda = backtrack_dat->lambdaMin;
 				xkp1 = backtrack_dat->xk - (pk*lambda);
 				success = (*feval) (xkp1,Fkp1,feval_data);
+				backtrack_dat->fun_call++;
 				if (success != 0) {mError(simulation_fail); return -1;}
 				backtrack_dat->normFkp1 = Fkp1.norm();
 				success = 1;
@@ -2503,6 +2953,7 @@ int backtrackLineSearch( int (*feval) (const Matrix<double>& x, Matrix<double> &
 			//Form new solution and norm
 			xkp1 = backtrack_dat->xk - (pk*lambda);
 			success = (*feval) (xkp1,Fkp1,feval_data);
+			backtrack_dat->fun_call++;
 			if (success != 0) {mError(simulation_fail); return -1;}
 			backtrack_dat->normFkp1 = Fkp1.norm();
 		}
@@ -2537,13 +2988,14 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 	if (x.rows() < 2)
 	{
 		success = -1;
-      	mError(matrix_too_small);
-      	return success;
+		mError(matrix_too_small);
+		return success;
 	}
 	pjfnk_dat->res_data = res_data;
 	pjfnk_dat->precon_data = precon_data;
 	pjfnk_dat->nl_iter = 0;
 	pjfnk_dat->l_iter = 0;
+	pjfnk_dat->fun_call = 0;
 	
 	//Check and initialize all PJFNK data
 	if (pjfnk_dat->F.rows() != x.rows())
@@ -2563,7 +3015,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 	}
 	if (pjfnk_dat->nl_maxit <= 0)
 		pjfnk_dat->nl_maxit = std::min(3*x.rows(),1000);
-	if (pjfnk_dat->linear_solver < 0 || pjfnk_dat->linear_solver > 7)
+	if (pjfnk_dat->linear_solver < GMRESLP || pjfnk_dat->linear_solver > GMRESR)
 	{
 		//Choose the best linear solver based on problem size and availability of preconditioning
 		if (x.rows() >= 100 && (*precon) == NULL)
@@ -2581,21 +3033,30 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		//NOTE: you would specify linear_solver = FOM if you wanted to take an exact
 		//Newton step. Otherwise, all steps are only approximate.
 	}
-	if (pjfnk_dat->nl_tol_abs >= 1.0 || pjfnk_dat->nl_tol_abs < DBL_EPSILON)
+	if (pjfnk_dat->nl_tol_abs >= 1.0)
 		pjfnk_dat->nl_tol_abs = 1e-6;
-	if (pjfnk_dat->nl_tol_rel >= 1.0 || pjfnk_dat->nl_tol_rel < DBL_EPSILON)
+	if (pjfnk_dat->nl_tol_abs < MIN_TOL)
+		pjfnk_dat->nl_tol_abs = MIN_TOL;
+	if (pjfnk_dat->nl_tol_rel >= 1.0)
 		pjfnk_dat->nl_tol_rel = 1e-6;
-	if (pjfnk_dat->lin_tol >= 1.0 || pjfnk_dat->lin_tol < DBL_EPSILON)
-		pjfnk_dat->lin_tol = 0.1;
+	if (pjfnk_dat->nl_tol_rel < MIN_TOL)
+		pjfnk_dat->nl_tol_rel = MIN_TOL;
+	if (pjfnk_dat->lin_tol_rel >= 1.0)
+		pjfnk_dat->lin_tol_rel = 0.1;
+	if (pjfnk_dat->lin_tol_rel < MIN_TOL)
+		pjfnk_dat->lin_tol_rel = MIN_TOL;
+	if (pjfnk_dat->lin_tol_abs >= 1.0)
+		pjfnk_dat->lin_tol_abs = 0.1;
+	if (pjfnk_dat->lin_tol_abs < MIN_TOL)
+		pjfnk_dat->lin_tol_abs = MIN_TOL;
 	if (pjfnk_dat->eps >= 1.0 || pjfnk_dat->eps < sqrt(DBL_EPSILON))
 		pjfnk_dat->eps = sqrt(DBL_EPSILON);
 	if (pjfnk_dat->Bounce == true)
 		pjfnk_dat->LineSearch = true;
-	if (pjfnk_dat->LineSearch == true)
-		pjfnk_dat->lin_tol = 1e-10;
 	
 	//Start the method by calling the users F(x) function to form an initial residual
 	success = (*pjfnk_dat->funeval) (pjfnk_dat->x,pjfnk_dat->F,pjfnk_dat->res_data);
+	pjfnk_dat->fun_call++;
 	if (success != 0) {mError(simulation_fail); return -1;}
 	pjfnk_dat->nl_res = pjfnk_dat->F.norm();
 	pjfnk_dat->nl_bestres = pjfnk_dat->nl_res;
@@ -2642,12 +3103,13 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		if (pjfnk_dat->linear_solver == GMRESLP)
 		{
 			pjfnk_dat->gmreslp_dat.Output = pjfnk_dat->L_Output;
-			pjfnk_dat->gmreslp_dat.tol_abs = pjfnk_dat->lin_tol * pjfnk_dat->nl_res;
-			pjfnk_dat->gmreslp_dat.tol_rel = pjfnk_dat->lin_tol;
+			pjfnk_dat->gmreslp_dat.tol_abs = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->gmreslp_dat.tol_rel = pjfnk_dat->lin_tol_rel;
 			pjfnk_dat->gmreslp_dat.maxit = x.rows();
 			success = gmresLeftPreconditioned(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->gmreslp_dat, pjfnk_dat, pjfnk_dat->precon_data);
-			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->gmreslp_dat.steps;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->gmreslp_dat.steps;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			
 			//Form new solution
 			if (pjfnk_dat->LineSearch == false)
@@ -2662,6 +3124,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			else
 			{
 				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->gmreslp_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
 				if (success < 0) {mError(simulation_fail); success = -1; break;}
 				//Form new solution
 				for (int i=0; i<x.rows(); i++)
@@ -2677,12 +3140,13 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		else if (pjfnk_dat->linear_solver == PCG)
 		{
 			pjfnk_dat->pcg_dat.Output = pjfnk_dat->L_Output;
-			pjfnk_dat->pcg_dat.tol_abs = pjfnk_dat->lin_tol * pjfnk_dat->nl_res;
-			pjfnk_dat->pcg_dat.tol_rel = pjfnk_dat->lin_tol;
-			pjfnk_dat->pcg_dat.maxit = x.rows();
+			pjfnk_dat->pcg_dat.tol_abs = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->pcg_dat.tol_rel = pjfnk_dat->lin_tol_rel;
+			pjfnk_dat->pcg_dat.maxit = 2*x.rows();
 			success = pcg(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->pcg_dat, pjfnk_dat, pjfnk_dat->precon_data);
-			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->pcg_dat.iter;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->pcg_dat.iter;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			
 			//Form new solution
 			if (pjfnk_dat->LineSearch == false)
@@ -2696,6 +3160,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			else
 			{
 				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->pcg_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
 				if (success < 0) {mError(simulation_fail); success = -1; break;}
 				//Form new solution
 				for (int i=0; i<x.rows(); i++)
@@ -2711,12 +3176,13 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		else if (pjfnk_dat->linear_solver == BiCGSTAB)
 		{
 			pjfnk_dat->bicgstab_dat.Output = pjfnk_dat->L_Output;
-			pjfnk_dat->bicgstab_dat.tol_abs = pjfnk_dat->lin_tol * pjfnk_dat->nl_res;
-			pjfnk_dat->bicgstab_dat.tol_rel = pjfnk_dat->lin_tol;
-			pjfnk_dat->bicgstab_dat.maxit = x.rows();
+			pjfnk_dat->bicgstab_dat.tol_abs = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->bicgstab_dat.tol_rel = pjfnk_dat->lin_tol_rel;
+			pjfnk_dat->bicgstab_dat.maxit = 2*x.rows();
 			success = bicgstab(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->bicgstab_dat, pjfnk_dat, pjfnk_dat->precon_data);
-			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->bicgstab_dat.iter;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->bicgstab_dat.iter;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			
 			if (pjfnk_dat->LineSearch == false)
 			{
@@ -2730,6 +3196,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			else
 			{
 				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->bicgstab_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
 				if (success < 0) {mError(simulation_fail); success = -1; break;}
 				//Form new solution
 				for (int i=0; i<x.rows(); i++)
@@ -2745,12 +3212,13 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		else if (pjfnk_dat->linear_solver == CGS)
 		{
 			pjfnk_dat->cgs_dat.Output = pjfnk_dat->L_Output;
-			pjfnk_dat->cgs_dat.tol_abs = pjfnk_dat->lin_tol * pjfnk_dat->nl_res;
-			pjfnk_dat->cgs_dat.tol_rel = pjfnk_dat->lin_tol;
-			pjfnk_dat->cgs_dat.maxit = x.rows();
+			pjfnk_dat->cgs_dat.tol_abs = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->cgs_dat.tol_rel = pjfnk_dat->lin_tol_rel;
+			pjfnk_dat->cgs_dat.maxit = 2*x.rows();
 			success = cgs(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->cgs_dat, pjfnk_dat, pjfnk_dat->precon_data);
-			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->cgs_dat.iter;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->cgs_dat.iter;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			
 			if (pjfnk_dat->LineSearch == false)
 			{
@@ -2764,6 +3232,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			else
 			{
 				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->cgs_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
 				if (success < 0) {mError(simulation_fail); success = -1; break;}
 				//Form new solution
 				for (int i=0; i<x.rows(); i++)
@@ -2775,15 +3244,16 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			}
 		}
 		
-		//Unrestarted GMRES with Left Preconditioning - Basically Equivalent to an Exact Newton Step
+		//Unrestarted GMRES with Left Preconditioning (i.e. Full Orthogonalization) - Basically Equivalent to an Exact Newton Step
 		else if (pjfnk_dat->linear_solver == FOM)
 		{
 			pjfnk_dat->gmreslp_dat.Output = pjfnk_dat->L_Output;
-			pjfnk_dat->gmreslp_dat.tol_abs = pjfnk_dat->lin_tol * pjfnk_dat->nl_res;
-			pjfnk_dat->gmreslp_dat.tol_rel = pjfnk_dat->lin_tol;
+			pjfnk_dat->gmreslp_dat.tol_abs = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->gmreslp_dat.tol_rel = pjfnk_dat->lin_tol_rel;
 			success = fom(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->gmreslp_dat, pjfnk_dat, pjfnk_dat->precon_data);
-			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->gmreslp_dat.steps;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->gmreslp_dat.steps;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			
 			if (pjfnk_dat->LineSearch == false)
 			{
@@ -2797,6 +3267,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			else
 			{
 				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->gmreslp_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
 				if (success < 0) {mError(simulation_fail); success = -1; break;}
 				//Form new solution
 				for (int i=0; i<x.rows(); i++)
@@ -2812,15 +3283,13 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		else if (pjfnk_dat->linear_solver == GMRESRP)
 		{
 			pjfnk_dat->gmresrp_dat.Output = pjfnk_dat->L_Output;
-			pjfnk_dat->gmresrp_dat.tol_abs = pjfnk_dat->lin_tol * pjfnk_dat->nl_res;
-			pjfnk_dat->gmresrp_dat.tol_rel = pjfnk_dat->lin_tol;
-			if (x.rows() <= 1000)
-				pjfnk_dat->gmresrp_dat.restart = x.rows();
-			else
-				pjfnk_dat->gmresrp_dat.restart = 1000;
-			success = gmresRightPreconditioned(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->gmresrp_dat, pjfnk_dat, pjfnk_dat->precon_data);
-			if (success != 0) {mError(simulation_fail); success = -1; break;}
+			pjfnk_dat->gmresrp_dat.tol_abs = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->gmresrp_dat.tol_rel = pjfnk_dat->lin_tol_rel;
+			pjfnk_dat->gmresrp_dat.maxit = x.rows();
+			success=gmresRightPreconditioned(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->gmresrp_dat, pjfnk_dat, pjfnk_dat->precon_data);
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->gmresrp_dat.iter_total;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->gmresrp_dat.iter_total;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			
 			if (pjfnk_dat->LineSearch == false)
 			{
@@ -2834,6 +3303,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			else
 			{
 				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->gmresrp_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
 				if (success < 0) {mError(simulation_fail); success = -1; break;}
 				//Form new solution
 				for (int i=0; i<x.rows(); i++)
@@ -2849,15 +3319,13 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		else if (pjfnk_dat->linear_solver == GCR)
 		{
 			pjfnk_dat->gcr_dat.Output = pjfnk_dat->L_Output;
-			pjfnk_dat->gcr_dat.tol_abs = pjfnk_dat->lin_tol * pjfnk_dat->nl_res;
-			pjfnk_dat->gcr_dat.tol_rel = pjfnk_dat->lin_tol;
-			if (x.rows() <= 500)
-				pjfnk_dat->gcr_dat.restart = x.rows();
-			else
-				pjfnk_dat->gcr_dat.restart = 500;
+			pjfnk_dat->gcr_dat.tol_abs = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->gcr_dat.tol_rel = pjfnk_dat->lin_tol_rel;
+			pjfnk_dat->gcr_dat.maxit = x.rows();
 			success = gcr(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->gcr_dat, pjfnk_dat, pjfnk_dat->precon_data);
-			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->gcr_dat.total_iter;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->gcr_dat.total_iter;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			
 			if (pjfnk_dat->LineSearch == false)
 			{
@@ -2871,6 +3339,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			else
 			{
 				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->gcr_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
 				if (success < 0) {mError(simulation_fail); success = -1; break;}
 				//Form new solution
 				for (int i=0; i<x.rows(); i++)
@@ -2887,16 +3356,14 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		{
 			pjfnk_dat->gmresr_dat.GCR_Output = pjfnk_dat->L_Output;
 			pjfnk_dat->gmresr_dat.GMRES_Output = false;
-			pjfnk_dat->gmresr_dat.gcr_abs_tol = pjfnk_dat->lin_tol * pjfnk_dat->nl_res;
-			pjfnk_dat->gmresr_dat.gcr_rel_tol = pjfnk_dat->lin_tol;
-			pjfnk_dat->gmresr_dat.gmres_tol = pjfnk_dat->lin_tol;
-			if (x.rows() <= 500)
-				pjfnk_dat->gmresr_dat.gcr_restart = x.rows();
-			else
-				pjfnk_dat->gmresr_dat.gcr_restart = 500;
+			pjfnk_dat->gmresr_dat.gcr_abs_tol = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->gmresr_dat.gcr_rel_tol = pjfnk_dat->lin_tol_rel;
+			pjfnk_dat->gmresr_dat.gmres_tol = pjfnk_dat->lin_tol_rel;
+			pjfnk_dat->gmresr_dat.gcr_maxit = x.rows();
 			success = gmresr(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->gmresr_dat, pjfnk_dat, pjfnk_dat->precon_data);
-			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->gmresr_dat.total_iter;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->gmresr_dat.total_iter;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
 			
 			if (pjfnk_dat->LineSearch == false)
 			{
@@ -2910,6 +3377,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			else
 			{
 				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->gmresr_dat.gcr_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
 				if (success < 0) {mError(simulation_fail); success = -1; break;}
 				//Form new solution
 				for (int i=0; i<x.rows(); i++)
@@ -2932,6 +3400,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		if (pjfnk_dat->LineSearch == false)
 		{
 			success = (*pjfnk_dat->funeval) (pjfnk_dat->x,pjfnk_dat->F,pjfnk_dat->res_data);
+			pjfnk_dat->fun_call++;
 			if (success != 0) {mError(simulation_fail); return -1;}
 			pjfnk_dat->nl_res = pjfnk_dat->F.norm();
 			
@@ -3037,6 +3506,71 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 		x = pjfnk_dat->bestx;
 		pjfnk_dat->nl_res = pjfnk_dat->nl_bestres;
 		success = 0;
+	}
+	
+	return success;
+}
+
+//Form a numerical jacobian matrix
+int NumericalJacobian( int (*Func) (const Matrix<double> &x, Matrix<double> &F, const void *user_data),
+					  const Matrix<double> &x, Matrix<double> &J, int Nx, int Nf, NUM_JAC_DATA *jac_dat,
+					  const void *user_data)
+{
+	int success = 0;
+	
+	//Check input arguments for problems
+	if ( (*Func) == NULL )
+	{
+		mError(nullptr_func);
+		return -1;
+	}
+	if ( jac_dat == NULL)
+	{
+		mError(nullptr_func);
+		return -1;
+	}
+	if (jac_dat->dxj.rows() != Nx)
+	{
+		jac_dat->dxj.set_size(Nx, 1);
+	}
+	if (J.rows() != Nf && J.columns() != Nx)
+	{
+		J.set_size(Nf, Nx);
+	}
+	if (jac_dat->Fx.rows() != Nf)
+	{
+		jac_dat->Fx.set_size(Nf, 1);
+	}
+	if (jac_dat->Fxp.rows() != Nf)
+	{
+		jac_dat->Fxp.set_size(Nf, 1);
+	}
+	if (jac_dat->eps < sqrt(DBL_EPSILON) || jac_dat->eps >= 1.0)
+	{
+		jac_dat->eps = sqrt(DBL_EPSILON);
+	}
+	
+	//Form the first fuction evaluation
+	success = (*Func) (x, jac_dat->Fx, user_data);
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//Create a copy of x to change piecewise
+	jac_dat->dxj = x;
+	for (int j=0; j<Nx; j++)
+	{
+		//Change the jth variable
+		jac_dat->dxj(j,0) = x(j,0) + jac_dat->eps;
+		success = (*Func) (jac_dat->dxj, jac_dat->Fxp, user_data);
+		if (success != 0) {mError(simulation_fail); return -1;}
+		
+		//Approximate each row of the first column of the jacobian
+		for (int i=0; i<Nf; i++)
+		{
+			J(i,j) = (jac_dat->Fxp(i,0) - jac_dat->Fx(i,0)) / jac_dat->eps;
+		}
+		
+		//Recover the jth variable before continuing
+		jac_dat->dxj(j,0) = x(j,0);
 	}
 	
 	return success;
