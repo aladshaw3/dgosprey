@@ -146,6 +146,7 @@ peacock_*.e
 
 #doxygen generated
 /doc/doxygen/html/
+/doc/doxygen/latex/
 
 # Restartable Data
 *.rd
