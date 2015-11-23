@@ -5,8 +5,6 @@ template<>
 InputParameters validParams<DGFluxBC>()
 {
 	InputParameters params = validParams<IntegratedBC>();
-	params.addParam<Real>("epsilon", 1.0, "epsilon");
-	params.addParam<Real>("sigma", 1.0, "sigma");
 	params.addParam<Real>("vx",0, "x-component of velocity vector");
 	params.addParam<Real>("vy",0,"y-component of velocity vector");
 	params.addParam<Real>("vz",0,"z-component of velocity vector");
@@ -25,8 +23,6 @@ InputParameters validParams<DGFluxBC>()
 
 DGFluxBC::DGFluxBC(const InputParameters & parameters) :
 IntegratedBC(parameters),
-_epsilon(getParam<Real>("epsilon")),
-_sigma(getParam<Real>("sigma")),
 _vx(getParam<Real>("vx")),
 _vy(getParam<Real>("vy")),
 _vz(getParam<Real>("vz")),

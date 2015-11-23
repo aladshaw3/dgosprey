@@ -71,14 +71,6 @@ _magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data"))
 		_index[i] = coupled("coupled_gases",i);
 		_gas_conc[i] = &coupledValue("coupled_gases",i);
 	}
-	
-	//Loop over _qp (Note: wanted to do this for initialization, but this didn't work)
-	/*
-	for (unsigned int _qp=0; _qp<_qrule->n_points(); _qp++)
-	{
-	
-	}
-	 */
 }
 
 void
