@@ -33,13 +33,6 @@ Real LinearDrivingForce::computeQpResidual()
 
 Real LinearDrivingForce::computeQpJacobian()
 {
-  return 0.0; //In this case, Jacobian is zero because var is not necessarily u
-  /*
-   If _var == _u (i.e. same variable),
-   then
-   return +/- _test[_i][_qp] * _coef * _phi[_j][_qp]
-   
-   May want to check for equality of variable or hard code different versions
-   */
+  return 0.0; 
 }
 
