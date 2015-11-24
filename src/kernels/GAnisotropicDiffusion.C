@@ -41,14 +41,12 @@ _Dzz(getParam<Real>("Dzz"))
 	_Diffusion(2,2) = _Dzz;
 }
 
-Real
-GAnisotropicDiffusion::computeQpResidual()
+Real GAnisotropicDiffusion::computeQpResidual()
 {
 	return _Diffusion*_grad_test[_i][_qp]*_grad_u[_qp];
 }
 
-Real
-GAnisotropicDiffusion::computeQpJacobian()
+Real GAnisotropicDiffusion::computeQpJacobian()
 {
 	return _Diffusion*_grad_test[_i][_qp]*_grad_phi[_j][_qp];
 }
