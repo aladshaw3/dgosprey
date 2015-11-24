@@ -20,9 +20,8 @@ _column_temp(coupledValue("coupled"))
 
 Real BedWallHeatTransfer::computeQpResidual()
 {
-  //Note: if _inner_dia == _outer_dia, this will lead to an error
+  //Note: if _inner_dia >= _outer_dia, this will lead to an error
   Real _coef = (4.0 * _bed_wall_transfer_coeff[_qp] * _inner_dia[_qp]) / ( (_outer_dia[_qp]*_outer_dia[_qp]) - (_inner_dia[_qp]*_inner_dia[_qp]) );
-  //Note also: if _inner_dia > _outer_dia, this will also lead to an error, but won't be caught!!!
   return -_test[_i][_qp] * _coef * (_column_temp[_qp] - _u[_qp]);
 }
 

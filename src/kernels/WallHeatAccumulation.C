@@ -16,14 +16,12 @@ _wall_heat_capacity(getMaterialProperty<Real>("wall_heat_capacity"))
   
 }
 
-Real
-WallHeatAccumulation::computeQpResidual()
+Real WallHeatAccumulation::computeQpResidual()
 {
   return _wall_density[_qp] * _wall_heat_capacity[_qp] * TimeDerivative::computeQpResidual();
 }
 
-Real
-WallHeatAccumulation::computeQpJacobian()
+Real WallHeatAccumulation::computeQpJacobian()
 {
   return _wall_density[_qp] * _wall_heat_capacity[_qp] * TimeDerivative::computeQpJacobian();
 }

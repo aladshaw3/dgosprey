@@ -233,7 +233,7 @@
 		variable =column_temp
 	[../]
 	[./columnAdsHeat]
-		type = MAGPIE_HeatAccumulation
+		type = AdsorptionHeatAccumulation
 		variable = column_temp
 		solid_heats = 'N2_AdsorbedHeat O2_AdsorbedHeat H2O_AdsorbedHeat'
 	[../]

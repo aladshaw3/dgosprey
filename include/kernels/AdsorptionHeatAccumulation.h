@@ -5,22 +5,22 @@
 //	All rights reserved
 //----------------------------------------
 
-#ifndef MAGPIE_HeatAccumulation_H
-#define MAGPIE_HeatAccumulation_H
+#ifndef AdsorptionHeatAccumulation_H
+#define AdsorptionHeatAccumulation_H
 
 #include "Kernel.h"
 
 //Forward Declarations
-class MAGPIE_HeatAccumulation;
+class AdsorptionHeatAccumulation;
 
 template<>
-InputParameters validParams<MAGPIE_HeatAccumulation>();
+InputParameters validParams<AdsorptionHeatAccumulation>();
 
-class MAGPIE_HeatAccumulation : public Kernel
+class AdsorptionHeatAccumulation : public Kernel
 {
 public:
 	
-	MAGPIE_HeatAccumulation(const InputParameters & parameters);
+	AdsorptionHeatAccumulation(const InputParameters & parameters);
 	
 protected:
 	virtual Real computeQpResidual();

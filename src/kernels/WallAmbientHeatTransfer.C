@@ -20,9 +20,8 @@ _ambient_temp(coupledValue("coupled"))
 
 Real WallAmbientHeatTransfer::computeQpResidual()
 {
-  //Note: if _inner_dia == _outer_dia, this will lead to an error
+  //Note: if _inner_dia >= _outer_dia, this will lead to an error
   Real _coef = (4.0 * _wall_exterior_transfer_coeff[_qp] * _outer_dia[_qp]) / ( (_outer_dia[_qp]*_outer_dia[_qp]) - (_inner_dia[_qp]*_inner_dia[_qp]) );
-  //Note also: if _inner_dia > _outer_dia, this will also lead to an error, but won't be caught!!!
   return _test[_i][_qp] * _coef * (_u[_qp] - _ambient_temp[_qp]);
 }
 

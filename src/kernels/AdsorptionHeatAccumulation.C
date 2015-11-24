@@ -5,17 +5,17 @@
 //	All rights reserved
 //----------------------------------------
 
-#include "MAGPIE_HeatAccumulation.h"
+#include "AdsorptionHeatAccumulation.h"
 
 template<>
-InputParameters validParams<MAGPIE_HeatAccumulation>()
+InputParameters validParams<AdsorptionHeatAccumulation>()
 {
 	InputParameters params = validParams<Kernel>();
 	params.addCoupledVar("solid_heats","Coupled variables for the solid heat of adsorption");
 	return params;
 }
 
-MAGPIE_HeatAccumulation::MAGPIE_HeatAccumulation(const InputParameters & parameters) :
+AdsorptionHeatAccumulation::AdsorptionHeatAccumulation(const InputParameters & parameters) :
 Kernel(parameters),
 _porosity(getMaterialProperty<Real>("porosity")),
 _pellet_density(getMaterialProperty<Real>("pellet_density"))
@@ -31,8 +31,7 @@ _pellet_density(getMaterialProperty<Real>("pellet_density"))
 	}
 }
 
-Real
-MAGPIE_HeatAccumulation::computeQpResidual()
+Real AdsorptionHeatAccumulation::computeQpResidual()
 {
 	double sum = 0.0;
 	
@@ -43,8 +42,7 @@ MAGPIE_HeatAccumulation::computeQpResidual()
 	return _pellet_density[_qp]*(1.0/1000.0)*sum*_test[_i][_qp];
 }
 
-Real
-MAGPIE_HeatAccumulation::computeQpJacobian()
+Real AdsorptionHeatAccumulation::computeQpJacobian()
 {
 	return 0.0;
 }
