@@ -47,14 +47,27 @@ class ColumnTemperatureIC;
 
 template<> InputParameters validParams<ColumnTemperatureIC>();
 
+/// ColumnTemperatureIC class object inherits from InitialCondition object
+/** This class object inherits from the InitialCondition object in the MOOSE framework.
+	All public and protected members of this class are required function overrides. The object
+	will establish the initial conditions for column temperature as constant throughout the 
+	domain.
+ 
+	\note You can have the non-linear variable vary spatially in the domain by inheriting from
+	and or modifying this file to do so. */
 class ColumnTemperatureIC : public InitialCondition
 {
 public:
+	/// Required constructor for objects in MOOSE
 	ColumnTemperatureIC(const InputParameters & parameters);
+	/// Required function override for setting the value of the non-linear variable at a given point
+	/** This function passes a point p as an argument. The return value will be the value of the non-linear
+		variable at that point. That information is used to establish the spatially varying initial condition
+		for the given non-linear variable. */
 	virtual Real value(const Point & p);
   
 private:
-	Real _TC_IC;
+	Real _TC_IC;			///< Initial condition value for the column temperature (K)
 };
 
 #endif //COLUMNTEMPERATUREIC_H
