@@ -15,8 +15,8 @@ public:
   
 private:
   Real _y_IC;
-  VariableValue & _temperature;
-  VariableValue & _total_pressure;
+  Real _PT_IC;
+  Real _T_IC;
 };
 
 #endif //CONCENTRATIONIC_H

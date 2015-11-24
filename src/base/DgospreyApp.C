@@ -19,7 +19,6 @@
 #include "TotalPressureIC.h"
 #include "ColumnTemperatureIC.h"
 #include "ConcentrationIC.h"
-#include "DGConcentrationIC.h"
 #include "DGAdvection.h"
 #include "DGFluxBC.h"
 #include "GAdvection.h"
@@ -107,7 +106,6 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerInitialCondition(TotalPressureIC);
 	registerInitialCondition(ColumnTemperatureIC);
 	registerInitialCondition(ConcentrationIC);
-	registerInitialCondition(DGConcentrationIC);
 
 	registerDGKernel(DGAdvection);
 	registerBoundaryCondition(DGFluxBC);

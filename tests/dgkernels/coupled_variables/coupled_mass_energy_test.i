@@ -107,7 +107,7 @@
 [ICs]
 
 	[./N2_IC]
-		type = DGConcentrationIC
+		type = ConcentrationIC
 		variable = N2
 		initial_mole_frac = 0.79
 		initial_press = 101.35
@@ -115,7 +115,7 @@
 	[../]
 
 	[./O2_IC]
-		type = DGConcentrationIC
+		type = ConcentrationIC
 		variable = O2
 		initial_mole_frac = 0.21
  		initial_press = 101.35
@@ -123,7 +123,7 @@
 	[../]
 
 	[./H2O_IC]
-		type = DGConcentrationIC
+		type = ConcentrationIC
 		variable = H2O
 		initial_mole_frac = 0.0
  		initial_press = 101.35
