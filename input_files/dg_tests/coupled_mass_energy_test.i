@@ -153,7 +153,7 @@
 [Kernels]
 
  	[./accumN2]
- 		type = RetardedTimeDerivative
+ 		type = BedMassAccumulation
  		variable = N2
  		index = 0
  	[../]
@@ -170,7 +170,7 @@
 	[../]
 
  	[./accumO2]
- 		type = RetardedTimeDerivative
+ 		type = BedMassAccumulation
  		variable = O2
  		index = 1
  	[../]
@@ -187,7 +187,7 @@
 	[../]
 
  	[./accumH2O]
- 		type = RetardedTimeDerivative
+ 		type = BedMassAccumulation
 		#type = CoefTimeDerivative
  		variable = H2O
 		#Coefficient = 121448.3707 #This is temporary as a surrogate for the adsorption strength = dq/dc * eb

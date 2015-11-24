@@ -48,20 +48,27 @@ InputParameters validParams<BedHeatAccumulation>();
 /// BedHeatAccumulation class object inherits from TimeDerivative object
 /** This class object inherits from the TimeDerivative object.
 	All public and protected members of this class are required function overrides.
-	The flux BC uses the velocity and diffusivity in the system to apply a boundary
-	condition based on whether or not material is leaving or entering the boundary. */
+	The kernel interfaces with the heat retardation coefficient calculated in a materials property
+	file and calls the standard TimeDerivative functions while appending the retardation coefficient
+	to those values. */
 class BedHeatAccumulation : public TimeDerivative
 {
 public:
-  
-  BedHeatAccumulation(const InputParameters & parameters);
+	/// Required constructor for objects in MOOSE
+	BedHeatAccumulation(const InputParameters & parameters);
   
 protected:
-  virtual Real computeQpResidual();
-  virtual Real computeQpJacobian();
+	/// Required residual function for standard kernels in MOOSE
+	/** This function returns a residual contribution for this object.*/
+	virtual Real computeQpResidual();
+	/// Required Jacobian function for standard kernels in MOOSE
+	/** This function returns a Jacobian contribution for this object. The Jacobian being
+		computed is the associated diagonal element in the overall Jacobian matrix for the
+		system and is used in preconditioning of the linear sub-problem. */
+	virtual Real computeQpJacobian();
   
 private:
-	const MaterialProperty<Real> & _heat_retardation;
+	const MaterialProperty<Real> & _heat_retardation;		///< Reference to the heat retardation material property
 };
 
 #endif // BEDHEATACCUMULATION_H

@@ -7,7 +7,7 @@
 #include "BedProperties.h"
 #include "AdsorbentProperties.h"
 #include "FlowProperties.h"
-#include "RetardedTimeDerivative.h"
+#include "BedMassAccumulation.h"
 #include "BedWallHeatTransfer.h"
 #include "WallAmbientHeatTransfer.h"
 #include "WallHeatAccumulation.h"
@@ -86,7 +86,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerMaterial(AdsorbentProperties);
 	registerMaterial(FlowProperties);
 	registerMaterial(MagpieAdsorbateProperties);
-	registerKernel(RetardedTimeDerivative);
+	registerKernel(BedMassAccumulation);
 	registerKernel(BedWallHeatTransfer);
 	registerKernel(WallAmbientHeatTransfer);
 	registerKernel(WallHeatAccumulation);
