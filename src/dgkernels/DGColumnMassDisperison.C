@@ -25,8 +25,7 @@ _molecular_diffusion(getMaterialProperty<std::vector<Real> >("molecular_diffusio
 
 }
 
-Real
-DGColumnMassDispersion::computeQpResidual(Moose::DGResidualType type)
+Real DGColumnMassDispersion::computeQpResidual(Moose::DGResidualType type)
 {
 	_Diffusion(0,0) =  _molecular_diffusion[_qp][_index];
 	_Diffusion(0,1) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
@@ -43,8 +42,7 @@ DGColumnMassDispersion::computeQpResidual(Moose::DGResidualType type)
 	return DGAnisotropicDiffusion::computeQpResidual(type);
 }
 
-Real
-DGColumnMassDispersion::computeQpJacobian(Moose::DGJacobianType type)
+Real DGColumnMassDispersion::computeQpJacobian(Moose::DGJacobianType type)
 {
 	
 	_Diffusion(0,0) =  _molecular_diffusion[_qp][_index];

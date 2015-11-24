@@ -22,8 +22,7 @@ _vel(getMaterialProperty<Real>("velocity"))
 
 }
 
-Real
-DGColumnMassAdvection::computeQpResidual(Moose::DGResidualType type)
+Real DGColumnMassAdvection::computeQpResidual(Moose::DGResidualType type)
 {
 	
 	_velocity(0)=0.0;
@@ -33,8 +32,7 @@ DGColumnMassAdvection::computeQpResidual(Moose::DGResidualType type)
 	return DGAdvection::computeQpResidual(type);
 }
 
-Real
-DGColumnMassAdvection::computeQpJacobian(Moose::DGJacobianType type)
+Real DGColumnMassAdvection::computeQpJacobian(Moose::DGJacobianType type)
 {
 	
 	_velocity(0)=0.0;

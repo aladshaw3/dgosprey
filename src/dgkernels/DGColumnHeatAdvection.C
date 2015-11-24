@@ -24,8 +24,7 @@ _gas_heat_capacity(getMaterialProperty<Real>("gas_heat_capacity"))
 
 }
 
-Real
-DGColumnHeatAdvection::computeQpResidual(Moose::DGResidualType type)
+Real DGColumnHeatAdvection::computeQpResidual(Moose::DGResidualType type)
 {
 	
 	_velocity(0)=0.0;
@@ -35,8 +34,7 @@ DGColumnHeatAdvection::computeQpResidual(Moose::DGResidualType type)
 	return DGAdvection::computeQpResidual(type);
 }
 
-Real
-DGColumnHeatAdvection::computeQpJacobian(Moose::DGJacobianType type)
+Real DGColumnHeatAdvection::computeQpJacobian(Moose::DGJacobianType type)
 {
 	
 	_velocity(0)=0.0;

@@ -21,8 +21,7 @@ _vz(getParam<Real>("vz"))
 	_velocity(2)=_vz;
 }
 
-Real
-DGAdvection::computeQpResidual(Moose::DGResidualType type)
+Real DGAdvection::computeQpResidual(Moose::DGResidualType type)
 {
 	Real r = 0;
 	
@@ -45,8 +44,7 @@ DGAdvection::computeQpResidual(Moose::DGResidualType type)
 	return r;
 }
 
-Real
-DGAdvection::computeQpJacobian(Moose::DGJacobianType type)
+Real DGAdvection::computeQpJacobian(Moose::DGJacobianType type)
 {
 	Real r = 0;
 	

@@ -45,8 +45,7 @@ _Dzz(getParam<Real>("Dzz"))
 	_Diffusion(2,2) = _Dzz;
 }
 
-Real
-DGAnisotropicDiffusion::computeQpResidual(Moose::DGResidualType type)
+Real DGAnisotropicDiffusion::computeQpResidual(Moose::DGResidualType type)
 {
 	Real r = 0;
 	
@@ -73,8 +72,7 @@ DGAnisotropicDiffusion::computeQpResidual(Moose::DGResidualType type)
 	return r;
 }
 
-Real
-DGAnisotropicDiffusion::computeQpJacobian(Moose::DGJacobianType type)
+Real DGAnisotropicDiffusion::computeQpJacobian(Moose::DGJacobianType type)
 {
 	Real r = 0;
 	
