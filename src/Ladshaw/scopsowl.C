@@ -1,12 +1,12 @@
-//----------------------------------------
-//  Created by Austin Ladshaw on 1/29/15
-//  Copyright (c) 2015
-//	Austin Ladshaw
-//	All rights reserved
-//----------------------------------------
-
-/*
- *			SCOPSOWL = Simultaneously Coupled Objects for Pore and Surface diffusion Operations With Linear systems
+/*!
+ *  \file scopsowl.h scopsowl.cpp
+ *	\brief Simultaneously Coupled Objects for Pore and Surface diffusion Operations With Linear systems
+ *  \author Austin Ladshaw
+ *	\date 01/29/2015
+ *	\copyright This software was designed and built at the Georgia Institute
+ *             of Technology by Austin Ladshaw for PhD research in the area
+ *             of adsorption and surface science. Copyright (c) 2015, all
+ *             rights reserved.
  */
 
 #include "scopsowl.h"

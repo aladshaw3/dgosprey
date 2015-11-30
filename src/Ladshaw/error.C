@@ -1,20 +1,12 @@
-//----------------------------------------
-//  Created by Austin Ladshaw on 1/2/14
-//  Copyright (c) 2014
-//	Austin Ladshaw
-//	All rights reserved
-//----------------------------------------
-
-/*
- * error.C
- *
- *      v1.0.0
- *
- *      0.0.1 - This class file will be expanded upon as need be for more specific error reporting by all programs
- *      		which are under development. Currently, serves to give only a generic error message.
- *
- *      1.0.0 - Error messages are flagged by an integer. All current messages are those previously defined within
- *      		each class file.
+/*!
+ *  \file error.h error.cpp
+ *	\brief All error types are defined here
+ *  \author Austin Ladshaw
+ *	\date 04/28/2014
+ *	\copyright This software was designed and built at the Georgia Institute
+ *             of Technology by Austin Ladshaw for PhD research in the area
+ *             of adsorption and surface science. Copyright (c) 2015, all
+ *             rights reserved.
  */
 
 #include "error.h"

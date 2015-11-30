@@ -1,16 +1,12 @@
-//----------------------------------------
-//  Created by Austin Ladshaw on 1/7/14
-//  Copyright (c) 2014
-//	Austin Ladshaw
-//	All rights reserved
-//----------------------------------------
-
-/*
- *		MACAW = MAtrix CAlculation Workspace
- *
- *		This is a small C++ library that faciltates the use and construction of
- *		real matrices using vector objects. It has functions for both dense and
- *		sparse matrices, though the sparse system is poorly supported at current.
+/*!
+ *  \file macaw.h macaw.cpp
+ *	\brief MAtrix CAlculation Workspace
+ *  \author Austin Ladshaw
+ *	\date 01/07/2014
+ *	\copyright This software was designed and built at the Georgia Institute
+ *             of Technology by Austin Ladshaw for PhD research in the area
+ *             of adsorption and surface science. Copyright (c) 2015, all
+ *             rights reserved.
  */
 
 #include "macaw.h"

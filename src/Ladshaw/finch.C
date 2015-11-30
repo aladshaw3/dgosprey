@@ -1,21 +1,12 @@
-//----------------------------------------
-//  Created by Austin Ladshaw on 6/10/14
-//  Copyright (c) 2014
-//	Austin Ladshaw
-//	All rights reserved
-//----------------------------------------
-
-/*
- *		FINCH = Flux-limiting Implicit Non-oscillatory Conservative High-resolution
- *
- *			This is a conservative finite differences scheme based on the Kurganov and Tadmoor (2000)
- *		MUSCL scheme for non-linear conservation laws.
- *
- *      v1.0.0
- *
- *      1.0.0 - FINCH solves 1-D mass/energy balances in various coordinates. Interface by creating functions
- *				to define how the variables of the model vary with space-time.
- *
+/*!
+ *  \file finch.h finch.cpp
+ *	\brief Flux-limiting Implicit Non-oscillatory Conservative High-resolution scheme
+ *  \author Austin Ladshaw
+ *	\date 01/29/2015
+ *	\copyright This software was designed and built at the Georgia Institute
+ *             of Technology by Austin Ladshaw for PhD research in the area
+ *             of adsorption and surface science. Copyright (c) 2015, all
+ *             rights reserved.
  */
 
 #include "finch.h"

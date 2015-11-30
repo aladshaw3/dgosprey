@@ -1,20 +1,12 @@
-//----------------------------------------
-//  Created by Austin Ladshaw on 1/29/15
-//  Copyright (c) 2015
-//	Austin Ladshaw
-//	All rights reserved
-//----------------------------------------
-
-/*
- *			EGRET = Estimation of Gas-phase pRopErTies
- *
- *		This file is responsible for estimating various temperature, pressure, and concentration
- *		dependent parameters to be used in other models for gas phase adsorption, mass transfer,
- *		and or mass transport. The goal of this file is to eliminate redundancies in code such
- *		that the higher level programs operate more efficiently and cleanly. Calculations made
- *		here are based on kinetic theory of gases, ideal gas law, and some emperical models that
- *		were developed to account for changes in density and viscosity with changes in temperature
- *		between standard temperatures and up to 1000 K.
+/*!
+ *  \file egret.h egret.cpp
+ *	\brief Estimation of Gas-phase pRopErTies
+ *  \author Austin Ladshaw
+ *	\date 01/29/2015
+ *	\copyright This software was designed and built at the Georgia Institute
+ *             of Technology by Austin Ladshaw for PhD research in the area
+ *             of adsorption and surface science. Copyright (c) 2015, all
+ *             rights reserved.
  */
 
 #include "egret.h"
