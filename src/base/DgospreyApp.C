@@ -33,6 +33,7 @@
 #include "DgospreyApp.h"
 #include "Moose.h"
 #include "AppFactory.h"
+#include "MooseSyntax.h"
 #include "ModulesApp.h"
 
 #include "LinearDrivingForce.h"
