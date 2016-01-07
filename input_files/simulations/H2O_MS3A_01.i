@@ -12,41 +12,41 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 3
- 	ny = 5
+	nx = 10
+ 	ny = 40
  	xmin = 0.0
-	xmax = 2.54
+	xmax = 2.54 #cm
  	ymin = 0.0
- 	ymax = 12.7
+	ymax = 12.7 #cm
 
  [] # END Mesh
 
 [Variables]
 
 	[./N2]
-		order = FIRST
-		family = L2_LAGRANGE
+		order = CONSTANT
+		family = MONOMIAL
 	[../]
 
 	[./O2]
-		order = FIRST
-		family = L2_LAGRANGE
+		order = CONSTANT
+		family = MONOMIAL
 	[../]
 
 	[./H2O]
-		order = FIRST
-		family = L2_LAGRANGE
+		order = CONSTANT
+		family = MONOMIAL
 	[../]
 
  	[./wall_temp]
- 		order = FIRST
- 		family = L2_LAGRANGE
+ 		order = CONSTANT
+ 		family = MONOMIAL
  		initial_condition = 298.15
  	[../]
 
 	[./column_temp]
- 		order = FIRST
- 		family = L2_LAGRANGE
+ 		order = CONSTANT
+ 		family = MONOMIAL
  		initial_condition = 298.15
 	[../]
 
@@ -55,14 +55,14 @@
 [AuxVariables]
 
 	[./total_pressure]
-		order = FIRST
-		family = L2_LAGRANGE
+		order = CONSTANT
+		family = MONOMIAL
 		initial_condition = 101.35
 	[../]
 
  	[./ambient_temp]
- 		order = FIRST
- 		family = L2_LAGRANGE
+ 		order = CONSTANT
+ 		family = MONOMIAL
  		initial_condition = 298.15
  	[../]
 
@@ -102,6 +102,24 @@
 		initial_condition = 0.0
 	[../]
 
+	[./N2_AdsorbedHeat]
+		order = CONSTANT
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
+
+	[./O2_AdsorbedHeat]
+		order = CONSTANT
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
+
+	[./H2O_AdsorbedHeat]
+		order = CONSTANT
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
+
  [] #END AuxVariables
 
 [ICs]
@@ -134,6 +152,12 @@
 
 [Kernels]
 
+ 	[./accumN2]
+ 		type = BedMassAccumulation
+ 		variable = N2
+ 		index = 0
+ 	[../]
+
 	[./diffN2]
 		type = GColumnMassDispersion
 		variable = N2
@@ -144,6 +168,12 @@
 		type = GColumnMassAdvection
 		variable = N2
 	[../]
+
+ 	[./accumO2]
+ 		type = BedMassAccumulation
+ 		variable = O2
+ 		index = 1
+ 	[../]
 
 	[./diffO2]
 		type = GColumnMassDispersion
@@ -156,6 +186,12 @@
 		variable = O2
 	[../]
 
+ 	[./accumH2O]
+ 		type = BedMassAccumulation
+ 		variable = H2O
+ 		index = 2
+ 	[../]
+
 	[./diffH2O]
 		type = GColumnMassDispersion
 		variable = H2O
@@ -167,6 +203,10 @@
 		variable = H2O
 	[../]
 
+ 	[./wallAccum]
+ 		type = WallHeatAccumulation
+ 		variable = wall_temp
+ 	[../]
  	[./wall_bed_trans]
  		type = BedWallHeatTransfer
  		variable = wall_temp
@@ -178,6 +218,10 @@
  		coupled = ambient_temp
  	[../]
 
+	[./columnAccum]
+		type = BedHeatAccumulation
+		variable = column_temp
+	[../]
 	[./columnConduction]
 		type = GColumnHeatDispersion
 		variable =column_temp
@@ -185,6 +229,11 @@
 	[./columnAdvection]
 		type = GColumnHeatAdvection
 		variable =column_temp
+	[../]
+	[./columnAdsHeat]
+		type = AdsorptionHeatAccumulation
+		variable = column_temp
+		solid_heats = 'N2_AdsorbedHeat O2_AdsorbedHeat H2O_AdsorbedHeat'
 	[../]
 
 
@@ -246,12 +295,69 @@
 		coupled_gases = 'N2 O2 H2O'
 	[../]
 
+	[./nitrogen_adsorption]
+		type = MAGPIE_Adsorption
+		variable = N2_Adsorbed
+		index = 0
+	[../]
+
+	[./oxygen_adsorption]
+		type = MAGPIE_Adsorption
+		variable = O2_Adsorbed
+		index = 1
+	[../]
+
+	[./water_adsorption]
+		type = MAGPIE_Adsorption
+		variable = H2O_Adsorbed
+		index = 2
+	[../]
+
+	[./nitrogen_perturbation]
+		type = MAGPIE_Perturbation
+		variable = N2_Perturb
+		index = 0
+	[../]
+
+	[./oxygen_perturbation]
+		type = MAGPIE_Perturbation
+		variable = O2_Perturb
+		index = 1
+	[../]
+
+	[./water_perturbation]
+		type = MAGPIE_Perturbation
+		variable = H2O_Perturb
+		index = 2
+	[../]
+
+	[./nitrogen_adsorption_heat]
+		type = MAGPIE_AdsorptionHeat
+		variable = N2_AdsorbedHeat
+		solid_conc = N2_Adsorbed
+		index = 0
+	[../]
+
+	[./oxygen_adsorption_heat]
+		type = MAGPIE_AdsorptionHeat
+		variable = O2_AdsorbedHeat
+		solid_conc = O2_Adsorbed
+		index = 1
+	[../]
+
+	[./water_adsorption_heat]
+		type = MAGPIE_AdsorptionHeat
+		variable = H2O_AdsorbedHeat
+		solid_conc = H2O_Adsorbed
+		index = 2
+	[../]
+
  [] #END AuxKernels
 
 [BCs]
 
  	[./N2_Flux]
- 		type = DGMassFluxLimitedBC
+		type = DGMassFluxLimitedBC
  		variable = N2
  		boundary = 'top bottom'
  		input_temperature = 298.15
@@ -261,7 +367,7 @@
  	[../]
 
  	[./O2_Flux]
- 		type = DGMassFluxLimitedBC
+		type = DGMassFluxLimitedBC
  		variable = O2
  		boundary = 'top bottom'
  		input_temperature = 298.15
@@ -271,7 +377,7 @@
  	[../]
 
  	[./H2O_Flux]
- 		type = DGMassFluxLimitedBC
+		type = DGMassFluxLimitedBC
  		variable = H2O
  		boundary = 'top bottom'
  		input_temperature = 298.15
@@ -290,7 +396,7 @@
 	[./Heat_Wall_Flux]
  		type = DGColumnWallHeatFluxLimitedBC
  		variable = column_temp
- 		boundary = 'right'
+ 		boundary = 'right left'
  		wall_temp = wall_temp
  	[../]
 
@@ -306,10 +412,10 @@
 		outer_diameter = 3.54
 		bulk_porosity = 0.421
 		axial_conductivity = 6.292E-05
-		wall_density = 1.0
-		wall_heat_capacity = 1.0
-		wall_heat_trans_coef = 1.0
-		extern_heat_trans_coef = 1.0
+		wall_density = 8.0
+		wall_heat_capacity = 0.5
+		wall_heat_trans_coef = 0.4672
+		extern_heat_trans_coef = 0.4672
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
 	[../]
@@ -339,10 +445,34 @@
 		crystal_radius = 1.5
 		pellet_diameter = 0.236
 		macropore_radius = 3.5e-6
-		pellet_density = 1.41
+		pellet_density = 1.69
 		pellet_heat_capacity = 1.045
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
+	[../]
+
+	[./AdsorbateMaterials]
+		type = MagpieAdsorbateProperties
+		block = 0
+		temperature = column_temp
+		total_pressure = total_pressure
+		coupled_gases = 'N2 O2 H2O'
+		number_sites = '0 0 4'
+		maximum_capacity = '0 0 11.67' #mol/kg
+		molar_volume = '0 0 13.91' #cm^3/mol
+		enthalpy_site_1 = '0 0 -46597.5'
+		enthalpy_site_2 = '0 0 -125024'
+		enthalpy_site_3 = '0 0 -193619'
+		enthalpy_site_4 = '0 0 -272228'
+		enthalpy_site_5 = '0 0 0'
+		enthalpy_site_6 = '0 0 0'
+
+		entropy_site_1 = '0 0 -53.6994'
+		entropy_site_2 = '0 0 -221.073'
+		entropy_site_3 = '0 0 -356.728'
+		entropy_site_4 = '0 0 -567.459'
+		entropy_site_5 = '0 0 0'
+		entropy_site_6 = '0 0 0'
 	[../]
 
  [] #END Materials
@@ -353,113 +483,95 @@
 		type = SideAverageValue
 		boundary = 'top'
 		variable = N2
+		execute_on = timestep_end
 	[../]
 
 	[./O2_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = O2
+		execute_on = timestep_end
 	[../]
 
 	[./H2O_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = H2O
+		execute_on = timestep_end
 	[../]
 
 	[./temp_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = column_temp
+		execute_on = timestep_end
 	[../]
 
 	[./press_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = total_pressure
+		execute_on = timestep_end
 	[../]
 
  	[./wall_temp]
  		type = SideAverageValue
  		boundary = 'right'
  		variable = wall_temp
+		execute_on = timestep_end
  	[../]
+
+	[./H2O_solid]
+		type = ElementAverageValue
+		variable = H2O_Adsorbed
+		execute_on = timestep_end
+	[../]
+
+	[./H2O_heat]
+		type = ElementAverageValue
+		variable = H2O_AdsorbedHeat
+		execute_on = timestep_end
+	[../]
 
  [] #END Postprocessors
 
 [Executioner]
 
- 	type = Steady
- 	scheme = bdf2
+ 	type = Transient
+	scheme = implicit-euler
 
+	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
- 	picard_abs_tol = 1e-6
  	nl_abs_tol = 1e-6
- 	nl_rel_step_tol = 1e-6
- 	picard_rel_tol = 1e-6
- 	nl_abs_step_tol = 1e-6
- 	l_tol = 0.01
- 	l_max_its = 100
+ 	nl_rel_step_tol = 1e-16
+ 	nl_abs_step_tol = 1e-16
+ 	l_tol = 1e-6
+ 	l_max_its = 10
 
- 	solve_type = PJFNK
+	solve_type = pjfnk
+    line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 60.0
-	petsc_options_iname = '-pc_type -pc_hypre_type'
-	petsc_options_value = 'hypre boomeramg'
+    petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
+    petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
-		type = ConstantDT
-		dt = 0.1
+		#Need to write a custom TimeStepper to enforce a maximum allowable dt
+		type = SolutionTimeAdaptiveDT
+		dt = 0.01
 	[../]
 
  [] #END Executioner
 
-[Adaptivity]
+[Preconditioning]
 
- 	[./Indicators]
- 		[./error_mass_N2]
- 			type = GradientJumpIndicator
- 			variable = N2
- 		[../]
- 		[./error_mass_O2]
- 			type = GradientJumpIndicator
- 			variable = O2
- 		[../]
- 		[./error_mass_H2O]
- 			type = GradientJumpIndicator
- 			variable = H2O
- 		[../]
- 		[./error_energy]
- 			type = GradientJumpIndicator
- 			variable = column_temp
- 		[../]
- 	[../]
-
-
- 	[./Markers]
-		[./ef_mass_N2]
- 			type = ErrorFractionMarker
- 			indicator = error_mass_N2
- 		[../]
- 		[./ef_mass_O2]
- 			type = ErrorFractionMarker
- 			indicator = error_mass_O2
- 		[../]
- 		[./ef_mass_H2O]
- 			type = ErrorFractionMarker
- 			indicator = error_mass_H2O
- 		[../]
- 		[./ef_energy]
- 			type = ErrorFractionMarker
- 			indicator = error_energy
- 		[../]
- 	[../]
-
- [] #END Adaptivity
+[] #END Preconditioning
 
 [Outputs]
   execute_on = 'timestep_end'
 
  exodus = true
  csv = true
+ print_linear_residuals = true
+
  [] #END Outputs

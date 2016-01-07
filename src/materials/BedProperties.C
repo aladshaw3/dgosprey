@@ -40,14 +40,14 @@ InputParameters validParams<BedProperties>()
   InputParameters params = validParams<Material>();
   
   params.addParam<Real>("length", "Bed length (cm)");
-  params.addParam<Real>("din", "Wall inner diameter (cm)");
-  params.addParam<Real>("dout","Wall outer diameter (cm)");
-  params.addParam<Real>("eb","Bed bulk porosity");
-  params.addParam<Real>("Kz","Effective Axial Thermal Conductivity (J/hr/cm/K");
-  params.addParam<Real>("rhow","Wall material density (g/cm^3)");
-  params.addParam<Real>("hw","Wall heat capacity (J/g/K)");
-  params.addParam<Real>("Uw","Bed-Wall Heat Transfer Coefficient (J/hr/cm^2/K)");
-  params.addParam<Real>("Ua","Wall-External Heat Transfer Coefficient (J/hr/cm^2/K)");
+  params.addParam<Real>("inner_diameter", "Wall inner diameter (cm)");
+  params.addParam<Real>("outer_diameter","Wall outer diameter (cm)");
+  params.addParam<Real>("bulk_porosity","Bed bulk porosity");
+  params.addParam<Real>("axial_conductivity","Effective Axial Thermal Conductivity (J/hr/cm/K");
+  params.addParam<Real>("wall_density","Wall material density (g/cm^3)");
+  params.addParam<Real>("wall_heat_capacity","Wall heat capacity (J/g/K)");
+  params.addParam<Real>("wall_heat_trans_coef","Bed-Wall Heat Transfer Coefficient (J/hr/cm^2/K)");
+  params.addParam<Real>("extern_heat_trans_coef","Wall-External Heat Transfer Coefficient (J/hr/cm^2/K)");
   params.addCoupledVar("temperature","Coupled variable for temperature");
   params.addCoupledVar("coupled_gases", "Gas concentrations variables being coupled");
   
@@ -58,14 +58,14 @@ BedProperties::BedProperties(const InputParameters & parameters)
   :Material(parameters),
    
    _length(getParam<Real>("length")),
-   _din(getParam<Real>("din")),
-   _dout(getParam<Real>("dout")),
-   _eb(getParam<Real>("eb")),
-   _Kz(getParam<Real>("Kz")),
-   _rhow(getParam<Real>("rhow")),
-   _hw(getParam<Real>("hw")),
-   _Uw(getParam<Real>("Uw")),
-   _Ua(getParam<Real>("Ua")),
+   _din(getParam<Real>("inner_diameter")),
+   _dout(getParam<Real>("outer_diameter")),
+   _eb(getParam<Real>("bulk_porosity")),
+   _Kz(getParam<Real>("axial_conductivity")),
+   _rhow(getParam<Real>("wall_density")),
+   _hw(getParam<Real>("wall_heat_capacity")),
+   _Uw(getParam<Real>("wall_heat_trans_coef")),
+   _Ua(getParam<Real>("extern_heat_trans_coef")),
    _inner_dia(declareProperty<Real>("inner_dia")),
    _outer_dia(declareProperty<Real>("outer_dia")),
    _porosity(declareProperty<Real>("porosity")),

@@ -172,7 +172,7 @@ FlowProperties::computeQpProperties()
 	
 	_gas_density[_qp] = (_total_pressure[_qp] * _gas_molecular_wieght[_qp]) / (8.3144621 * _temperature[_qp]);
 	
-	_heat_retardation[_qp] = -_heat_retardation[_qp] + (_gas_heat_capacity[_qp]*_gas_density[_qp]*_porosity[_qp]) + (_pellet_heat_capacity[_qp]*_pellet_density[_qp]*(1.0-_porosity[_qp]));
+	_heat_retardation[_qp] = -_heat_retardation[_qp] + ((_gas_heat_capacity[_qp]*_gas_density[_qp]*_porosity[_qp]) + (_pellet_heat_capacity[_qp]*_pellet_density[_qp]*(1.0-_porosity[_qp])));
 	
 	
 

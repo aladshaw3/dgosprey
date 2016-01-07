@@ -44,8 +44,8 @@ InputParameters validParams<AdsorbentProperties>()
   params.addParam<Real>("crystal_radius","Radius of the adsorbent crystals in the binder matrix (um)");
   params.addParam<Real>("pellet_diameter","Diameter of the adsorbent pellet (cm)");
   params.addParam<Real>("macropore_radius","Nominal pore size of the macropores in the binder material (cm)");
-  params.addParam<Real>("rhos","Density of the adsorbent pellet (g/cm^3)");
-  params.addParam<Real>("hs","Pellet heat capacity (J/g/K)");
+  params.addParam<Real>("pellet_density","Density of the adsorbent pellet (g/cm^3)");
+  params.addParam<Real>("pellet_heat_capacity","Pellet heat capacity (J/g/K)");
   params.addCoupledVar("temperature","Coupled variable for temperature");
   params.addCoupledVar("coupled_gases", "Gas concentrations variables being coupled");
   
@@ -60,8 +60,8 @@ _binder_porosity(getParam<Real>("binder_porosity")),
 _crystal_radius(getParam<Real>("crystal_radius")),
 _pellet_diameter(getParam<Real>("pellet_diameter")),
 _macropore_radius(getParam<Real>("macropore_radius")),
-_rhos(getParam<Real>("rhos")),
-_hs(getParam<Real>("hs")),
+_rhos(getParam<Real>("pellet_density")),
+_hs(getParam<Real>("pellet_heat_capacity")),
 _pellet_density(declareProperty<Real>("pellet_density")),
 _pellet_heat_capacity(declareProperty<Real>("pellet_heat_capacity")),
 _temperature(coupledValue("temperature"))
