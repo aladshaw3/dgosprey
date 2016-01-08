@@ -57,10 +57,21 @@ MAGPIE_Adsorption::computeValue()
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
 	{
 		int success = 0;
+		//magpie_copy.sys_dat.Output = true;
 		success = MAGPIE( (void *)&magpie_copy );
-		if (success < 0 || success > 3) {mError(simulation_fail);}
+		if (success < 0 || success > 3)
+		{
+			//mError(simulation_fail);
+			//std::cout << success << std::endl;
+			//std::cout << magpie_copy.gpast_dat[_index].q << std::endl;
+		}
 		else success = 0;
-	
+		
+		//std::cout << "q = " << magpie_copy.gpast_dat[_index].q << std::endl;
+		//std::cout << "qT = " << magpie_copy.sys_dat.qT << std::endl;
+		//std::cout << "gama = " << magpie_copy.mspd_dat[_index].gama << std::endl;
+		//std::cout << "x = " << magpie_copy.gpast_dat[_index].x << std::endl;
+		
 		return magpie_copy.gpast_dat[_index].q;
 		
 		//Temporary override to demonstrate LDF kinetics

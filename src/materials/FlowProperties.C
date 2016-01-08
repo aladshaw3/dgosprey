@@ -124,6 +124,9 @@ FlowProperties::computeQpProperties()
   {
 	  Real _yi = ( ((*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp])/_total_pressure[_qp] );
 	  
+	  if (_yi > 1.0) _yi = 1.0;
+	  if (_yi < 0.0) _yi = 0.0;
+	  
 	  Real _sum_yj_over_Dij = 0.0, _sum_yi_over_Dij_prime = 0.0;
 	  
 	  Real _rho_i = (_total_pressure[_qp] * _molecular_wieght[i]) / (8.3144621 * _temperature[_qp]);
@@ -136,16 +139,19 @@ FlowProperties::computeQpProperties()
 	  {
 		  if ( j != i)
 		  {
-		  	Real _yj = ( ((*_gas_conc[j])[_qp] * 8.3144621 * _temperature[_qp])/_total_pressure[_qp] );
+			  Real _yj = ( ((*_gas_conc[j])[_qp] * 8.3144621 * _temperature[_qp])/_total_pressure[_qp] );
 			  
-		  	Real _rho_j = (_total_pressure[_qp] * _molecular_wieght[j]) / (8.3144621 * _temperature[_qp]);
+			  if (_yj > 1.0) _yj = 1.0;
+			  if (_yj < 0.0) _yj = 0.0;
+			  
+			  Real _rho_j = (_total_pressure[_qp] * _molecular_wieght[j]) / (8.3144621 * _temperature[_qp]);
 		  
-		  	Real _mu_j = _comp_ref_viscosity[j] * ( ( _comp_ref_temp[j] + _comp_Sutherland_const[j]) / ( _temperature[_qp] + _comp_Sutherland_const[j]) ) * std::pow(_temperature[_qp]/_comp_ref_temp[j],(3.0/2.0));
+			  Real _mu_j = _comp_ref_viscosity[j] * ( ( _comp_ref_temp[j] + _comp_Sutherland_const[j]) / ( _temperature[_qp] + _comp_Sutherland_const[j]) ) * std::pow(_temperature[_qp]/_comp_ref_temp[j],(3.0/2.0));
 		  
-		  	Real _Dij = ( (4.0/std::pow(2.0,0.5))*std::pow((1.0/_molecular_wieght[i])+(1.0/_molecular_wieght[j]),0.5) );
-		  	_Dij = _Dij / std::pow(std::pow((_rho_i*_rho_i)/(1.385*1.385*_mu_i*_mu_i*_molecular_wieght[i]),0.25)+std::pow((_rho_j*_rho_j)/(1.385*1.385*_mu_j*_mu_j*_molecular_wieght[j]),0.25),2.0);
+			  Real _Dij = ( (4.0/std::pow(2.0,0.5))*std::pow((1.0/_molecular_wieght[i])+(1.0/_molecular_wieght[j]),0.5) );
+			  _Dij = _Dij / std::pow(std::pow((_rho_i*_rho_i)/(1.385*1.385*_mu_i*_mu_i*_molecular_wieght[i]),0.25)+std::pow((_rho_j*_rho_j)/(1.385*1.385*_mu_j*_mu_j*_molecular_wieght[j]),0.25),2.0);
 		  
-		  	Real _Dij_prime = (_total_pressure[_qp]*_Dij) / 100.0;
+			  Real _Dij_prime = (_total_pressure[_qp]*_Dij) / 100.0;
 			  
 			  _sum_yj_over_Dij = _sum_yj_over_Dij + (_yj/_Dij);
 			  _sum_yi_over_Dij_prime = _sum_yi_over_Dij_prime + (_yi/_Dij_prime);
@@ -154,7 +160,15 @@ FlowProperties::computeQpProperties()
 		  
 	  } //jth Loop
 	  
-	  _molecular_diffusion[_qp][i] = (1.0 - _yi) / _sum_yj_over_Dij;
+	  if (_sum_yj_over_Dij == 0.0)
+	  {
+		  _molecular_diffusion[_qp][i] = ( (4.0/std::pow(2.0,0.5))*std::pow((1.0/_molecular_wieght[i])+(1.0/_molecular_wieght[i]),0.5) );
+		  _molecular_diffusion[_qp][i] = _molecular_diffusion[_qp][i] / std::pow(std::pow((_rho_i*_rho_i)/(1.385*1.385*_mu_i*_mu_i*_molecular_wieght[i]),0.25)+std::pow((_rho_i*_rho_i)/(1.385*1.385*_mu_i*_mu_i*_molecular_wieght[i]),0.25),2.0);
+	  }
+	  else
+	  {
+		  _molecular_diffusion[_qp][i] = (1.0 - _yi) / _sum_yj_over_Dij;
+	  }
 	  
 	  _dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (1e-6*_column_length*_velocity[_qp]));
 	  

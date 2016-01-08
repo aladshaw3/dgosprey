@@ -62,10 +62,9 @@ TotalColumnPressure::computeValue()
 {
 	Real _PT = 0.0;
   
-  for (unsigned int i = 0; i<_gas_conc.size(); ++i)
-  {
-    _PT = _PT + ( (*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp] );
-  }
-  
-  return _PT;
+	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
+	{
+		_PT = _PT + ( (*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp] );
+	}
+	return _PT;
 }

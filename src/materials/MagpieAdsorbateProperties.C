@@ -100,7 +100,7 @@ _magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data"))
 
 void
 MagpieAdsorbateProperties::computeQpProperties()
-{	
+{
 	//Only setup working space if it has not yet been set up
 	if (_magpie_dat[_qp].sys_dat.N != _gas_conc.size())
 	{

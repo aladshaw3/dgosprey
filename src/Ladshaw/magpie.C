@@ -223,7 +223,7 @@ double lnact_mSPD(const double *par, const void *data, int i, volatile double PI
 						}
 					}
 					
-					e[l][j] =  sqrt( ( fabs(dat->mspd_dat[l].eMax) + e[l][l] ) * ( fabs(dat->mspd_dat[j].eMax) + e[j][j] ) ) - (shift * alpha[l][j] );
+					e[l][j] =  sqrt( fabs(( fabs(dat->mspd_dat[l].eMax) + e[l][l] ) * ( fabs(dat->mspd_dat[j].eMax) + e[j][j] )) ) - (shift * alpha[l][j] );
 					
 					e[j][l] = e[l][j];
 					
@@ -291,7 +291,7 @@ double lnact_mSPD(const double *par, const void *data, int i, volatile double PI
 						dat->mspd_dat[l].eta[j];
 					}
 					
-					e[l][j] =  sqrt( ( fabs(dat->mspd_dat[l].eMax) + e[l][l] ) * ( fabs(dat->mspd_dat[j].eMax) + e[j][j] ) ) - (shift * alpha[l][j] );
+					e[l][j] =  sqrt( fabs(( fabs(dat->mspd_dat[l].eMax) + e[l][l] ) * ( fabs(dat->mspd_dat[j].eMax) + e[j][j] )) ) - (shift * alpha[l][j] );
 					
 					e[j][l] = e[l][j];
 					
@@ -341,7 +341,11 @@ double grad_mSPD(const double *par, const void *data, int i)
 	}
 	
 	dx = xph - xmh;
-	grad = (lnact_ph - lnact_mh) / dx;
+	if (dx == 0.0)
+		grad = 0.0;
+	else
+		grad = (lnact_ph - lnact_mh) / dx;
+	
 	return grad;
 }
 
@@ -470,7 +474,7 @@ void eval_eta(const double *par, int m_dat, const void *data, double *fvec, int 
 	//Infinite Dilution of i will be indexed 0
 	ejj[0] = ( 2 * (Qst(dat->gpast_dat[j].po[j], dat, j) - (-1*dat->gsta_dat[j].dHo[0]) ) ) / ( Z * dat->mspd_dat[j].s);
 	eii[0] = ( 2 * (Qst(dat->gpast_dat[i].po[j], dat, i) - (-1*dat->gsta_dat[i].dHo[0]) ) ) / ( Z * dat->mspd_dat[i].s);
-	eij[0] = sqrt( (fabs(dat->mspd_dat[i].eMax) + eii[0]) * (fabs(dat->mspd_dat[j].eMax) + ejj[0]) ) - ( fabs(par[0]) * shift);
+	eij[0] = sqrt( fabs((fabs(dat->mspd_dat[i].eMax) + eii[0]) * (fabs(dat->mspd_dat[j].eMax) + ejj[0])) ) - ( fabs(par[0]) * shift);
 	
 	Tij[0] = exp( - (Z * (eij[0]-ejj[0])) / (2*R*dat->sys_dat.T) );
 	Tji[0] = exp( - (Z * (eij[0]-eii[0])) / (2*R*dat->sys_dat.T) );
@@ -479,7 +483,7 @@ void eval_eta(const double *par, int m_dat, const void *data, double *fvec, int 
 	//Infinite Dilution of j will be indexed 1
 	ejj[1] = ( 2 * (Qst(dat->gpast_dat[j].po[i], dat, j) - (-1*dat->gsta_dat[j].dHo[0]) ) ) / ( Z * dat->mspd_dat[j].s);
 	eii[1] = ( 2 * (Qst(dat->gpast_dat[i].po[i], dat, i) - (-1*dat->gsta_dat[i].dHo[0]) ) ) / ( Z * dat->mspd_dat[i].s);
-	eij[1] = sqrt( (fabs(dat->mspd_dat[i].eMax) + eii[1]) * (fabs(dat->mspd_dat[j].eMax) + ejj[1])) - ( fabs(par[1]) * shift);
+	eij[1] = sqrt( fabs((fabs(dat->mspd_dat[i].eMax) + eii[1]) * (fabs(dat->mspd_dat[j].eMax) + ejj[1]))) - ( fabs(par[1]) * shift);
 	
 	Tij[1] = exp( - (Z * (eij[1]-ejj[1])) / (2*R*dat->sys_dat.T) );
 	Tji[1] = exp( - (Z * (eij[1]-eii[1])) / (2*R*dat->sys_dat.T) );
@@ -831,7 +835,10 @@ int MAGPIE(const void *data)
 		if (dat->sys_dat.Carrier == false)
 			n_par = 1+dat->sys_dat.N;
 		else
-			n_par = 2+dat->sys_dat.N;
+			n_par = 1+dat->sys_dat.N;
+		
+		if (dat->sys_dat.Carrier == true && dat->sys_dat.Recover == true)
+			n_par++;
 		
 		if (dat->sys_dat.Recover == false)
 			m_dat = 1+dat->sys_dat.N;

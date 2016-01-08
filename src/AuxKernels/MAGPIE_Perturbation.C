@@ -65,8 +65,13 @@ MAGPIE_Perturbation::computeValue()
 	
 	
 		int success = 0;
+		//magpie_copy.sys_dat.Output = true;
 		success = MAGPIE( (void *)&magpie_copy );
-		if (success < 0 || success > 3) {mError(simulation_fail);}
+		if (success < 0 || success > 3)
+		{
+			//mError(simulation_fail);
+			//std::cout << success << std::endl;
+		}
 		else success = 0;
 		
 		return magpie_copy.gpast_dat[_index].q;
