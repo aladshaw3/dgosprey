@@ -546,7 +546,7 @@
  	nl_rel_step_tol = 1e-16
  	nl_abs_step_tol = 1e-16
  	l_tol = 1e-6
- 	l_max_its = 10
+ 	l_max_its = 100
 
 	solve_type = pjfnk
     line_search = bt    # Options: default shell none basic l2 bt cp

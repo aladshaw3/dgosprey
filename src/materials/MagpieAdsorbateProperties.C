@@ -94,7 +94,10 @@ _magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data"))
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
 		_index[i] = coupled("coupled_gases",i);
-		_gas_conc[i] = &coupledValue("coupled_gases",i);
+		if (_dt_old == 0.0)
+			_gas_conc[i] = &coupledValue("coupled_gases",i);
+		else
+			_gas_conc[i] = &coupledValueOld("coupled_gases",i);
 	}
 }
 
@@ -224,7 +227,10 @@ MagpieAdsorbateProperties::computeQpProperties()
 		}
 		
 		if (_magpie_dat[_qp].gpast_dat[i].y < 0.0)
+		{
+			_magpie_dat[_qp].sys_dat.Carrier = true;
 			_magpie_dat[_qp].gpast_dat[i].y = 0.0;
+		}
 	}
 	
 }

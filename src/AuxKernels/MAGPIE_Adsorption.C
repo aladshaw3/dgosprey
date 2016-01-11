@@ -59,11 +59,11 @@ MAGPIE_Adsorption::computeValue()
 		int success = 0;
 		//magpie_copy.sys_dat.Output = true;
 		success = MAGPIE( (void *)&magpie_copy );
-		if (success < 0 || success > 3)
+		if (success < 0 || success > 5)
 		{
-			//mError(simulation_fail);
-			//std::cout << success << std::endl;
-			//std::cout << magpie_copy.gpast_dat[_index].q << std::endl;
+			mError(simulation_fail);
+			std::cout << success << std::endl;
+			std::cout << "index = " << _index << "\tq = " << magpie_copy.gpast_dat[_index].q << std::endl;
 		}
 		else success = 0;
 		
