@@ -393,12 +393,12 @@
  		input_temperature = 298.15
  	[../]
 
-	[./Heat_Wall_Flux]
- 		type = DGColumnWallHeatFluxLimitedBC
- 		variable = column_temp
- 		boundary = 'right left'
- 		wall_temp = wall_temp
- 	[../]
+#[./Heat_Wall_Flux]
+#type = DGColumnWallHeatFluxLimitedBC
+#variable = column_temp
+#boundary = 'right left'
+#wall_temp = wall_temp
+#[../]
 
  [] #END BCs
 
@@ -542,9 +542,9 @@
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
- 	nl_abs_tol = 1e-6
- 	nl_rel_step_tol = 1e-16
- 	nl_abs_step_tol = 1e-16
+ 	nl_abs_tol = 1e-4
+ 	nl_rel_step_tol = 1e-10
+ 	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
  	l_max_its = 100
 

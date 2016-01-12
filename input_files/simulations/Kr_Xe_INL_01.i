@@ -362,7 +362,7 @@
  		boundary = 'top bottom'
  		input_temperature = 220.15
  		input_pressure = 101.35
- 		input_molefraction = 0.000114657
+ 		input_molefraction = 0.000112072
  		index = 0
  	[../]
 
@@ -382,7 +382,7 @@
  		boundary = 'top bottom'
  		input_temperature = 220.15
  		input_pressure = 101.35
- 		input_molefraction = 0.999134452
+ 		input_molefraction = 0.999137037
  		index = 2
  	[../]
 
@@ -393,12 +393,12 @@
  		input_temperature = 220.15
  	[../]
 
-	[./Heat_Wall_Flux]
- 		type = DGColumnWallHeatFluxLimitedBC
- 		variable = column_temp
- 		boundary = 'right left'
- 		wall_temp = wall_temp
- 	[../]
+#[./Heat_Wall_Flux]
+#type = DGColumnWallHeatFluxLimitedBC
+#variable = column_temp
+#boundary = 'right left'
+#wall_temp = wall_temp
+#[../]
 
  [] #END BCs
 
@@ -459,7 +459,6 @@
 		coupled_gases = 'Kr Xe He'
 		number_sites = '2 3 0'
 		maximum_capacity = '1.716 1.479 0' #mol/kg
-#maximum_capacity = '1.716 0 0' #mol/kg
 		molar_volume = '20.785 25.412 0' #cm^3/mol
 		enthalpy_site_1 = '-44696.86 -18455.18 0'
 		enthalpy_site_2 = '-65465.52 -35511.74 0'
@@ -555,9 +554,9 @@
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
- 	nl_abs_tol = 1e-6
- 	nl_rel_step_tol = 1e-16
- 	nl_abs_step_tol = 1e-16
+ 	nl_abs_tol = 1e-4
+ 	nl_rel_step_tol = 1e-10
+ 	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
  	l_max_its = 100
 

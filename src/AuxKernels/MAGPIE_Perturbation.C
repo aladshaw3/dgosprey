@@ -65,21 +65,27 @@ MAGPIE_Perturbation::computeValue()
 	
 	
 		int success = 0;
-		//magpie_copy.sys_dat.Output = true;
 		success = MAGPIE( (void *)&magpie_copy );
-		if (success < 0 || success > 5)
+		if (success < 0 || success > 3)
 		{
-			mError(simulation_fail);
-			std::cout << success << std::endl;
+			for (int i=0; i<magpie_copy.sys_dat.N; i++)
+			{
+				if (i != _index)
+				{
+					magpie_copy.gpast_dat[i].y = 0.0;
+					magpie_copy.sys_dat.Carrier = true;
+				}
+			}
+			success = MAGPIE( (void *)&magpie_copy );
+			if (success < 0 || success > 3)
+			{
+				mError(simulation_fail);
+			}
 		}
 		else success = 0;
 		
 		return magpie_copy.gpast_dat[_index].q;
 		
-		//This override was used to demonstrate that we can do perturbation with kinetics
-		//double k = magpie_copy.gpast_dat[_index].q * 0.008;
-		//double qe = magpie_copy.gpast_dat[_index].q;
-		//return (_u_old[_qp] + (_dt*k*qe))/(1.0+(_dt*k));
 	}
 	else
 	{

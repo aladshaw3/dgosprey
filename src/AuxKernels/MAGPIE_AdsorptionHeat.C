@@ -58,11 +58,6 @@ MAGPIE_AdsorptionHeat::computeValue()
 	//Call MAGPIE Simulation for Unperturbed data
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
 	{
-		//int success = 0;
-		//success = MAGPIE( (void *)&magpie_copy );
-		//if (success < 0 || success > 3) {mError(simulation_fail);}
-		//else success = 0;
-		
 		double pi = magpie_copy.gpast_dat[_index].y * magpie_copy.sys_dat.PT;
 		return _solid_conc[_qp] * Qst(pi,(void *)&magpie_copy,_index);
 	}
