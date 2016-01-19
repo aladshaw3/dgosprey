@@ -299,36 +299,42 @@
 		type = MAGPIE_Adsorption
 		variable = Kr_Adsorbed
 		index = 0
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_adsorption]
 		type = MAGPIE_Adsorption
 		variable = Xe_Adsorbed
 		index = 1
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_adsorption]
 		type = MAGPIE_Adsorption
 		variable = He_Adsorbed
 		index = 2
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./krypton_perturbation]
 		type = MAGPIE_Perturbation
 		variable = Kr_Perturb
 		index = 0
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_perturbation]
 		type = MAGPIE_Perturbation
 		variable = Xe_Perturb
 		index = 1
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_perturbation]
 		type = MAGPIE_Perturbation
 		variable = He_Perturb
 		index = 2
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./krypton_adsorption_heat]
@@ -362,7 +368,7 @@
  		boundary = 'top bottom'
  		input_temperature = 220.15
  		input_pressure = 101.35
- 		input_molefraction = 0.000112072
+ 		input_molefraction = 0.000114729
  		index = 0
  	[../]
 
@@ -382,7 +388,7 @@
  		boundary = 'top bottom'
  		input_temperature = 220.15
  		input_pressure = 101.35
- 		input_molefraction = 0.999137037
+ 		input_molefraction = 0.99913438
  		index = 2
  	[../]
 
@@ -392,13 +398,6 @@
  		boundary = 'top bottom'
  		input_temperature = 220.15
  	[../]
-
-#[./Heat_Wall_Flux]
-#type = DGColumnWallHeatFluxLimitedBC
-#variable = column_temp
-#boundary = 'right left'
-#wall_temp = wall_temp
-#[../]
 
  [] #END BCs
 
@@ -445,7 +444,7 @@
 		crystal_radius = 1.5				#not known
 		pellet_diameter = 0.236				#not known
 		macropore_radius = 3.5e-6			#not Known
-		pellet_density = 1.69				#not Known
+		pellet_density = 2.69				#not Known
 		pellet_heat_capacity = 1.045		#not known
 		temperature = column_temp
 		coupled_gases = 'Kr Xe He'
@@ -550,7 +549,8 @@
 [Executioner]
 
  	type = Transient
-	scheme = implicit-euler
+	#scheme = implicit-euler
+	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
@@ -569,7 +569,8 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		type = SolutionTimeAdaptiveDT
+		type = ConstantDT
+		#type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]
 

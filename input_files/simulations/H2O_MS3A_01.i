@@ -299,36 +299,42 @@
 		type = MAGPIE_Adsorption
 		variable = N2_Adsorbed
 		index = 0
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_adsorption]
 		type = MAGPIE_Adsorption
 		variable = O2_Adsorbed
 		index = 1
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_adsorption]
 		type = MAGPIE_Adsorption
 		variable = H2O_Adsorbed
 		index = 2
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./nitrogen_perturbation]
 		type = MAGPIE_Perturbation
 		variable = N2_Perturb
 		index = 0
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_perturbation]
 		type = MAGPIE_Perturbation
 		variable = O2_Perturb
 		index = 1
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_perturbation]
 		type = MAGPIE_Perturbation
 		variable = H2O_Perturb
 		index = 2
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./nitrogen_adsorption_heat]
@@ -393,13 +399,6 @@
  		input_temperature = 298.15
  	[../]
 
-#[./Heat_Wall_Flux]
-#type = DGColumnWallHeatFluxLimitedBC
-#variable = column_temp
-#boundary = 'right left'
-#wall_temp = wall_temp
-#[../]
-
  [] #END BCs
 
 [Materials]
@@ -409,7 +408,7 @@
 		block = 0
 		length = 12.7
 		inner_diameter = 2.54
-		outer_diameter = 3.54
+		outer_diameter = 2.84
 		bulk_porosity = 0.421
 		axial_conductivity = 6.292E-05
 		wall_density = 8.0
@@ -538,7 +537,7 @@
 [Executioner]
 
  	type = Transient
-	scheme = implicit-euler
+	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
@@ -557,7 +556,8 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		type = SolutionTimeAdaptiveDT
+		type = ConstantDT
+		#type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]
 
