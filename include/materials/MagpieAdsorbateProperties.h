@@ -76,6 +76,7 @@ private:
 	VariableValue & _temperature;				///< Reference to the coupled column temperature
 	VariableValue & _total_pressure;			///< Reference to the coupled column pressure
 	std::vector<VariableValue *> _gas_conc;		///< Pointer list to the coupled gases
+	std::vector<VariableValue *> _gas_conc_old;	///< Pointer list to the old states of coupled gases
 	
 	std::vector<int> _num_sites;				///< List of the number of sites each gas species' isotherm contains
 	std::vector<Real> _max_capacity;			///< List of the maximum adsorption capacities of each gas species

@@ -53,7 +53,7 @@ _conductivity(getMaterialProperty<Real>("conductivity"))
 Real
 DGColumnWallHeatFluxLimitedBC::computeQpResidual()
 {
-	_velocity(0)=_bed_wall_transfer_coeff[_qp];
+	_velocity(0)=_bed_wall_transfer_coeff[_qp]*1e-6;
 	_velocity(1)=0.0;
 	_velocity(2)=0.0;
 	
@@ -77,7 +77,7 @@ DGColumnWallHeatFluxLimitedBC::computeQpResidual()
 Real
 DGColumnWallHeatFluxLimitedBC::computeQpJacobian()
 {
-	_velocity(0)=_bed_wall_transfer_coeff[_qp];
+	_velocity(0)=_bed_wall_transfer_coeff[_qp]*1e-6;
 	_velocity(1)=0.0;
 	_velocity(2)=0.0;
 	

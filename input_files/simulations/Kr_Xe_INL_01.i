@@ -15,7 +15,7 @@
 	nx = 10
  	ny = 40
  	xmin = 0.0
-	xmax = 1.0922 #cm
+	xmax = 0.5461 #cm
  	ymin = 0.0
 	ymax = 15.24 #cm
 
@@ -398,6 +398,13 @@
  		boundary = 'top bottom'
  		input_temperature = 220.15
  	[../]
+ 
+	[./Heat_Wall_Flux]
+		type = DGColumnWallHeatFluxLimitedBC
+		variable = column_temp
+		boundary = 'right left'
+		wall_temp = wall_temp
+	[../]
 
  [] #END BCs
 
@@ -409,7 +416,7 @@
 		length = 15.24
 		inner_diameter = 1.0922
 		outer_diameter = 1.27
-		bulk_porosity = 0.421				#not known
+		bulk_porosity = 0.798				#not known
 		axial_conductivity = 6.292E-05      #not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
@@ -444,7 +451,7 @@
 		crystal_radius = 1.5				#not known
 		pellet_diameter = 0.236				#not known
 		macropore_radius = 3.5e-6			#not Known
-		pellet_density = 2.69				#not Known
+		pellet_density = 1.69				#not Known
 		pellet_heat_capacity = 1.045		#not known
 		temperature = column_temp
 		coupled_gases = 'Kr Xe He'
@@ -549,8 +556,7 @@
 [Executioner]
 
  	type = Transient
-	#scheme = implicit-euler
-	scheme = bdf2
+	scheme = implicit-euler
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
@@ -569,8 +575,8 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		type = ConstantDT
-		#type = SolutionTimeAdaptiveDT
+		#type = ConstantDT
+		type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]
 

@@ -90,11 +90,13 @@ _magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data"))
 	unsigned int n = coupledComponents("coupled_gases");
 	_index.resize(n);
 	_gas_conc.resize(n);
+	_gas_conc_old.resize(n);
 	
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
 		_index[i] = coupled("coupled_gases",i);
 		_gas_conc[i] = &coupledValue("coupled_gases",i);
+		_gas_conc_old[i] = &coupledValueOld("coupled_gases",i);
 	}
 }
 
@@ -197,11 +199,17 @@ MagpieAdsorbateProperties::computeQpProperties()
 	_magpie_dat[_qp].sys_dat.T = _temperature[_qp];
 	
 	double tempPT = 0.0;
+	double dt_nm1 = _dt_old;
+	if (_dt_old == 0.0) dt_nm1 = _dt;
 	
 	//Loop over all gas species
 	for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
 	{
-		double pi = (*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp];
+		double pi = 0.0;
+		if (_dt_old == 0.0)
+			pi = (*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp];
+		else
+			pi = ( (*_gas_conc[i])[_qp] + ( (_dt/(0.75*dt_nm1))*((*_gas_conc[i])[_qp] - (*_gas_conc_old[i])[_qp]) ) ) * 8.3144621 * _temperature[_qp];
 		if (pi < 0.0)
 			pi = 0.0;
 		tempPT = pi + tempPT;	
@@ -210,7 +218,11 @@ MagpieAdsorbateProperties::computeQpProperties()
 	
 	for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
 	{
-		double pi = (*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp];
+		double pi = 0.0;
+		if (_dt_old == 0.0)
+			pi = (*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp];
+		else
+			pi = ( (*_gas_conc[i])[_qp] + ( (_dt/(0.75*dt_nm1))*((*_gas_conc[i])[_qp] - (*_gas_conc_old[i])[_qp]) ) ) * 8.3144621 * _temperature[_qp];
 		if (pi < 0.0)
 			pi = 0.0;
 		
