@@ -53,9 +53,20 @@ _conductivity(getMaterialProperty<Real>("conductivity"))
 Real
 DGColumnWallHeatFluxLimitedBC::computeQpResidual()
 {
-	_velocity(0)=_bed_wall_transfer_coeff[_qp]*1e-6;
+	_velocity(0)=_bed_wall_transfer_coeff[_qp];
 	_velocity(1)=0.0;
 	_velocity(2)=0.0;
+	
+	//Output
+	if ((_velocity)*_normals[_qp] > 0.0)
+	{
+		_velocity(0)=0.0;
+	}
+	//Input
+	else
+	{
+		_velocity(0)=_bed_wall_transfer_coeff[_qp];
+	}
 	
 	_Diffusion(0,0) =  _conductivity[_qp];
 	_Diffusion(0,1) = std::pow(std::pow(_conductivity[_qp],2.0) + std::pow(_conductivity[_qp],2.0),0.5);
@@ -77,9 +88,20 @@ DGColumnWallHeatFluxLimitedBC::computeQpResidual()
 Real
 DGColumnWallHeatFluxLimitedBC::computeQpJacobian()
 {
-	_velocity(0)=_bed_wall_transfer_coeff[_qp]*1e-6;
+	_velocity(0)=_bed_wall_transfer_coeff[_qp];
 	_velocity(1)=0.0;
 	_velocity(2)=0.0;
+	
+	//Output
+	if ((_velocity)*_normals[_qp] > 0.0)
+	{
+		_velocity(0)=0.0;
+	}
+	//Input
+	else
+	{
+		_velocity(0)=_bed_wall_transfer_coeff[_qp];
+	}
 	
 	_Diffusion(0,0) =  _conductivity[_qp];
 	_Diffusion(0,1) = std::pow(std::pow(_conductivity[_qp],2.0) + std::pow(_conductivity[_qp],2.0),0.5);

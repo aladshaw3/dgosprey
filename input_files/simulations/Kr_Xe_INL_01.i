@@ -15,9 +15,9 @@
 	nx = 10
  	ny = 40
  	xmin = 0.0
-	xmax = 0.5461 #cm
+	xmax = 0.8636 #cm
  	ymin = 0.0
-	ymax = 15.24 #cm
+	ymax = 22.86 #cm
 
  [] # END Mesh
 
@@ -413,15 +413,15 @@
 	[./BedMaterials]
 		type = BedProperties
 		block = 0
-		length = 15.24
-		inner_diameter = 1.0922
-		outer_diameter = 1.27
+		length = 22.86
+		inner_diameter = 1.7272
+		outer_diameter = 1.905
 		bulk_porosity = 0.798				#not known
 		axial_conductivity = 6.292E-05      #not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
-		extern_heat_trans_coef = 9.0
+		extern_heat_trans_coef = 90.0       #not known
 		temperature = column_temp
 		coupled_gases = 'Kr Xe He'
 	[../]
@@ -435,7 +435,7 @@
 		comp_ref_temp = '273.15 273.15 273.15'
 		comp_Sutherland_const = '266.505 232.746 80.0'
 		flow_rate = 2994.06
-		column_length = 15.24
+		column_length = 22.86
 		temperature = column_temp
  		total_pressure = total_pressure
 		coupled_gases = 'Kr Xe He'

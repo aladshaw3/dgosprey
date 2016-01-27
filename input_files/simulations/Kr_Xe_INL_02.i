@@ -421,7 +421,7 @@
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
-		extern_heat_trans_coef = 9.0
+		extern_heat_trans_coef = 90.0		#not known
 		temperature = column_temp
 		coupled_gases = 'Kr Xe He'
 	[../]
