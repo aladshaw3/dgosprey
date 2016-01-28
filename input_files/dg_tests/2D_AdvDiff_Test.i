@@ -3,7 +3,7 @@ vx = 0.0 #R-direction (positive leaves outward, negative pushes inward)
 vy = 2.0 #Z-direction (positive moves bottom to top, negative moves top to bottom)
 vz = 0.0 #Not used in RZ system
 
-Dxx = 0.1 #Radial Diffusion in cylinder
+Dxx = 0.01 #Radial Diffusion in cylinder
 Dxy = 0.0
 Dxz = 0.0
 
@@ -24,8 +24,8 @@ coord_type = RZ
 [Mesh]
 type = GeneratedMesh
 dim = 2
-nx = 3 #R-direction == x
-ny = 5 #Z-direction == y
+nx = 10 #R-direction == x
+ny = 40 #Z-direction == y
 xmax = 0.25
 ymax = 1.0
 []
