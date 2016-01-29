@@ -1,18 +1,17 @@
 /*!
- *  \file AdsorptionHeatAccumulation.h
- *	\brief Standard kernel for the heat of adsorption and its effect on the system temperature
- *	\details This file creates a standard MOOSE kernel for the transfer of energy as heat between the
- *			bulk gas temperature of the fixed-bed and the adsorbent material in the column. The
- *			heat transfer is based on the heat of adsorption and the amount currently adsorbed.
- *			It is coupled to the heat of the gas in the column.
+ *  \file AdsorptionMassTransfer.h
+ *	\brief Standard kernel for the transfer of mass via adsorption
+ *	\details This file creates a standard MOOSE kernel for the transfer of mass between the
+ *			bulk gas of the fixed-bed and the adsorbent material in the column. The
+ *			mass transfer is based on the amount of material in the bed and the solid adsorption variables.
  *
  *  \author Austin Ladshaw
- *	\date 11/20/2015
+ *	\date 01/29/2016
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
  *			   by Idaho National Laboratory and Oak Ridge National Laboratory
- *			   engineers and scientists. Portions Copyright (c) 2015, all
+ *			   engineers and scientists. Portions Copyright (c) 2016, all
  *             rights reserved.
  *
  *			   Austin Ladshaw does not claim any owership or copyright to the
@@ -35,28 +34,28 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef AdsorptionHeatAccumulation_H
-#define AdsorptionHeatAccumulation_H
+#ifndef AdsorptionMassTransfer_H
+#define AdsorptionMassTransfer_H
 
 #include "Kernel.h"
 
 /// AdsorptionHeatAccumulation class object forward declarationss
-class AdsorptionHeatAccumulation;
+class AdsorptionMassTransfer;
 
 template<>
-InputParameters validParams<AdsorptionHeatAccumulation>();
+InputParameters validParams<AdsorptionMassTransfer>();
 
-/// AdsorptionHeatAccumulation class object inherits from Kernel object
+/// AdsorptionMassTransfer class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
 	The kernel interfaces the material properties for the bulk bed porosity and the
-	pellet density, as well as coupling with the heat of adsorption as it changes in time,
-	in order to form a residuals and Jacobians for the gas temperature variable. */
-class AdsorptionHeatAccumulation : public Kernel
+	pellet density, as well as coupling with adsorption as it changes in time,
+	in order to form a residuals and Jacobians for the gas concentration variable. */
+class AdsorptionMassTransfer : public Kernel
 {
 public:
 	/// Required constructor for objects in MOOSE
-	AdsorptionHeatAccumulation(const InputParameters & parameters);
+	AdsorptionMassTransfer(const InputParameters & parameters);
 	
 protected:
 	/// Required residual function for standard kernels in MOOSE
@@ -71,8 +70,8 @@ protected:
 private:
 	const MaterialProperty<Real> & _porosity;			///< Reference to the bed bulk porosity material property
 	const MaterialProperty<Real> & _pellet_density;		///< Reference to the pellet density material property
-	std::vector<VariableValue *> _solid_heat;			///< Pointer list to the coupled heats of adsorption at the current time
-	std::vector<VariableValue *> _solid_heat_old;		///< Pointer list to the coupled heats of adsorption at the previous time
+	VariableValue & _solid;								///< Pointer to coupled adsorption at the current time
+	VariableValue & _solid_old;							///< Pointer to coupled adsorption at the previous time
 };
 
 #endif

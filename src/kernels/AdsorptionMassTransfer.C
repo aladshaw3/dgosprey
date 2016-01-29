@@ -1,13 +1,13 @@
 /*!
- *  \file LinearDrivingForce.h
- *	\brief Standard kernel for a generic coupled linear driving force mechanism
+ *  \file AdsorptionMassTransfer.h
+ *	\brief Standard kernel for the transfer of mass via adsorption
  *  \author Austin Ladshaw
- *	\date 11/20/2015
+ *	\date 01/29/2015
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
  *			   by Idaho National Laboratory and Oak Ridge National Laboratory
- *			   engineers and scientists. Portions Copyright (c) 2015, all
+ *			   engineers and scientists. Portions Copyright (c) 2016, all
  *             rights reserved.
  *
  *			   Austin Ladshaw does not claim any owership or copyright to the
@@ -30,41 +30,34 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "LinearDrivingForce.h"
-#include "Material.h"
+
+#include "AdsorptionMassTransfer.h"
 
 template<>
-InputParameters validParams<LinearDrivingForce>()
+InputParameters validParams<AdsorptionMassTransfer>()
 {
 	InputParameters params = validParams<Kernel>();
-	params.addParam<bool>("gaining",true,"True if driving force is a gaining term and false if driving force is a loss term");
-	params.addParam<Real>("ldf_coef",1.0,"Coefficient multiplied by driving force");
-	params.addParam<Real>("driving_value",1.0,"Value of driving force for the conserved quantity");
-	params.addCoupledVar("coupled", "Coupled variable of the conserved quantity");
-  return params;
+	params.addCoupledVar("solid_conc","Coupled variables for the solid adsorption concentrations");
+	return params;
 }
 
-
-LinearDrivingForce::LinearDrivingForce(const InputParameters & parameters)
-  :Kernel(parameters),
-   _gaining(getParam<bool>("gaining")),
-   _coef(getParam<Real>("ldf_coef")),
-   _driving_value(getParam<Real>("driving_value")),
-   _var(coupledValue("coupled"))
+AdsorptionMassTransfer::AdsorptionMassTransfer(const InputParameters & parameters) :
+Kernel(parameters),
+_porosity(getMaterialProperty<Real>("porosity")),
+_pellet_density(getMaterialProperty<Real>("pellet_density")),
+_solid(coupledValue("solid_conc")),
+_solid_old(coupledValueOld("solid_conc"))
 {
+
 }
 
-Real LinearDrivingForce::computeQpResidual()
+Real AdsorptionMassTransfer::computeQpResidual()
 {
-  if (_gaining == false)
-  	return _test[_i][_qp] * _coef * (_driving_value - _var[_qp]);
-  else
-	return -_test[_i][_qp] * _coef * (_driving_value - _var[_qp]);
-  
+	return -(1.0-_porosity[_qp])*_pellet_density[_qp]*((_solid[_qp]-_solid_old[_qp])/_dt)*_test[_i][_qp];
 }
 
-Real LinearDrivingForce::computeQpJacobian()
+Real AdsorptionMassTransfer::computeQpJacobian()
 {
-  return 0.0; 
+	return 0.0;
 }
 

@@ -44,13 +44,13 @@
 	[./u]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0
+		initial_condition = 1.0
 	[../]
 
 	[./q]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0
+		initial_condition = 11.0
 	[../]
 
 []
@@ -92,7 +92,7 @@
 		variable = q
 		coupled = q
 		driving_var = u
-		coefficient = 4.0
+		ldf_coef = 4.0
 		gaining = true
 		driving_coef = 10.0
 	[../]
@@ -102,7 +102,7 @@
 		variable = u
 		coupled = q
 		driving_var = u
-		coefficient = 8.0
+		ldf_coef = 8.0
 		gaining = false
 		driving_coef = 10.0
 	[../]

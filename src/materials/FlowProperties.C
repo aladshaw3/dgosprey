@@ -173,7 +173,7 @@ FlowProperties::computeQpProperties()
 	  _dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (1e-6*_column_length*_velocity[_qp]));
 	  
 	  _retardation[_qp][i] = _porosity[_qp] + ((1-_porosity[_qp]) * _pellet_density[_qp] * ( ((*_solid_perturb[i])[_qp] - (*_solid_conc[i])[_qp]) / sqrt(DBL_EPSILON) ) );
-	  	  
+	  	  	  
 	  if (_yi != 0.0)
 		  _gas_viscosity[_qp] = _gas_viscosity[_qp] + (_mu_i / (1.0 + ( (113.65*_phi*_mu_i*_temperature[_qp])/(_yi*_molecular_wieght[i]) ) * _sum_yi_over_Dij_prime) );
 	  else

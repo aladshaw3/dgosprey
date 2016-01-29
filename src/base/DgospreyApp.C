@@ -78,6 +78,7 @@
 #include "MAGPIE_Perturbation.h"
 #include "MAGPIE_AdsorptionHeat.h"
 #include "AdsorptionHeatAccumulation.h"
+#include "AdsorptionMassTransfer.h"
 
 
 template<>
@@ -126,6 +127,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(WallAmbientHeatTransfer);
 	registerKernel(WallHeatAccumulation);
 	registerKernel(BedHeatAccumulation);
+	registerKernel(AdsorptionMassTransfer);
 
 	registerAux(TotalColumnPressure);
 	registerAux(MAGPIE_Adsorption);
