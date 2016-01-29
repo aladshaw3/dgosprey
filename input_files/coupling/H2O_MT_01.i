@@ -69,7 +69,7 @@
 	[./H2O_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0
+		initial_condition = 10.166
 	[../]
 
 	[./N2_Adsorbed]
@@ -87,7 +87,7 @@
 	[./H2O_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0
+		initial_condition = 10.166
 	[../]
 
 	[./N2_Perturb]
@@ -127,7 +127,7 @@
 	[./N2_IC]
 		type = ConcentrationIC
 		variable = N2
-		initial_mole_frac = 0.79
+		initial_mole_frac = 0.78863
 		initial_press = 101.35
 		initial_temp = 298.15
 	[../]
@@ -135,7 +135,7 @@
 	[./O2_IC]
 		type = ConcentrationIC
 		variable = O2
-		initial_mole_frac = 0.21
+		initial_mole_frac = 0.20974
  		initial_press = 101.35
  		initial_temp = 298.15
 	[../]
@@ -143,7 +143,7 @@
 	[./H2O_IC]
 		type = ConcentrationIC
 		variable = H2O
-		initial_mole_frac = 0.0
+		initial_mole_frac = 0.00163
  		initial_press = 101.35
  		initial_temp = 298.15
 	[../]
@@ -374,7 +374,7 @@
  		boundary = 'top bottom'
  		input_temperature = 298.15
  		input_pressure = 101.35
- 		input_molefraction = 0.78863
+ 		input_molefraction = 0.79
  		index = 0
  	[../]
 
@@ -384,7 +384,7 @@
  		boundary = 'top bottom'
  		input_temperature = 298.15
  		input_pressure = 101.35
- 		input_molefraction = 0.20974
+ 		input_molefraction = 0.21
  		index = 1
  	[../]
 
@@ -394,7 +394,7 @@
  		boundary = 'top bottom'
  		input_temperature = 298.15
  		input_pressure = 101.35
- 		input_molefraction = 0.00163
+ 		input_molefraction = 0.0
  		index = 2
  	[../]
 
@@ -563,7 +563,7 @@
 	solve_type = pjfnk
     line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 60.0
+	end_time = 500.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 

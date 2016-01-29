@@ -75,13 +75,13 @@
 	[./Kr_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0
+		initial_condition = 4.08e-5
 	[../]
 
 	[./Xe_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0
+		initial_condition = 0.0517
 	[../]
 
 	[./He_Perturb]
@@ -93,13 +93,13 @@
 	[./Kr_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0
+		initial_condition = 4.08e-5
 	[../]
 
 	[./Xe_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0
+		initial_condition = 0.0517
 	[../]
 
 	[./Kr_AdsorbedHeat]
@@ -127,7 +127,7 @@
 	[./Kr_IC]
 		type = ConcentrationIC
 		variable = Kr
-		initial_mole_frac = 0.0
+		initial_mole_frac = 0.000153814
 		initial_press = 101.35
 		initial_temp = 295.15
 	[../]
@@ -135,7 +135,7 @@
 	[./Xe_IC]
 		type = ConcentrationIC
 		variable = Xe
-		initial_mole_frac = 0.0
+		initial_mole_frac = 0.001007334
  		initial_press = 101.35
  		initial_temp = 295.15
 	[../]
@@ -143,7 +143,7 @@
 	[./He_IC]
 		type = ConcentrationIC
 		variable = He
-		initial_mole_frac = 1.0
+		initial_mole_frac = 0.998838852
  		initial_press = 101.35
  		initial_temp = 295.15
 	[../]
@@ -386,7 +386,7 @@
  		boundary = 'top bottom'
  		input_temperature = 295.15
  		input_pressure = 101.35
- 		input_molefraction = 0.000153814
+ 		input_molefraction = 0.0
  		index = 0
  	[../]
 
@@ -396,7 +396,7 @@
  		boundary = 'top bottom'
  		input_temperature = 295.15
  		input_pressure = 101.35
- 		input_molefraction = 0.001007334
+ 		input_molefraction = 0.0
  		index = 1
  	[../]
 
@@ -406,7 +406,7 @@
  		boundary = 'top bottom'
  		input_temperature = 295.15
  		input_pressure = 101.35
- 		input_molefraction = 0.998838852
+ 		input_molefraction = 1.0
  		index = 2
  	[../]
 
