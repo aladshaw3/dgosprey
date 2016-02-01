@@ -14,7 +14,7 @@
  *			   engineers and scientists. Portions Copyright (c) 2016, all
  *             rights reserved.
  *
- *			   Austin Ladshaw does not claim any owership or copyright to the
+ *			   Austin Ladshaw does not claim any ownership or copyright to the
  *			   MOOSE framework in which these kernels are constructed, only
  *			   the kernels themselves. The MOOSE framework copyright is held
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
