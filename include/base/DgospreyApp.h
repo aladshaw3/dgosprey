@@ -26,16 +26,16 @@
  *
  *
  *	\section copyright Copyright Statement
- *	\copyright This kernel was designed and built at the Georgia Institute
+ *	\copyright This software was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
  *			   by Idaho National Laboratory and Oak Ridge National Laboratory
  *			   engineers and scientists. Portions Copyright (c) 2015, all
  *             rights reserved. \n \n Austin Ladshaw does not claim any ownership or
- *			   copyright to the MOOSE framework in which these kernels are 
- *			   constructed, only the kernels themselves. The MOOSE framework 
- *			   copyright is held by the Battelle Energy Alliance, LLC (c) 2010, 
- *			   all rights reserved.
+ *			   copyright to the MOOSE framework in which this software is
+ *			   constructed, only the individual source code files of the DGOSPREY 
+ *			   project. The MOOSE framework copyright is held by the Battelle
+ *			   Energy Alliance, LLC (c) 2010, all rights reserved.
  *
  *	\section info General Information
  *
