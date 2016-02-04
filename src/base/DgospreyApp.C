@@ -80,6 +80,10 @@
 #include "AdsorptionHeatAccumulation.h"
 #include "AdsorptionMassTransfer.h"
 
+#include "Aux_LDF.h"
+#include "MAGPIE_ConstLDF_Adsorption.h"
+#include "MAGPIE_ConstLDF_Perturbation.h"
+
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -133,6 +137,9 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerAux(MAGPIE_Adsorption);
 	registerAux(MAGPIE_Perturbation);
 	registerAux(MAGPIE_AdsorptionHeat);
+	registerAux(Aux_LDF);
+	registerAux(MAGPIE_ConstLDF_Adsorption);
+	registerAux(MAGPIE_ConstLDF_Perturbation);
 
 	registerInitialCondition(TotalPressureIC);
 	registerInitialCondition(ColumnTemperatureIC);

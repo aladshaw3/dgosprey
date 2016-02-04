@@ -302,43 +302,45 @@
 	[../]
 
 	[./nitrogen_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_ConstLDF_Adsorption
 		variable = N2_Adsorbed
 		index = 0
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_ConstLDF_Adsorption
 		variable = O2_Adsorbed
 		index = 1
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_ConstLDF_Adsorption
 		variable = H2O_Adsorbed
+		ldf_coeff = 0.015
 		index = 2
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./nitrogen_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_ConstLDF_Perturbation
 		variable = N2_Perturb
 		index = 0
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_ConstLDF_Perturbation
 		variable = O2_Perturb
 		index = 1
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_ConstLDF_Perturbation
 		variable = H2O_Perturb
+		ldf_coeff = 0.015
 		index = 2
 		execute_on = 'initial timestep_end'
 	[../]
@@ -550,7 +552,8 @@
 [Executioner]
 
  	type = Transient
-	scheme = implicit-euler
+	#scheme = implicit-euler
+	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6

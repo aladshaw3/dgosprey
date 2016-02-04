@@ -1,13 +1,13 @@
 /*!
- *  \file MAGPIE_Perturbation.h
- *	\brief Auxillary kernel to calculate the perturbed adsorption equilibria of a particular gas species in the system
+ *  \file MAGPIE_ConstLDF_Adsorption.h
+ *	\brief Auxillary kernel to calculate adsorption based on LDF kinetics with constant coefficients
  *  \author Austin Ladshaw
- *	\date 11/20/2015
+ *	\date 02/04/2016
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
  *			   by Idaho National Laboratory and Oak Ridge National Laboratory
- *			   engineers and scientists. Portions Copyright (c) 2015, all
+ *			   engineers and scientists. Portions Copyright (c) 2016, all
  *             rights reserved.
  *
  *			   Austin Ladshaw does not claim any ownership or copyright to the
@@ -30,39 +30,31 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "MAGPIE_Perturbation.h"
+#include "MAGPIE_ConstLDF_Adsorption.h"
 
 template<>
-InputParameters validParams<MAGPIE_Perturbation>()
+InputParameters validParams<MAGPIE_ConstLDF_Adsorption>()
 {
-	InputParameters params = validParams<AuxKernel>();
+	InputParameters params = validParams<Aux_LDF>();
 	params.addParam<unsigned int>("index",0,"Index of the species that we are interested in.");
 	return params;
 }
 
-MAGPIE_Perturbation::MAGPIE_Perturbation(const InputParameters & parameters) :
-AuxKernel(parameters),
+MAGPIE_ConstLDF_Adsorption::MAGPIE_ConstLDF_Adsorption(const InputParameters & parameters) :
+Aux_LDF(parameters),
 _index(getParam<unsigned int>("index")),
 _magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data"))
 {
 }
 
-Real
-MAGPIE_Perturbation::computeValue()
+Real MAGPIE_ConstLDF_Adsorption::computeValue()
 {
 	MAGPIE_DATA magpie_copy;
 	magpie_copy = _magpie_dat[_qp];
 	
-	
-	//Check for adsorption
+	//Call MAGPIE Simulation for Unperturbed data
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
 	{
-		//perturn the copy's _index y
-		double pi = _magpie_dat[_qp].gpast_dat[_index].y * _magpie_dat[_qp].sys_dat.PT;
-		double ci = Cstd(pi,_magpie_dat[_qp].sys_dat.T) + sqrt(DBL_EPSILON);
-		double yi = Pstd(ci,_magpie_dat[_qp].sys_dat.T) / _magpie_dat[_qp].sys_dat.PT;
-		magpie_copy.gpast_dat[_index].y = yi;
-	
 		int success = 0;
 		success = MAGPIE( (void *)&magpie_copy );
 		if (success < 0 || success > 3)
@@ -83,12 +75,13 @@ MAGPIE_Perturbation::computeValue()
 		}
 		else success = 0;
 		
-		return magpie_copy.gpast_dat[_index].q;
+		_driving_value = magpie_copy.gpast_dat[_index].q;
 		
 	}
 	else
 	{
-		return 0.0;
+		_driving_value = 0.0;
 	}
+	
+	return Aux_LDF::computeValue();
 }
-
