@@ -72,7 +72,7 @@ protected:
 	virtual void computeQpProperties();
 	
 private:
-	std::vector<Real> _molecular_wieght;							///< Molecular wieghts for each gas species (g/mol)
+	std::vector<Real> _molecular_weight;							///< Molecular weights for each gas species (g/mol)
 	std::vector<Real> _comp_heat_capacity;							///< Heat capacities for each gas species (J/g/K)
 	std::vector<Real> _comp_ref_viscosity;							///< Sutherland's reference viscosity for each gas species (g/cm/s)
 	std::vector<Real> _comp_ref_temp;								///< Sutherland's reference temperature for each species (K)
@@ -90,11 +90,19 @@ private:
 	const MaterialProperty<Real> & _porosity;						///< Coupled material property for bed bulk porosity
 	const MaterialProperty<Real> & _pellet_density;					///< Coupled material property for adsorbent pellet density
 	const MaterialProperty<Real> & _pellet_heat_capacity;			///< Coupled material property for adsorbent heat capacity
+	const MaterialProperty<Real> & _pellet_diameter;				///< Coupled material property for the adsorbent pellet diameter
+	const MaterialProperty<Real> & _binder_porosity;				///< MaterialProperty for the binder porosity
+	const MaterialProperty<Real> & _pore_size;						///< MaterialProperty for the macropore radius (cm)
 	
 	MaterialProperty<Real> & _heat_retardation;						///< MaterialProperty for energy balance retardation coefficient
 	MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< MaterialProperty for each species' molecular diffusion (cm^2/s)
 	MaterialProperty<std::vector<Real> > & _dispersion;			///< MaterialProperty for each species' dispersion coefficient (cm^2/hr)
 	MaterialProperty<std::vector<Real> > & _retardation;		///< MaterialProperty for each species' retardation coefficient
+	MaterialProperty<std::vector<Real> > & _partition_ratio;	///< MaterialProperty for each species' partition ratio
+	MaterialProperty< MIXED_GAS > & _mixed_gas;					///< MaterialProperty for the MIXED_GAS struct in egret.h
+	
+	MaterialProperty<std::vector<Real> > & _film_transfer;			///< MaterialProperty for the film mass transfer coeff (cm/hr)
+	MaterialProperty<std::vector<Real> > & _pore_diffusion;			///< MaterialProperty for the pore diffusion (cm^2/hr)
   	
   	VariableValue & _temperature;					///< Reference to the coupled column temperature
 	VariableValue & _total_pressure;				///< Reference to the coupled column pressure

@@ -83,6 +83,8 @@
 #include "Aux_LDF.h"
 #include "MAGPIE_ConstLDF_Adsorption.h"
 #include "MAGPIE_ConstLDF_Perturbation.h"
+#include "MAGPIE_MaterialLDF_Adsorption.h"
+#include "MAGPIE_MaterialLDF_Perturbation.h"
 
 
 template<>
@@ -140,6 +142,8 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerAux(Aux_LDF);
 	registerAux(MAGPIE_ConstLDF_Adsorption);
 	registerAux(MAGPIE_ConstLDF_Perturbation);
+	registerAux(MAGPIE_MaterialLDF_Adsorption);
+	registerAux(MAGPIE_MaterialLDF_Perturbation);
 
 	registerInitialCondition(TotalPressureIC);
 	registerInitialCondition(ColumnTemperatureIC);

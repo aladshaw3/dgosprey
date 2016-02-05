@@ -429,13 +429,13 @@
 	[./FlowMaterials]
 		type = FlowProperties
 		block = 0
-		molecular_wieght = '83.8 131.29 4.0026'
+		molecular_weight = '83.8 131.29 4.0026'
 		comp_heat_capacity = '0.25 0.16 5.1916'
 		comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 		comp_ref_temp = '273.15 273.15 273.15'
 		comp_Sutherland_const = '266.505 232.746 80.0'
 		flow_rate = 2994.06
-		column_length = 22.86
+		length = 22.86
 		temperature = column_temp
  		total_pressure = total_pressure
 		coupled_gases = 'Kr Xe He'

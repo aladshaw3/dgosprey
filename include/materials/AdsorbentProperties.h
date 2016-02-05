@@ -39,6 +39,7 @@
 /****************************************************************/
 
 #include "Material.h"
+#include "flock.h"
 
 #ifndef ADSORBENTPROPERTIES_H
 #define ADSORBENTPROPERTIES_H
@@ -67,15 +68,27 @@ protected:
 	
 private:
 	Real _binder_fraction;		///< Binder fraction in the biporous adsorbent pellet (0 means no binder material)
-	Real _binder_porosity;		///< Macro-porosity of the binder material in the adsorbent pellet
-	Real _crystal_radius;		///< Nominal radius of the adsorbent crystals suspended in the binder (um)
-	Real _pellet_diameter;		///< Nominal diameter of the adsorbent pellets in the system (cm)
+	Real _eps_binder;			///< Macro-porosity of the binder material in the adsorbent pellet
+	Real _crystal_rad;			///< Nominal radius of the adsorbent crystals suspended in the binder (um)
+	Real _pellet_dia;			///< Nominal diameter of the adsorbent pellets in the system (cm)
 	Real _macropore_radius;		///< Nominal size of the macro-pores in the pellet (cm)
 	Real _rhos;					///< Density of the adsorbent pellet (g/cm^3)
 	Real _hs;					///< Heat capacity of the adsorbent pellet (J/g/K)
-  
+	
+	std::vector<Real> _ref_diff;	///< Reference Surface Diffusivity (um^2/hr)
+	std::vector<Real> _act_energy;	///< Activation Energy of Surface Diffusion (J/mol)
+	std::vector<Real> _ref_temp;	///< Reference Temperature for Surface Diffusion (K)
+	std::vector<Real> _affinity;	///< Affinity coefficient for Surface Diffusion (-)
+	
 	MaterialProperty<Real> & _pellet_density;			///< MaterialProperty for the pellet density (g/cm^3)
 	MaterialProperty<Real> & _pellet_heat_capacity;		///< MaterialProperty for the pellet heat capacity (J/g/K)
+	MaterialProperty<Real> & _pellet_diameter;			///< MaterialProperty for pellet diameter (cm)
+	MaterialProperty<Real> & _crystal_radius;			///< MaterialProperty for the crystal radius (um)
+	MaterialProperty<Real> & _binder_porosity;			///< MaterialProperty for the binder porosity
+	MaterialProperty<Real> & _binder_ratio;				///< MaterialProperty for the ratio of binder to pellet volumes
+	MaterialProperty<Real> & _pore_size;				///< MaterialProperty for the macropore radius (cm)
+	
+	MaterialProperty<std::vector<Real> > & _surface_diffusion;		///< MaterialProperty for the surface diffusion (um^2/hr)
 	
 	VariableValue & _temperature;						///< Reference to the coupled column temperature
 	std::vector<unsigned int> _index;					///< List of indices for the coupled gases

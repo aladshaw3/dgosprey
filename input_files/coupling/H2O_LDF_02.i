@@ -15,25 +15,25 @@
 	nx = 10
  	ny = 40
  	xmin = 0.0
-	xmax = 0.8636 #cm
+	xmax = 2.54 #cm
  	ymin = 0.0
-	ymax = 22.86 #cm
+	ymax = 12.7 #cm
 
  [] # END Mesh
 
 [Variables]
 
-	[./Kr]
+	[./N2]
 		order = CONSTANT
 		family = MONOMIAL
 	[../]
 
-	[./Xe]
+	[./O2]
 		order = CONSTANT
 		family = MONOMIAL
 	[../]
 
-	[./He]
+	[./H2O]
 		order = CONSTANT
 		family = MONOMIAL
 	[../]
@@ -41,13 +41,13 @@
  	[./wall_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 220.15
+ 		initial_condition = 298.15
  	[../]
 
 	[./column_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 220.15
+ 		initial_condition = 298.15
 	[../]
 
  [] #END Variables
@@ -63,58 +63,58 @@
  	[./ambient_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 220.15
+ 		initial_condition = 298.15
  	[../]
 
-	[./He_Adsorbed]
+	[./H2O_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
-	[./Kr_Adsorbed]
+	[./N2_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
-	[./Xe_Adsorbed]
+	[./O2_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
-	[./He_Perturb]
+	[./H2O_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
-	[./Kr_Perturb]
+	[./N2_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
-	[./Xe_Perturb]
+	[./O2_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
-	[./Kr_AdsorbedHeat]
+	[./N2_AdsorbedHeat]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
-	[./Xe_AdsorbedHeat]
+	[./O2_AdsorbedHeat]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
-	[./He_AdsorbedHeat]
+	[./H2O_AdsorbedHeat]
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
@@ -124,83 +124,89 @@
 
 [ICs]
 
-	[./Kr_IC]
+	[./N2_IC]
 		type = ConcentrationIC
-		variable = Kr
-		initial_mole_frac = 0.0
+		variable = N2
+		initial_mole_frac = 0.79
 		initial_press = 101.35
-		initial_temp = 220.15
+		initial_temp = 298.15
 	[../]
 
-	[./Xe_IC]
+	[./O2_IC]
 		type = ConcentrationIC
-		variable = Xe
+		variable = O2
+		initial_mole_frac = 0.21
+ 		initial_press = 101.35
+ 		initial_temp = 298.15
+	[../]
+
+	[./H2O_IC]
+		type = ConcentrationIC
+		variable = H2O
 		initial_mole_frac = 0.0
  		initial_press = 101.35
- 		initial_temp = 220.15
-	[../]
-
-	[./He_IC]
-		type = ConcentrationIC
-		variable = He
-		initial_mole_frac = 1.0
- 		initial_press = 101.35
- 		initial_temp = 220.15
+ 		initial_temp = 298.15
 	[../]
 
  [] #END ICs
 
 [Kernels]
 
- 	[./accumKr]
-		type = BedMassAccumulation
- 		variable = Kr
+ 	[./accumN2]
+ 		type = BedMassAccumulation
+ 		variable = N2
+ 		index = 0
+ 	[../]
+
+	[./diffN2]
+		type = GColumnMassDispersion
+		variable = N2
 		index = 0
- 	[../]
-
-	[./diffKr]
-		type = GColumnMassDispersion
-		variable = Kr
-		index = 0
 	[../]
 
-	[./advKr]
+	[./advN2]
 		type = GColumnMassAdvection
-		variable = Kr
+		variable = N2
 	[../]
 
- 	[./accumXe]
-		type = BedMassAccumulation
- 		variable = Xe
-		index = 1
+ 	[./accumO2]
+ 		type = BedMassAccumulation
+ 		variable = O2
+ 		index = 1
  	[../]
 
-	[./diffXe]
+	[./diffO2]
 		type = GColumnMassDispersion
-		variable = Xe
+		variable = O2
 		index = 1
 	[../]
 
-	[./advXe]
+	[./advO2]
 		type = GColumnMassAdvection
-		variable = Xe
+		variable = O2
 	[../]
 
- 	[./accumHe]
-		type = BedMassAccumulation
- 		variable = He
-		index = 2
+ 	[./accumH2O]
+ 		type = BedMassAccumulation
+ 		variable = H2O
+ 		index = 2
  	[../]
+ 
+	[./H2O_MT]
+		type = AdsorptionMassTransfer
+		variable = H2O
+		solid_conc = H2O_Adsorbed
+	[../]
 
-	[./diffHe]
+	[./diffH2O]
 		type = GColumnMassDispersion
-		variable = He
+		variable = H2O
 		index = 2
 	[../]
 
-	[./advHe]
+	[./advH2O]
 		type = GColumnMassAdvection
-		variable = He
+		variable = H2O
 	[../]
 
  	[./wallAccum]
@@ -233,7 +239,7 @@
 	[./columnAdsHeat]
 		type = AdsorptionHeatAccumulation
 		variable = column_temp
-		solid_heats = 'Kr_AdsorbedHeat Xe_AdsorbedHeat He_AdsorbedHeat'
+		solid_heats = 'N2_AdsorbedHeat O2_AdsorbedHeat H2O_AdsorbedHeat'
 	[../]
 
 
@@ -241,37 +247,37 @@
 
 [DGKernels]
 
-	[./dg_disp_Kr]
+	[./dg_disp_N2]
 		type = DGColumnMassDispersion
-		variable = Kr
+		variable = N2
 		index = 0
 	[../]
 
- 	[./dg_adv_Kr]
+ 	[./dg_adv_N2]
 		type = DGColumnMassAdvection
-		variable = Kr
+		variable = N2
 	[../]
 
-	[./dg_disp_Xe]
+	[./dg_disp_O2]
 		type = DGColumnMassDispersion
-		variable = Xe
+		variable = O2
 		index = 1
 	[../]
 
- 	[./dg_adv_Xe]
+ 	[./dg_adv_O2]
 		type = DGColumnMassAdvection
-		variable = Xe
+		variable = O2
 	[../]
 
-	[./dg_disp_He]
+	[./dg_disp_H2O]
 		type = DGColumnMassDispersion
-		variable = He
+		variable = H2O
 		index = 2
 	[../]
 
-	[./dg_adv_He]
+	[./dg_adv_H2O]
 		type = DGColumnMassAdvection
-		variable = He
+		variable = H2O
 	[../]
 
 	[./dg_disp_heat]
@@ -292,69 +298,69 @@
 		type = TotalColumnPressure
 		variable = total_pressure
 		temperature = column_temp
-		coupled_gases = 'Kr Xe He'
+		coupled_gases = 'N2 O2 H2O'
 	[../]
 
-	[./krypton_adsorption]
-		type = MAGPIE_Adsorption
-		variable = Kr_Adsorbed
+	[./nitrogen_adsorption]
+		type = MAGPIE_MaterialLDF_Adsorption
+		variable = N2_Adsorbed
 		index = 0
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./xenon_adsorption]
-		type = MAGPIE_Adsorption
-		variable = Xe_Adsorbed
+	[./oxygen_adsorption]
+		type = MAGPIE_MaterialLDF_Adsorption
+		variable = O2_Adsorbed
 		index = 1
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./helium_adsorption]
-		type = MAGPIE_Adsorption
-		variable = He_Adsorbed
+	[./water_adsorption]
+		type = MAGPIE_MaterialLDF_Adsorption
+		variable = H2O_Adsorbed
 		index = 2
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./krypton_perturbation]
-		type = MAGPIE_Perturbation
-		variable = Kr_Perturb
+	[./nitrogen_perturbation]
+		type = MAGPIE_MaterialLDF_Perturbation
+		variable = N2_Perturb
 		index = 0
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./xenon_perturbation]
-		type = MAGPIE_Perturbation
-		variable = Xe_Perturb
+	[./oxygen_perturbation]
+		type = MAGPIE_MaterialLDF_Perturbation
+		variable = O2_Perturb
 		index = 1
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./helium_perturbation]
-		type = MAGPIE_Perturbation
-		variable = He_Perturb
+	[./water_perturbation]
+		type = MAGPIE_MaterialLDF_Perturbation
+		variable = H2O_Perturb
 		index = 2
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./krypton_adsorption_heat]
+	[./nitrogen_adsorption_heat]
 		type = MAGPIE_AdsorptionHeat
-		variable = Kr_AdsorbedHeat
-		solid_conc = Kr_Adsorbed
+		variable = N2_AdsorbedHeat
+		solid_conc = N2_Adsorbed
 		index = 0
 	[../]
 
-	[./xenon_adsorption_heat]
+	[./oxygen_adsorption_heat]
 		type = MAGPIE_AdsorptionHeat
-		variable = Xe_AdsorbedHeat
-		solid_conc = Xe_Adsorbed
+		variable = O2_AdsorbedHeat
+		solid_conc = O2_Adsorbed
 		index = 1
 	[../]
 
-	[./helium_adsorption_heat]
+	[./water_adsorption_heat]
 		type = MAGPIE_AdsorptionHeat
-		variable = He_AdsorbedHeat
-		solid_conc = He_Adsorbed
+		variable = H2O_AdsorbedHeat
+		solid_conc = H2O_Adsorbed
 		index = 2
 	[../]
 
@@ -362,33 +368,33 @@
 
 [BCs]
 
- 	[./Kr_Flux]
+ 	[./N2_Flux]
 		type = DGMassFluxLimitedBC
- 		variable = Kr
+ 		variable = N2
  		boundary = 'top bottom'
- 		input_temperature = 220.15
+ 		input_temperature = 298.15
  		input_pressure = 101.35
- 		input_molefraction = 0.000114729
+ 		input_molefraction = 0.78863
  		index = 0
  	[../]
 
- 	[./Xe_Flux]
+ 	[./O2_Flux]
 		type = DGMassFluxLimitedBC
- 		variable = Xe
+ 		variable = O2
  		boundary = 'top bottom'
- 		input_temperature = 220.15
+ 		input_temperature = 298.15
  		input_pressure = 101.35
- 		input_molefraction = 0.000750891
+ 		input_molefraction = 0.20974
  		index = 1
  	[../]
 
- 	[./He_Flux]
+ 	[./H2O_Flux]
 		type = DGMassFluxLimitedBC
- 		variable = He
+ 		variable = H2O
  		boundary = 'top bottom'
- 		input_temperature = 220.15
+ 		input_temperature = 298.15
  		input_pressure = 101.35
- 		input_molefraction = 0.99913438
+ 		input_molefraction = 0.00163
  		index = 2
  	[../]
 
@@ -396,7 +402,7 @@
  		type = DGHeatFluxLimitedBC
  		variable = column_temp
  		boundary = 'top bottom'
- 		input_temperature = 220.15
+ 		input_temperature = 298.15
  	[../]
  
 	[./Heat_Wall_Flux]
@@ -413,48 +419,52 @@
 	[./BedMaterials]
 		type = BedProperties
 		block = 0
-		length = 22.86
-		inner_diameter = 1.7272
-		outer_diameter = 1.905
-		bulk_porosity = 0.798				#not known
-		axial_conductivity = 6.292E-05      #not known
-		wall_density = 7.7
+		length = 12.7
+		inner_diameter = 2.54
+		outer_diameter = 2.84
+		bulk_porosity = 0.421
+		axial_conductivity = 6.292E-05
+		wall_density = 8.0
 		wall_heat_capacity = 0.5
-		wall_heat_trans_coef = 9.0
-		extern_heat_trans_coef = 90.0       #not known
+		wall_heat_trans_coef = 6.12
+		extern_heat_trans_coef = 6.12
 		temperature = column_temp
-		coupled_gases = 'Kr Xe He'
+		coupled_gases = 'N2 O2 H2O'
 	[../]
 
 	[./FlowMaterials]
 		type = FlowProperties
 		block = 0
-		molecular_weight = '83.8 131.29 4.0026'
-		comp_heat_capacity = '0.25 0.16 5.1916'
-		comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
-		comp_ref_temp = '273.15 273.15 273.15'
-		comp_Sutherland_const = '266.505 232.746 80.0'
-		flow_rate = 2994.06
-		length = 22.86
+		molecular_weight = '28.016 32 18'
+		comp_heat_capacity = '1.04 0.919 1.97'
+		comp_ref_viscosity = '0.0001781 0.0002018 0.0001043'
+		comp_ref_temp = '300.55 292.25 298.16'
+		comp_Sutherland_const = '111 127 784.72'
+		flow_rate = 211680.0
+		length = 12.7
 		temperature = column_temp
  		total_pressure = total_pressure
-		coupled_gases = 'Kr Xe He'
-		coupled_adsorption = 'Kr_Adsorbed Xe_Adsorbed He_Adsorbed'
-		coupled_perturbation = 'Kr_Perturb Xe_Perturb He_Perturb'
+		coupled_gases = 'N2 O2 H2O'
+		coupled_adsorption = 'N2_Adsorbed O2_Adsorbed H2O_Adsorbed'
+		coupled_perturbation = 'N2_Perturb O2_Perturb H2O_Perturb'
 	[../]
 
 	[./AdsorbentMaterials]
 		type = AdsorbentProperties
 		block = 0
-		binder_fraction = 0.175				#not known
-		binder_porosity = 0.27				#not known
-		crystal_radius = 1.5				#not known
-		pellet_diameter = 0.236				#not known
-		macropore_radius = 3.5e-6			#not Known
-		pellet_density = 1.69				#not Known
-		pellet_heat_capacity = 1.045		#not known
+		binder_fraction = 0.175
+		binder_porosity = 0.27
+		crystal_radius = 1.5
+		pellet_diameter = 0.236
+		macropore_radius = 3.5e-6
+		pellet_density = 1.69
+		pellet_heat_capacity = 1.045
+		ref_diffusion = '0 0 0.8814'
+		activation_energy = '0 0 0'
+		ref_temperature = '0 0 267.999'
+		affinity = '0 0 0'
 		temperature = column_temp
-		coupled_gases = 'Kr Xe He'
+		coupled_gases = 'N2 O2 H2O'
 	[../]
 
 	[./AdsorbateMaterials]
@@ -462,21 +472,21 @@
 		block = 0
 		temperature = column_temp
 		total_pressure = total_pressure
-		coupled_gases = 'Kr Xe He'
-		number_sites = '2 3 0'
-		maximum_capacity = '1.716 1.479 0' #mol/kg
-		molar_volume = '20.785 25.412 0' #cm^3/mol
-		enthalpy_site_1 = '-44696.86 -18455.18 0'
-		enthalpy_site_2 = '-65465.52 -35511.74 0'
-		enthalpy_site_3 = '0 -53315.13 0'
-		enthalpy_site_4 = '0 0 0'
+		coupled_gases = 'N2 O2 H2O'
+		number_sites = '0 0 4'
+		maximum_capacity = '0 0 11.67' #mol/kg
+		molar_volume = '0 0 13.91' #cm^3/mol
+		enthalpy_site_1 = '0 0 -46597.5'
+		enthalpy_site_2 = '0 0 -125024'
+		enthalpy_site_3 = '0 0 -193619'
+		enthalpy_site_4 = '0 0 -272228'
 		enthalpy_site_5 = '0 0 0'
 		enthalpy_site_6 = '0 0 0'
 
-		entropy_site_1 = '-170.45 -23.25 0'
-		entropy_site_2 = '-248.55 -62.45 0'
-		entropy_site_3 = '0 -100.10 0'
-		entropy_site_4 = '0 0 0'
+		entropy_site_1 = '0 0 -53.6994'
+		entropy_site_2 = '0 0 -221.073'
+		entropy_site_3 = '0 0 -356.728'
+		entropy_site_4 = '0 0 -567.459'
 		entropy_site_5 = '0 0 0'
 		entropy_site_6 = '0 0 0'
 	[../]
@@ -485,24 +495,24 @@
 
 [Postprocessors]
 
-	[./Kr_exit]
+	[./N2_exit]
 		type = SideAverageValue
 		boundary = 'top'
-		variable = Kr
+		variable = N2
 		execute_on = timestep_end
 	[../]
 
-	[./Xe_exit]
+	[./O2_exit]
 		type = SideAverageValue
 		boundary = 'top'
-		variable = Xe
+		variable = O2
 		execute_on = timestep_end
 	[../]
 
-	[./He_exit]
+	[./H2O_exit]
 		type = SideAverageValue
 		boundary = 'top'
-		variable = He
+		variable = H2O
 		execute_on = timestep_end
 	[../]
 
@@ -527,27 +537,15 @@
 		execute_on = timestep_end
  	[../]
 
-	[./Kr_solid]
+	[./H2O_solid]
 		type = ElementAverageValue
-		variable = Kr_Adsorbed
+		variable = H2O_Adsorbed
 		execute_on = timestep_end
 	[../]
 
-	[./Kr_heat]
+	[./H2O_heat]
 		type = ElementAverageValue
-		variable = Kr_AdsorbedHeat
-		execute_on = timestep_end
-	[../]
- 
-	[./Xe_solid]
-		type = ElementAverageValue
-		variable = Xe_Adsorbed
-		execute_on = timestep_end
-	[../]
- 
-	[./Xe_heat]
-		type = ElementAverageValue
-		variable = Xe_AdsorbedHeat
+		variable = H2O_AdsorbedHeat
 		execute_on = timestep_end
 	[../]
 
@@ -556,11 +554,12 @@
 [Executioner]
 
  	type = Transient
-	scheme = implicit-euler
+	#scheme = implicit-euler
+	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
- 	nl_abs_tol = 1e-4
+ 	nl_abs_tol = 1e-6
  	nl_rel_step_tol = 1e-10
  	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
@@ -569,7 +568,7 @@
 	solve_type = pjfnk
     line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 90.0
+	end_time = 60.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
