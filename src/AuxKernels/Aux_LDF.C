@@ -50,5 +50,8 @@ _driving_value(getParam<Real>("driving_value"))
 
 Real Aux_LDF::computeValue()
 {
-	return (_u[_qp] + (_dt*_ldf_coef*_driving_value))/(1.0 + (_dt*_ldf_coef));
+	if (_dt == 0.0)
+		return (_u[_qp] + (0.01*_ldf_coef*_driving_value))/(1.0 + (0.01*_ldf_coef));
+	else
+		return (_u[_qp] + (_dt*_ldf_coef*_driving_value))/(1.0 + (_dt*_ldf_coef));
 }

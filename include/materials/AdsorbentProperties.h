@@ -90,6 +90,8 @@ private:
 	
 	MaterialProperty<std::vector<Real> > & _surface_diffusion;		///< MaterialProperty for the surface diffusion (um^2/hr)
 	
+	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;			///< Pointer to MAGPIE_DATA material property
+	
 	VariableValue & _temperature;						///< Reference to the coupled column temperature
 	std::vector<unsigned int> _index;					///< List of indices for the coupled gases
 	std::vector<VariableValue *> _gas_conc;				///< Pointer list for the coupled gases

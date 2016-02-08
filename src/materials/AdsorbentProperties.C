@@ -82,6 +82,7 @@ _binder_porosity(declareProperty<Real>("binder_porosity")),
 _binder_ratio(declareProperty<Real>("binder_ratio")),
 _pore_size(declareProperty<Real>("pore_size")),
 _surface_diffusion(declareProperty<std::vector<Real> >("surface_diffusion")),
+_magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data")),
 _temperature(coupledValue("temperature"))
 
 {
@@ -91,7 +92,7 @@ _temperature(coupledValue("temperature"))
 	
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
-		_index[i] = coupled("coupled_gases",i); //may only be useful for compute Jacobian Off Diagonal (see ~/projects/truck/moose/modules/chemical_reactions/ .../ CoupledConvectionReactionSub.C)
+		_index[i] = coupled("coupled_gases",i);
 		_gas_conc[i] = &coupledValue("coupled_gases",i);
 	}
 	/*
@@ -107,7 +108,7 @@ AdsorbentProperties::computeQpProperties()
 	
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
-		Real p = ((*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp]);
+		Real p = _magpie_dat[_qp].gpast_dat[i].y * _magpie_dat[_qp].sys_dat.PT;
 		
 		if (p < 0.0) p = 0.0;
 		

@@ -318,7 +318,7 @@
 	[./water_adsorption]
 		type = MAGPIE_ConstLDF_Adsorption
 		variable = H2O_Adsorbed
-		ldf_coeff = 0.015
+		ldf_coeff = 1e16
 		index = 2
 		execute_on = 'initial timestep_end'
 	[../]
@@ -340,7 +340,7 @@
 	[./water_perturbation]
 		type = MAGPIE_ConstLDF_Perturbation
 		variable = H2O_Perturb
-		ldf_coeff = 0.015
+		ldf_coeff = 1e16
 		index = 2
 		execute_on = 'initial timestep_end'
 	[../]

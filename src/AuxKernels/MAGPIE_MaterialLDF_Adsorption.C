@@ -91,11 +91,14 @@ Real MAGPIE_MaterialLDF_Adsorption::computeValue()
 		_driving_value = 0.0;
 	}
 	
+	Real _part_rat = 1.69 * 10.16 / 6.66E-5;
+	Real _surf_diff = 0.17468;
+	
 	//Calculate the LDF coefficient
-	_ldf_coef = ((_partition_ratio[_qp][_index]*_pellet_diameter[_qp])/(6.0*(1.0-_porosity[_qp])*_film_transfer[_qp][_index])) + ((_partition_ratio[_qp][_index]*_pellet_diameter[_qp]*_pellet_diameter[_qp])/(60.0*(1.0-_porosity[_qp])*_binder_porosity[_qp]*_pore_diffusion[_qp][_index]));
+	_ldf_coef = ((_part_rat*_pellet_diameter[_qp])/(6.0*(1.0-_porosity[_qp])*_film_transfer[_qp][_index])) + ((_part_rat*_pellet_diameter[_qp]*_pellet_diameter[_qp])/(60.0*(1.0-_porosity[_qp])*_binder_porosity[_qp]*_pore_diffusion[_qp][_index]));
 	
 	if (_surface_diffusion[_qp][_index] > 0.0)
-		_ldf_coef = _ldf_coef + ((_crystal_radius[_qp]*_crystal_radius[_qp])/(15.0*_surface_diffusion[_qp][_index]));
+		_ldf_coef = _ldf_coef + ((_crystal_radius[_qp]*_crystal_radius[_qp])/(15.0*_surf_diff));
 	
 	if (_ldf_coef <= 0.0)
 		_ldf_coef = 0.0;
@@ -106,6 +109,7 @@ Real MAGPIE_MaterialLDF_Adsorption::computeValue()
 	std::cout <<  "ldf coef = " << _ldf_coef << std::endl;
 	
 	std::cout << "part coef = " << _partition_ratio[_qp][_index] << std::endl;
+	std::cout << "part coef 2 = " << _part_rat << std::endl;
 	std::cout << "pellet dia = " << _pellet_diameter[_qp] << std::endl;
 	std::cout << "porosity = " << _porosity[_qp] << std::endl;
 	std::cout << "film mt = " << _film_transfer[_qp][_index] << std::endl;
@@ -113,6 +117,7 @@ Real MAGPIE_MaterialLDF_Adsorption::computeValue()
 	std::cout << "pore diff = " << _pore_diffusion[_qp][_index] << std::endl;
 	std::cout << "cry rad = " << _crystal_radius[_qp] << std::endl;
 	std::cout << "surf diff = " << _surface_diffusion[_qp][_index] << std::endl;
+	std::cout << "surf diff 2 = " << _surf_diff << std::endl;
 	
 	std::cout << std::endl;
 	
