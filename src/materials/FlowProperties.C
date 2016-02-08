@@ -82,7 +82,6 @@ _heat_retardation(declareProperty<Real>("heat_retardation")),
 _molecular_diffusion(declareProperty<std::vector<Real> >("molecular_diffusion")),
 _dispersion(declareProperty<std::vector<Real> >("dispersion")),
 _retardation(declareProperty<std::vector<Real> >("retardation")),
-_partition_ratio(declareProperty<std::vector<Real> >("partition_ratio")),
 _mixed_gas(declareProperty< MIXED_GAS >("mixed_gas_data")),
 _film_transfer(declareProperty<std::vector<Real> >("film_transfer")),
 _pore_diffusion(declareProperty<std::vector<Real> >("pore_diffusion")),
@@ -130,7 +129,6 @@ FlowProperties::computeQpProperties()
   	_molecular_diffusion[_qp].resize(_gas_conc.size());
   	_dispersion[_qp].resize(_gas_conc.size());
   	_retardation[_qp].resize(_gas_conc.size());
-	_partition_ratio[_qp].resize(_gas_conc.size());
 	_film_transfer[_qp].resize(_gas_conc.size());
 	_pore_diffusion[_qp].resize(_gas_conc.size());
 	
@@ -205,8 +203,6 @@ FlowProperties::computeQpProperties()
 	  
 		_retardation[_qp][i] = _porosity[_qp] + ((1-_porosity[_qp]) * _pellet_density[_qp] * ( ((*_solid_perturb[i])[_qp] - (*_solid_conc[i])[_qp]) / sqrt(DBL_EPSILON) ) );
 		
-		_partition_ratio[_qp][i] = (_pellet_density[_qp]*( ((*_solid_perturb[i])[_qp] - (*_solid_conc[i])[_qp]) / sqrt(DBL_EPSILON) ) );
-	  	  	  
 		if (_yi != 0.0)
 			_gas_viscosity[_qp] = _gas_viscosity[_qp] + (_mu_i / (1.0 + ( (113.65*_phi*_mu_i*_temperature[_qp])/(_yi*_molecular_weight[i]) ) * _sum_yi_over_Dij_prime) );
 		else

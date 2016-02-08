@@ -98,7 +98,6 @@ private:
 	MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< MaterialProperty for each species' molecular diffusion (cm^2/s)
 	MaterialProperty<std::vector<Real> > & _dispersion;			///< MaterialProperty for each species' dispersion coefficient (cm^2/hr)
 	MaterialProperty<std::vector<Real> > & _retardation;		///< MaterialProperty for each species' retardation coefficient
-	MaterialProperty<std::vector<Real> > & _partition_ratio;	///< MaterialProperty for each species' partition ratio
 	MaterialProperty< MIXED_GAS > & _mixed_gas;					///< MaterialProperty for the MIXED_GAS struct in egret.h
 	
 	MaterialProperty<std::vector<Real> > & _film_transfer;			///< MaterialProperty for the film mass transfer coeff (cm/hr)

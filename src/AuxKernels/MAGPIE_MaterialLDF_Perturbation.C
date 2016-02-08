@@ -48,7 +48,7 @@ _pellet_diameter(getMaterialProperty<Real>("pellet_diameter")),
 _porosity(getMaterialProperty<Real>("porosity")),
 _binder_porosity(getMaterialProperty<Real>("binder_porosity")),
 _crystal_radius(getMaterialProperty<Real>("crystal_radius")),
-_partition_ratio(getMaterialProperty<std::vector<Real> >("partition_ratio")),
+_pellet_density(getMaterialProperty<Real>("pellet_density")),
 _film_transfer(getMaterialProperty<std::vector<Real> >("film_transfer")),
 _pore_diffusion(getMaterialProperty<std::vector<Real> >("pore_diffusion")),
 _surface_diffusion(getMaterialProperty<std::vector<Real> >("surface_diffusion"))
@@ -97,19 +97,34 @@ Real MAGPIE_MaterialLDF_Perturbation::computeValue()
 		_driving_value = 0.0;
 	}
 	
-	Real _part_rat = 1.69 * 10.16 / 6.66E-5;
-	Real _surf_diff = 0.17468;
+	//Calculate the partition ratio
+	Real _part_rat = (1.0-_porosity[_qp])*_pellet_density[_qp] * q_p((magpie_copy.gpast_dat[_index].y * magpie_copy.sys_dat.PT), (void *)&magpie_copy, _index) * Rstd * magpie_copy.sys_dat.T;
+	
+	//Calculate each resistance
+	Real _kf_res, _Dp_res, _Ds_res;
+	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
+	{
+		_kf_res = (6.0*(1.0-_porosity[_qp])*_film_transfer[_qp][_index])/(_part_rat*_pellet_diameter[_qp]);
+		_Dp_res = (60.0*(1.0-_porosity[_qp])*_binder_porosity[_qp]*_pore_diffusion[_qp][_index])/(_part_rat*_pellet_diameter[_qp]*_pellet_diameter[_qp]);
+		_Ds_res = (15.0*_surface_diffusion[_qp][_index])/(_crystal_radius[_qp]*_crystal_radius[_qp]);
+	}
+	else
+	{
+		_ldf_coef = 0.0;
+		return Aux_LDF::computeValue();
+	}
+	
+	//Check for errors
+	if (std::isnan(_kf_res) || std::isinf(_kf_res))
+		_kf_res = sqrt(DBL_MAX);
+	if (std::isnan(_Dp_res))
+		_Dp_res = sqrt(DBL_MAX);
+	if (std::isnan(_Ds_res))
+		_Ds_res = sqrt(DBL_MAX);
+	
 	
 	//Calculate the LDF coefficient
-	_ldf_coef = ((_part_rat*_pellet_diameter[_qp])/(6.0*(1.0-_porosity[_qp])*_film_transfer[_qp][_index])) + ((_part_rat*_pellet_diameter[_qp]*_pellet_diameter[_qp])/(60.0*(1.0-_porosity[_qp])*_binder_porosity[_qp]*_pore_diffusion[_qp][_index]));
-	
-	if (_surface_diffusion[_qp][_index] > 0.0)
-		_ldf_coef = _ldf_coef + ((_crystal_radius[_qp]*_crystal_radius[_qp])/(15.0*_surf_diff));
-	
-	if (_ldf_coef <= 0.0)
-		_ldf_coef = sqrt(DBL_MAX);
-	else
-		_ldf_coef = 1.0/_ldf_coef;
+	_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))))/10.0;
 	
 	return Aux_LDF::computeValue();
 }

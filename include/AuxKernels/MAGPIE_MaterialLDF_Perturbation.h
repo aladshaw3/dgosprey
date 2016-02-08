@@ -83,8 +83,8 @@ private:
 	const MaterialProperty<Real> & _porosity;						///< Coupled material property for bed bulk porosity
 	const MaterialProperty<Real> & _binder_porosity;				///< MaterialProperty for the binder porosity
 	const MaterialProperty<Real> & _crystal_radius;					///< MaterialProperty for the crystal radius (um)
+	const MaterialProperty<Real > & _pellet_density;				///< MaterialProperty for the pellet density
 	
-	const MaterialProperty<std::vector<Real> > & _partition_ratio;	///< MaterialProperty for each species' partition ratio
 	const MaterialProperty<std::vector<Real> > & _film_transfer;	///< MaterialProperty for the film mass transfer coeff (cm/hr)
 	const MaterialProperty<std::vector<Real> > & _pore_diffusion;	///< MaterialProperty for the pore diffusion (cm^2/hr)
 	const MaterialProperty<std::vector<Real> > & _surface_diffusion;///< MaterialProperty for the surface diffusion (um^2/hr)
