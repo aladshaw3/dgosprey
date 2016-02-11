@@ -507,66 +507,66 @@
 		type = SideAverageValue
 		boundary = 'top'
 		variable = Kr
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./Xe_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = Xe
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./He_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = He
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./temp_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = column_temp
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./press_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = total_pressure
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
  	[./wall_temp]
  		type = SideAverageValue
  		boundary = 'right'
  		variable = wall_temp
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
  	[../]
 
 	[./Kr_solid]
 		type = ElementAverageValue
 		variable = Kr_Adsorbed
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./Kr_heat]
 		type = ElementAverageValue
 		variable = Kr_AdsorbedHeat
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./Xe_solid]
 		type = ElementAverageValue
 		variable = Xe_Adsorbed
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./Xe_heat]
 		type = ElementAverageValue
 		variable = Xe_AdsorbedHeat
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
  [] #END Postprocessors

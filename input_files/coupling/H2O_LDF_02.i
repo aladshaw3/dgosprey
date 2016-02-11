@@ -499,54 +499,54 @@
 		type = SideAverageValue
 		boundary = 'top'
 		variable = N2
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./O2_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = O2
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./H2O_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = H2O
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./temp_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = column_temp
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./press_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = total_pressure
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
  	[./wall_temp]
  		type = SideAverageValue
  		boundary = 'right'
  		variable = wall_temp
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
  	[../]
 
 	[./H2O_solid]
 		type = ElementAverageValue
 		variable = H2O_Adsorbed
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./H2O_heat]
 		type = ElementAverageValue
 		variable = H2O_AdsorbedHeat
-		execute_on = timestep_end
+		execute_on = 'initial timestep_end'
 	[../]
 
  [] #END Postprocessors
