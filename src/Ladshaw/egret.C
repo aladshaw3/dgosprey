@@ -133,7 +133,7 @@ int calculate_properties(MIXED_GAS *gas_dat)
 					muT_sum = muT_sum + (gas_dat->molefraction[j]/Dp_ij(gas_dat->binary_diffusion(i,j),gas_dat->total_pressure));
 				}
 			}
-			if (Dm_sum == 0.0)
+			if (Dm_sum == 0.0 || gas_dat->molefraction[i] >= 1.0)
 				gas_dat->species_dat[i].molecular_diffusion = gas_dat->binary_diffusion(i,i);
 			else
 				gas_dat->species_dat[i].molecular_diffusion = (1.0 - gas_dat->molefraction[i]) / Dm_sum;

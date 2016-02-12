@@ -117,10 +117,11 @@ FlowProperties::computeQpProperties()
 {
 	//Check to see if MIXED_GAS has been initialized
 	int success = 0;
+	int num_species = (int)_gas_conc.size();
 	_mixed_gas[_qp].CheckMolefractions = false;
-	if (_mixed_gas[_qp].N != _gas_conc.size())
+	if (_mixed_gas[_qp].N != num_species)
 	{
-		success = initialize_data(_gas_conc.size(),&_mixed_gas[_qp]);
+		success = initialize_data(_gas_conc.size(),&_mixed_gas[_qp]); ///< MOVE TO INITIALIZATION OPERATION
 	}
 	
 	
@@ -187,7 +188,7 @@ FlowProperties::computeQpProperties()
 		  
 		} //jth Loop
 	  
-		if (_sum_yj_over_Dij == 0.0)
+		if (_sum_yj_over_Dij == 0.0 || _yi >= 1.0)
 		{
 			_molecular_diffusion[_qp][i] = ( (4.0/std::pow(2.0,0.5))*std::pow((1.0/_molecular_weight[i])+(1.0/_molecular_weight[i]),0.5) );
 			_molecular_diffusion[_qp][i] = _molecular_diffusion[_qp][i] / std::pow(std::pow((_rho_i*_rho_i)/(1.385*1.385*_mu_i*_mu_i*_molecular_weight[i]),0.25)+std::pow((_rho_i*_rho_i)/(1.385*1.385*_mu_i*_mu_i*_molecular_weight[i]),0.25),2.0);
@@ -225,7 +226,6 @@ FlowProperties::computeQpProperties()
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
 		_film_transfer[_qp][i] = FilmMTCoeff(_mixed_gas[_qp].species_dat[i].molecular_diffusion,_pellet_diameter[_qp],_mixed_gas[_qp].Reynolds,_mixed_gas[_qp].species_dat[i].Schmidt) * 3600.0;
-		
 		_pore_diffusion[_qp][i] = Dp(_mixed_gas[_qp].species_dat[i].molecular_diffusion,_binder_porosity[_qp]);
 		_pore_diffusion[_qp][i] = avgDp(_pore_diffusion[_qp][i],Dk(_pore_size[_qp],_temperature[_qp],_mixed_gas[_qp].species_dat[i].molecular_weight)) * 3600.0;
 		

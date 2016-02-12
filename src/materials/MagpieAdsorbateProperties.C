@@ -105,7 +105,8 @@ MagpieAdsorbateProperties::computeQpProperties()
 {
 	
 	//Only setup working space if it has not yet been set up
-	if (_magpie_dat[_qp].sys_dat.N != _gas_conc.size())
+	int num_species = (int)_gas_conc.size();
+	if (_magpie_dat[_qp].sys_dat.N != num_species)   ///< MOVE TO INITIALIZATION OPERATION
 	{
 		_magpie_dat[_qp].sys_dat.N = _gas_conc.size();
 		_magpie_dat[_qp].gpast_dat.resize(_magpie_dat[_qp].sys_dat.N);
