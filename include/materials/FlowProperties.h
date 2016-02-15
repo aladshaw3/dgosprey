@@ -71,6 +71,8 @@ protected:
 	/** This function computes the material properties when they are needed by other MOOSE objects.*/
 	virtual void computeQpProperties();
 	
+	virtual void initQpStatefulProperties();
+	
 private:
 	std::vector<Real> _molecular_weight;							///< Molecular weights for each gas species (g/mol)
 	std::vector<Real> _comp_heat_capacity;							///< Heat capacities for each gas species (J/g/K)
@@ -99,6 +101,7 @@ private:
 	MaterialProperty<std::vector<Real> > & _dispersion;			///< MaterialProperty for each species' dispersion coefficient (cm^2/hr)
 	MaterialProperty<std::vector<Real> > & _retardation;		///< MaterialProperty for each species' retardation coefficient
 	MaterialProperty< MIXED_GAS > & _mixed_gas;					///< MaterialProperty for the MIXED_GAS struct in egret.h
+	MaterialProperty< MIXED_GAS > & _mixed_gas_old;					///< Old MaterialProperty for the MIXED_GAS struct in egret.h
 	
 	MaterialProperty<std::vector<Real> > & _film_transfer;			///< MaterialProperty for the film mass transfer coeff (cm/hr)
 	MaterialProperty<std::vector<Real> > & _pore_diffusion;			///< MaterialProperty for the pore diffusion (cm^2/hr)

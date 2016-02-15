@@ -83,6 +83,7 @@ _molecular_diffusion(declareProperty<std::vector<Real> >("molecular_diffusion"))
 _dispersion(declareProperty<std::vector<Real> >("dispersion")),
 _retardation(declareProperty<std::vector<Real> >("retardation")),
 _mixed_gas(declareProperty< MIXED_GAS >("mixed_gas_data")),
+_mixed_gas_old(declarePropertyOld< MIXED_GAS >("mixed_gas_data")),
 _film_transfer(declareProperty<std::vector<Real> >("film_transfer")),
 _pore_diffusion(declareProperty<std::vector<Real> >("pore_diffusion")),
 _temperature(coupledValue("temperature")),
@@ -112,26 +113,28 @@ _total_pressure(coupledValue("total_pressure"))
 	 */
 }
 
-void
-FlowProperties::computeQpProperties()
+void FlowProperties::initQpStatefulProperties()
 {
-	//Check to see if MIXED_GAS has been initialized
 	int success = 0;
 	int num_species = (int)_gas_conc.size();
 	_mixed_gas[_qp].CheckMolefractions = false;
-	if (_mixed_gas[_qp].N != num_species)
-	{
-		success = initialize_data(_gas_conc.size(),&_mixed_gas[_qp]); ///< MOVE TO INITIALIZATION OPERATION
-	}
+	success = initialize_data(_gas_conc.size(),&_mixed_gas[_qp]);
 	
-	
-  	_velocity[_qp] = _porosity[_qp] * (_flow_rate / (_porosity[_qp] * (M_PI/4.0) * _inner_dia[_qp] * _inner_dia[_qp]));
-		  
-  	_molecular_diffusion[_qp].resize(_gas_conc.size());
-  	_dispersion[_qp].resize(_gas_conc.size());
-  	_retardation[_qp].resize(_gas_conc.size());
+	_molecular_diffusion[_qp].resize(_gas_conc.size());
+	_dispersion[_qp].resize(_gas_conc.size());
+	_retardation[_qp].resize(_gas_conc.size());
 	_film_transfer[_qp].resize(_gas_conc.size());
 	_pore_diffusion[_qp].resize(_gas_conc.size());
+}
+
+void FlowProperties::computeQpProperties()
+{
+	//Check to see if MIXED_GAS has been initialized
+	int success = 0;
+
+	
+	_mixed_gas[_qp].CheckMolefractions = false;
+  	_velocity[_qp] = _porosity[_qp] * (_flow_rate / (_porosity[_qp] * (M_PI/4.0) * _inner_dia[_qp] * _inner_dia[_qp]));
 	
 	_gas_molecular_wieght[_qp] = 0.0;
 	_gas_viscosity[_qp] = 0.0;

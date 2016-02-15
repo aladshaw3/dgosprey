@@ -85,7 +85,8 @@ _entropy_4(getParam<std::vector<Real> >("entropy_site_4")),
 _entropy_5(getParam<std::vector<Real> >("entropy_site_5")),
 _entropy_6(getParam<std::vector<Real> >("entropy_site_6")),
 
-_magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data"))
+_magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data")),
+_magpie_dat_old(declarePropertyOld< MAGPIE_DATA >("magpie_data"))
 {
 	unsigned int n = coupledComponents("coupled_gases");
 	_index.resize(n);
@@ -100,94 +101,89 @@ _magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data"))
 	}
 }
 
-void
-MagpieAdsorbateProperties::computeQpProperties()
+void MagpieAdsorbateProperties::initQpStatefulProperties()
 {
-	
-	//Only setup working space if it has not yet been set up
-	int num_species = (int)_gas_conc.size();
-	if (_magpie_dat[_qp].sys_dat.N != num_species)   ///< MOVE TO INITIALIZATION OPERATION
+	_magpie_dat[_qp].sys_dat.N = _gas_conc.size();
+	_magpie_dat[_qp].gpast_dat.resize(_magpie_dat[_qp].sys_dat.N);
+	_magpie_dat[_qp].gsta_dat.resize(_magpie_dat[_qp].sys_dat.N);
+	_magpie_dat[_qp].mspd_dat.resize(_magpie_dat[_qp].sys_dat.N);
+		
+	for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
 	{
-		_magpie_dat[_qp].sys_dat.N = _gas_conc.size();
-		_magpie_dat[_qp].gpast_dat.resize(_magpie_dat[_qp].sys_dat.N);
-		_magpie_dat[_qp].gsta_dat.resize(_magpie_dat[_qp].sys_dat.N);
-		_magpie_dat[_qp].mspd_dat.resize(_magpie_dat[_qp].sys_dat.N);
-	
-		for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
+		_magpie_dat[_qp].mspd_dat[i].eta.resize(_magpie_dat[_qp].sys_dat.N);
+		_magpie_dat[_qp].gpast_dat[i].gama_inf.resize(_magpie_dat[_qp].sys_dat.N);
+		_magpie_dat[_qp].gpast_dat[i].po.resize(_magpie_dat[_qp].sys_dat.N);
+		_magpie_dat[_qp].gsta_dat[i].qmax = _max_capacity[i];
+			
+		//This species is adsorbable
+		if (_magpie_dat[_qp].gsta_dat[i].qmax > 0.0)
 		{
-			_magpie_dat[_qp].mspd_dat[i].eta.resize(_magpie_dat[_qp].sys_dat.N);
-			_magpie_dat[_qp].gpast_dat[i].gama_inf.resize(_magpie_dat[_qp].sys_dat.N);
-			_magpie_dat[_qp].gpast_dat[i].po.resize(_magpie_dat[_qp].sys_dat.N);
-			
-			_magpie_dat[_qp].gsta_dat[i].qmax = _max_capacity[i];
-			
-			//This species is adsorbable
-			if (_magpie_dat[_qp].gsta_dat[i].qmax > 0.0)
-			{
-				_magpie_dat[_qp].mspd_dat[i].v = _molar_volume[i];
-				_magpie_dat[_qp].gsta_dat[i].m = _num_sites[i];
-				if (_magpie_dat[_qp].gsta_dat[i].m < 1)
-					_magpie_dat[_qp].gsta_dat[i].m = 1;
-				if (_magpie_dat[_qp].gsta_dat[i].m > 6)
-					_magpie_dat[_qp].gsta_dat[i].m = 6;
-				_magpie_dat[_qp].gsta_dat[i].dHo.resize(_magpie_dat[_qp].gsta_dat[i].m);
-				_magpie_dat[_qp].gsta_dat[i].dSo.resize(_magpie_dat[_qp].gsta_dat[i].m);
-				for (int n=0; n<_magpie_dat[_qp].gsta_dat[i].m; n++)
-				{
-					if (n == 0)
-					{
-						_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_1[i];
-						_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_1[i];
-					}
-					else if (n == 1)
-					{
-						_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_2[i];
-						_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_2[i];
-					}
-					else if (n == 2)
-					{
-						_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_3[i];
-						_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_3[i];
-					}
-					else if (n == 3)
-					{
-						_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_4[i];
-						_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_4[i];
-					}
-					else if (n == 4)
-					{
-						_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_5[i];
-						_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_5[i];
-					}
-					else if (n == 5)
-					{
-						_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_6[i];
-						_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_6[i];
-					}
-					else
-					{
-						_magpie_dat[_qp].gsta_dat[i].dHo[n] = 0.0;
-						_magpie_dat[_qp].gsta_dat[i].dSo[n] = 0.0;
-					}
-				}
-			}
-			//This species will not adsorb
-			else
-			{
-				_magpie_dat[_qp].gsta_dat[i].qmax = 0.0;
-				_magpie_dat[_qp].mspd_dat[i].v = 0;
+			_magpie_dat[_qp].mspd_dat[i].v = _molar_volume[i];
+			_magpie_dat[_qp].gsta_dat[i].m = _num_sites[i];
+			if (_magpie_dat[_qp].gsta_dat[i].m < 1)
 				_magpie_dat[_qp].gsta_dat[i].m = 1;
-				_magpie_dat[_qp].gsta_dat[i].dHo.resize(_magpie_dat[_qp].gsta_dat[i].m);
-				_magpie_dat[_qp].gsta_dat[i].dSo.resize(_magpie_dat[_qp].gsta_dat[i].m);
-				for (int n=0; n<_magpie_dat[_qp].gsta_dat[i].m; n++)
+			if (_magpie_dat[_qp].gsta_dat[i].m > 6)
+				_magpie_dat[_qp].gsta_dat[i].m = 6;
+			_magpie_dat[_qp].gsta_dat[i].dHo.resize(_magpie_dat[_qp].gsta_dat[i].m);
+			_magpie_dat[_qp].gsta_dat[i].dSo.resize(_magpie_dat[_qp].gsta_dat[i].m);
+			for (int n=0; n<_magpie_dat[_qp].gsta_dat[i].m; n++)
+			{
+				if (n == 0)
+				{
+					_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_1[i];
+					_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_1[i];
+				}
+				else if (n == 1)
+				{
+					_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_2[i];
+					_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_2[i];
+				}
+				else if (n == 2)
+				{
+					_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_3[i];
+					_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_3[i];
+				}
+				else if (n == 3)
+				{
+					_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_4[i];
+					_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_4[i];
+				}
+				else if (n == 4)
+				{
+					_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_5[i];
+					_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_5[i];
+				}
+				else if (n == 5)
+				{
+					_magpie_dat[_qp].gsta_dat[i].dHo[n] = _enthalpy_6[i];
+					_magpie_dat[_qp].gsta_dat[i].dSo[n] = _entropy_6[i];
+				}
+				else
 				{
 					_magpie_dat[_qp].gsta_dat[i].dHo[n] = 0.0;
 					_magpie_dat[_qp].gsta_dat[i].dSo[n] = 0.0;
 				}
 			}
 		}
-	}// END if Not Initialized
-	
+		//This species will not adsorb
+		else
+		{
+			_magpie_dat[_qp].gsta_dat[i].qmax = 0.0;
+			_magpie_dat[_qp].mspd_dat[i].v = 0;
+			_magpie_dat[_qp].gsta_dat[i].m = 1;
+			_magpie_dat[_qp].gsta_dat[i].dHo.resize(_magpie_dat[_qp].gsta_dat[i].m);
+			_magpie_dat[_qp].gsta_dat[i].dSo.resize(_magpie_dat[_qp].gsta_dat[i].m);
+			for (int n=0; n<_magpie_dat[_qp].gsta_dat[i].m; n++)
+			{
+				_magpie_dat[_qp].gsta_dat[i].dHo[n] = 0.0;
+				_magpie_dat[_qp].gsta_dat[i].dSo[n] = 0.0;
+			}
+		}
+	}
+}
+
+void MagpieAdsorbateProperties::computeQpProperties()
+{
 	_magpie_dat[_qp].sys_dat.total_eval = 0;
 	_magpie_dat[_qp].sys_dat.avg_norm = 0;
 	_magpie_dat[_qp].sys_dat.max_norm = 0;

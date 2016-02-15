@@ -70,6 +70,8 @@ protected:
 	/** This function computes the material properties when they are needed by other MOOSE objects.*/
 	virtual void computeQpProperties();
 	
+	virtual void initQpStatefulProperties();
+	
 private:
 	
 	std::vector<unsigned int> _index;			///< Indices for the gas species in the system
@@ -101,6 +103,9 @@ private:
 		variable information such as adsorption capacities, mixed gas adsorption equilibria, and
 		heats of adsorption. */
 	MaterialProperty< MAGPIE_DATA > & _magpie_dat;
+	
+	/// Old MaterialProperty object to hold the MAGPIE_DATA structure and all relavent information
+	MaterialProperty< MAGPIE_DATA > & _magpie_dat_old;
 };
 
 #endif //MAGPIEADSORBATEPROPERTIES_H
