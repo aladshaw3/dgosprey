@@ -70,6 +70,10 @@ protected:
 	/** This function computes the material properties when they are needed by other MOOSE objects.*/
 	virtual void computeQpProperties();
 	
+	/// Required function override for Stateful Material objects in MOOSE
+	/** This function is needed because we have to properly initialize our custom objects without
+		having to reinitialize at each compute step. It takes more memory this way, but also prevents
+		segfault errors and helps the kernel run faster after initialization. */
 	virtual void initQpStatefulProperties();
 	
 private:
@@ -105,6 +109,8 @@ private:
 	MaterialProperty< MAGPIE_DATA > & _magpie_dat;
 	
 	/// Old MaterialProperty object to hold the MAGPIE_DATA structure and all relavent information
+	/** This object is required to be created in order to use the stateful properties, which is how
+		we intialize our custom objects in MOOSE correctly. */
 	MaterialProperty< MAGPIE_DATA > & _magpie_dat_old;
 };
 
