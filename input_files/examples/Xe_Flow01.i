@@ -469,7 +469,7 @@
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 		#type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		dt = 1e-6
 	[../]
 
  [] #END Executioner
