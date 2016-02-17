@@ -3,5 +3,6 @@
     type = Exodiff
     input = Kr_Xe_INL_02.i
     exodiff = Kr_Xe_INL_02_out.e
+	petsc_version = '=3.4'
   [../]
 []
