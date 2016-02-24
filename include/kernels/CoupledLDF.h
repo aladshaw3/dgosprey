@@ -78,7 +78,7 @@ protected:
 	virtual Real computeQpJacobian();
 	
 	Real _drive_coef;				///< Coefficient for relationship between coupled variables
-	VariableValue & _drive_var;		///< Reference to the coupled non-linear variable that is driving
+	const VariableValue & _drive_var;		///< Reference to the coupled non-linear variable that is driving
 	
 private:
 	

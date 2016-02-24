@@ -83,9 +83,9 @@ private:
 	MaterialProperty<Real> & _bed_wall_transfer_coeff;			///< MaterialProperty for bed-wall heat transfer coefficient
 	MaterialProperty<Real> & _wall_exterior_transfer_coeff;		///< MaterialProperty for exterior-wall heat transfer coefficient
 	
-	VariableValue & _temperature;					///< Reference to the coupled column temperature
+	const VariableValue & _temperature;					///< Reference to the coupled column temperature
 	std::vector<unsigned int> _index;				///< List of indices for the species in the system
-	std::vector<VariableValue *> _gas_conc;			///< Pointer list of the gas species concentrations 
+	std::vector<const VariableValue *> _gas_conc;			///< Pointer list of the gas species concentrations 
 
 };
 

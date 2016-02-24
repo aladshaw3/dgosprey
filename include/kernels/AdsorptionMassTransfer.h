@@ -70,8 +70,8 @@ protected:
 private:
 	const MaterialProperty<Real> & _porosity;			///< Reference to the bed bulk porosity material property
 	const MaterialProperty<Real> & _pellet_density;		///< Reference to the pellet density material property
-	VariableValue & _solid;								///< Pointer to coupled adsorption at the current time
-	VariableValue & _solid_old;							///< Pointer to coupled adsorption at the previous time
+	const VariableValue & _solid;								///< Pointer to coupled adsorption at the current time
+	const VariableValue & _solid_old;							///< Pointer to coupled adsorption at the previous time
 };
 
 #endif
