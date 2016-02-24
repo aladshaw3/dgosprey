@@ -76,7 +76,7 @@ protected:
 	bool _gaining;			///< Boolean to mark whether the driving force is gaining or losing (True = gaining)
 	Real _coef;				///< Coefficient for the strength or rate of the driving force
 	Real _driving_value;	///< Value the coupled variable is driving towards
-	VariableValue & _var;	///< Reference to the coupled non-linear variable 
+	const VariableValue & _var;	///< Reference to the coupled non-linear variable 
 
 private:
 

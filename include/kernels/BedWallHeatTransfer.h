@@ -74,7 +74,7 @@ private:
 	const MaterialProperty<Real> & _inner_dia;					///< Reference to the wall inner diameter material property
 	const MaterialProperty<Real> & _outer_dia;					///< Reference to the wall outer diameter material property
   
-	VariableValue & _column_temp;								///< Reference to the gas temperature coupled non-linear variable 
+	const VariableValue & _column_temp;								///< Reference to the gas temperature coupled non-linear variable 
   
 };
 #endif //BEDWALLHEATTRANSFER_H

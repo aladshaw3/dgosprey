@@ -71,8 +71,8 @@ protected:
 private:
 	const MaterialProperty<Real> & _porosity;			///< Reference to the bed bulk porosity material property
 	const MaterialProperty<Real> & _pellet_density;		///< Reference to the pellet density material property
-	std::vector<VariableValue *> _solid_heat;			///< Pointer list to the coupled heats of adsorption at the current time
-	std::vector<VariableValue *> _solid_heat_old;		///< Pointer list to the coupled heats of adsorption at the previous time
+	std::vector<const VariableValue *> _solid_heat;			///< Pointer list to the coupled heats of adsorption at the current time
+	std::vector<const VariableValue *> _solid_heat_old;		///< Pointer list to the coupled heats of adsorption at the previous time
 };
 
 #endif

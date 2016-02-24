@@ -110,12 +110,12 @@ private:
 	MaterialProperty<std::vector<Real> > & _film_transfer;			///< MaterialProperty for the film mass transfer coeff (cm/hr)
 	MaterialProperty<std::vector<Real> > & _pore_diffusion;			///< MaterialProperty for the pore diffusion (cm^2/hr)
   	
-  	VariableValue & _temperature;					///< Reference to the coupled column temperature
-	VariableValue & _total_pressure;				///< Reference to the coupled column pressure
+  	const VariableValue & _temperature;					///< Reference to the coupled column temperature
+	const VariableValue & _total_pressure;				///< Reference to the coupled column pressure
 	std::vector<unsigned int> _index;				///< Indices for the gas species in the system
-	std::vector<VariableValue *> _gas_conc;			///< Pointer list to the coupled gases
-	std::vector<VariableValue *> _solid_conc;		///< Pointer list to the coupled adsorption concentrations
-	std::vector<VariableValue *> _solid_perturb;	///< Pointer list to the coupled adsorption perturbations
+	std::vector<const VariableValue *> _gas_conc;			///< Pointer list to the coupled gases
+	std::vector<const VariableValue *> _solid_conc;		///< Pointer list to the coupled adsorption concentrations
+	std::vector<const VariableValue *> _solid_perturb;	///< Pointer list to the coupled adsorption perturbations
 	
 };
 

@@ -75,7 +75,7 @@ protected:
 private:
 	unsigned int _index;									///< Index of the gaseous species to calculate adsorbtion heat for
 	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;	///< Material Property holding the MAGPIE data structure
-	VariableValue & _solid_conc;							///< Reference to the adsorbed amount of the given species (AuxVariable)
+	const VariableValue & _solid_conc;							///< Reference to the adsorbed amount of the given species (AuxVariable)
 	
 };
 

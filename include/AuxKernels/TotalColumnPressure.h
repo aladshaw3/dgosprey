@@ -65,9 +65,9 @@ protected:
 	virtual Real computeValue();
 	
 private:
-	VariableValue & _temperature;					///< Reference to the temperature non-linear variable
+	const VariableValue & _temperature;					///< Reference to the temperature non-linear variable
 	std::vector<unsigned int> _index;				///< Indices of the gaseous species coupled to the object
-	std::vector<VariableValue *> _gas_conc;			///< Pointer list for the non-linear concentration variables
+	std::vector<const VariableValue *> _gas_conc;			///< Pointer list for the non-linear concentration variables
   
 };
 
