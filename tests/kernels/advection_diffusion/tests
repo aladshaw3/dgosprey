@@ -1,7 +1,0 @@
-[Tests]
-  [./test]
-    type = 'Exodiff'
-    input = 'advection_diffusion_test.i'
-    exodiff = 'advection_diffusion_test_out.e'
-  [../]
-[]
