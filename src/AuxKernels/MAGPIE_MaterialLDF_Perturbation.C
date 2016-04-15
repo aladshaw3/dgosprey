@@ -124,7 +124,10 @@ Real MAGPIE_MaterialLDF_Perturbation::computeValue()
 	
 	
 	//Calculate the LDF coefficient
-	_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))))/10.0;
+	if (_surface_diffusion[_qp][_index] == 0.0)
+		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res))))/10.0;
+	else
+		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))))/10.0;
 	
 	return Aux_LDF::computeValue();
 }

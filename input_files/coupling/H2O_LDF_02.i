@@ -568,7 +568,7 @@
 	solve_type = pjfnk
     line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 60.0
+	end_time = 80.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
