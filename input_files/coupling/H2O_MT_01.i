@@ -348,6 +348,7 @@
 		variable = N2_AdsorbedHeat
 		solid_conc = N2_Adsorbed
 		index = 0
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_adsorption_heat]
@@ -355,6 +356,7 @@
 		variable = O2_AdsorbedHeat
 		solid_conc = O2_Adsorbed
 		index = 1
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_adsorption_heat]
@@ -362,6 +364,7 @@
 		variable = H2O_AdsorbedHeat
 		solid_conc = H2O_Adsorbed
 		index = 2
+		execute_on = 'initial timestep_end'
 	[../]
 
  [] #END AuxKernels
@@ -561,7 +564,7 @@
  	l_max_its = 100
 
 	solve_type = pjfnk
-    line_search = bt    # Options: default shell none basic l2 bt cp
+    line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 60.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
@@ -571,7 +574,7 @@
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 		#type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		dt = 1e-4
 	[../]
 
  [] #END Executioner

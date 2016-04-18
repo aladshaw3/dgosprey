@@ -53,7 +53,7 @@ _solid_old(coupledValueOld("solid_conc"))
 
 Real AdsorptionMassTransfer::computeQpResidual()
 {
-	return -(1.0-_porosity[_qp])*_pellet_density[_qp]*((_solid[_qp]-_solid_old[_qp])/_dt)*_test[_i][_qp];
+	return -(1.0-_porosity[_qp])*_pellet_density[_qp]*((_solid[_qp]-_solid_old[_qp])/(_dt))*_test[_i][_qp];
 }
 
 Real AdsorptionMassTransfer::computeQpJacobian()

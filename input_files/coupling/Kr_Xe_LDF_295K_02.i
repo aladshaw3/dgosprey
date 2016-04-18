@@ -41,13 +41,13 @@
  	[./wall_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 253.15
+ 		initial_condition = 295.15
  	[../]
 
 	[./column_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 253.15
+ 		initial_condition = 295.15
 	[../]
 
  [] #END Variables
@@ -63,7 +63,7 @@
  	[./ambient_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 253.15
+ 		initial_condition = 295.15
  	[../]
 
 	[./He_Adsorbed]
@@ -129,7 +129,7 @@
 		variable = Kr
 		initial_mole_frac = 0.0
 		initial_press = 101.35
-		initial_temp = 253.15
+		initial_temp = 295.15
 	[../]
 
 	[./Xe_IC]
@@ -137,7 +137,7 @@
 		variable = Xe
 		initial_mole_frac = 0.0
  		initial_press = 101.35
- 		initial_temp = 253.15
+ 		initial_temp = 295.15
 	[../]
 
 	[./He_IC]
@@ -145,7 +145,7 @@
 		variable = He
 		initial_mole_frac = 1.0
  		initial_press = 101.35
- 		initial_temp = 253.15
+ 		initial_temp = 295.15
 	[../]
 
  [] #END ICs
@@ -157,6 +157,12 @@
  		variable = Kr
 		index = 0
  	[../]
+ 
+	[./Kr_MT]
+		type = AdsorptionMassTransfer
+		variable = Kr
+		solid_conc = Kr_Adsorbed
+	[../]
 
 	[./diffKr]
 		type = GColumnMassDispersion
@@ -174,6 +180,12 @@
  		variable = Xe
 		index = 1
  	[../]
+ 
+	[./Xe_MT]
+		type = AdsorptionMassTransfer
+		variable = Xe
+		solid_conc = Xe_Adsorbed
+	[../]
 
 	[./diffXe]
 		type = GColumnMassDispersion
@@ -296,42 +308,42 @@
 	[../]
 
 	[./krypton_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = Kr_Adsorbed
 		index = 0
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = Xe_Adsorbed
 		index = 1
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = He_Adsorbed
 		index = 2
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./krypton_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = Kr_Perturb
 		index = 0
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = Xe_Perturb
 		index = 1
 		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = He_Perturb
 		index = 2
 		execute_on = 'initial timestep_end'
@@ -369,9 +381,9 @@
 		type = DGMassFluxLimitedBC
  		variable = Kr
  		boundary = 'top bottom'
- 		input_temperature = 253.15
+ 		input_temperature = 295.15
  		input_pressure = 101.35
- 		input_molefraction = 0.000131792
+ 		input_molefraction = 0.000153814
  		index = 0
  	[../]
 
@@ -379,9 +391,9 @@
 		type = DGMassFluxLimitedBC
  		variable = Xe
  		boundary = 'top bottom'
- 		input_temperature = 253.15
+ 		input_temperature = 295.15
  		input_pressure = 101.35
- 		input_molefraction = 0.000863107
+ 		input_molefraction = 0.001007334
  		index = 1
  	[../]
 
@@ -389,9 +401,9 @@
 		type = DGMassFluxLimitedBC
  		variable = He
  		boundary = 'top bottom'
- 		input_temperature = 253.15
+ 		input_temperature = 295.15
  		input_pressure = 101.35
- 		input_molefraction = 0.999005101
+ 		input_molefraction = 0.998838852
  		index = 2
  	[../]
 
@@ -399,7 +411,7 @@
  		type = DGHeatFluxLimitedBC
  		variable = column_temp
  		boundary = 'top bottom'
- 		input_temperature = 253.15
+ 		input_temperature = 295.15
  	[../]
  
 	[./Heat_Wall_Flux]
@@ -456,6 +468,10 @@
 		macropore_radius = 3.5e-6			#not Known
 		pellet_density = 1.69				#not Known
 		pellet_heat_capacity = 1.045		#not known
+		ref_diffusion = '0 0 0'				#not known
+		activation_energy = '0 0 0'			#not known
+		ref_temperature = '0 0 0'			#not known
+		affinity = '0 0 0'					#not known
 		temperature = column_temp
 		coupled_gases = 'Kr Xe He'
 	[../]
@@ -570,9 +586,9 @@
  	l_max_its = 100
 
 	solve_type = pjfnk
-    line_search = none    # Options: default shell none basic l2 bt cp
+    line_search = l2    # Options: default shell none basic l2 bt cp (USE l2 or none)
 	start_time = 0.0
-	end_time = 50.0
+	end_time = 10.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
@@ -580,7 +596,7 @@
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 		#type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 1e-4
+		dt = 0.01
 	[../]
 
  [] #END Executioner

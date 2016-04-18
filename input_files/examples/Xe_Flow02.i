@@ -459,7 +459,7 @@
  	l_max_its = 100
 
 	solve_type = pjfnk
-    line_search = bt    # Options: default shell none basic l2 bt cp
+    line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 50.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
@@ -469,7 +469,7 @@
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 		#type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 1e-6
+		dt = 0.01
 	[../]
 
  [] #END Executioner

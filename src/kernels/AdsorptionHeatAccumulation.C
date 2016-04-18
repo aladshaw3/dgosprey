@@ -63,7 +63,7 @@ Real AdsorptionHeatAccumulation::computeQpResidual()
 	
 	for (unsigned int i=0; i<_solid_heat.size(); i++)
 	{
-		sum = sum + (((*_solid_heat[i])[_qp]-(*_solid_heat_old[i])[_qp])/_dt);
+		sum = sum + (((*_solid_heat[i])[_qp]-(*_solid_heat_old[i])[_qp])/(_dt));
 	}
 	return (1.0-_porosity[_qp])*_pellet_density[_qp]*(1.0/1000.0)*sum*_test[_i][_qp];
 }
