@@ -15,7 +15,7 @@
 	nx = 10
  	ny = 40
  	xmin = 0.0
-	xmax = 2.54 #cm
+	xmax = 1.27 #cm
  	ymin = 0.0
 	ymax = 12.7 #cm
 
@@ -191,6 +191,12 @@
  		variable = H2O
  		index = 2
  	[../]
+ 
+	[./H2O_MT]
+		type = AdsorptionMassTransfer
+		variable = H2O
+		solid_conc = H2O_Adsorbed
+	[../]
 
 	[./diffH2O]
 		type = GColumnMassDispersion
@@ -556,8 +562,9 @@
  	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
  	l_max_its = 100
+	nl_max_its = 10
 
-	solve_type = pjfnk
+	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 60.0
@@ -566,9 +573,9 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 1e-4
+		#type = SolutionTimeAdaptiveDT
+		type = ConstantDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner

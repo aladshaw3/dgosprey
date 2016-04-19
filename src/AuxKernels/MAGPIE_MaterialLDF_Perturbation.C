@@ -104,9 +104,9 @@ Real MAGPIE_MaterialLDF_Perturbation::computeValue()
 	Real _kf_res, _Dp_res, _Ds_res;
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
 	{
-		_kf_res = (6.0*(1.0-_porosity[_qp])*_film_transfer[_qp][_index])/(_part_rat*_pellet_diameter[_qp]);
-		_Dp_res = (60.0*(1.0-_porosity[_qp])*_binder_porosity[_qp]*_pore_diffusion[_qp][_index])/(_part_rat*_pellet_diameter[_qp]*_pellet_diameter[_qp]);
-		_Ds_res = (15.0*_surface_diffusion[_qp][_index])/(_crystal_radius[_qp]*_crystal_radius[_qp]);
+		_kf_res = (6.0*(1.0-_porosity[_qp])*_film_transfer[_qp][_index])/(_part_rat*_pellet_diameter[_qp])/25.0;
+		_Dp_res = (60.0*(1.0-_porosity[_qp])*_binder_porosity[_qp]*_pore_diffusion[_qp][_index])/(_part_rat*_pellet_diameter[_qp]*_pellet_diameter[_qp])/25.0;
+		_Ds_res = (15.0*_surface_diffusion[_qp][_index])/(_crystal_radius[_qp]*_crystal_radius[_qp])/25.0;
 	}
 	else
 	{
@@ -125,9 +125,9 @@ Real MAGPIE_MaterialLDF_Perturbation::computeValue()
 	
 	//Calculate the LDF coefficient
 	if (_surface_diffusion[_qp][_index] == 0.0)
-		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res))))/10.0;
+		_ldf_coef = 2.0*(_kf_res + (1.0/((1.0/_Dp_res))));
 	else
-		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))))/10.0;
+		_ldf_coef = 2.0*(_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))));
 	
 	return Aux_LDF::computeValue();
 }

@@ -317,6 +317,8 @@
 
 	[./water_adsorption]
 		type = MAGPIE_MaterialLDF_Adsorption
+#type = MAGPIE_ConstLDF_Adsorption
+#ldf_coeff = 100
 		variable = H2O_Adsorbed
 		index = 2
 		execute_on = 'initial timestep_end'
@@ -338,6 +340,8 @@
 
 	[./water_perturbation]
 		type = MAGPIE_MaterialLDF_Perturbation
+#type = MAGPIE_ConstLDF_Perturbation
+#ldf_coeff = 100
 		variable = H2O_Perturb
 		index = 2
 		execute_on = 'initial timestep_end'
@@ -568,18 +572,18 @@
  	l_tol = 1e-6
  	l_max_its = 100
 
-	solve_type = pjfnk
+	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 80.0
+	end_time = 60.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 1e-8
+		type = ConstantDT
+#type = SolutionTimeAdaptiveDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner

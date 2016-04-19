@@ -157,6 +157,12 @@
  		variable = Kr
 		index = 0
  	[../]
+ 
+	[./Kr_MT]
+		type = AdsorptionMassTransfer
+		variable = Kr
+		solid_conc = Kr_Adsorbed
+	[../]
 
 	[./diffKr]
 		type = GColumnMassDispersion
@@ -174,6 +180,12 @@
  		variable = Xe
 		index = 1
  	[../]
+ 
+	[./Xe_MT]
+		type = AdsorptionMassTransfer
+		variable = Xe
+		solid_conc = Xe_Adsorbed
+	[../]
 
 	[./diffXe]
 		type = GColumnMassDispersion
@@ -569,7 +581,7 @@
  	l_tol = 1e-6
  	l_max_its = 100
 
-	solve_type = pjfnk
+	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 10.0
@@ -578,9 +590,9 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-#		type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 1e-6
+		type = ConstantDT
+#type = SolutionTimeAdaptiveDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner
