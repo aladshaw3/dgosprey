@@ -158,6 +158,12 @@
 		index = 0
  	[../]
 
+	[./Kr_MT]
+		type = AdsorptionMassTransfer
+		variable = Kr
+		solid_conc = Kr_Adsorbed
+	[../]
+ 
 	[./diffKr]
 		type = GColumnMassDispersion
 		variable = Kr
@@ -174,6 +180,12 @@
  		variable = Xe
 		index = 1
  	[../]
+ 
+	[./Xe_MT]
+		type = AdsorptionMassTransfer
+		variable = Xe
+		solid_conc = Xe_Adsorbed
+	[../]
 
 	[./diffXe]
 		type = GColumnMassDispersion
@@ -342,6 +354,7 @@
 		variable = Kr_AdsorbedHeat
 		solid_conc = Kr_Adsorbed
 		index = 0
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_adsorption_heat]
@@ -349,6 +362,7 @@
 		variable = Xe_AdsorbedHeat
 		solid_conc = Xe_Adsorbed
 		index = 1
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_adsorption_heat]
@@ -356,6 +370,7 @@
 		variable = He_AdsorbedHeat
 		solid_conc = He_Adsorbed
 		index = 2
+		execute_on = 'initial timestep_end'
 	[../]
 
  [] #END AuxKernels
@@ -566,8 +581,8 @@
  	l_tol = 1e-6
  	l_max_its = 100
 
-	solve_type = pjfnk
-    line_search = bt    # Options: default shell none basic l2 bt cp
+	solve_type = newton
+    line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 50.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
@@ -575,9 +590,9 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 1e-6
+		type = ConstantDT
+#type = SolutionTimeAdaptiveDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner

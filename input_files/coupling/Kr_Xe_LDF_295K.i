@@ -575,7 +575,7 @@
 [Executioner]
 
  	type = Transient
-scheme = implicit-euler
+	scheme = implicit-euler
 #scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
@@ -587,7 +587,7 @@ scheme = implicit-euler
  	l_max_its = 100
 
 #solve_type = linear
-solve_type = pjfnk
+solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 10.0
@@ -596,9 +596,9 @@ solve_type = pjfnk
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		type = ConstantDT
+#type = SolutionTimeAdaptiveDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner

@@ -585,8 +585,8 @@
  	l_tol = 1e-6
  	l_max_its = 100
 
-	solve_type = pjfnk
-    line_search = cp    # Options: default none basic l2 bt cp (USE bt, l2, cp, or none)
+	solve_type = newton
+    line_search = none    # Options: default none basic l2 bt cp (USE bt, l2, cp, or none)
 	start_time = 0.0
 	end_time = 50.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
@@ -594,9 +594,9 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		type = ConstantDT
+#type = SolutionTimeAdaptiveDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner

@@ -126,6 +126,12 @@
  		variable = Xe
 		index = 0
  	[../]
+ 
+	[./Xe_MT]
+		type = AdsorptionMassTransfer
+		variable = Xe
+		solid_conc = Xe_Adsorbed
+	[../]
 
 	[./diffXe]
 		type = GColumnMassDispersion
@@ -269,6 +275,7 @@
 		variable = Xe_AdsorbedHeat
 		solid_conc = Xe_Adsorbed
 		index = 0
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_adsorption_heat]
@@ -276,6 +283,7 @@
 		variable = He_AdsorbedHeat
 		solid_conc = He_Adsorbed
 		index = 1
+		execute_on = 'initial timestep_end'
 	[../]
 
  [] #END AuxKernels
@@ -447,8 +455,7 @@
 [Executioner]
 
  	type = Transient
-	#scheme = implicit-euler
-	scheme = bdf2
+	scheme = implicit-euler
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
@@ -458,7 +465,7 @@
  	l_tol = 1e-6
  	l_max_its = 100
 
-	solve_type = pjfnk
+	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 50.0
@@ -467,9 +474,9 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		type = ConstantDT
+#type = SolutionTimeAdaptiveDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner

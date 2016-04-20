@@ -118,21 +118,19 @@ Real MAGPIE_MaterialLDF_Adsorption::computeValue()
 	
 	//Calculate the LDF coefficient
 	if (_surface_diffusion[_qp][_index] == 0.0)
-		_ldf_coef = 2.0*(_kf_res + (1.0/((1.0/_Dp_res))));
+		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res))));
 	else
-		_ldf_coef = 2.0*(_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))));
+		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))));
 	
 	/*
 	std::cout << _index << std::endl;
 	std::cout <<  "ldf coef = " << _ldf_coef << std::endl;
-	
 	std::cout << "Kf res = " << _kf_res << std::endl;
 	std::cout << "Dp res = " << _Dp_res << std::endl;
 	std::cout << "Ds res = " << _Ds_res << std::endl;
 	std::cout << "Ds act = " << _surface_diffusion[_qp][_index] << std::endl;
-	
 	std::cout << std::endl;
 	 */
-	 
+	
 	return Aux_LDF::computeValue();
 }
