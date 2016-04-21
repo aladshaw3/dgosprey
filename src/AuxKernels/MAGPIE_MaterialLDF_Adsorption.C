@@ -53,6 +53,10 @@ _film_transfer(getMaterialProperty<std::vector<Real> >("film_transfer")),
 _pore_diffusion(getMaterialProperty<std::vector<Real> >("pore_diffusion")),
 _surface_diffusion(getMaterialProperty<std::vector<Real> >("surface_diffusion"))
 {
+	//Forces specific execution behavior of the auxkernel
+	_exec_flags.clear();
+	_exec_flags.push_back(EXEC_INITIAL);
+	_exec_flags.push_back(EXEC_TIMESTEP_END);
 }
 
 Real MAGPIE_MaterialLDF_Adsorption::computeValue()
@@ -118,9 +122,13 @@ Real MAGPIE_MaterialLDF_Adsorption::computeValue()
 	
 	//Calculate the LDF coefficient
 	if (_surface_diffusion[_qp][_index] == 0.0)
+	{
 		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res))));
+	}
 	else
+	{
 		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))));
+	}
 	
 	/*
 	std::cout << _index << std::endl;

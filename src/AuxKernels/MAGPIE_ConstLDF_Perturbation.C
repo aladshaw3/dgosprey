@@ -45,6 +45,10 @@ Aux_LDF(parameters),
 _index(getParam<unsigned int>("index")),
 _magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data"))
 {
+	//Forces specific execution behavior of the auxkernel
+	_exec_flags.clear();
+	_exec_flags.push_back(EXEC_INITIAL);
+	_exec_flags.push_back(EXEC_TIMESTEP_END);
 }
 
 Real MAGPIE_ConstLDF_Perturbation::computeValue()
