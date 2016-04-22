@@ -299,42 +299,36 @@
 		type = MAGPIE_Adsorption
 		variable = Kr_Adsorbed
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_adsorption]
 		type = MAGPIE_Adsorption
 		variable = Xe_Adsorbed
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_adsorption]
 		type = MAGPIE_Adsorption
 		variable = He_Adsorbed
 		index = 2
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./krypton_perturbation]
 		type = MAGPIE_Perturbation
 		variable = Kr_Perturb
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_perturbation]
 		type = MAGPIE_Perturbation
 		variable = Xe_Perturb
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_perturbation]
 		type = MAGPIE_Perturbation
 		variable = He_Perturb
 		index = 2
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./krypton_adsorption_heat]

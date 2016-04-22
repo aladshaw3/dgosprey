@@ -304,42 +304,36 @@
 		type = MAGPIE_Adsorption
 		variable = N2_Adsorbed
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_adsorption]
 		type = MAGPIE_Adsorption
 		variable = O2_Adsorbed
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_adsorption]
 		type = MAGPIE_Adsorption
 		variable = H2O_Adsorbed
 		index = 2
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./nitrogen_perturbation]
 		type = MAGPIE_Perturbation
 		variable = N2_Perturb
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_perturbation]
 		type = MAGPIE_Perturbation
 		variable = O2_Perturb
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_perturbation]
 		type = MAGPIE_Perturbation
 		variable = H2O_Perturb
 		index = 2
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./nitrogen_adsorption_heat]

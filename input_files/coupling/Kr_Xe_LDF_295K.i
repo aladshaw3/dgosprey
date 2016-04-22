@@ -308,9 +308,7 @@
 	[../]
 
 	[./krypton_adsorption]
-#type = MAGPIE_MaterialLDF_Adsorption
-type = MAGPIE_ConstLDF_Adsorption
-ldf_coeff = 1.0
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = Kr_Adsorbed
 		index = 0
 	[../]
@@ -328,9 +326,7 @@ ldf_coeff = 1.0
 	[../]
 
 	[./krypton_perturbation]
-#type = MAGPIE_MaterialLDF_Perturbation
-type = MAGPIE_ConstLDF_Perturbation
-ldf_coeff = 1.0
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = Kr_Perturb
 		index = 0
 	[../]
@@ -579,6 +575,7 @@ ldf_coeff = 1.0
  	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
  	l_max_its = 100
+	nl_max_its = 10
 
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
@@ -590,9 +587,9 @@ ldf_coeff = 1.0
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-#type = ConstantDT
+		#type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 0.0001
+		dt = 0.1
 	[../]
 
  [] #END Executioner

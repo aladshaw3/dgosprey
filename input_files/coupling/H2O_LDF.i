@@ -557,6 +557,7 @@
  	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
  	l_max_its = 100
+	nl_max_its = 10
 
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
@@ -568,9 +569,9 @@
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
-		type = ConstantDT
-#type = SolutionTimeAdaptiveDT
-		dt = 0.1
+		#type = ConstantDT
+		type = SolutionTimeAdaptiveDT
+		dt = 0.01
 	[../]
 
  [] #END Executioner

@@ -64,9 +64,6 @@ Real Aux_LDF::computeValue()
 	}
 	else
 	{
-		if ((_ldf_coef*_dt) > 20.0)
-			return _driving_value;
-		else
-			return (_u[_qp] + (_dt*_ldf_coef*_driving_value))/(1.0 + (_dt*_ldf_coef));
+		return (_u[_qp] + (_dt*_ldf_coef*_driving_value))/(1.0 + (_dt*_ldf_coef));
 	}
 }

@@ -305,42 +305,36 @@
 		type = MAGPIE_Adsorption
 		variable = N2_Adsorbed
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_adsorption]
 		type = MAGPIE_Adsorption
 		variable = O2_Adsorbed
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_adsorption]
 		type = MAGPIE_Adsorption
 		variable = H2O_Adsorbed
 		index = 2
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./nitrogen_perturbation]
 		type = MAGPIE_Perturbation
 		variable = N2_Perturb
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_perturbation]
 		type = MAGPIE_Perturbation
 		variable = O2_Perturb
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_perturbation]
 		type = MAGPIE_Perturbation
 		variable = H2O_Perturb
 		index = 2
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./nitrogen_adsorption_heat]
@@ -348,7 +342,6 @@
 		variable = N2_AdsorbedHeat
 		solid_conc = N2_Adsorbed
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./oxygen_adsorption_heat]
@@ -356,7 +349,6 @@
 		variable = O2_AdsorbedHeat
 		solid_conc = O2_Adsorbed
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./water_adsorption_heat]
@@ -364,7 +356,6 @@
 		variable = H2O_AdsorbedHeat
 		solid_conc = H2O_Adsorbed
 		index = 2
-		execute_on = 'initial timestep_end'
 	[../]
 
  [] #END AuxKernels
@@ -568,14 +559,15 @@
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 60.0
+	dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = SolutionTimeAdaptiveDT
-		type = ConstantDT
-		dt = 0.1
+		type = SolutionTimeAdaptiveDT
+		#type = ConstantDT
+		dt = 0.001
 	[../]
 
  [] #END Executioner
