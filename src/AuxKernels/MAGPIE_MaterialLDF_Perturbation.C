@@ -115,9 +115,9 @@ Real MAGPIE_MaterialLDF_Perturbation::computeValue()
 		_Dp_res = (60.0*(1.0-_porosity[_qp])*_binder_porosity[_qp]*_pore_diffusion[_qp][_index])/(_part_rat*_pellet_diameter[_qp]*_pellet_diameter[_qp])/25.0;
 		_Ds_res = (15.0*_surface_diffusion[_qp][_index])/(_crystal_radius[_qp]*_crystal_radius[_qp])/25.0;
 		//Hard limits on physically relevant constants
-		if (_kf_res > 0.33) _kf_res = 0.33;
-		if (_Dp_res > 0.33) _Dp_res = 0.33;
-		if (_Ds_res > 0.33) _Ds_res = 0.33;
+		//if (_kf_res > 0.33) _kf_res = 0.33;
+		//if (_Dp_res > 0.33) _Dp_res = 0.33;
+		//if (_Ds_res > 0.33) _Ds_res = 0.33;
 	}
 	else
 	{

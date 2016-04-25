@@ -246,28 +246,24 @@
 		type = MAGPIE_Adsorption
 		variable = Xe_Adsorbed
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_adsorption]
 		type = MAGPIE_Adsorption
 		variable = He_Adsorbed
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_perturbation]
 		type = MAGPIE_Perturbation
 		variable = Xe_Perturb
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_perturbation]
 		type = MAGPIE_Perturbation
 		variable = He_Perturb
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./xenon_adsorption_heat]
@@ -275,7 +271,6 @@
 		variable = Xe_AdsorbedHeat
 		solid_conc = Xe_Adsorbed
 		index = 0
-		execute_on = 'initial timestep_end'
 	[../]
 
 	[./helium_adsorption_heat]
@@ -283,7 +278,6 @@
 		variable = He_AdsorbedHeat
 		solid_conc = He_Adsorbed
 		index = 1
-		execute_on = 'initial timestep_end'
 	[../]
 
  [] #END AuxKernels
@@ -456,7 +450,6 @@
 
  	type = Transient
 	scheme = implicit-euler
-#scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
@@ -465,18 +458,20 @@
  	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
  	l_max_its = 100
+	nl_max_its = 10
 
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 50.0
+	dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 		type = ConstantDT
-#type = SolutionTimeAdaptiveDT
+		#type = SolutionTimeAdaptiveDT
 		dt = 0.1
 	[../]
 

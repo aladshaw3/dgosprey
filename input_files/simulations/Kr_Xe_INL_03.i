@@ -577,6 +577,7 @@
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 10.0
+	dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
@@ -584,7 +585,7 @@
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 		#type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 0.0001
+		dt = 0.000001
 	[../]
 
  [] #END Executioner
