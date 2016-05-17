@@ -108,10 +108,6 @@ Real MAGPIE_MaterialLDF_Adsorption::computeValue()
 		_kf_res = (6.0*(1.0-_porosity[_qp])*_film_transfer[_qp][_index])/(_part_rat*_pellet_diameter[_qp])/25.0;
 		_Dp_res = (60.0*(1.0-_porosity[_qp])*_binder_porosity[_qp]*_pore_diffusion[_qp][_index])/(_part_rat*_pellet_diameter[_qp]*_pellet_diameter[_qp])/25.0;
 		_Ds_res = (15.0*_surface_diffusion[_qp][_index])/(_crystal_radius[_qp]*_crystal_radius[_qp])/25.0;
-		//Hard limits on physically relevant constants
-		//if (_kf_res > 0.33) _kf_res = 0.33;
-		//if (_Dp_res > 0.33) _Dp_res = 0.33;
-		//if (_Ds_res > 0.33) _Ds_res = 0.33;
 	}
 	else
 	{
@@ -136,16 +132,6 @@ Real MAGPIE_MaterialLDF_Adsorption::computeValue()
 	{
 		_ldf_coef = (_kf_res + (1.0/((1.0/_Dp_res)+(1.0/_Ds_res))));
 	}
-	
-	/*
-	std::cout << _index << std::endl;
-	std::cout <<  "ldf coef = " << _ldf_coef << std::endl;
-	std::cout << "Kf res = " << _kf_res << std::endl;
-	std::cout << "Dp res = " << _Dp_res << std::endl;
-	std::cout << "Ds res = " << _Ds_res << std::endl;
-	std::cout << "Ds act = " << _surface_diffusion[_qp][_index] << std::endl;
-	std::cout << std::endl;
-	*/
 	 
 	return Aux_LDF::computeValue();
 }

@@ -569,9 +569,9 @@
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		type = ConstantDT
+		#type = SolutionTimeAdaptiveDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner
