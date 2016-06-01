@@ -86,6 +86,8 @@
 #include "MAGPIE_MaterialLDF_Adsorption.h"
 #include "MAGPIE_MaterialLDF_Perturbation.h"
 
+#include "ScopsowlProperties.h"
+
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -128,6 +130,8 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerMaterial(AdsorbentProperties);
 	registerMaterial(FlowProperties);
 	registerMaterial(MagpieAdsorbateProperties);
+	registerMaterial(ScopsowlProperties);
+	
 	registerKernel(BedMassAccumulation);
 	registerKernel(BedWallHeatTransfer);
 	registerKernel(WallAmbientHeatTransfer);

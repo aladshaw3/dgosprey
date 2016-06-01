@@ -39,9 +39,9 @@ InputParameters validParams<AdsorbentProperties>()
 {
   InputParameters params = validParams<Material>();
   
-	params.addParam<Real>("binder_fraction","Binder fraction of the adsorbent pellet");
+	params.addParam<Real>("binder_fraction",1.0,"Binder fraction of the adsorbent pellet");
 	params.addParam<Real>("binder_porosity","Porosity of the binder material in the adsorbent pellet");
-	params.addParam<Real>("crystal_radius","Radius of the adsorbent crystals in the binder matrix (um)");
+	params.addParam<Real>("crystal_radius",1.0,"Radius of the adsorbent crystals in the binder matrix (um)");
 	params.addParam<Real>("pellet_diameter","Diameter of the adsorbent pellet (cm)");
 	params.addParam<Real>("macropore_radius","Nominal pore size of the macropores in the binder material (cm)");
 	params.addParam<Real>("pellet_density","Density of the adsorbent pellet (g/cm^3)");
