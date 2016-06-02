@@ -59,6 +59,7 @@ MicroSpheres(getParam<bool>("micro_spheres")),
 MacroLength(getParam<Real>("macro_length")),
 MicroLength(getParam<Real>("micro_length")),
 _magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data")),
+_coupled_gas(getMaterialProperty< MIXED_GAS >("mixed_gas_data")),
 _velocity(getMaterialProperty<Real>("velocity")),
 _pellet_diameter(getMaterialProperty<Real>("pellet_diameter")),
 _pellet_density(getMaterialProperty<Real>("pellet_density")),
@@ -66,6 +67,10 @@ _binder_porosity(getMaterialProperty<Real>("binder_porosity")),
 _pore_size(getMaterialProperty<Real>("pore_size")),
 _crystal_radius(getMaterialProperty<Real>("crystal_radius")),
 _binder_ratio(getMaterialProperty<Real>("binder_ratio")),
+_ref_diffusion(getMaterialProperty<std::vector<Real> >("ref_diffusion")),
+_activation_energy(getMaterialProperty<std::vector<Real> >("activation_energy")),
+_ref_temperature(getMaterialProperty<std::vector<Real> >("ref_temperature")),
+_affinity_coeff(getMaterialProperty<std::vector<Real> >("affinity_coeff")),
 _owl_dat(declareProperty< SCOPSOWL_DATA >("owl_data")),
 _owl_dat_old(declarePropertyOld< SCOPSOWL_DATA >("owl_data")),
 _gas_dat(declareProperty< MIXED_GAS >("gas_data")),
@@ -95,6 +100,7 @@ void ScopsowlProperties::initQpStatefulProperties()
 			_owl_dat[_qp].param_dat[i].Adsorbable = false;
 		else
 			_owl_dat[_qp].param_dat[i].Adsorbable = true;
+		
 	}
 	
 	int success = 0;
@@ -127,10 +133,23 @@ void ScopsowlProperties::initQpStatefulProperties()
 		_owl_dat[_qp].char_micro = MicroLength;
 	}
 	
+	if (_owl_dat[_qp].Heterogeneous == true)
+	{
+		_owl_dat[_qp].eval_surfDiff = (*default_Dc);
+	}
+	else
+	{
+		_owl_dat[_qp].eval_surfDiff = (*default_surf_diffusion);
+		_owl_dat[_qp].coord_micro = 2;
+		_owl_dat[_qp].char_micro = 1.0;
+	}
+	
 	_owl_dat[_qp].pellet_radius = _pellet_diameter[_qp]/2.0;
 	_owl_dat[_qp].pellet_density = _pellet_density[_qp];
 	_owl_dat[_qp].binder_porosity = _binder_porosity[_qp];
 	_owl_dat[_qp].binder_poresize = _pore_size[_qp];
+	
+	_gas_dat[_qp] = _coupled_gas[_qp];
 	
 	if (Heterogeneous == true)
 	{
@@ -141,22 +160,21 @@ void ScopsowlProperties::initQpStatefulProperties()
 	{
 		_owl_dat[_qp].binder_fraction = 1.0;
 		_owl_dat[_qp].crystal_radius = 1.0;
-		_owl_dat[_qp].coord_micro = 2;
-		_owl_dat[_qp].char_micro = 1.0;
 	}
 	
-	//std::cout << "End SCOPSOWL Initialization" << std::endl;
-	//std::cout << _owl_dat[_qp].pellet_radius << std::endl;
+	for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
+	{
+		_owl_dat[_qp].param_dat[i].ref_diffusion = _ref_diffusion[_qp][i];
+		_owl_dat[_qp].param_dat[i].activation_energy = _activation_energy[_qp][i];
+		_owl_dat[_qp].param_dat[i].ref_temperature = _ref_temperature[_qp][i];
+		_owl_dat[_qp].param_dat[i].affinity = _affinity_coeff[_qp][i];
+	}
 	
-	//TO DO
-	// Fix issues with initialization. Some values are not getting initialized
-	//   Use initialization only for memory
+	success = setup_SCOPSOWL_DATA(NULL, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, _owl_dat[_qp].eval_surfDiff, (void *)&_owl_dat[_qp], &_gas_dat[_qp], &_owl_dat[_qp]);
+	if (success != 0) {mError(simulation_fail); return;}
 	
-	// May need to move everything to AdsorbentProperties
-	//   Several redundant parameters needed to get acquired
-	
-	// Mixed gas data is already in the FlowProperties file
-	//   Remove from this object and link them together?
+	//TODO
+	//  Step up the initial conditions for SCOPSOWL
 	
 }
 
@@ -164,7 +182,37 @@ void ScopsowlProperties::computeQpProperties()
 {
 	_owl_dat[_qp].total_pressure = _magpie_dat[_qp].sys_dat.PT;
 	_owl_dat[_qp].gas_temperature = _magpie_dat[_qp].sys_dat.T;
-	_owl_dat[_qp].gas_velocity = _velocity[_qp];
+	_owl_dat[_qp].gas_velocity = _velocity[_qp] / 3600.0;
+	
+	_owl_dat[_qp].pellet_radius = _pellet_diameter[_qp]/2.0;
+	_owl_dat[_qp].pellet_density = _pellet_density[_qp];
+	_owl_dat[_qp].binder_porosity = _binder_porosity[_qp];
+	_owl_dat[_qp].binder_poresize = _pore_size[_qp];
+	
+	_gas_dat[_qp] = _coupled_gas[_qp];
+	
+	if (Heterogeneous == true)
+	{
+		_owl_dat[_qp].crystal_radius = _crystal_radius[_qp];
+		_owl_dat[_qp].binder_fraction = _binder_ratio[_qp];
+	}
+	else
+	{
+		_owl_dat[_qp].binder_fraction = 1.0;
+		_owl_dat[_qp].crystal_radius = 1.0;
+	}
+	
+	for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
+	{
+		_owl_dat[_qp].param_dat[i].ref_diffusion = _ref_diffusion[_qp][i];
+		_owl_dat[_qp].param_dat[i].activation_energy = _activation_energy[_qp][i];
+		_owl_dat[_qp].param_dat[i].ref_temperature = _ref_temperature[_qp][i];
+		_owl_dat[_qp].param_dat[i].affinity = _affinity_coeff[_qp][i];
+		
+		_owl_dat[_qp].y[i] = _magpie_dat[_qp].gpast_dat[i].y;
+	}
+	
+	//std::cout << "Compute Properties\n";
 
 }
 

@@ -74,6 +74,11 @@ _act_energy(getParam<std::vector<Real> >("activation_energy")),
 _ref_temp(getParam<std::vector<Real> >("ref_temperature")),
 _affinity(getParam<std::vector<Real> >("affinity")),
 
+_ref_diffusion(declareProperty<std::vector<Real> >("ref_diffusion")),
+_activation_energy(declareProperty<std::vector<Real> >("activation_energy")),
+_ref_temperature(declareProperty<std::vector<Real> >("ref_temperature")),
+_affinity_coeff(declareProperty<std::vector<Real> >("affinity_coeff")),
+
 _pellet_density(declareProperty<Real>("pellet_density")),
 _pellet_heat_capacity(declareProperty<Real>("pellet_heat_capacity")),
 _pellet_diameter(declareProperty<Real>("pellet_diameter")),
@@ -82,6 +87,7 @@ _binder_porosity(declareProperty<Real>("binder_porosity")),
 _binder_ratio(declareProperty<Real>("binder_ratio")),
 _pore_size(declareProperty<Real>("pore_size")),
 _surface_diffusion(declareProperty<std::vector<Real> >("surface_diffusion")),
+_surf_diff_old(declarePropertyOld<std::vector<Real> >("surface_diffusion")),
 _magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data")),
 _temperature(coupledValue("temperature"))
 
@@ -101,10 +107,33 @@ _temperature(coupledValue("temperature"))
 	 */
 }
 
-void
-AdsorbentProperties::computeQpProperties()
+void AdsorbentProperties::initQpStatefulProperties()
 {
 	_surface_diffusion[_qp].resize(_gas_conc.size());
+	_ref_diffusion[_qp].resize(_gas_conc.size());
+	_activation_energy[_qp].resize(_gas_conc.size());
+	_ref_temperature[_qp].resize(_gas_conc.size());
+	_affinity_coeff[_qp].resize(_gas_conc.size());
+	
+	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
+	{
+		_ref_diffusion[_qp][i] = _ref_diff[i];
+		_activation_energy[_qp][i] = _act_energy[i];
+		_ref_temperature[_qp][i] = _ref_temp[i];
+		_affinity_coeff[_qp][i] = _affinity[i];
+	}
+	
+	_pellet_density[_qp] = _rhos;
+	_pellet_heat_capacity[_qp] = _hs;
+	_pellet_diameter[_qp] = _pellet_dia;
+	_crystal_radius[_qp] = _crystal_rad;
+	_binder_porosity[_qp] = _eps_binder;
+	_binder_ratio[_qp] = _binder_fraction;
+	_pore_size[_qp] = _macropore_radius;
+}
+
+void AdsorbentProperties::computeQpProperties()
+{
 	
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
@@ -121,6 +150,11 @@ AdsorbentProperties::computeQpProperties()
 			_surface_diffusion[_qp][i] = D_o(_ref_diff[i],_act_energy[i],_temperature[_qp]);
 			_surface_diffusion[_qp][i] = D_inf(_surface_diffusion[_qp][i],_ref_temp[i],_affinity[i],p,_temperature[_qp]);
 		}
+		
+		_ref_diffusion[_qp][i] = _ref_diff[i];
+		_activation_energy[_qp][i] = _act_energy[i];
+		_ref_temperature[_qp][i] = _ref_temp[i];
+		_affinity_coeff[_qp][i] = _affinity[i];
 	}
 	
 	//For constant bed properties...

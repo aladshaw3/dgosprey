@@ -82,7 +82,8 @@ private:
 	Real MacroLength;									///< Length of cylindrical pellets (cm)
 	Real MicroLength;									///< Length of cylindrical crystals (um)
 	
-	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;	///< Coupled material property for MAGPIE_DATA
+	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;	///< Coupled material property for MAGPIE_DATA from MagpieProperties
+	const MaterialProperty< MIXED_GAS > & _coupled_gas;		///< Coupled material property for MIXED_GAS from FlowProperties
 	const MaterialProperty<Real> & _velocity;				///< Linear velocity in the column (cm/hr)
 	const MaterialProperty<Real> & _pellet_diameter;		///< Diameter of the adsobent pellet (cm)
 	const MaterialProperty<Real> & _pellet_density;			///< Pellet material density (g/cm^3)
@@ -90,6 +91,11 @@ private:
 	const MaterialProperty<Real> & _pore_size;				///< Nominal pore size of the binder material (cm)
 	const MaterialProperty<Real> & _crystal_radius;			///< Nominal size of crystals in adsorbent pellet (um)
 	const MaterialProperty<Real> & _binder_ratio;			///< Ratio of binder to crystal in the adsorbent
+	
+	const MaterialProperty<std::vector<Real> > & _ref_diffusion;		///< MaterialProperty for reference diffusivity (um^2/hr)
+	const MaterialProperty<std::vector<Real> > & _activation_energy;	///< MaterialProperty for activation energy (J/mol)
+	const MaterialProperty<std::vector<Real> > & _ref_temperature;		///< MaterialProperty for reference temperature (K)
+	const MaterialProperty<std::vector<Real> > & _affinity_coeff;		///< MaterialProperty for affinity coefficient (-)
 	
 	/// MaterialProperty object to hold the SCOPSOWL_DATA structure and all relavent information
 	/** This is the object that needs to interface with the MAGPIE functions in order to solve for

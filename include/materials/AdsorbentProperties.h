@@ -66,6 +66,12 @@ protected:
 	/** This function computes the material properties when they are needed by other MOOSE objects.*/
 	virtual void computeQpProperties();
 	
+	/// Required function override for Stateful Material objects in MOOSE
+	/** This function is needed because we have to properly initialize our custom objects without
+		having to reinitialize at each compute step. It takes more memory this way, but also prevents
+		segfault errors and helps the kernel run faster after initialization. */
+	virtual void initQpStatefulProperties();
+	
 private:
 	Real _binder_fraction;		///< Binder fraction in the biporous adsorbent pellet (0 means no binder material)
 	Real _eps_binder;			///< Macro-porosity of the binder material in the adsorbent pellet
@@ -80,6 +86,11 @@ private:
 	std::vector<Real> _ref_temp;	///< Reference Temperature for Surface Diffusion (K)
 	std::vector<Real> _affinity;	///< Affinity coefficient for Surface Diffusion (-)
 	
+	MaterialProperty<std::vector<Real> > & _ref_diffusion;		///< MaterialProperty for reference diffusivity (um^2/hr)
+	MaterialProperty<std::vector<Real> > & _activation_energy;	///< MaterialProperty for activation energy of surface diffusion (J/mol)
+	MaterialProperty<std::vector<Real> > & _ref_temperature;	///< MaterialProperty for reference temperature (K)
+	MaterialProperty<std::vector<Real> > & _affinity_coeff;		///< MaterialProperty for affinity coefficient of surface diffusion (-)
+	
 	MaterialProperty<Real> & _pellet_density;			///< MaterialProperty for the pellet density (g/cm^3)
 	MaterialProperty<Real> & _pellet_heat_capacity;		///< MaterialProperty for the pellet heat capacity (J/g/K)
 	MaterialProperty<Real> & _pellet_diameter;			///< MaterialProperty for pellet diameter (cm)
@@ -89,6 +100,7 @@ private:
 	MaterialProperty<Real> & _pore_size;				///< MaterialProperty for the macropore radius (cm)
 	
 	MaterialProperty<std::vector<Real> > & _surface_diffusion;		///< MaterialProperty for the surface diffusion (um^2/hr)
+	MaterialProperty<std::vector<Real> > & _surf_diff_old;			///< MaterialProperty for stateful surface diffusion
 	
 	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;			///< Pointer to MAGPIE_DATA material property
 	
