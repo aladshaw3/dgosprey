@@ -173,9 +173,6 @@ void ScopsowlProperties::initQpStatefulProperties()
 	success = setup_SCOPSOWL_DATA(NULL, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, _owl_dat[_qp].eval_surfDiff, (void *)&_owl_dat[_qp], &_gas_dat[_qp], &_owl_dat[_qp]);
 	if (success != 0) {mError(simulation_fail); return;}
 	
-	//TODO
-	//  Step up the initial conditions for SCOPSOWL
-	
 }
 
 void ScopsowlProperties::computeQpProperties()
@@ -212,8 +209,6 @@ void ScopsowlProperties::computeQpProperties()
 		_owl_dat[_qp].y[i] = _magpie_dat[_qp].gpast_dat[i].y;
 	}
 	
-	//std::cout << "Compute Properties\n";
-
 }
 
 

@@ -452,6 +452,10 @@
 		macropore_radius = 3.5e-6
 		pellet_density = 1.69
 		pellet_heat_capacity = 1.045
+		ref_diffusion = '0 0 0.8814'
+		activation_energy = '0 0 0'
+		ref_temperature = '0 0 267.999'
+		affinity = '0 0 0'
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
 	[../]

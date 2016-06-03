@@ -87,6 +87,7 @@
 #include "MAGPIE_MaterialLDF_Perturbation.h"
 
 #include "ScopsowlProperties.h"
+#include "Scopsowl_Adsorption.h"
 
 
 template<>
@@ -148,6 +149,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerAux(MAGPIE_ConstLDF_Perturbation);
 	registerAux(MAGPIE_MaterialLDF_Adsorption);
 	registerAux(MAGPIE_MaterialLDF_Perturbation);
+	registerAux(Scopsowl_Adsorption);
 
 	registerInitialCondition(TotalPressureIC);
 	registerInitialCondition(ColumnTemperatureIC);

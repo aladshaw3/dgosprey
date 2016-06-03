@@ -365,6 +365,10 @@
 		macropore_radius = 3.5e-6			#not Known
 		pellet_density = 0.5245				#not Known
 		pellet_heat_capacity = 1.045		#not known
+		ref_diffusion = '0 0'
+		activation_energy = '0 0'
+		ref_temperature = '0 0
+		affinity = '0 0'
 		temperature = column_temp
 		coupled_gases = 'Xe He'
 	[../]
