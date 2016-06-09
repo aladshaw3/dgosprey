@@ -81,6 +81,7 @@ protected:
 private:
 	unsigned int _index;									///< Index of the gaseous species to calculate equilibria for
 	const MaterialProperty< SCOPSOWL_DATA > & _owl_dat;		///< Material Property holding the SCOPSOWL data structure
+	MooseArray< SCOPSOWL_DATA > _dat;						///< Array for holding material property info for SCOPSOWL
 	
 };
 

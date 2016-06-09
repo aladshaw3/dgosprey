@@ -159,7 +159,7 @@ double default_adsorption(int i, int l, const void *user_data)
 		
 		//Store perturbed result in temp location
 		qEPS = dat->magpie_dat.sys_dat.qT * dat->magpie_dat.gpast_dat[i].x;
-		
+				
 		//Restore original info
 		for (int j=0; j<dat->magpie_dat.sys_dat.N; j++)
 		{

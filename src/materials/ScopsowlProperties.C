@@ -206,7 +206,7 @@ void ScopsowlProperties::computeQpProperties()
 		_owl_dat[_qp].param_dat[i].ref_temperature = _ref_temperature[_qp][i];
 		_owl_dat[_qp].param_dat[i].affinity = _affinity_coeff[_qp][i];
 		
-		_owl_dat[_qp].y[i] = _magpie_dat[_qp].gpast_dat[i].y;
+		_owl_dat[_qp].y[i] = _gas_dat[_qp].molefraction[i];
 	}
 	
 }

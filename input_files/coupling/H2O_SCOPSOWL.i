@@ -53,6 +53,12 @@
  [] #END Variables
 
 [AuxVariables]
+ 
+	[./A_OWL]
+		order = CONSTANT
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
 	[./total_pressure]
 		order = CONSTANT
@@ -127,7 +133,8 @@
 	[./N2_IC]
 		type = ConcentrationIC
 		variable = N2
-		initial_mole_frac = 0.79
+#initial_mole_frac = 0.79
+ initial_mole_frac = 0.78863
 		initial_press = 101.35
 		initial_temp = 298.15
 	[../]
@@ -135,7 +142,8 @@
 	[./O2_IC]
 		type = ConcentrationIC
 		variable = O2
-		initial_mole_frac = 0.21
+#initial_mole_frac = 0.21
+ initial_mole_frac = 0.20974
  		initial_press = 101.35
  		initial_temp = 298.15
 	[../]
@@ -143,7 +151,8 @@
 	[./H2O_IC]
 		type = ConcentrationIC
 		variable = H2O
-		initial_mole_frac = 0.0
+#initial_mole_frac = 0.0
+ initial_mole_frac = 0.00163
  		initial_press = 101.35
  		initial_temp = 298.15
 	[../]
@@ -293,6 +302,12 @@
  [] #END DGKernels
 
 [AuxKernels]
+ 
+	[./owl_adsorption]
+		type = Scopsowl_Adsorption
+		variable = A_OWL
+		index = 2
+	[../]
 
 	[./column_pressure]
 		type = TotalColumnPressure
@@ -496,6 +511,12 @@
  [] #END Materials
 
 [Postprocessors]
+ 
+	[./A_solid]
+		type = ElementAverageValue
+		variable = A_OWL
+		execute_on = 'initial timestep_end'
+	[../]
 
 	[./N2_exit]
 		type = SideAverageValue
@@ -545,11 +566,11 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./H2O_heat]
-		type = ElementAverageValue
-		variable = H2O_AdsorbedHeat
-		execute_on = 'initial timestep_end'
-	[../]
+#[./H2O_heat]
+#type = ElementAverageValue
+#variable = H2O_AdsorbedHeat
+#execute_on = 'initial timestep_end'
+#[../]
 
  [] #END Postprocessors
 
@@ -579,7 +600,7 @@
 	[./TimeStepper]
 		type = ConstantDT
 		#type = SolutionTimeAdaptiveDT
-		dt = 0.1
+		dt = 0.01
 	[../]
 
  [] #END Executioner

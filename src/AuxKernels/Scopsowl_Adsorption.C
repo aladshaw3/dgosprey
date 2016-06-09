@@ -54,7 +54,74 @@ _owl_dat(getMaterialProperty< SCOPSOWL_DATA >("owl_data"))
 Real
 Scopsowl_Adsorption::computeValue()
 {
+	int success = 0;
 	Real q = 0.0;
+	
+	// Initial Conditions
+	if (_dt == 0.0)
+	{
+		_dat.resize(_q_point.size());
+		_dat[_qp] = _owl_dat[_qp];
+		
+		//Establish parameters
+		_dat[_qp].param_dat[_index].ref_pressure = 0.1652005;
+		
+		if (_owl_dat[_qp].param_dat[_index].Adsorbable == false)
+			return 0.0;
+		
+		//Establish ICs, then calculate adsorption
+		success = set_SCOPSOWL_ICs(&_dat[_qp]);
+		if (success != 0) {mError(simulation_fail); return -1;}
+		
+		q = _dat[_qp].param_dat[_index].qIntegralAvg;
+		
+	}
+	// After Initial Conditions
+	else
+	{
+		//Establish parameters
+		_dat[_qp].param_dat[_index].ref_pressure = 0.1652005;
+		
+		_dat[_qp].total_pressure = _owl_dat[_qp].total_pressure;
+		_dat[_qp].gas_temperature = _owl_dat[_qp].gas_temperature;
+		_dat[_qp].gas_velocity = _owl_dat[_qp].gas_velocity;
+		
+		//Set time step
+		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
+		{
+			_dat[_qp].y[i] = _owl_dat[_qp].y[i];
+			
+			_dat[_qp].finch_dat[i].dt = _dt;
+			_dat[_qp].finch_dat[i].t = _dat[_qp].finch_dat[i].dt + _dat[_qp].finch_dat[i].t_old;
+			
+			if (_dat[_qp].SurfDiff == true && _dat[_qp].Heterogeneous == true)
+			{
+				for (int l=0; l<_dat[_qp].finch_dat[i].LN; l++)
+				{
+					_dat[_qp].skua_dat[l].finch_dat[i].dt = _dat[_qp].finch_dat[i].dt;
+					_dat[_qp].skua_dat[l].finch_dat[i].t = _dat[_qp].finch_dat[i].t;
+					_dat[_qp].skua_dat[l].t_old = _dat[_qp].finch_dat[i].t_old;
+					_dat[_qp].skua_dat[l].t = _dat[_qp].finch_dat[i].t;
+				}
+			}
+		}
+		_dat[_qp].t_old = _dat[_qp].finch_dat[0].t_old;
+		_dat[_qp].t = _dat[_qp].finch_dat[0].t;
+		
+		//Call Executioner
+		success = SCOPSOWL_Executioner(&_dat[_qp]);
+		if (success != 0) {mError(simulation_fail); return -1;}
+		
+		q = _dat[_qp].param_dat[_index].qIntegralAvg;
+		
+		//_dat[_qp].finch_dat[_index].unp1.Display("unp1");
+		//_dat[_qp].skua_dat[0].finch_dat[_index].unp1.Display("unp1");
+		//_dat[_qp].param_dat[_index].qAvg.Display("qnp1");
+		
+		//Reset for next step
+		success = SCOPSOWL_reset(&_dat[_qp]);
+		if (success != 0) {mError(simulation_fail); return -1;}
+	}
 	
 	return q;
 }

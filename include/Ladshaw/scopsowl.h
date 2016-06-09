@@ -70,7 +70,7 @@ typedef struct
 	double ref_diffusion;					///< Reference state surface diffusivity (um^2/hr)
 	double ref_temperature;					///< Reference temperature for empirical adjustments (K)
 	double affinity;						///< Affinity parameter used in empirical adjustments (-)
-	double ref_pressure;					//< /Reference pressure used in empirical adjustments (kPa)
+	double ref_pressure;					///< Reference pressure used in empirical adjustments (kPa)
 	
 	bool Adsorbable;						///< True = species can adsorb; False = species cannot adsorb
 	
