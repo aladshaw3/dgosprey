@@ -45,6 +45,7 @@ InputParameters validParams<ScopsowlProperties>()
 	params.addParam<bool>("micro_spheres",true,"True = spherical crystals; False = cylindrical crystals");
 	params.addParam<Real>("macro_length",1.0,"Length of the cylindrical pellets (cm)");
 	params.addParam<Real>("micro_length",1.0,"Length of the cylindrical crystals (um)");
+	params.addCoupledVar("coupled_adsorption", "Adsorption concentration variables being coupled");
 	
 	return params;
 }
@@ -76,7 +77,19 @@ _owl_dat_old(declarePropertyOld< SCOPSOWL_DATA >("owl_data")),
 _gas_dat(declareProperty< MIXED_GAS >("gas_data")),
 _gas_dat_old(declarePropertyOld< MIXED_GAS >("gas_data"))
 {
+	unsigned int n = coupledComponents("coupled_adsorption");
+	_solid_conc.resize(n);
+	
+	for (unsigned int i = 0; i<_solid_conc.size(); ++i)
+	{
+		_solid_conc[i] = &coupledValue("coupled_adsorption",i);
+	}
 
+}
+
+MaterialProperty< SCOPSOWL_DATA > & ScopsowlProperties::getOwlData()
+{
+	return _owl_dat;
 }
 
 void ScopsowlProperties::initQpStatefulProperties()
@@ -168,6 +181,7 @@ void ScopsowlProperties::initQpStatefulProperties()
 		_owl_dat[_qp].param_dat[i].activation_energy = _activation_energy[_qp][i];
 		_owl_dat[_qp].param_dat[i].ref_temperature = _ref_temperature[_qp][i];
 		_owl_dat[_qp].param_dat[i].affinity = _affinity_coeff[_qp][i];
+		
 	}
 	
 	success = setup_SCOPSOWL_DATA(NULL, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, _owl_dat[_qp].eval_surfDiff, (void *)&_owl_dat[_qp], &_gas_dat[_qp], &_owl_dat[_qp]);
@@ -207,6 +221,9 @@ void ScopsowlProperties::computeQpProperties()
 		_owl_dat[_qp].param_dat[i].affinity = _affinity_coeff[_qp][i];
 		
 		_owl_dat[_qp].y[i] = _gas_dat[_qp].molefraction[i];
+		
+		if (_dt == 0.0)
+			_owl_dat[_qp].param_dat[i].qIntegralAvg_old = (*_solid_conc[i])[_qp];
 	}
 	
 }

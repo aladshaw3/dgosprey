@@ -133,8 +133,8 @@
 	[./N2_IC]
 		type = ConcentrationIC
 		variable = N2
-#initial_mole_frac = 0.79
- initial_mole_frac = 0.78863
+initial_mole_frac = 0.79
+#initial_mole_frac = 0.78863
 		initial_press = 101.35
 		initial_temp = 298.15
 	[../]
@@ -142,8 +142,8 @@
 	[./O2_IC]
 		type = ConcentrationIC
 		variable = O2
-#initial_mole_frac = 0.21
- initial_mole_frac = 0.20974
+initial_mole_frac = 0.21
+#initial_mole_frac = 0.20974
  		initial_press = 101.35
  		initial_temp = 298.15
 	[../]
@@ -151,8 +151,8 @@
 	[./H2O_IC]
 		type = ConcentrationIC
 		variable = H2O
-#initial_mole_frac = 0.0
- initial_mole_frac = 0.00163
+initial_mole_frac = 0.0
+#initial_mole_frac = 0.00163
  		initial_press = 101.35
  		initial_temp = 298.15
 	[../]
@@ -506,6 +506,7 @@
 		dirichlet_bc = false
 		heterogeneous = true
 		surface_diffusion = true
+        coupled_adsorption = 'N2_Adsorbed O2_Adsorbed H2O_Adsorbed'
     [../]
 
  [] #END Materials
@@ -591,7 +592,7 @@
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 60.0
+	end_time = 0.10
 	dtmin = 1e-8
 	dtmax = 0.1				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'

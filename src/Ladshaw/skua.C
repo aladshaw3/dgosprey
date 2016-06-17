@@ -480,6 +480,7 @@ int set_SKUA_ICs(SKUA_DATA *skua_dat)
 		skua_dat->param_dat[i].xn = skua_dat->magpie_dat.gpast_dat[i].x;
 		skua_dat->param_dat[i].xnp1 = skua_dat->param_dat[i].xn;
 		skua_dat->finch_dat[i].uAvg = skua_dat->magpie_dat.sys_dat.qT * skua_dat->magpie_dat.gpast_dat[i].x;
+		
 	}
 	
 	//Call MAGPIE to determine equilibrium adsorption

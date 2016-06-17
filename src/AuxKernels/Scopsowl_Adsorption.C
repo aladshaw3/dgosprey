@@ -64,10 +64,22 @@ Scopsowl_Adsorption::computeValue()
 		_dat[_qp] = _owl_dat[_qp];
 		
 		//Establish parameters
-		_dat[_qp].param_dat[_index].ref_pressure = 0.1652005;
+		//_dat[_qp].param_dat[_index].ref_pressure = 0.1652005;
 		
 		if (_owl_dat[_qp].param_dat[_index].Adsorbable == false)
 			return 0.0;
+		
+		//Need to set dat.magpie_dat.sys_dat.qT and dat.param_dat[i].xIC for all
+		_dat[_qp].magpie_dat.sys_dat.qT = 0.0;
+		for (int i=0; i<_dat[_qp].magpie_dat.sys_dat.N; i++)
+			_dat[_qp].magpie_dat.sys_dat.qT += _dat[_qp].param_dat[i].qIntegralAvg_old;
+		for (int i=0; i<_dat[_qp].magpie_dat.sys_dat.N; i++)
+		{
+			if (_dat[_qp].magpie_dat.sys_dat.qT > 0.0)
+				_dat[_qp].param_dat[i].xIC = _dat[_qp].param_dat[i].qIntegralAvg_old/_dat[_qp].magpie_dat.sys_dat.qT;
+			else
+				_dat[_qp].param_dat[i].xIC = 0.0;
+		}
 		
 		//Establish ICs, then calculate adsorption
 		success = set_SCOPSOWL_ICs(&_dat[_qp]);
@@ -79,8 +91,11 @@ Scopsowl_Adsorption::computeValue()
 	// After Initial Conditions
 	else
 	{
+		if (_owl_dat[_qp].param_dat[_index].Adsorbable == false)
+			return 0.0;
+		
 		//Establish parameters
-		_dat[_qp].param_dat[_index].ref_pressure = 0.1652005;
+		//_dat[_qp].param_dat[_index].ref_pressure = 0.1652005;
 		
 		_dat[_qp].total_pressure = _owl_dat[_qp].total_pressure;
 		_dat[_qp].gas_temperature = _owl_dat[_qp].gas_temperature;
@@ -113,10 +128,6 @@ Scopsowl_Adsorption::computeValue()
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
 		q = _dat[_qp].param_dat[_index].qIntegralAvg;
-		
-		//_dat[_qp].finch_dat[_index].unp1.Display("unp1");
-		//_dat[_qp].skua_dat[0].finch_dat[_index].unp1.Display("unp1");
-		//_dat[_qp].param_dat[_index].qAvg.Display("qnp1");
 		
 		//Reset for next step
 		success = SCOPSOWL_reset(&_dat[_qp]);
