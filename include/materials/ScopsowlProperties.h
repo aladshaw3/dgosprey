@@ -61,8 +61,6 @@ public:
 	/// Required constructor for objects in MOOSE
 	ScopsowlProperties(const InputParameters & parameters);
 	
-	MaterialProperty< SCOPSOWL_DATA > & getOwlData();
-	
 protected:
 	/// Required function override for Material objects in MOOSE
 	/** This function computes the material properties when they are needed by other MOOSE objects.*/
@@ -122,6 +120,9 @@ private:
 	MaterialProperty< MIXED_GAS > & _gas_dat_old;
 	
 	std::vector<const VariableValue *> _solid_conc;		///< Pointer list to the coupled adsorption concentrations
+	std::vector<const VariableValue *> _gas_conc;		///< Pointer list to the coupled gases
+	std::vector<const VariableValue *> _gas_conc_old;	///< Pointer list to the old states of coupled gases
+	
 };
 
 

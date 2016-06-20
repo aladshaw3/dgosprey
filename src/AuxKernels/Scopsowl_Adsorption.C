@@ -60,32 +60,32 @@ Scopsowl_Adsorption::computeValue()
 	// Initial Conditions
 	if (_dt == 0.0)
 	{
-		_dat.resize(_q_point.size());
-		_dat[_qp] = _owl_dat[_qp];
+		//std::cout << _current_elem->id() << std::endl;
+		_dat[_current_elem->id()] = _owl_dat[_qp];
 		
 		//Establish parameters
-		//_dat[_qp].param_dat[_index].ref_pressure = 0.1652005;
+		//_dat[_current_elem->id()].param_dat[_index].ref_pressure = 0.1652005;
 		
 		if (_owl_dat[_qp].param_dat[_index].Adsorbable == false)
 			return 0.0;
 		
 		//Need to set dat.magpie_dat.sys_dat.qT and dat.param_dat[i].xIC for all
-		_dat[_qp].magpie_dat.sys_dat.qT = 0.0;
-		for (int i=0; i<_dat[_qp].magpie_dat.sys_dat.N; i++)
-			_dat[_qp].magpie_dat.sys_dat.qT += _dat[_qp].param_dat[i].qIntegralAvg_old;
-		for (int i=0; i<_dat[_qp].magpie_dat.sys_dat.N; i++)
+		_dat[_current_elem->id()].magpie_dat.sys_dat.qT = 0.0;
+		for (int i=0; i<_dat[_current_elem->id()].magpie_dat.sys_dat.N; i++)
+			_dat[_current_elem->id()].magpie_dat.sys_dat.qT += _dat[_current_elem->id()].param_dat[i].qIntegralAvg_old;
+		for (int i=0; i<_dat[_current_elem->id()].magpie_dat.sys_dat.N; i++)
 		{
-			if (_dat[_qp].magpie_dat.sys_dat.qT > 0.0)
-				_dat[_qp].param_dat[i].xIC = _dat[_qp].param_dat[i].qIntegralAvg_old/_dat[_qp].magpie_dat.sys_dat.qT;
+			if (_dat[_current_elem->id()].magpie_dat.sys_dat.qT > 0.0)
+				_dat[_current_elem->id()].param_dat[i].xIC = _dat[_current_elem->id()].param_dat[i].qIntegralAvg_old/_dat[_current_elem->id()].magpie_dat.sys_dat.qT;
 			else
-				_dat[_qp].param_dat[i].xIC = 0.0;
+				_dat[_current_elem->id()].param_dat[i].xIC = 0.0;
 		}
 		
 		//Establish ICs, then calculate adsorption
-		success = set_SCOPSOWL_ICs(&_dat[_qp]);
+		success = set_SCOPSOWL_ICs(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
-		q = _dat[_qp].param_dat[_index].qIntegralAvg;
+		q = _dat[_current_elem->id()].param_dat[_index].qIntegralAvg;
 		
 	}
 	// After Initial Conditions
@@ -95,44 +95,52 @@ Scopsowl_Adsorption::computeValue()
 			return 0.0;
 		
 		//Establish parameters
-		//_dat[_qp].param_dat[_index].ref_pressure = 0.1652005;
+		//_dat[_current_elem->id()].param_dat[_index].ref_pressure = 0.1652005;
 		
-		_dat[_qp].total_pressure = _owl_dat[_qp].total_pressure;
-		_dat[_qp].gas_temperature = _owl_dat[_qp].gas_temperature;
-		_dat[_qp].gas_velocity = _owl_dat[_qp].gas_velocity;
+		_dat[_current_elem->id()].total_pressure = _owl_dat[_qp].total_pressure;
+		_dat[_current_elem->id()].gas_temperature = _owl_dat[_qp].gas_temperature;
+		_dat[_current_elem->id()].gas_velocity = _owl_dat[_qp].gas_velocity;
 		
 		//Set time step
 		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
 		{
-			_dat[_qp].y[i] = _owl_dat[_qp].y[i];
+			_dat[_current_elem->id()].y[i] = _owl_dat[_qp].y[i];
 			
-			_dat[_qp].finch_dat[i].dt = _dt;
-			_dat[_qp].finch_dat[i].t = _dat[_qp].finch_dat[i].dt + _dat[_qp].finch_dat[i].t_old;
+			_dat[_current_elem->id()].finch_dat[i].dt = _dt;
+			_dat[_current_elem->id()].finch_dat[i].t = _dat[_current_elem->id()].finch_dat[i].dt + _dat[_current_elem->id()].finch_dat[i].t_old;
 			
-			if (_dat[_qp].SurfDiff == true && _dat[_qp].Heterogeneous == true)
+			if (_dat[_current_elem->id()].SurfDiff == true && _dat[_current_elem->id()].Heterogeneous == true)
 			{
-				for (int l=0; l<_dat[_qp].finch_dat[i].LN; l++)
+				for (int l=0; l<_dat[_current_elem->id()].finch_dat[i].LN; l++)
 				{
-					_dat[_qp].skua_dat[l].finch_dat[i].dt = _dat[_qp].finch_dat[i].dt;
-					_dat[_qp].skua_dat[l].finch_dat[i].t = _dat[_qp].finch_dat[i].t;
-					_dat[_qp].skua_dat[l].t_old = _dat[_qp].finch_dat[i].t_old;
-					_dat[_qp].skua_dat[l].t = _dat[_qp].finch_dat[i].t;
+					_dat[_current_elem->id()].skua_dat[l].finch_dat[i].dt = _dat[_current_elem->id()].finch_dat[i].dt;
+					_dat[_current_elem->id()].skua_dat[l].finch_dat[i].t = _dat[_current_elem->id()].finch_dat[i].t;
+					_dat[_current_elem->id()].skua_dat[l].t_old = _dat[_current_elem->id()].finch_dat[i].t_old;
+					_dat[_current_elem->id()].skua_dat[l].t = _dat[_current_elem->id()].finch_dat[i].t;
 				}
 			}
 		}
-		_dat[_qp].t_old = _dat[_qp].finch_dat[0].t_old;
-		_dat[_qp].t = _dat[_qp].finch_dat[0].t;
+		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
+		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
+		
+		//std::cout << "ElemID = " << _current_elem->id() << "\tTime (hrs) = " << _dat[_current_elem->id()].t << std::endl;
 		
 		//Call Executioner
-		success = SCOPSOWL_Executioner(&_dat[_qp]);
+		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
-		q = _dat[_qp].param_dat[_index].qIntegralAvg;
+		q = _dat[_current_elem->id()].param_dat[_index].qIntegralAvg;
 		
 		//Reset for next step
-		success = SCOPSOWL_reset(&_dat[_qp]);
+		success = SCOPSOWL_reset(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
 	}
+	
+	//_dat[_current_elem->id()].param_dat[_index].qAvg.Display("q");
+	//std::cout << "y = " << _owl_dat[_qp].y[_index] << std::endl;
+	//_dat[_current_elem->id()].finch_dat[_index].unp1.Display("C");
+	//_dat[_current_elem->id()].skua_dat[9].finch_dat[_index].unp1.Display("q9");
+	std::cout << "Boundary = " << _dat[_current_elem->id()].skua_dat[9].finch_dat[_index].uo << std::endl;
 	
 	return q;
 }

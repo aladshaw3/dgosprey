@@ -507,6 +507,7 @@ initial_mole_frac = 0.0
 		heterogeneous = true
 		surface_diffusion = true
         coupled_adsorption = 'N2_Adsorbed O2_Adsorbed H2O_Adsorbed'
+		coupled_gases = 'N2 O2 H2O'
     [../]
 
  [] #END Materials
@@ -592,15 +593,15 @@ initial_mole_frac = 0.0
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 0.10
+	end_time = 60.0
 	dtmin = 1e-8
 	dtmax = 0.1				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
-		type = ConstantDT
-		#type = SolutionTimeAdaptiveDT
+		#type = ConstantDT
+		type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]
 
