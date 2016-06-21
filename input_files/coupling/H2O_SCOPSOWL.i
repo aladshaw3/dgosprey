@@ -53,12 +53,6 @@
  [] #END Variables
 
 [AuxVariables]
- 
-	[./A_OWL]
-		order = CONSTANT
-		family = MONOMIAL
-		initial_condition = 0.0
-	[../]
 
 	[./total_pressure]
 		order = CONSTANT
@@ -302,12 +296,6 @@ initial_mole_frac = 0.0
  [] #END DGKernels
 
 [AuxKernels]
- 
-	[./owl_adsorption]
-		type = Scopsowl_Adsorption
-		variable = A_OWL
-		index = 2
-	[../]
 
 	[./column_pressure]
 		type = TotalColumnPressure
@@ -317,37 +305,37 @@ initial_mole_frac = 0.0
 	[../]
 
 	[./nitrogen_adsorption]
-		type = MAGPIE_MaterialLDF_Adsorption
+		type = Scopsowl_Adsorption
 		variable = N2_Adsorbed
 		index = 0
 	[../]
 
 	[./oxygen_adsorption]
-		type = MAGPIE_MaterialLDF_Adsorption
+		type = Scopsowl_Adsorption
 		variable = O2_Adsorbed
 		index = 1
 	[../]
 
 	[./water_adsorption]
-		type = MAGPIE_MaterialLDF_Adsorption
+		type = Scopsowl_Adsorption
 		variable = H2O_Adsorbed
 		index = 2
 	[../]
 
 	[./nitrogen_perturbation]
-		type = MAGPIE_MaterialLDF_Perturbation
+		type = Scopsowl_Perturbation
 		variable = N2_Perturb
 		index = 0
 	[../]
 
 	[./oxygen_perturbation]
-		type = MAGPIE_MaterialLDF_Perturbation
+		type = Scopsowl_Perturbation
 		variable = O2_Perturb
 		index = 1
 	[../]
 
 	[./water_perturbation]
-		type = MAGPIE_MaterialLDF_Perturbation
+		type = Scopsowl_Perturbation
 		variable = H2O_Perturb
 		index = 2
 	[../]
@@ -513,12 +501,6 @@ initial_mole_frac = 0.0
  [] #END Materials
 
 [Postprocessors]
- 
-	[./A_solid]
-		type = ElementAverageValue
-		variable = A_OWL
-		execute_on = 'initial timestep_end'
-	[../]
 
 	[./N2_exit]
 		type = SideAverageValue
@@ -568,11 +550,11 @@ initial_mole_frac = 0.0
 		execute_on = 'initial timestep_end'
 	[../]
 
-#[./H2O_heat]
-#type = ElementAverageValue
-#variable = H2O_AdsorbedHeat
-#execute_on = 'initial timestep_end'
-#[../]
+	[./H2O_heat]
+		type = ElementAverageValue
+		variable = H2O_AdsorbedHeat
+		execute_on = 'initial timestep_end'
+	[../]
 
  [] #END Postprocessors
 
@@ -593,14 +575,14 @@ initial_mole_frac = 0.0
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 60.0
+	end_time = 600.0
 	dtmin = 1e-8
 	dtmax = 0.1				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
-		#type = ConstantDT
+#type = ConstantDT
 		type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]

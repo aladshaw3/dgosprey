@@ -237,52 +237,6 @@ void ScopsowlProperties::computeQpProperties()
 			_owl_dat[_qp].param_dat[i].qIntegralAvg_old = (*_solid_conc[i])[_qp];
 	}
 	
-	
-	/*
-	int success = 0;
-	
-	if (time_old == _t)
-	{
-		//Do Nothing
-		//std::cout << "here" << std::endl;
-	}
-	else
-	{
-		time_old = _t;
-		//Set time step
-		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
-		{
-			_owl_dat[_qp].y[i] = _owl_dat[_qp].y[i];
-			
-			_owl_dat[_qp].finch_dat[i].dt = _dt;
-			_owl_dat[_qp].finch_dat[i].t = _owl_dat[_qp].finch_dat[i].dt + _owl_dat[_qp].finch_dat[i].t_old;
-			
-			if (_owl_dat[_qp].SurfDiff == true && _owl_dat[_qp].Heterogeneous == true)
-			{
-				for (int l=0; l<_owl_dat[_qp].finch_dat[i].LN; l++)
-				{
-					_owl_dat[_qp].skua_dat[l].finch_dat[i].dt = _owl_dat[_qp].finch_dat[i].dt;
-					_owl_dat[_qp].skua_dat[l].finch_dat[i].t = _owl_dat[_qp].finch_dat[i].t;
-					_owl_dat[_qp].skua_dat[l].t_old = _owl_dat[_qp].finch_dat[i].t_old;
-					_owl_dat[_qp].skua_dat[l].t = _owl_dat[_qp].finch_dat[i].t;
-				}
-			}
-		}
-		_owl_dat[_qp].t_old = _owl_dat[_qp].finch_dat[0].t_old;
-		_owl_dat[_qp].t = _owl_dat[_qp].finch_dat[0].t;
-		
-		//std::cout << "Time (hrs) = " << _owl_dat[_qp].t << std::endl;
-		//std::cout << _current_elem->id() << std::endl;
-		
-		//Reset for next step
-		success = SCOPSOWL_reset(&_owl_dat[_qp]);
-		if (success != 0) {mError(simulation_fail); return;}
-	}
-	
-	//std::cout << _current_elem->id() << std::endl;
-	 
-	 */
-	
 }
 
 

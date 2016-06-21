@@ -1056,6 +1056,7 @@ int SCOPSOWL_preprocesses(SCOPSOWL_DATA *owl_dat)
 				owl_dat->skua_dat[l].param_dat[i].activation_energy = owl_dat->param_dat[i].activation_energy;
 				owl_dat->skua_dat[l].param_dat[i].ref_temperature = 0.0;
 				owl_dat->skua_dat[l].param_dat[i].affinity = 0.0;
+				
 			}
 		}
 		owl_dat->finch_dat[i].uo = Cstd(owl_dat->magpie_dat.sys_dat.PT*owl_dat->y[i], owl_dat->magpie_dat.sys_dat.T);

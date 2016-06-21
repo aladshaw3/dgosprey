@@ -1,10 +1,10 @@
 /*!
- *  \file Scopsowl_Adsorption.h
- *	\brief Auxillary kernel to calculate adsorption kinetics of a particular gas species in the system
- *	\details This file is responsible for calculating the adsorption kinetics of a particular species
+ *  \file Scopsowl_Perturbation.h
+ *	\brief Auxillary kernel to calculate perturbed adsorption kinetics of a particular gas species in the system
+ *	\details This file is responsible for calculating the perturbed adsorption kinetics of a particular species
  *			in the system. The SCOPSOWL object is stored as a material property whose constants are set
  *			in the corresponding material property file (see ScopsowlProperties.h). That information
- *			is then used to call the SCOPSOWL routine to calculate the mixed gas adsorption kinetics for 
+ *			is then used to call the SCOPSOWL routine to calculate the mixed gas adsorption kinetics for
  *			a specific species of interest.
  *
  *			Unfortunately, the material property system has recently changed in MOOSE, making this operation
@@ -14,13 +14,13 @@
  *			of the entire object and have the subroutine act on that copy.
  *
  *			In addition, although SCOPSOWL calculates the kinetics of all species in the mixture simultaneously,
- *			MOOSE only allows kernels to act on and calculate properties and values of a single variable at a 
+ *			MOOSE only allows kernels to act on and calculate properties and values of a single variable at a
  *			time. This means that to get the kinetics of all species in MOOSE, you have to redundantly perform
  *			these calculations again for each other species of interest. This is highly inefficient, but under
  *			time constraints it is the fastest way to finish this project.
  *
  *  \author Austin Ladshaw
- *	\date 06/03/2016
+ *	\date 06/21/2016
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -51,26 +51,26 @@
 #include "AuxKernel.h"
 #include "flock.h"
 
-#ifndef Scopsowl_Adsorption_H
-#define Scopsowl_Adsorption_H
+#ifndef Scopsowl_Perturbation_H
+#define Scopsowl_Perturbation_H
 
-/// Scopsowl Adsorption class object forward declaration
-class Scopsowl_Adsorption;
+/// Scopsowl Perturbation class object forward declaration
+class Scopsowl_Perturbation;
 
 template<>
-InputParameters validParams<Scopsowl_Adsorption>();
+InputParameters validParams<Scopsowl_Perturbation>();
 
-/// Scopsowl Adsorption class inherits from AuxKernel
+/// Scopsowl Perturbation class inherits from AuxKernel
 /** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
-	calculate the adsorption kinetics for a given species in the gas phase based on parameters,
+	calculate the perturbed adsorption kinetics for a given species in the gas phase based on parameters,
 	variables, and constants set in the SCOPSOWL object. Those values include temperature, pressure,
 	concentration, and associated equilibrium energy constants. The return value is the adsorption
 	value in mol/kg. */
-class Scopsowl_Adsorption : public AuxKernel
+class Scopsowl_Perturbation : public AuxKernel
 {
 public:
 	/// Standard MOOSE public constructor
-	Scopsowl_Adsorption(const InputParameters & parameters);
+	Scopsowl_Perturbation(const InputParameters & parameters);
 	
 protected:
 	/// Required MOOSE function override
@@ -86,4 +86,4 @@ private:
 };
 
 
-#endif /* Scopsowl_Adsorption_h */
+#endif /* Scopsowl_Perturbation_h */
