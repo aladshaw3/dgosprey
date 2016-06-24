@@ -50,6 +50,8 @@ _gas_dat(getMaterialProperty< MIXED_GAS >("gas_data"))
 	_exec_flags.clear();
 	_exec_flags.push_back(EXEC_INITIAL);
 	_exec_flags.push_back(EXEC_TIMESTEP_END);
+	
+	ymax = 0.0;
 }
 
 Real
@@ -72,16 +74,12 @@ Scopsowl_Perturbation::computeValue()
 		_dat[_current_elem->id()].gas_temperature = _owl_dat[_qp].gas_temperature;
 		_dat[_current_elem->id()].gas_velocity = _owl_dat[_qp].gas_velocity;
 		
-		double pi = _owl_dat[_qp].y[_index] * _owl_dat[_qp].total_pressure;
-		double ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + sqrt(DBL_EPSILON);
-		double yi = Pstd(ci,_owl_dat[_qp].gas_temperature) / _owl_dat[_qp].total_pressure;
-		
 		//Set time step
 		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
 		{
 			_dat[_current_elem->id()].y[i] = _owl_dat[_qp].y[i];
 			
-			_dat[_current_elem->id()].finch_dat[i].dt = 100.0;
+			_dat[_current_elem->id()].finch_dat[i].dt = 0.01;
 			_dat[_current_elem->id()].finch_dat[i].t = _dat[_current_elem->id()].finch_dat[i].dt + _dat[_current_elem->id()].finch_dat[i].t_old;
 			
 			if (_dat[_current_elem->id()].SurfDiff == true && _dat[_current_elem->id()].Heterogeneous == true)
@@ -95,6 +93,17 @@ Scopsowl_Perturbation::computeValue()
 				}
 			}
 		}
+		
+		if (_dat[_current_elem->id()].y[_index] > ymax)
+			ymax = _dat[_current_elem->id()].y[_index];
+		//_dat[_current_elem->id()].y[_index] = ymax;
+		
+		//double pi = _owl_dat[_qp].y[_index] * _owl_dat[_qp].total_pressure;
+		//double pi = 0.00163 * _owl_dat[_qp].total_pressure;
+		double pi = _dat[_current_elem->id()].y[_index] * _owl_dat[_qp].total_pressure;
+		double ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (0.3625*sqrt(DBL_EPSILON));
+		double yi = Pstd(ci,_owl_dat[_qp].gas_temperature) / _owl_dat[_qp].total_pressure;
+		
 		_dat[_current_elem->id()].y[_index] = yi;
 		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
 		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
@@ -130,8 +139,6 @@ Scopsowl_Perturbation::computeValue()
 		//Fix info
 		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
 		{
-			_dat[_current_elem->id()].y[i] = _owl_dat[_qp].y[i];
-			
 			_dat[_current_elem->id()].finch_dat[i].dt = _dt;
 			_dat[_current_elem->id()].finch_dat[i].t = _dat[_current_elem->id()].finch_dat[i].dt + _dat[_current_elem->id()].finch_dat[i].t_old;
 			
@@ -164,10 +171,6 @@ Scopsowl_Perturbation::computeValue()
 		_dat[_current_elem->id()].gas_temperature = _owl_dat[_qp].gas_temperature;
 		_dat[_current_elem->id()].gas_velocity = _owl_dat[_qp].gas_velocity;
 		
-		double pi = _owl_dat[_qp].y[_index] * _owl_dat[_qp].total_pressure;
-		double ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + sqrt(DBL_EPSILON);
-		double yi = Pstd(ci,_owl_dat[_qp].gas_temperature) / _owl_dat[_qp].total_pressure;
-		
 		//Set time step
 		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
 		{
@@ -187,6 +190,17 @@ Scopsowl_Perturbation::computeValue()
 				}
 			}
 		}
+		
+		if (_dat[_current_elem->id()].y[_index] > ymax)
+			ymax = _dat[_current_elem->id()].y[_index];
+		//_dat[_current_elem->id()].y[_index] = ymax;
+		
+		//double pi = _owl_dat[_qp].y[_index] * _owl_dat[_qp].total_pressure;
+		//double pi = 0.00163 * _owl_dat[_qp].total_pressure;
+		double pi = _dat[_current_elem->id()].y[_index] * _owl_dat[_qp].total_pressure;
+		double ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (0.3625*sqrt(DBL_EPSILON));
+		double yi = Pstd(ci,_owl_dat[_qp].gas_temperature) / _owl_dat[_qp].total_pressure;
+		
 		_dat[_current_elem->id()].y[_index] = yi;
 		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
 		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
@@ -198,16 +212,6 @@ Scopsowl_Perturbation::computeValue()
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
 		q = _dat[_current_elem->id()].param_dat[_index].qIntegralAvg;
-		
-		//Fix the state
-		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
-		{
-			_dat[_current_elem->id()].y[i] = _owl_dat[_qp].y[i];
-		}
-		
-		//ReCall Executioner
-		//success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);
-		//if (success != 0) {mError(simulation_fail); return -1;}
 		
 		//Reset for next step
 		success = SCOPSOWL_reset(&_dat[_current_elem->id()]);

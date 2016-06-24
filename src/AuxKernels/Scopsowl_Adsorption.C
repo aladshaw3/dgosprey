@@ -50,6 +50,8 @@ _gas_dat(getMaterialProperty< MIXED_GAS >("gas_data"))
 	_exec_flags.clear();
 	_exec_flags.push_back(EXEC_INITIAL);
 	_exec_flags.push_back(EXEC_TIMESTEP_END);
+	
+	ymax = 0.0;
 }
 
 Real
@@ -97,7 +99,12 @@ Scopsowl_Adsorption::computeValue()
 		success = set_SCOPSOWL_ICs(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
+		if (_dat[_current_elem->id()].y[_index] > ymax)
+			ymax = _dat[_current_elem->id()].y[_index];
+		//_dat[_current_elem->id()].y[_index] = ymax;
+		
 		//_dat[_current_elem->id()].param_dat[_index].ref_pressure = 0.1652005;
+		//_dat[_current_elem->id()].y[_index] = 0.00163;
 		
 		q = _dat[_current_elem->id()].param_dat[_index].qIntegralAvg;
 		
@@ -137,7 +144,12 @@ Scopsowl_Adsorption::computeValue()
 		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
 		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
 		
+		if (_dat[_current_elem->id()].y[_index] > ymax)
+			ymax = _dat[_current_elem->id()].y[_index];
+		//_dat[_current_elem->id()].y[_index] = ymax;
+		
 		//_dat[_current_elem->id()].param_dat[_index].ref_pressure = 0.1652005;
+		//_dat[_current_elem->id()].y[_index] = 0.00163;
 		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);

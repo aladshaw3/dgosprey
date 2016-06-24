@@ -755,7 +755,7 @@ int set_SCOPSOWL_ICs(SCOPSOWL_DATA *owl_dat)
 			owl_dat->finch_dat[i].ko = 0.0;
 			owl_dat->finch_dat[i].vo = 0.0;
 			
-			owl_dat->finch_dat[i].kfn = (*owl_dat->eval_kf) (i,owl_dat) * 0.1;
+			owl_dat->finch_dat[i].kfn = (*owl_dat->eval_kf) (i,owl_dat) * 1.0;
 			owl_dat->finch_dat[i].kfnp1 = owl_dat->finch_dat[i].kfn;
 			if (owl_dat->finch_dat[i].kfn < 0.0)
 			{
@@ -893,7 +893,7 @@ int set_SCOPSOWL_ICs(SCOPSOWL_DATA *owl_dat)
 			owl_dat->finch_dat[i].ko = 0.0;
 			owl_dat->finch_dat[i].vo = 0.0;
 			
-			owl_dat->finch_dat[i].kfn = (*owl_dat->eval_kf) (i,owl_dat) * 0.1;
+			owl_dat->finch_dat[i].kfn = (*owl_dat->eval_kf) (i,owl_dat) * 1.0;
 			owl_dat->finch_dat[i].kfnp1 = owl_dat->finch_dat[i].kfn;
 			if (owl_dat->finch_dat[i].kfn < 0.0)
 			{
@@ -992,10 +992,10 @@ int set_SCOPSOWL_ICs(SCOPSOWL_DATA *owl_dat)
 			for (int l=0; l<owl_dat->finch_dat[i].LN; l++)
 			{
 				owl_dat->finch_dat[i].Rn.edit(l, 0, (*owl_dat->eval_retard) (i,l,owl_dat));
-				owl_dat->finch_dat[i].Dn.edit(l, 0, (*owl_dat->eval_diff) (i,l,owl_dat) * 0.1);
+				owl_dat->finch_dat[i].Dn.edit(l, 0, (*owl_dat->eval_diff) (i,l,owl_dat) * 1.0);
 			}
 			owl_dat->finch_dat[i].Ro = (*owl_dat->eval_retard) (i,-1,owl_dat);
-			owl_dat->finch_dat[i].Do = (*owl_dat->eval_diff) (i,-1,owl_dat) * 0.1;
+			owl_dat->finch_dat[i].Do = (*owl_dat->eval_diff) (i,-1,owl_dat) * 1.0;
 			owl_dat->finch_dat[i].Rnp1 = owl_dat->finch_dat[i].Rn;
 			owl_dat->finch_dat[i].Dnp1 = owl_dat->finch_dat[i].Dn;
 			
@@ -1066,8 +1066,8 @@ int SCOPSOWL_preprocesses(SCOPSOWL_DATA *owl_dat)
 			mError(simulation_fail);
 			return -1;
 		}
-		owl_dat->finch_dat[i].Do = (*owl_dat->eval_diff) (i,-1,owl_dat) * 0.1;
-		owl_dat->finch_dat[i].kfnp1 = (*owl_dat->eval_kf) (i,owl_dat) * 0.1;
+		owl_dat->finch_dat[i].Do = (*owl_dat->eval_diff) (i,-1,owl_dat) * 1.0;
+		owl_dat->finch_dat[i].kfnp1 = (*owl_dat->eval_kf) (i,owl_dat) * 1.0;
 	}
 	
 	return success;
@@ -1087,7 +1087,7 @@ int set_SCOPSOWL_params(const void *user_data)
 		//Loop over all nodes
 		for (int l=0; l<owl_dat->finch_dat[i].LN; l++)
 		{
-			owl_dat->finch_dat[i].Dnp1.edit(l, 0, (*owl_dat->eval_diff) (i,l,owl_dat) * 0.1);
+			owl_dat->finch_dat[i].Dnp1.edit(l, 0, (*owl_dat->eval_diff) (i,l,owl_dat) * 1.0);
 		}
 	}
 	

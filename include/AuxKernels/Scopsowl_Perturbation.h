@@ -84,6 +84,7 @@ private:
 	const MaterialProperty< MIXED_GAS > & _gas_dat;			///< Material Property holding the MIXED_GAS data structure
 	std::map< unsigned int, SCOPSOWL_DATA > _dat;			///< Map for holding material property info for SCOPSOWL
 	std::map< unsigned int, MIXED_GAS > _mixed_dat;			///< Map for holding material property info for MIXED_GAS
+	double ymax;
 	
 };
 

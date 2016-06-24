@@ -582,8 +582,8 @@ initial_mole_frac = 0.0
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
-#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
+type = ConstantDT
+#type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]
 
