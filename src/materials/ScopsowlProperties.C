@@ -174,15 +174,6 @@ void ScopsowlProperties::initQpStatefulProperties()
 		_owl_dat[_qp].crystal_radius = 1.0;
 	}
 	
-	for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
-	{
-		_owl_dat[_qp].param_dat[i].ref_diffusion = _ref_diffusion[_qp][i];
-		_owl_dat[_qp].param_dat[i].activation_energy = _activation_energy[_qp][i];
-		_owl_dat[_qp].param_dat[i].ref_temperature = _ref_temperature[_qp][i];
-		_owl_dat[_qp].param_dat[i].affinity = _affinity_coeff[_qp][i];
-		
-	}
-	
 	success = setup_SCOPSOWL_DATA(NULL, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, _owl_dat[_qp].eval_surfDiff, (void *)&_owl_dat[_qp], &_gas_dat[_qp], &_owl_dat[_qp]);
 	if (success != 0) {mError(simulation_fail); return;}
 	
@@ -201,6 +192,7 @@ void ScopsowlProperties::computeQpProperties()
 	_owl_dat[_qp].binder_poresize = _pore_size[_qp];
 	
 	_gas_dat[_qp] = _coupled_gas[_qp];
+	_owl_dat[_qp].magpie_dat = _magpie_dat[_qp];
 	
 	if (Heterogeneous == true)
 	{

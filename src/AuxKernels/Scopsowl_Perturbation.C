@@ -43,7 +43,8 @@ InputParameters validParams<Scopsowl_Perturbation>()
 Scopsowl_Perturbation::Scopsowl_Perturbation(const InputParameters & parameters) :
 AuxKernel(parameters),
 _index(getParam<unsigned int>("index")),
-_owl_dat(getMaterialProperty< SCOPSOWL_DATA >("owl_data"))
+_owl_dat(getMaterialProperty< SCOPSOWL_DATA >("owl_data")),
+_gas_dat(getMaterialProperty< MIXED_GAS >("gas_data"))
 {
 	//Forces specific execution behavior of the auxkernel
 	_exec_flags.clear();
@@ -61,8 +62,10 @@ Scopsowl_Perturbation::computeValue()
 	if (_dt == 0.0)
 	{
 		_dat[_current_elem->id()] = _owl_dat[_qp];
+		_mixed_dat[_current_elem->id()] = _gas_dat[_qp];
+		_dat[_current_elem->id()].magpie_dat = _owl_dat[_qp].magpie_dat;
 		
-		success = setup_SCOPSOWL_DATA(NULL, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, _dat[_current_elem->id()].eval_surfDiff, (void *)&_dat[_current_elem->id()], _dat[_current_elem->id()].gas_dat, &_dat[_current_elem->id()]);
+		success = setup_SCOPSOWL_DATA(NULL, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, _dat[_current_elem->id()].eval_surfDiff, (void *)&_dat[_current_elem->id()], &_mixed_dat[_current_elem->id()], &_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
 		_dat[_current_elem->id()].total_pressure = _owl_dat[_qp].total_pressure;
@@ -78,7 +81,7 @@ Scopsowl_Perturbation::computeValue()
 		{
 			_dat[_current_elem->id()].y[i] = _owl_dat[_qp].y[i];
 			
-			_dat[_current_elem->id()].finch_dat[i].dt = 0.01;
+			_dat[_current_elem->id()].finch_dat[i].dt = 100.0;
 			_dat[_current_elem->id()].finch_dat[i].t = _dat[_current_elem->id()].finch_dat[i].dt + _dat[_current_elem->id()].finch_dat[i].t_old;
 			
 			if (_dat[_current_elem->id()].SurfDiff == true && _dat[_current_elem->id()].Heterogeneous == true)
@@ -116,6 +119,8 @@ Scopsowl_Perturbation::computeValue()
 		success = set_SCOPSOWL_ICs(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
+		//_dat[_current_elem->id()].param_dat[_index].ref_pressure = 0.1652005;
+		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
@@ -151,6 +156,8 @@ Scopsowl_Perturbation::computeValue()
 	{
 		if (_owl_dat[_qp].param_dat[_index].Adsorbable == false)
 			return 0.0;
+		_mixed_dat[_current_elem->id()] = _gas_dat[_qp];
+		_dat[_current_elem->id()].magpie_dat = _owl_dat[_qp].magpie_dat;
 		
 		//Establish parameters
 		_dat[_current_elem->id()].total_pressure = _owl_dat[_qp].total_pressure;
@@ -183,6 +190,8 @@ Scopsowl_Perturbation::computeValue()
 		_dat[_current_elem->id()].y[_index] = yi;
 		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
 		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
+		
+		//_dat[_current_elem->id()].param_dat[_index].ref_pressure = 0.1652005;
 		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);
