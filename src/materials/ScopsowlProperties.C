@@ -100,7 +100,7 @@ void ScopsowlProperties::initQpStatefulProperties()
 	_gas_dat[_qp].CheckMolefractions = true;
 	_owl_dat[_qp].total_steps = 0;
 	
-	_owl_dat[_qp].magpie_dat = _magpie_dat[_qp]; //Note: this line may cause seqfaults depending on the order MOOSE chooses
+	_owl_dat[_qp].magpie_dat = _magpie_dat[_qp];
 	
 	_owl_dat[_qp].param_dat.resize(_magpie_dat[_qp].sys_dat.N);
 	_owl_dat[_qp].finch_dat.resize(_magpie_dat[_qp].sys_dat.N);

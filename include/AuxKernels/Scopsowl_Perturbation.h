@@ -80,11 +80,11 @@ protected:
 	
 private:
 	unsigned int _index;									///< Index of the gaseous species to calculate equilibria for
+	Real _dt0;												///< Initial dt for perturbation synchronization (hrs)
 	const MaterialProperty< SCOPSOWL_DATA > & _owl_dat;		///< Material Property holding the SCOPSOWL data structure
 	const MaterialProperty< MIXED_GAS > & _gas_dat;			///< Material Property holding the MIXED_GAS data structure
 	std::map< unsigned int, SCOPSOWL_DATA > _dat;			///< Map for holding material property info for SCOPSOWL
 	std::map< unsigned int, MIXED_GAS > _mixed_dat;			///< Map for holding material property info for MIXED_GAS
-	double ymax;
 	
 };
 

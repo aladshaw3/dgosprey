@@ -1,6 +1,9 @@
 [GlobalParams]
+	
+	length = 12.7
+	initial_dt = 0.01
 
- [] #END GlobalParams
+[] #END GlobalParams
 
  [Problem]
 
@@ -127,7 +130,7 @@
 	[./N2_IC]
 		type = ConcentrationIC
 		variable = N2
-initial_mole_frac = 0.79
+		initial_mole_frac = 0.79
 #initial_mole_frac = 0.78863
 		initial_press = 101.35
 		initial_temp = 298.15
@@ -136,7 +139,7 @@ initial_mole_frac = 0.79
 	[./O2_IC]
 		type = ConcentrationIC
 		variable = O2
-initial_mole_frac = 0.21
+		initial_mole_frac = 0.21
 #initial_mole_frac = 0.20974
  		initial_press = 101.35
  		initial_temp = 298.15
@@ -145,7 +148,7 @@ initial_mole_frac = 0.21
 	[./H2O_IC]
 		type = ConcentrationIC
 		variable = H2O
-initial_mole_frac = 0.0
+		initial_mole_frac = 0.0
 #initial_mole_frac = 0.00163
  		initial_press = 101.35
  		initial_temp = 298.15
@@ -326,18 +329,21 @@ initial_mole_frac = 0.0
 		type = Scopsowl_Perturbation
 		variable = N2_Perturb
 		index = 0
+#initial_dt = 0.1
 	[../]
 
 	[./oxygen_perturbation]
 		type = Scopsowl_Perturbation
 		variable = O2_Perturb
 		index = 1
+#initial_dt = 0.1
 	[../]
 
 	[./water_perturbation]
 		type = Scopsowl_Perturbation
 		variable = H2O_Perturb
 		index = 2
+#initial_dt = 0.1
 	[../]
 
 	[./nitrogen_adsorption_heat]
@@ -577,13 +583,13 @@ initial_mole_frac = 0.0
 	start_time = 0.0
 	end_time = 60.0
 	dtmin = 1e-8
-	dtmax = 0.1				# Need to set a maximum for better accuracy
+	dtmax = 1.0				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
-type = ConstantDT
-#type = SolutionTimeAdaptiveDT
+#type = ConstantDT
+type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]
 

@@ -37,12 +37,14 @@ InputParameters validParams<Scopsowl_Perturbation>()
 {
 	InputParameters params = validParams<AuxKernel>();
 	params.addParam<unsigned int>("index",0,"Index of the species that we are interested in.");
+	params.addRequiredParam<Real>("initial_dt","Initial time step for multi-scale synchronization (hrs)");
 	return params;
 }
 
 Scopsowl_Perturbation::Scopsowl_Perturbation(const InputParameters & parameters) :
 AuxKernel(parameters),
 _index(getParam<unsigned int>("index")),
+_dt0(getParam<Real>("initial_dt")),
 _owl_dat(getMaterialProperty< SCOPSOWL_DATA >("owl_data")),
 _gas_dat(getMaterialProperty< MIXED_GAS >("gas_data"))
 {
@@ -51,7 +53,6 @@ _gas_dat(getMaterialProperty< MIXED_GAS >("gas_data"))
 	_exec_flags.push_back(EXEC_INITIAL);
 	_exec_flags.push_back(EXEC_TIMESTEP_END);
 	
-	ymax = 0.0;
 }
 
 Real
@@ -79,7 +80,7 @@ Scopsowl_Perturbation::computeValue()
 		{
 			_dat[_current_elem->id()].y[i] = _owl_dat[_qp].y[i];
 			
-			_dat[_current_elem->id()].finch_dat[i].dt = 0.01;
+			_dat[_current_elem->id()].finch_dat[i].dt = _dt0;
 			_dat[_current_elem->id()].finch_dat[i].t = _dat[_current_elem->id()].finch_dat[i].dt + _dat[_current_elem->id()].finch_dat[i].t_old;
 			
 			if (_dat[_current_elem->id()].SurfDiff == true && _dat[_current_elem->id()].Heterogeneous == true)
@@ -94,12 +95,6 @@ Scopsowl_Perturbation::computeValue()
 			}
 		}
 		
-		if (_dat[_current_elem->id()].y[_index] > ymax)
-			ymax = _dat[_current_elem->id()].y[_index];
-		//_dat[_current_elem->id()].y[_index] = ymax;
-		
-		//double pi = _owl_dat[_qp].y[_index] * _owl_dat[_qp].total_pressure;
-		//double pi = 0.00163 * _owl_dat[_qp].total_pressure;
 		double pi = _dat[_current_elem->id()].y[_index] * _owl_dat[_qp].total_pressure;
 		double ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (0.3625*sqrt(DBL_EPSILON));
 		double yi = Pstd(ci,_owl_dat[_qp].gas_temperature) / _owl_dat[_qp].total_pressure;
@@ -127,8 +122,6 @@ Scopsowl_Perturbation::computeValue()
 		//Establish ICs, then calculate adsorption
 		success = set_SCOPSOWL_ICs(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
-		
-		//_dat[_current_elem->id()].param_dat[_index].ref_pressure = 0.1652005;
 		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);
@@ -191,12 +184,6 @@ Scopsowl_Perturbation::computeValue()
 			}
 		}
 		
-		if (_dat[_current_elem->id()].y[_index] > ymax)
-			ymax = _dat[_current_elem->id()].y[_index];
-		//_dat[_current_elem->id()].y[_index] = ymax;
-		
-		//double pi = _owl_dat[_qp].y[_index] * _owl_dat[_qp].total_pressure;
-		//double pi = 0.00163 * _owl_dat[_qp].total_pressure;
 		double pi = _dat[_current_elem->id()].y[_index] * _owl_dat[_qp].total_pressure;
 		double ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (0.3625*sqrt(DBL_EPSILON));
 		double yi = Pstd(ci,_owl_dat[_qp].gas_temperature) / _owl_dat[_qp].total_pressure;
@@ -204,8 +191,6 @@ Scopsowl_Perturbation::computeValue()
 		_dat[_current_elem->id()].y[_index] = yi;
 		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
 		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
-		
-		//_dat[_current_elem->id()].param_dat[_index].ref_pressure = 0.1652005;
 		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);
