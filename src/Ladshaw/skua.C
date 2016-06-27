@@ -594,7 +594,7 @@ int SKUA_preprocesses(SKUA_DATA *skua_dat)
 	
 	//Call MAGPIE to determine equilibrium adsorption
 	success = MAGPIE((void *)&skua_dat->magpie_dat);
-	if (success < 0 || success > 3) {mError(simulation_fail); return -1;}
+	if (success < 0 || success > 5) {mError(simulation_fail); return -1;}
 	else success = 0;
 	skua_dat->total_steps = skua_dat->total_steps + skua_dat->magpie_dat.sys_dat.total_eval;
 	

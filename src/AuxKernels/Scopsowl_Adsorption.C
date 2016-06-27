@@ -136,6 +136,8 @@ Scopsowl_Adsorption::computeValue()
 		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
 		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
 		
+		//_dat[_current_elem->id()].magpie_dat.sys_dat.Output = true;
+		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
@@ -144,7 +146,6 @@ Scopsowl_Adsorption::computeValue()
 		
 		//Reset for next step
 		success = SCOPSOWL_reset(&_dat[_current_elem->id()]);
-		if (success != 0) {mError(simulation_fail); return -1;}
 	}
 	
 	return q;

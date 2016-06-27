@@ -145,7 +145,7 @@ void ScopsowlProperties::initQpStatefulProperties()
 		_owl_dat[_qp].char_micro = MicroLength;
 	}
 	
-	if (_owl_dat[_qp].Heterogeneous == true)
+	if (_owl_dat[_qp].Heterogeneous == true && _owl_dat[_qp].SurfDiff == true)
 	{
 		_owl_dat[_qp].eval_surfDiff = (*default_Dc);
 	}

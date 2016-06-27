@@ -200,7 +200,6 @@ Scopsowl_Perturbation::computeValue()
 		
 		//Reset for next step
 		success = SCOPSOWL_reset(&_dat[_current_elem->id()]);
-		if (success != 0) {mError(simulation_fail); return -1;}
 	}
 	
 	return q;
