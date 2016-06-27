@@ -1,4 +1,6 @@
 [GlobalParams]
+ 
+	initial_dt = 0.01
 
  [] #END GlobalParams
 
@@ -308,37 +310,37 @@
 	[../]
 
 	[./krypton_adsorption]
-		type = MAGPIE_MaterialLDF_Adsorption
+		type = Scopsowl_Adsorption
 		variable = Kr_Adsorbed
 		index = 0
 	[../]
 
 	[./xenon_adsorption]
-		type = MAGPIE_MaterialLDF_Adsorption
+		type = Scopsowl_Adsorption
 		variable = Xe_Adsorbed
 		index = 1
 	[../]
 
 	[./helium_adsorption]
-		type = MAGPIE_MaterialLDF_Adsorption
+		type = Scopsowl_Adsorption
 		variable = He_Adsorbed
 		index = 2
 	[../]
 
 	[./krypton_perturbation]
-		type = MAGPIE_MaterialLDF_Perturbation
+		type = Scopsowl_Perturbation
 		variable = Kr_Perturb
 		index = 0
 	[../]
 
 	[./xenon_perturbation]
-		type = MAGPIE_MaterialLDF_Perturbation
+		type = Scopsowl_Perturbation
 		variable = Xe_Perturb
 		index = 1
 	[../]
 
 	[./helium_perturbation]
-		type = MAGPIE_MaterialLDF_Perturbation
+		type = Scopsowl_Perturbation
 		variable = He_Perturb
 		index = 2
 	[../]
@@ -490,6 +492,17 @@
 		entropy_site_5 = '0 0 0'
 		entropy_site_6 = '0 0 0'
 	[../]
+ 
+	[./KineticMaterials]
+		type = ScopsowlProperties
+		block = 0
+		dirichlet_bc = false
+		heterogeneous = true
+		surface_diffusion = false
+		macro_spheres = false
+		coupled_adsorption = 'Kr_Adsorbed Xe_Adsorbed He_Adsorbed'
+		coupled_gases = 'Kr Xe He'
+	[../]
 
  [] #END Materials
 
@@ -581,7 +594,7 @@
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 10.0
-	dtmax = 0.1
+	dtmax = 1.0
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
@@ -589,7 +602,7 @@
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 		#type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 0.1
+		dt = 0.01
 	[../]
 
  [] #END Executioner
