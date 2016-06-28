@@ -1,6 +1,6 @@
 [GlobalParams]
  
-	initial_dt = 0.01
+	initial_dt = 0.1
 
 [] #END GlobalParams
 
@@ -424,7 +424,7 @@
 		length = 22.86
 		inner_diameter = 1.7272
 		outer_diameter = 1.905
-		bulk_porosity = 0.798				#not known
+		bulk_porosity = 0.885				#Based on bulk solids density data from INL
 		axial_conductivity = 6.292E-05      #not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
@@ -454,12 +454,10 @@
 	[./AdsorbentMaterials]
 		type = AdsorbentProperties
 		block = 0
-		binder_fraction = 0.175				#not known
-		binder_porosity = 0.27				#not known
-		crystal_radius = 1.5				#not known
-		pellet_diameter = 0.236				#not known
-		macropore_radius = 3.5e-6			#not Known
-		pellet_density = 1.69				#not Known
+		binder_porosity = 0.384
+		pellet_diameter = 0.16
+		macropore_radius = 1.5e-4
+		pellet_density = 3.06
 		pellet_heat_capacity = 1.045		#not known
 		ref_diffusion = '0 0 0'				#not known
 		activation_energy = '0 0 0'			#not known
@@ -497,9 +495,10 @@
 		type = ScopsowlProperties
 		block = 0
 		dirichlet_bc = false
-		heterogeneous = true
-		surface_diffusion = false
+		heterogeneous = false
+		surface_diffusion = true
 		macro_spheres = false
+		macro_length = 0.4
 		coupled_adsorption = 'Kr_Adsorbed Xe_Adsorbed He_Adsorbed'
 		coupled_gases = 'Kr Xe He'
 	[../]
@@ -600,9 +599,9 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		type = ConstantDT
+#type = SolutionTimeAdaptiveDT
+		dt = 0.1
 	[../]
 
  [] #END Executioner

@@ -327,7 +327,7 @@ double default_adsorption(int i, int l, const void *user_data)
 			}
 			
 			
-			dq_dc = ( qEPS - dat->param_dat[i].qAvg(l,0) ) / eps;
+			dq_dc = fabs( qEPS - dat->param_dat[i].qAvg(l,0) ) / eps;
 			dat->param_dat[i].dq_dc.edit(l, 0, dq_dc);
 			
 		}
