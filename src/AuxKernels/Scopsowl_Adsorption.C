@@ -53,8 +53,7 @@ _gas_dat(getMaterialProperty< MIXED_GAS >("gas_data"))
 	
 }
 
-Real
-Scopsowl_Adsorption::computeValue()
+Real Scopsowl_Adsorption::computeValue()
 {
 	int success = 0;
 	Real q = 0.0;
@@ -98,6 +97,17 @@ Scopsowl_Adsorption::computeValue()
 		success = set_SCOPSOWL_ICs(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
+		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
+		{
+			_dat[_current_elem->id()].param_dat[i].ref_pressure = _dat[_current_elem->id()].y[i] * _owl_dat[_qp].total_pressure;
+			
+			_dat[_current_elem->id()].param_dat[i].ref_diffusion = D_inf(_owl_dat[_qp].param_dat[i].ref_diffusion,_owl_dat[_qp].param_dat[i].ref_temperature,_owl_dat[_qp].param_dat[i].affinity,_dat[_current_elem->id()].param_dat[i].ref_pressure,_owl_dat[_qp].gas_temperature);
+		
+			_dat[_current_elem->id()].param_dat[i].activation_energy = _owl_dat[_qp].param_dat[i].activation_energy;
+			_dat[_current_elem->id()].param_dat[i].ref_temperature = 0.0;
+			_dat[_current_elem->id()].param_dat[i].affinity = 0.0;
+		}
+		
 		q = _dat[_current_elem->id()].param_dat[_index].qIntegralAvg;
 		
 	}
@@ -136,7 +146,16 @@ Scopsowl_Adsorption::computeValue()
 		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
 		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
 		
-		//_dat[_current_elem->id()].magpie_dat.sys_dat.Output = true;
+		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
+		{
+			_dat[_current_elem->id()].param_dat[i].ref_pressure = _dat[_current_elem->id()].y[i] * _owl_dat[_qp].total_pressure;
+			
+			_dat[_current_elem->id()].param_dat[i].ref_diffusion = D_inf(_owl_dat[_qp].param_dat[i].ref_diffusion,_owl_dat[_qp].param_dat[i].ref_temperature,_owl_dat[_qp].param_dat[i].affinity,_dat[_current_elem->id()].param_dat[i].ref_pressure,_owl_dat[_qp].gas_temperature);
+			
+			_dat[_current_elem->id()].param_dat[i].activation_energy = _owl_dat[_qp].param_dat[i].activation_energy;
+			_dat[_current_elem->id()].param_dat[i].ref_temperature = 0.0;
+			_dat[_current_elem->id()].param_dat[i].affinity = 0.0;
+		}
 		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);

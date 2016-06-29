@@ -1,6 +1,6 @@
 [GlobalParams]
  
-	initial_dt = 0.1
+	initial_dt = 0.01
 
 [] #END GlobalParams
 
@@ -599,9 +599,9 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		type = ConstantDT
-#type = SolutionTimeAdaptiveDT
-		dt = 0.1
+#type = ConstantDT
+type = SolutionTimeAdaptiveDT
+		dt = 0.01
 	[../]
 
  [] #END Executioner

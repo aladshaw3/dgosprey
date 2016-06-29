@@ -106,6 +106,9 @@ void ScopsowlProperties::initQpStatefulProperties()
 	_owl_dat[_qp].finch_dat.resize(_magpie_dat[_qp].sys_dat.N);
 	_owl_dat[_qp].y.resize(_magpie_dat[_qp].sys_dat.N);
 	
+	double dt_nm1 = _dt_old;
+	if (_dt_old == 0.0) dt_nm1 = _dt;
+	
 	for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
 	{
 		if (_magpie_dat[_qp].gsta_dat[i].qmax <= 0.0)

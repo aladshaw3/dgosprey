@@ -55,8 +55,7 @@ _gas_dat(getMaterialProperty< MIXED_GAS >("gas_data"))
 	
 }
 
-Real
-Scopsowl_Perturbation::computeValue()
+Real Scopsowl_Perturbation::computeValue()
 {
 	int success = 0;
 	Real q = 0.0;
@@ -96,7 +95,15 @@ Scopsowl_Perturbation::computeValue()
 		}
 		
 		double pi = _dat[_current_elem->id()].y[_index] * _owl_dat[_qp].total_pressure;
-		double ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (0.3625*sqrt(DBL_EPSILON));
+		double ci;
+		if (_dat[_current_elem->id()].SurfDiff == true && _dat[_current_elem->id()].Heterogeneous == true)
+		{
+			ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (0.3625*sqrt(DBL_EPSILON));
+		}
+		else
+		{
+			ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (sqrt(DBL_EPSILON));
+		}
 		double yi = Pstd(ci,_owl_dat[_qp].gas_temperature) / _owl_dat[_qp].total_pressure;
 		
 		_dat[_current_elem->id()].y[_index] = yi;
@@ -122,6 +129,15 @@ Scopsowl_Perturbation::computeValue()
 		//Establish ICs, then calculate adsorption
 		success = set_SCOPSOWL_ICs(&_dat[_current_elem->id()]);
 		if (success != 0) {mError(simulation_fail); return -1;}
+		
+		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
+		{
+			_dat[_current_elem->id()].param_dat[i].ref_pressure = _dat[_current_elem->id()].y[i] * _owl_dat[_qp].total_pressure;
+			_dat[_current_elem->id()].param_dat[i].ref_diffusion = D_inf(_owl_dat[_qp].param_dat[i].ref_diffusion,_owl_dat[_qp].param_dat[i].ref_temperature,_owl_dat[_qp].param_dat[i].affinity,_dat[_current_elem->id()].param_dat[i].ref_pressure,_owl_dat[_qp].gas_temperature);
+			_dat[_current_elem->id()].param_dat[i].activation_energy = _owl_dat[_qp].param_dat[i].activation_energy;
+			_dat[_current_elem->id()].param_dat[i].ref_temperature = 0.0;
+			_dat[_current_elem->id()].param_dat[i].affinity = 0.0;
+		}
 		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);
@@ -185,12 +201,29 @@ Scopsowl_Perturbation::computeValue()
 		}
 		
 		double pi = _dat[_current_elem->id()].y[_index] * _owl_dat[_qp].total_pressure;
-		double ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (0.3625*sqrt(DBL_EPSILON));
+		double ci;
+		if (_dat[_current_elem->id()].SurfDiff == true && _dat[_current_elem->id()].Heterogeneous == true)
+		{
+			ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (0.3625*sqrt(DBL_EPSILON));
+		}
+		else
+		{
+			ci = Cstd(pi,_owl_dat[_qp].gas_temperature) + (sqrt(DBL_EPSILON));
+		}
 		double yi = Pstd(ci,_owl_dat[_qp].gas_temperature) / _owl_dat[_qp].total_pressure;
 		
 		_dat[_current_elem->id()].y[_index] = yi;
 		_dat[_current_elem->id()].t_old = _dat[_current_elem->id()].finch_dat[0].t_old;
 		_dat[_current_elem->id()].t = _dat[_current_elem->id()].finch_dat[0].t;
+		
+		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
+		{
+			_dat[_current_elem->id()].param_dat[i].ref_pressure = _dat[_current_elem->id()].y[i] * _owl_dat[_qp].total_pressure;
+			_dat[_current_elem->id()].param_dat[i].ref_diffusion = D_inf(_owl_dat[_qp].param_dat[i].ref_diffusion,_owl_dat[_qp].param_dat[i].ref_temperature,_owl_dat[_qp].param_dat[i].affinity,_dat[_current_elem->id()].param_dat[i].ref_pressure,_owl_dat[_qp].gas_temperature);
+			_dat[_current_elem->id()].param_dat[i].activation_energy = _owl_dat[_qp].param_dat[i].activation_energy;
+			_dat[_current_elem->id()].param_dat[i].ref_temperature = 0.0;
+			_dat[_current_elem->id()].param_dat[i].affinity = 0.0;
+		}
 		
 		//Call Executioner
 		success = SCOPSOWL_Executioner(&_dat[_current_elem->id()]);

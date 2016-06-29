@@ -329,21 +329,18 @@
 		type = Scopsowl_Perturbation
 		variable = N2_Perturb
 		index = 0
-#initial_dt = 0.1
 	[../]
 
 	[./oxygen_perturbation]
 		type = Scopsowl_Perturbation
 		variable = O2_Perturb
 		index = 1
-#initial_dt = 0.1
 	[../]
 
 	[./water_perturbation]
 		type = Scopsowl_Perturbation
 		variable = H2O_Perturb
 		index = 2
-#initial_dt = 0.1
 	[../]
 
 	[./nitrogen_adsorption_heat]
@@ -422,7 +419,6 @@
 	[./BedMaterials]
 		type = BedProperties
 		block = 0
-		length = 12.7
 		inner_diameter = 2.54
 		outer_diameter = 2.84
 		bulk_porosity = 0.421
@@ -444,7 +440,6 @@
 		comp_ref_temp = '300.55 292.25 298.16'
 		comp_Sutherland_const = '111 127 784.72'
 		flow_rate = 211680.0
-		length = 12.7
 		temperature = column_temp
  		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O'
@@ -583,7 +578,7 @@
 	start_time = 0.0
 	end_time = 60.0
 	dtmin = 1e-8
-	dtmax = 1.0				# Need to set a maximum for better accuracy
+	dtmax = 0.1				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
