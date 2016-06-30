@@ -58,6 +58,8 @@ Real Scopsowl_Adsorption::computeValue()
 	int success = 0;
 	Real q = 0.0;
 	
+	double ymax = 0.00163;
+	
 	// Initial Conditions
 	if (_dt == 0.0)
 	{
@@ -99,7 +101,12 @@ Real Scopsowl_Adsorption::computeValue()
 		
 		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
 		{
+			double tempP = Pstd(_dat[_current_elem->id()].finch_dat[i].uAvg,_dat[_current_elem->id()].gas_temperature);
+			
 			_dat[_current_elem->id()].param_dat[i].ref_pressure = _dat[_current_elem->id()].y[i] * _owl_dat[_qp].total_pressure;
+			
+			if (tempP > _dat[_current_elem->id()].param_dat[i].ref_pressure)
+				_dat[_current_elem->id()].param_dat[i].ref_pressure = tempP;
 			
 			_dat[_current_elem->id()].param_dat[i].ref_diffusion = D_inf(_owl_dat[_qp].param_dat[i].ref_diffusion,_owl_dat[_qp].param_dat[i].ref_temperature,_owl_dat[_qp].param_dat[i].affinity,_dat[_current_elem->id()].param_dat[i].ref_pressure,_owl_dat[_qp].gas_temperature);
 		
@@ -148,7 +155,12 @@ Real Scopsowl_Adsorption::computeValue()
 		
 		for (int i=0; i<_owl_dat[_qp].magpie_dat.sys_dat.N; i++)
 		{
+			double tempP = Pstd(_dat[_current_elem->id()].finch_dat[i].uAvg,_dat[_current_elem->id()].gas_temperature);
+			
 			_dat[_current_elem->id()].param_dat[i].ref_pressure = _dat[_current_elem->id()].y[i] * _owl_dat[_qp].total_pressure;
+			
+			if (tempP > _dat[_current_elem->id()].param_dat[i].ref_pressure)
+				_dat[_current_elem->id()].param_dat[i].ref_pressure = tempP;
 			
 			_dat[_current_elem->id()].param_dat[i].ref_diffusion = D_inf(_owl_dat[_qp].param_dat[i].ref_diffusion,_owl_dat[_qp].param_dat[i].ref_temperature,_owl_dat[_qp].param_dat[i].affinity,_dat[_current_elem->id()].param_dat[i].ref_pressure,_owl_dat[_qp].gas_temperature);
 			

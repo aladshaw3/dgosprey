@@ -1,8 +1,8 @@
 [GlobalParams]
  
-	initial_dt = 0.1
+	initial_dt = 0.01
 
- [] #END GlobalParams
+[] #END GlobalParams
 
  [Problem]
 
@@ -14,8 +14,8 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 10
- 	ny = 40
+	nx = 1
+ 	ny = 3
  	xmin = 0.0
 	xmax = 0.8636 #cm
  	ymin = 0.0
@@ -43,13 +43,13 @@
  	[./wall_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 295.15
+ 		initial_condition = 253.15
  	[../]
 
 	[./column_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 295.15
+ 		initial_condition = 253.15
 	[../]
 
  [] #END Variables
@@ -65,7 +65,7 @@
  	[./ambient_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 295.15
+ 		initial_condition = 253.15
  	[../]
 
 	[./He_Adsorbed]
@@ -77,13 +77,13 @@
 	[./Kr_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 4.08e-5
+		initial_condition = 0.0
 	[../]
 
 	[./Xe_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0517
+		initial_condition = 0.0
 	[../]
 
 	[./He_Perturb]
@@ -95,13 +95,13 @@
 	[./Kr_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 4.08e-5
+		initial_condition = 0.0
 	[../]
 
 	[./Xe_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 0.0517
+		initial_condition = 0.0
 	[../]
 
 	[./Kr_AdsorbedHeat]
@@ -129,25 +129,25 @@
 	[./Kr_IC]
 		type = ConcentrationIC
 		variable = Kr
-		initial_mole_frac = 0.000153814
+		initial_mole_frac = 0.0
 		initial_press = 101.35
-		initial_temp = 295.15
+		initial_temp = 253.15
 	[../]
 
 	[./Xe_IC]
 		type = ConcentrationIC
 		variable = Xe
-		initial_mole_frac = 0.001007334
+		initial_mole_frac = 0.0
  		initial_press = 101.35
- 		initial_temp = 295.15
+ 		initial_temp = 253.15
 	[../]
 
 	[./He_IC]
 		type = ConcentrationIC
 		variable = He
-		initial_mole_frac = 0.998838852
+		initial_mole_frac = 1.0
  		initial_press = 101.35
- 		initial_temp = 295.15
+ 		initial_temp = 253.15
 	[../]
 
  [] #END ICs
@@ -205,12 +205,6 @@
  		variable = He
 		index = 2
  	[../]
- 
-	[./He_MT]
-		type = AdsorptionMassTransfer
-		variable = He
-		solid_conc = He_Adsorbed
-	[../]
 
 	[./diffHe]
 		type = GColumnMassDispersion
@@ -316,42 +310,36 @@
 	[../]
 
 	[./krypton_adsorption]
-#type = MAGPIE_Adsorption
 		type = Scopsowl_Adsorption
 		variable = Kr_Adsorbed
 		index = 0
 	[../]
 
 	[./xenon_adsorption]
-#type = MAGPIE_Adsorption
 		type = Scopsowl_Adsorption
 		variable = Xe_Adsorbed
 		index = 1
 	[../]
 
 	[./helium_adsorption]
-#type = MAGPIE_Adsorption
 		type = Scopsowl_Adsorption
 		variable = He_Adsorbed
 		index = 2
 	[../]
 
 	[./krypton_perturbation]
-#type = MAGPIE_Perturbation
 		type = Scopsowl_Perturbation
 		variable = Kr_Perturb
 		index = 0
 	[../]
 
 	[./xenon_perturbation]
-#type = MAGPIE_Perturbation
 		type = Scopsowl_Perturbation
 		variable = Xe_Perturb
 		index = 1
 	[../]
 
 	[./helium_perturbation]
-#type = MAGPIE_Perturbation
 		type = Scopsowl_Perturbation
 		variable = He_Perturb
 		index = 2
@@ -386,9 +374,9 @@
 		type = DGMassFluxLimitedBC
  		variable = Kr
  		boundary = 'top bottom'
- 		input_temperature = 295.15
+ 		input_temperature = 253.15
  		input_pressure = 101.35
- 		input_molefraction = 0.0
+ 		input_molefraction = 0.000131792
  		index = 0
  	[../]
 
@@ -396,9 +384,9 @@
 		type = DGMassFluxLimitedBC
  		variable = Xe
  		boundary = 'top bottom'
- 		input_temperature = 295.15
+ 		input_temperature = 253.15
  		input_pressure = 101.35
- 		input_molefraction = 0.0
+ 		input_molefraction = 0.000863107
  		index = 1
  	[../]
 
@@ -406,9 +394,9 @@
 		type = DGMassFluxLimitedBC
  		variable = He
  		boundary = 'top bottom'
- 		input_temperature = 295.15
+ 		input_temperature = 253.15
  		input_pressure = 101.35
- 		input_molefraction = 1.0
+ 		input_molefraction = 0.999005101
  		index = 2
  	[../]
 
@@ -416,7 +404,7 @@
  		type = DGHeatFluxLimitedBC
  		variable = column_temp
  		boundary = 'top bottom'
- 		input_temperature = 295.15
+ 		input_temperature = 253.15
  	[../]
  
 	[./Heat_Wall_Flux]
@@ -594,7 +582,7 @@
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
- 	nl_abs_tol = 1e-6
+ 	nl_abs_tol = 1e-4
  	nl_rel_step_tol = 1e-10
  	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
@@ -602,18 +590,18 @@
 	nl_max_its = 10
 
 	solve_type = newton
-    line_search = none    # Options: default shell none basic l2 bt cp
+    line_search = none    # Options: default none basic l2 bt cp (USE bt, l2, cp, or none)
 	start_time = 0.0
-	end_time = 20.0
-	dtmax = 1.0
+	end_time = 0.04
+	dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 0.1
+type = ConstantDT
+#type = SolutionTimeAdaptiveDT
+		dt = 0.01
 	[../]
 
  [] #END Executioner
