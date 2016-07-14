@@ -1,6 +1,6 @@
 [GlobalParams]
  
-	initial_dt = 0.01
+	initial_dt = 0.008
 
  [] #END GlobalParams
 
@@ -317,48 +317,48 @@
 
 	[./krypton_adsorption]
 #type = MAGPIE_Adsorption
-#type = Scopsowl_Adsorption
- type = MAGPIE_MaterialLDF_Adsorption
+type = Scopsowl_Adsorption
+# type = MAGPIE_MaterialLDF_Adsorption
 		variable = Kr_Adsorbed
 		index = 0
 	[../]
 
 	[./xenon_adsorption]
 #type = MAGPIE_Adsorption
-#type = Scopsowl_Adsorption
- type = MAGPIE_MaterialLDF_Adsorption
+type = Scopsowl_Adsorption
+# type = MAGPIE_MaterialLDF_Adsorption
 		variable = Xe_Adsorbed
 		index = 1
 	[../]
 
 	[./helium_adsorption]
 #type = MAGPIE_Adsorption
-#type = Scopsowl_Adsorption
- type = MAGPIE_MaterialLDF_Adsorption
+type = Scopsowl_Adsorption
+# type = MAGPIE_MaterialLDF_Adsorption
 		variable = He_Adsorbed
 		index = 2
 	[../]
 
 	[./krypton_perturbation]
 #type = MAGPIE_Perturbation
-#type = Scopsowl_Perturbation
- type = MAGPIE_MaterialLDF_Perturbation
+type = Scopsowl_Perturbation
+# type = MAGPIE_MaterialLDF_Perturbation
 		variable = Kr_Perturb
 		index = 0
 	[../]
 
 	[./xenon_perturbation]
 #type = MAGPIE_Perturbation
-#type = Scopsowl_Perturbation
- type = MAGPIE_MaterialLDF_Perturbation
+type = Scopsowl_Perturbation
+# type = MAGPIE_MaterialLDF_Perturbation
 		variable = Xe_Perturb
 		index = 1
 	[../]
 
 	[./helium_perturbation]
 #type = MAGPIE_Perturbation
-#type = Scopsowl_Perturbation
- type = MAGPIE_MaterialLDF_Perturbation
+type = Scopsowl_Perturbation
+# type = MAGPIE_MaterialLDF_Perturbation
 		variable = He_Perturb
 		index = 2
 	[../]
@@ -611,15 +611,15 @@
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 20.0
-	dtmax = 1.0
+	dtmax = 0.08
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 #type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+type = SolutionTimeAdaptiveDT
+		dt = 0.008
 	[../]
 
  [] #END Executioner

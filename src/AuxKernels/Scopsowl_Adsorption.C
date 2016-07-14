@@ -174,7 +174,7 @@ Real Scopsowl_Adsorption::computeValue()
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
 		q = _dat[_current_elem->id()].param_dat[_index].qIntegralAvg;
-		
+				
 		//Reset for next step
 		success = SCOPSOWL_reset(&_dat[_current_elem->id()]);
 	}

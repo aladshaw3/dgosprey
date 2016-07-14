@@ -1,7 +1,7 @@
 [GlobalParams]
 	
 	length = 12.7
-	initial_dt = 0.01
+	initial_dt = 0.0118
 
 [] #END GlobalParams
 
@@ -578,14 +578,14 @@
 	start_time = 0.0
 	end_time = 60.0
 	dtmin = 1e-8
-	dtmax = 0.1				# Need to set a maximum for better accuracy
+	dtmax = 0.118				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 #type = ConstantDT
 type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		dt = 0.0118
 	[../]
 
  [] #END Executioner
