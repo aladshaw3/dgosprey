@@ -341,10 +341,16 @@ double default_retardation(int i, int l, const void *user_data)
 {
 	double Ret = 1.0;
 	SCOPSOWL_DATA *dat = (SCOPSOWL_DATA *) user_data;
+	double ads_coeff = (dat->pellet_density*(*dat->eval_ads)(i,l,user_data));
 	if (l < 0 && dat->DirichletBC == false)
-		Ret = fabs(dat->binder_porosity*dat->binder_fraction);
+		Ret = (dat->binder_porosity*dat->binder_fraction);
 	else
-		Ret = fabs((dat->binder_porosity*dat->binder_fraction) + (dat->pellet_density*(*dat->eval_ads)(i,l,user_data)));
+	{
+		if (ads_coeff > 0.0)
+			Ret = (dat->binder_porosity*dat->binder_fraction) + ads_coeff;
+		else
+			Ret = (dat->binder_porosity*dat->binder_fraction);
+	}
 	if (Ret < 0.0)
 	{
 		mError(unstable_matrix);
@@ -435,6 +441,12 @@ double default_surf_diffusion(int i, int l, const void *user_data)
 	Dc = D_o(dat->param_dat[i].ref_diffusion, dat->param_dat[i].activation_energy, dat->magpie_dat.sys_dat.T);
 	Dc = D_inf(Dc, dat->param_dat[i].ref_temperature, dat->param_dat[i].affinity, dat->param_dat[i].ref_pressure, dat->magpie_dat.sys_dat.T);
 	return Dc;
+}
+
+//Function to return 0 as surface diffusion
+double zero_surf_diffusion(int i, int l, const void *user_data)
+{
+	return 0.0;
 }
 
 //Function to evaluate an effective diffusivity based on pore and surface diffusion
@@ -627,6 +639,11 @@ int setup_SCOPSOWL_DATA(FILE *file,
 	{
 		owl_data->eval_diff = (*default_effective_diffusion);
 		owl_data->eval_surfDiff = (*eval_surface_diff);
+	}
+	else if (owl_data->SurfDiff == false && owl_data->Heterogeneous == false)
+	{
+		owl_data->eval_diff = (*default_effective_diffusion);
+		owl_data->eval_surfDiff = (*zero_surf_diffusion);
 	}
 	else
 	{
