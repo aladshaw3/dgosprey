@@ -161,4 +161,5 @@ peacock_*.e
 #Misc
 *.svn
 /include/DgospreyRevision.h
+/include/base/DgospreyRevision.h
 
