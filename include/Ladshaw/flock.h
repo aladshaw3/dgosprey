@@ -27,5 +27,6 @@
 #include "skua.h"
 #include "scopsowl.h"
 #include "magpie.h"
+#include "yaml_wrapper.h"
 
 #endif

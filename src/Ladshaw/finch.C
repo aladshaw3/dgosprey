@@ -3991,7 +3991,7 @@ int FINCH_TESTS()
 	dat.nl_method = LARK_PJFNK; //0 = FINCH_Picard, 1 = LARK_Picard, 2 = LARK_PJFNK
 	dat.pjfnk_dat.nl_tol_rel = 1e-6;
 	dat.pjfnk_dat.nl_tol_abs = 1e-6;
-	dat.pjfnk_dat.linear_solver = GMRESRP;
+	dat.pjfnk_dat.linear_solver = QR;
 	//dat.pjfnk_dat.L_Output = true;
 	//dat.pjfnk_dat.lin_tol = 1e-10;
 	dat.pjfnk_dat.LineSearch = true;

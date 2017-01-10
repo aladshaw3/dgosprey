@@ -424,8 +424,8 @@ typedef struct
 	double outer_abstol = 1e-6;		///< Absolute residual tolerance for outer steps (Default = 1e-6)
 	double inner_reltol = 0.1;		///< Residual tolerance for inner steps made relative to outer steps (Default = 0.1)
 	
-	bool Output_out = true;			///< True = Print the outer steps residuals
-	bool Output_in = false;			///< True = Print the inner steps residuals
+	bool Output_outer = true;			///< True = Print the outer steps residuals
+	bool Output_inner = false;			///< True = Print the inner steps residuals
 	
 	GMRESRP_DATA gmres_out;					///< Data structure for the outer steps
 	std::vector<GMRESRP_DATA> gmres_in;		///< Data structures for each recursion level
@@ -439,6 +439,20 @@ typedef struct
 	const void *term_precon;	///< Data structure for the user's terminal preconditioner
 	
 }KMS_DATA;
+
+///Data structure for the implementation of a QR solver given some invertable linear operator
+/** C-style object to be used in conjuction with a QR solver for invertable linear operators.
+	This method will extract columns from the linear operator and use Householder Reflections
+	to factor the operator into an upper triangular matrix and a unitary reflection matrix.
+	It is generally less efficient to use this method for sparse systems, but is more stable
+	and occassionally more efficient for dense systems. */
+typedef struct
+{
+	Matrix<double> ek;				///< Unit vector used to extract columns from the linear operator
+	Matrix<double> Ro;				///< Upper triangular matrix formed from factoring the linear operator
+	Matrix<double> x;				///< Solution to the linear system
+	
+}QR_DATA;
 
 /// Data structure for the implementation of a Picard or Fixed-Point iteration for non-linear systems
 /** C-style object used in conjunction with the Picard algorithm for solving a non-linear system of equations.
@@ -499,6 +513,8 @@ typedef enum
 	GMRESRP,
 	GCR,
 	GMRESR,
+	KMS,
+	QR
 } krylov_method;
 
 /// Data structure for the implementation of the PJFNK algorithm for non-linear systems
@@ -545,6 +561,8 @@ typedef struct
 	GMRESRP_DATA gmresrp_dat;		///< Data structure for the GMRESRP method
 	GCR_DATA gcr_dat;				///< Data structure for the GCR method
 	GMRESR_DATA gmresr_dat;			///< Data structure for the GMRESR method
+	KMS_DATA kms_dat;				///< Data structure for the KMS method
+	QR_DATA qr_dat;					///< Data structure for the QR solve method
 	
 	
 	BACKTRACK_DATA backtrack_dat;	///< Data structure for the Backtracking Linesearch algorithm
@@ -1085,6 +1103,33 @@ int krylovMultiSpace( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax
 					 Matrix<double> &b, KMS_DATA *kms_dat, const void *matvec_data,
 					 const void *term_precon_data );
 
+/// Function to solve a dense linear operator system using QR factorization
+/** This function is used to solve a dense linear system using QR factorization. It should only be used
+	if iterative methods are unstable or if the linear system is very dense. There will likely be memory
+	limitations to using this method, since it is assumed that the matrix/operator is dense. This method
+	may also be less efficient because it has to extract the matrix elements from the linear operator. So
+	if the linear operator is large, then the setup cost for this method is high.
+ 
+	Factorization is carried out using Householder Reflections. Each reflection matrix is iteratively
+	applied to the operator and the vector b to convert the linear system to upper triangular. Then, the
+	system is solved using backwards substitution.
+ 
+	\param matvec user supplied linear operator given as an int function
+	\param b matrix of boundary conditions in the linear system Ax=b
+	\param qr_dat pointer to the QR_DATA data structure
+	\param matvec_data user supplied void pointer to a data structure needed for the linear operator*/
+
+/**	\note int (*matvec) (const Matrix<double>& v, Matrix<double> &Av, const void *data)
+	\n --------------------------------------------------------------------------------
+	\n This is a user supplied function for a linear operator. User's function must return an
+ int of 0 upon success and anything else denotes a failure. The function accepts a matrix
+ v that will act on the linear operator a modified the matrix entries of Av to form the
+ result of a matrix-vector product. Void pointer data is used to pass any user data structure
+ that the function may need in order to perform the linear operation.
+	\n --------------------------------------------------------------------------------*/
+int QRsolve( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const void *data),
+			Matrix<double> &b, QR_DATA *qr_dat, const void *matvec_data);
+
 /// Function to iteratively solve a non-linear system using the Picard or Fixed-Point method
 /** This function iteratively solves a non-linear system using the Picard method. User supplies
 	a residual function and a weak solution form function. The weak form function is used to
@@ -1228,5 +1273,10 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 int NumericalJacobian( int (*Func) (const Matrix<double> &x, Matrix<double> &F, const void *user_data),
 					  const Matrix<double> &x, Matrix<double> &J, int Nx, int Nf, NUM_JAC_DATA *jac_dat,
 					  const void *user_data);
+
+/// Function that runs a variety of tests on all the functions in LARK
+/** This function runs a variety of tests on the linear and non-linear methods
+	developed in LARK. It can be called from the UI.*/
+int LARK_TESTS();
 
 #endif
