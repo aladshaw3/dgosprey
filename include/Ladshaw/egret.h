@@ -166,4 +166,9 @@ int set_variables(double PT, double T, double us, double L, std::vector<double> 
 	as well as adsorption kinetics in porous adsorbents. */
 int calculate_properties(MIXED_GAS *gas_dat);
 
+/// Function runs a series of tests for the EGRET file
+/** The test looks at a standard air with 5 primary species of interest and calculates
+	the gas properties from 273 K to 373 K. This function can be called from the UI. */
+int EGRET_TESTS();
+
 #endif
