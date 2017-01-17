@@ -17,6 +17,7 @@
 #include "Moose.h"
 #include "MooseApp.h"
 #include "AppFactory.h"
+#include "yaml_wrapper.h"
 
 // Create a performance log
 PerfLog Moose::perf_log("Dgosprey");
@@ -24,23 +25,32 @@ PerfLog Moose::perf_log("Dgosprey");
 // Begin the main program.
 int main(int argc, char *argv[])
 {
-  // Initialize MPI, solvers and MOOSE
-  MooseInit init(argc, argv);
+	//Do stuff before MOOSE
+	int pid;
+	MPI_Init(&argc,&argv);
+	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
+	if (pid == 0)
+	{
+		std::cout << "\nDo stuff before MOOSE...\n";
+	}
+	
+	// Initialize MPI, solvers and MOOSE
+	MooseInit init(argc, argv);
 
-  // Register this application's MooseApp and any it depends on
-  DgospreyApp::registerApps();
+	// Register this application's MooseApp and any it depends on
+	DgospreyApp::registerApps();
 
-  // This creates dynamic memory that we're responsible for deleting
-  MooseApp * app = AppFactory::createApp("DgospreyApp", argc, argv);
+	// This creates dynamic memory that we're responsible for deleting
+	MooseApp * app = AppFactory::createApp("DgospreyApp", argc, argv);
 
-  app->legacyUoInitializationDefault() = false;
-  app->legacyUoAuxComputationDefault() = false;
+	app->legacyUoInitializationDefault() = false;
+	app->legacyUoAuxComputationDefault() = false;
 
-  // Execute the application
-  app->run();
+	// Execute the application
+	app->run();
 
-  // Free up the memory we created earlier
-  delete app;
+	// Free up the memory we created earlier
+	delete app;
 
-  return 0;
+	return 0;
 }

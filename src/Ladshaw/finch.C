@@ -65,79 +65,79 @@ double minmod(std::vector<double> &values)
 //Function to return the Total value of the conserved quantity in the domain
 int uTotal(FINCH_DATA *dat)
 {
-  	int success = 0;
-  	double total = 0.0;
+	int success = 0;
+	double total = 0.0;
 	
-  	for (int l=0; l<dat->LN; l++)
-  	{
-    	if (l == 0)
-    	{
-      		if (dat->Dirichlet == true && dat->vo > 0.0)
-      		{
-        		total = total + (0.5 * (dat->unp1(l,0) +dat->uo) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
+	for (int l=0; l<dat->LN; l++)
+	{
+		if (l == 0)
+		{
+			if (dat->Dirichlet == true && dat->vo > 0.0)
+			{
+				total = total + (0.5 * (dat->unp1(l,0) +dat->uo) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
 				total = total + (0.5 * (dat->unp1(l+1,0) +dat->unp1(l,0)) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
-      		}
-      		else
-      		{
-        		total = total + (0.5 * (dat->unp1(l+1,0) + dat->unp1(l,0)) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
-      		}
-    	}
-    	else if (l == dat->LN-1)
-    	{
-    		if (dat->Dirichlet == true && dat->vo <= 0.0)
-      		{
-        		total = total + (0.5 * (dat->uo + dat->unp1(l,0)) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
-      		}
-      		else {/*No Action*/}
+			}
+			else
+			{
+				total = total + (0.5 * (dat->unp1(l+1,0) + dat->unp1(l,0)) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
+			}
+		}
+		else if (l == dat->LN-1)
+		{
+			if (dat->Dirichlet == true && dat->vo <= 0.0)
+			{
+				total = total + (0.5 * (dat->uo + dat->unp1(l,0)) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
+			}
+			else {/*No Action*/}
 		}
 		else
-    	{
-    		total = total + (0.5 * (dat->unp1(l+1,0) + dat->unp1(l,0)) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
-    	}
-  	}
-  	dat->uT = pow(dat->dz,(double)dat->d+1)*total;
+		{
+			total = total + (0.5 * (dat->unp1(l+1,0) + dat->unp1(l,0)) * (pow((double)(l+1),(double)dat->d+1) - pow((double)l,(double)dat->d+1)));
+		}
+	}
+	dat->uT = pow(dat->dz,(double)dat->d+1)*total;
 	
-  	if (dat->d == 0)
-    	dat->uT = dat->uT * dat->s;
-  	else if (dat->d == 1)
-    	dat->uT = M_PI * dat->uT * dat->s;
-  	else if (dat->d == 2)
-    	dat->uT = (4.0/3.0) * M_PI * dat->uT;
-  	else {mError(invalid_boolean); return -1;}
+	if (dat->d == 0)
+		dat->uT = dat->uT * dat->s;
+	else if (dat->d == 1)
+		dat->uT = M_PI * dat->uT * dat->s;
+	else if (dat->d == 2)
+		dat->uT = (4.0/3.0) * M_PI * dat->uT;
+	else {mError(invalid_boolean); return -1;}
 	
-  	return success;
+	return success;
 }
 
 //Function to return the Average value of the conserved quantity in the domain
 int uAverage(FINCH_DATA *dat)
 {
-  	int success = 0;
+	int success = 0;
 	
-  	if (dat->d == 0)
-  	{
-    	dat->uAvg = dat->uT / (dat->L * dat->s);
-  	}
-  	else if (dat->d == 1)
-  	{
-    	dat->uAvg = dat->uT / (M_PI * pow(dat->L,2.0) * dat->s);
-  	}
-  	else if (dat->d == 2)
-  	{
-    	dat->uAvg = dat->uT / ( (4.0/3.0) * M_PI * pow(dat->L,3.0) );
-  	}
-  	else {mError(invalid_boolean); return -1;}
+	if (dat->d == 0)
+	{
+		dat->uAvg = dat->uT / (dat->L * dat->s);
+	}
+	else if (dat->d == 1)
+	{
+		dat->uAvg = dat->uT / (M_PI * pow(dat->L,2.0) * dat->s);
+	}
+	else if (dat->d == 2)
+	{
+		dat->uAvg = dat->uT / ( (4.0/3.0) * M_PI * pow(dat->L,3.0) );
+	}
+	else {mError(invalid_boolean); return -1;}
 	
-  	return success;
+	return success;
 }
 
 //Check solution vectors for negative mass
 int check_Mass(FINCH_DATA *dat)
 {
-    int success = 0;
+	int success = 0;
 	
 	//Small negative numbers will be treated as zero or given previously valid values
-  	if (dat->CheckMass == false)
-    	return 0;
+	if (dat->CheckMass == false)
+		return 0;
 	
 	//Check for negative concentrations first
 	for (int l=0; l<dat->LN; l++)
@@ -145,7 +145,7 @@ int check_Mass(FINCH_DATA *dat)
 		//Check for negative concentrations in u
 		if (dat->u_star(l,0) < -1.0e-4 || dat->un(l,0) < -1.0e-4 || dat->unm1(l,0) < -1.0e-4 || dat->unp1(l,0) < -1.0e-4)
 		{
-      		//Error Reporting is temporarilly disabled disabled
+			//Error Reporting is temporarilly disabled disabled
 			/*
 			 mError(negative_mass);
 			 std::cout << "u_star at node " << l << ": " << dat->u_star(l,0) << std::endl;
@@ -157,8 +157,8 @@ int check_Mass(FINCH_DATA *dat)
 			
 			dat->unp1.edit(l,0,dat->un(l,0));
 			dat->u_star.edit(l,0,dat->un(l,0));
-      		dat->unm1.edit(l,0,0.0);
-      		dat->un.edit(l,0,0.0);
+			dat->unm1.edit(l,0,0.0);
+			dat->un.edit(l,0,0.0);
 			
 		}
 		if (dat->u_star(l,0) >= -1.0e-4 && dat->u_star(l,0) < 0.0)
@@ -247,8 +247,8 @@ int lark_picard_step(const Matrix<double> &x, Matrix<double> &G, const void *dat
 //Function to solve non-linear portion iteratively (Default Supplied Solver called by default_solve)
 int nl_picard(FINCH_DATA *dat)
 {
-  	int success = 0;
-  	double rel_res_base, res_norm, res_old, bestres;
+	int success = 0;
+	double rel_res_base, res_norm, res_old, bestres;
 	
 	//Set up System for First Iterate
 	dat->unp1 = dat->un;
@@ -257,7 +257,7 @@ int nl_picard(FINCH_DATA *dat)
 	success = (*dat->evalres) (dat->unp1,dat->res,dat);
 	if (success != 0) {mError(simulation_fail); return -1;}
 	
-  	res_norm = dat->res.norm();
+	res_norm = dat->res.norm();
 	bestres = res_norm;
 	dat->ubest = dat->unp1;
 	res_old = res_norm;
@@ -270,11 +270,11 @@ int nl_picard(FINCH_DATA *dat)
 		std::cout << "\t" << 0 << "\t" << res_norm << "\t" << (res_norm/rel_res_base) << std::endl;
 	}
 	
-  	//Loop until convergence
-  	int k;
-  	for (k=0; k<dat->max_iter; k++)
-  	{
-    	dat->total_iter++;
+	//Loop until convergence
+	int k;
+	for (k=0; k<dat->max_iter; k++)
+	{
+		dat->total_iter++;
 		
 		//Form Search direction
 		success = (*dat->evalprecon) (dat->res,dat->pres,dat);
@@ -286,21 +286,21 @@ int nl_picard(FINCH_DATA *dat)
 		success = (*dat->evalres) (dat->unp1,dat->res,dat);
 		if (success != 0) {mError(simulation_fail); return -1;}
 		
-    	res_norm = dat->res.norm();
-    	if (dat->NormTrack == true)
-    		std::cout << "\t" << k+1 << "\t" << res_norm << "\t" << (res_norm/rel_res_base) << std::endl;
-    	if (res_norm <= dat->tol_abs)
-    	{
+		res_norm = dat->res.norm();
+		if (dat->NormTrack == true)
+			std::cout << "\t" << k+1 << "\t" << res_norm << "\t" << (res_norm/rel_res_base) << std::endl;
+		if (res_norm <= dat->tol_abs)
+		{
 			if (dat->NormTrack == true)
 				std::cout << "\nSolution Converged in " << k+1 << " iteration(s) within Residual Tolerance!" << std::endl;
-      		return success;
+			return success;
 		}
-    	else if ( (res_norm/rel_res_base) <= dat->tol_rel)
-    	{
+		else if ( (res_norm/rel_res_base) <= dat->tol_rel)
+		{
 			if (dat->NormTrack == true)
 				std::cout << "\nSolution Converged in " << k+1 << " iteration(s) within Relative Residual Tolerance!" << std::endl;
-      		return success;
-    	}
+			return success;
+		}
 		else
 		{
 			if (res_norm < bestres)
@@ -313,15 +313,15 @@ int nl_picard(FINCH_DATA *dat)
 		res_old = res_norm;
 	}
 	
-  	if (k >= dat->max_iter)
-  	{
+	if (k >= dat->max_iter)
+	{
 		if (dat->NormTrack == true)
 		{
 			std::cout << "\nReached Maximum Iterations without Convergence!" << std::endl;
 			std::cout << "Best Reported Norm: " << bestres << std::endl;
 		}
 		dat->unp1 = dat->ubest;
-  	}
+	}
 	if (success == -1)
 	{
 		if (dat->NormTrack == true)
@@ -333,7 +333,7 @@ int nl_picard(FINCH_DATA *dat)
 		success = 0;
 	}
 	
-  	return success;
+	return success;
 }
 
 //Function to setup memory and default arguments based on input
@@ -426,7 +426,7 @@ int setup_FINCH_DATA( int (*user_callroutine) (const void *user_data),
 		dat->max_iter = std::min(3*dat->LN,1000);
 	dat->picard_dat.maxit = dat->max_iter;
 	dat->pjfnk_dat.nl_maxit = dat->max_iter;
-  	dat->total_iter = 0;
+	dat->total_iter = 0;
 	dat->pjfnk_dat.NL_Output = dat->NormTrack;
 	dat->picard_dat.Output = dat->NormTrack;
 	
@@ -489,12 +489,12 @@ int setup_FINCH_DATA( int (*user_callroutine) (const void *user_data),
 //Function to print out the space header for the output file
 void print2file_dim_header(FILE *Output, FINCH_DATA *dat)
 {
-	fprintf(Output,"z_dim\t%.6g\t",0.0);
+	fprintf(Output,"z_dim\t%.6g",0.0);
 	for (int l=0; l<dat->LN; l++)
 	{
-        if (dat->Dirichlet == false && l == dat->LN-1)
-            break;
-		fprintf(Output,"%.6g\t",(l+1)*dat->dz);
+		if (dat->Dirichlet == false && l == dat->LN-1)
+			break;
+		fprintf(Output,"\t%.6g",(l+1)*dat->dz);
 	}
 }
 
@@ -502,14 +502,14 @@ void print2file_dim_header(FILE *Output, FINCH_DATA *dat)
 void print2file_time_header(FILE *Output, FINCH_DATA *dat)
 {
 	fprintf(Output,"Time\t");
-  	fprintf(Output,"u[0]\t");
-  	for (int l=0; l<dat->LN; l++)
-  	{
-      	if (dat->Dirichlet == false && l == dat->LN-1)
-          	break;
-      	fprintf(Output,"u[%i]\t",l+1);
-  	}
-  	fprintf(Output,"uTotal\tuAverage\t");
+	fprintf(Output,"u[0]\t");
+	for (int l=0; l<dat->LN; l++)
+	{
+		if (dat->Dirichlet == false && l == dat->LN-1)
+			break;
+		fprintf(Output,"u[%i]\t",l+1);
+	}
+	fprintf(Output,"uTotal\tuAverage");
 }
 
 //Function to print out the previous time step results to a file
@@ -517,27 +517,27 @@ void print2file_result_old(FILE *Output, FINCH_DATA *dat)
 {
 	
 	if (dat->vo > 0.0)
-  	{
-    	fprintf(Output,"%.6g\t",dat->t_old);
-    	if (dat->Dirichlet == true)
-      		fprintf(Output,"%.6g\t",dat->uo);
-    	for (int l=0; l<dat->LN; l++)
-    	{
-      		fprintf(Output,"%.6g\t",dat->un(l,0));
-    	}
-    	fprintf(Output,"%.6g\t%.6g\t",dat->uT,dat->uAvg);
-  	}
-  	else
-  	{
-    	fprintf(Output,"%.6g\t",dat->t_old);
-    	for (int l=0; l<dat->LN; l++)
-    	{
-      		fprintf(Output,"%.6g\t",dat->un(l,0));
-    	}
-    	if (dat->Dirichlet == true)
-      		fprintf(Output,"%.6g\t",dat->uo);
-    	fprintf(Output,"%.6g\t%.6g\t",dat->uT,dat->uAvg);
-  	}
+	{
+		fprintf(Output,"%.6g\t",dat->t_old);
+		if (dat->Dirichlet == true)
+			fprintf(Output,"%.6g\t",dat->uo);
+		for (int l=0; l<dat->LN; l++)
+		{
+			fprintf(Output,"%.6g\t",dat->un(l,0));
+		}
+		fprintf(Output,"%.6g\t%.6g",dat->uT,dat->uAvg);
+	}
+	else
+	{
+		fprintf(Output,"%.6g\t",dat->t_old);
+		for (int l=0; l<dat->LN; l++)
+		{
+			fprintf(Output,"%.6g\t",dat->un(l,0));
+		}
+		if (dat->Dirichlet == true)
+			fprintf(Output,"%.6g\t",dat->uo);
+		fprintf(Output,"%.6g\t%.6g",dat->uT,dat->uAvg);
+	}
 	
 }
 
@@ -554,7 +554,7 @@ void print2file_result_new(FILE *Output, FINCH_DATA *dat)
 		{
 			fprintf(Output,"%.6g\t",dat->unp1(l,0));
 		}
-		fprintf(Output,"%.6g\t%.6g\t",dat->uT,dat->uAvg);
+		fprintf(Output,"%.6g\t%.6g",dat->uT,dat->uAvg);
 	}
 	else
 	{
@@ -565,7 +565,7 @@ void print2file_result_new(FILE *Output, FINCH_DATA *dat)
 		}
 		if (dat->Dirichlet == true)
 			fprintf(Output,"%.6g\t",dat->uo);
-		fprintf(Output,"%.6g\t%.6g\t",dat->uT,dat->uAvg);
+		fprintf(Output,"%.6g\t%.6g",dat->uT,dat->uAvg);
 	}
 	
 }
@@ -621,27 +621,27 @@ int default_ic(const void *user_data)
 	int success = 0;
 	FINCH_DATA *dat = (FINCH_DATA *) user_data;
 	
-  	if (dat->SteadyState == true)
+	if (dat->SteadyState == true)
 		dat->Rn.ConstantICFill(0.0);
-  	else
+	else
 		dat->Rn.ConstantICFill(dat->RIC);
-    
+	
 	dat->un.ConstantICFill(dat->uIC);
-    dat->vn.ConstantICFill(dat->vIC);
+	dat->vn.ConstantICFill(dat->vIC);
 	dat->Dn.ConstantICFill(dat->DIC);
-    dat->kn.ConstantICFill(dat->kIC);
+	dat->kn.ConstantICFill(dat->kIC);
 	dat->Sn.ConstantICFill(0.0);
 	dat->unm1 = dat->un;
-    dat->unp1 = dat->un;
+	dat->unp1 = dat->un;
 	
-  	success = uTotal(dat);
-  	if (success != 0) {mError(simulation_fail); return -1;}
+	success = uTotal(dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
 	
-  	success = uAverage(dat);
-  	if (success != 0) {mError(simulation_fail); return -1;}
+	success = uAverage(dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
 	
-  	dat->uT_old = dat->uT;
-  	dat->uAvg_old = dat->uAvg;
+	dat->uT_old = dat->uT;
+	dat->uAvg_old = dat->uAvg;
 	
 	return success;
 }
@@ -3778,14 +3778,14 @@ int buckley_leverett_ic(const void *user_data)
 	if (dat->SteadyState == true)
 		dat->unp1.ConstantICFill(0.0);
 	
-  	success = uTotal(dat);
-  	if (success != 0) {mError(simulation_fail); return -1;}
+	success = uTotal(dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
 	
-  	success = uAverage(dat);
-  	if (success != 0) {mError(simulation_fail); return -1;}
+	success = uAverage(dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
 	
-  	dat->uT_old = dat->uT;
-  	dat->uAvg_old = dat->uAvg;
+	dat->uT_old = dat->uT;
+	dat->uAvg_old = dat->uAvg;
 	
 	return success;
 }
@@ -3847,13 +3847,13 @@ int burgers_ic(const void *user_data)
 	}
 	
 	success = uTotal(dat);
-  	if (success != 0) {mError(simulation_fail); return -1;}
+	if (success != 0) {mError(simulation_fail); return -1;}
 	
-  	success = uAverage(dat);
-  	if (success != 0) {mError(simulation_fail); return -1;}
+	success = uAverage(dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
 	
-  	dat->uT_old = dat->uT;
-  	dat->uAvg_old = dat->uAvg;
+	dat->uT_old = dat->uT;
+	dat->uAvg_old = dat->uAvg;
 	
 	return success;
 }
@@ -3906,7 +3906,7 @@ int burgers_bcs(const void *user_data)
 	}
 	
 	/*
-	 NOTE: This demonstrate how one would handle a Periodic BC in FINCH. For this
+		NOTE: This demonstrate how one would handle a Periodic BC in FINCH. For this
 	 case, the Dirichlet BC would be used and we specify that the value at
 	 the input node is equal to the value at the output node. However, the
 	 input node is not expilictly solved for, whereas the output node is. Thus,
@@ -3915,5 +3915,189 @@ int burgers_bcs(const void *user_data)
 	 */
 	
 	
+	return success;
+}
+
+//Function runs the FINCH tests for convergence, accuracy, and stability when tasked
+int FINCH_TESTS()
+{
+	int success = 0;
+	
+	/* 					Testing of the scheme				*/
+	
+	//Declarations
+	FINCH_DATA dat;
+	double time;
+	FILE *Output;
+	double exponent = 0.0;
+	double truncErr;
+	int time_steps = 0;
+	
+	//Initializations
+	time = clock();
+	Output = fopen("output/FINCH_TEST_Output.txt","w+");
+	if (Output == nullptr)
+	{
+		system("mkdir output");
+		Output = fopen("output/FINCH_TEST_Output.txt","w+");
+	}
+	
+	//Change Parameters for Testing
+	dat.uIC = 0.0;
+	//dat.uIC = 1.0;
+	dat.uo = 1.0;
+	//dat.uo = 0.0;
+	//dat.vIC = 992.2941164;
+	//dat.vo = 992.2941164;
+	dat.vIC = 2.0;
+	dat.vo = 2.0;
+	//dat.vIC = 1.0;
+	//dat.vo = 1.0;
+	//dat.DIC = 0.546244074;
+	//dat.Do = 0.546244074;
+	dat.DIC = 0.01;
+	dat.Do = 0.01;
+	//dat.DIC = 0.0;
+	//dat.Do = 0.0;
+	//dat.kIC = 0.0;
+	//dat.ko = 0.0;
+	dat.kIC = 5.0;
+	dat.ko = 5.0;
+	dat.RIC = 1.0;
+	dat.Ro = 1.0;
+	//dat.RIC = 285991.8319;
+	//dat.Ro = 285991.8319;
+	dat.kfn = 0.0;
+	dat.kfnp1 = 0.0;
+	//dat.L = 0.127;
+	dat.L = 1.0;
+	//dat.L = 2.0*M_PI;
+	dat.s = 1.0;
+	dat.T = 0.2;
+	//dat.T = 60.0;
+	dat.LN = 40;
+	dat.t_old = 0.0;
+	dat.dt_old = 0.0;
+	dat.d = 0;
+	
+	//Boolean Statments
+	dat.Dirichlet = true;
+	dat.CheckMass = false;
+	dat.Iterative = true;
+	dat.SteadyState = false;
+	dat.NormTrack = true;
+	
+	//Iterative Methods
+	dat.nl_method = LARK_PJFNK; //0 = FINCH_Picard, 1 = LARK_Picard, 2 = LARK_PJFNK
+	dat.pjfnk_dat.nl_tol_rel = 1e-6;
+	dat.pjfnk_dat.nl_tol_abs = 1e-6;
+	dat.pjfnk_dat.linear_solver = QR;
+	//dat.pjfnk_dat.L_Output = true;
+	//dat.pjfnk_dat.lin_tol = 1e-10;
+	dat.pjfnk_dat.LineSearch = true;
+	dat.pjfnk_dat.Bounce = true;
+	
+	/*
+	 After extensive testing, we can show that our Picard iteration is the most
+		efficient solution method. However, PJFNK is still good and will be useful
+	 for solving more complex, non-linear systems.
+	 */
+	
+	//Used in determining truncation error
+	if (dat.CN == true)
+		exponent = exponent + 1.0;
+	else
+		exponent = exponent + 0.5;
+	if (dat.ExplicitFlux == false)
+		exponent = exponent + 1.0;
+	else
+		exponent = exponent + 0.5;
+	
+	//Set up the FINCH_DATA
+	
+	//Buckley-Leverett Non-Linear Tests with Default Dirichlet BCs
+	success = setup_FINCH_DATA(default_execution,buckley_leverett_ic,default_timestep,default_preprocess,default_solve,buckley_leverett_params,vanAlbada_discretization,default_bcs,default_res,default_precon,default_postprocess,default_reset,&dat,(void *)&dat);
+	
+	//Inviscous Burger's Non-Linear Tests with Periodic BCs
+	//success = setup_FINCH_DATA(default_execution,burgers_ic,default_timestep,default_preprocess,default_solve,burgers_params,minmod_discretization,burgers_bcs,default_res,default_precon,default_postprocess,default_reset,&dat,(void *)&dat);
+	
+	//Below uses minmod discretization (least dispersive, least oscillatory, worst convergence)
+	//success = setup_FINCH_DATA(default_execution,default_ic,default_timestep,default_preprocess,default_solve,default_params,minmod_discretization,default_bcs,default_res,default_precon,default_postprocess,default_reset,&dat,(void *)&dat);
+	
+	//Below uses Ospre discretization (less dispersive, less oscillatory, better convergence)
+	//success = setup_FINCH_DATA(default_execution,default_ic,default_timestep,default_preprocess,default_solve,default_params,ospre_discretization,default_bcs,default_res,default_precon,default_postprocess,default_reset,&dat,(void *)&dat);
+	
+	//Below uses van Albada discretization (most dispersive, most oscillations, best convergence)
+	//success = setup_FINCH_DATA(default_execution,default_ic,default_timestep,default_preprocess,default_solve,default_params,vanAlbada_discretization,default_bcs,default_res,default_precon,default_postprocess,default_reset,&dat,(void *)&dat);
+	
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//Make header file for output
+	print2file_dim_header(Output, &dat);
+	print2file_newline(Output, &dat);
+	print2file_time_header(Output, &dat);
+	print2file_newline(Output, &dat);
+	
+	//Set Initial Conditions
+	success = (*dat.setic) (&dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//Print out ICs
+	print2file_result_old(Output, &dat);
+	print2file_newline(Output, &dat);
+	
+	//Loop to solve for each time step in simulation
+	do
+	{
+		//Check to see if system needs updating
+		if (dat.Update == true)
+		{
+			success = (*dat.resettime) ((void *)&dat);
+			if (success != 0) {mError(simulation_fail); return -1;}
+		}
+		
+		//Step size based of off CFL condition
+		success = (*dat.settime) ((void *)&dat);
+		if (success != 0) {mError(simulation_fail); return -1;}
+		//dat.dt = 0.1;
+		if (dat.SteadyState == false)
+			dat.t = dat.t_old + dat.dt;
+		else
+			dat.t = INFINITY;
+		
+		//Call the routine
+		std::cout << "Evaluating Time: " << dat.t << std::endl;
+		success = (*dat.callroutine) ((void *)&dat);
+		if (success == 0)
+		{
+			std::cout << "Simulation Successful!\n" << std::endl;
+			dat.Update = true; //Be sure to set update = true if simulation successful!
+		}
+		else {mError(simulation_fail); dat.Update = false; return -1;}
+		
+		//Print out simulation results
+		print2file_result_new(Output, &dat);
+		print2file_newline(Output, &dat);
+		
+		time_steps++;
+		
+	} while (dat.t < (dat.T) && dat.SteadyState == false);
+	
+	//END PROGRAM
+	fclose(Output);
+	time = clock() - time;
+	
+	if (dat.SteadyState == false)
+		truncErr = pow(dat.dz,2.0) + pow(dat.dt,exponent);
+	else
+		truncErr = pow(dat.dz,2.0);
+	
+	//Display performance metrics for tests
+	std::cout << "Runtime Time (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "Truncation Error:\t" << truncErr << std::endl;
+	std::cout << "Total Iterations:\t" << dat.total_iter << std::endl;
+	std::cout << "Total Time Steps:\t" << time_steps+1 << std::endl;
+	std::cout << "Average Iterations:\t" << (double)dat.total_iter/(time_steps+1) << std::endl;
+	std::cout << "Complexity (ms):\t" << (time / CLOCKS_PER_SEC)/(double)(dat.total_iter+time_steps)*1000.0 << std::endl;
 	return success;
 }

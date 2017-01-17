@@ -77,8 +77,10 @@ public:
 	Matrix operator*(const T);				///< Operator to multiply this matrix by a scalar T return the new matrix result
 	Matrix operator/(const T);				///< Operator to divide this matrix by a scalar T and return the new matrix result
 	Matrix operator*(const Matrix& M);		///< Operator to multiply this matrix and matrix M and return the new matrix result
+	Matrix outer_product(const Matrix& M);	///< Operator to perform an outer product between this and M and return result
 	Matrix& transpose(const Matrix& M);		///< Function to convert this matrix to the transpose of the given matrix M
-	Matrix& transpose_multiply(const Matrix& MT, const Matrix& v);	///< Function to convert this matrix into the result of the given matrix M transposed and multiplied by the other given matrix v
+	/// Function to convert this matrix into the result of the given matrix M transposed and multiplied by the other given matrix v
+	Matrix& transpose_multiply(const Matrix& MT, const Matrix& v);
 	Matrix& adjoint(const Matrix &M);		///< Function to convert this matrix to the adjoint of the given matrix
 	Matrix& inverse(const Matrix &M);		///< Function to convert this matrix to the inverse of the given matrix
 	void Display(const std::string Name);	///< Function to display the contents of this matrix given a Name for the matrix
@@ -187,6 +189,9 @@ public:
 	/// Function to solve the system Hx=v for x given that H is lower Hessenberg (this->x)
 	Matrix& lowerHessenbergSolve(const Matrix& H, const Matrix& v);
 	
+	/// Function to solve the system Mx=b using QR factorization for x given that M is invertable
+	Matrix& qrSolve(const Matrix& M, const Matrix& b);
+	
 	Matrix& columnExtract(int j, const Matrix& M);	///< Function to set this column matrix to the jth column of the given matrix M
 	Matrix& rowExtract(int i, const Matrix& M);		///< Function to set this row matrix to the ith row of the given matrix M
 	Matrix& columnReplace(int j, const Matrix& v);	///< Function to this matrices' jth column with the given column matrix v
@@ -254,7 +259,7 @@ Data(M.num_rows * M.num_cols)
 	{
 		for (int j=0; j<num_cols; j++)
 		{
-			Data[(i*num_cols)+j] = M(i,j);
+			Data[(i*num_cols)+j] = M.Data[(i*M.num_cols)+j];
 		}
 	}
 }
@@ -280,7 +285,7 @@ Matrix<T> &Matrix<T>::operator=(const Matrix &M)
 		{
 			for (int j=0; j<num_cols; j++)
 			{
-				Data[(i*num_cols)+j] = M(i,j);
+				Data[(i*num_cols)+j] = M.Data[(i*M.num_cols)+j];
 			}
 		}
 		return *this;
@@ -336,7 +341,7 @@ void Matrix<T>::edit(int i, int j, T value)
 		mError(out_of_bounds);
 		return;
 	}
-	this->Matrix::operator()(i, j) = value;
+	this->Data[(i*this->num_cols)+j] = value;
 }
 
 //Function to return the number of rows in the matrix
@@ -478,7 +483,7 @@ T Matrix<T>::inner_product(const Matrix& x)
 	{
 		for (int i=0; i<x.num_rows; i++)
 		{
-			prod = prod + x(i,0)*Data[(i*num_cols)+0];
+			prod = prod + x.Data[(i*x.num_cols)+0]*Data[(i*num_cols)+0];
 		}
 	}
 	return prod;
@@ -653,22 +658,50 @@ Matrix<T> Matrix<T>::operator*(const Matrix &M)
 		temp.num_cols = M.num_cols;
 		temp.Data.resize(num_rows*M.num_cols);
 		
-		int j=0;
-		for(int i=0; i<num_rows; i++)
+		for (int i=0; i<num_rows; i++)
 		{
-			for (int J=0; J<M.num_cols; J++)
+			for (int k=0; k<num_cols; k++)
 			{
-				temp.edit(i, J, 0);
-				j=0;
-				for (int I=0; I<M.num_rows; I++)
+				for (int j=0; j<M.num_cols; j++)
 				{
-					temp.edit(i, J,temp(i,J) + (this->Data[(i*num_cols)+j] * M.Data[(I*M.num_cols)+J]) );
-					j++;
+					temp.Data[(i*temp.num_cols)+j] += (this->Data[(i*num_cols)+k] * M.Data[(k*M.num_cols)+j]);
 				}
 			}
 		}
+		
 		return temp;
 	}
+}
+
+//Formation of new matrix from an outer product
+template <class T>
+Matrix<T> Matrix<T>::outer_product(const Matrix &M)
+{
+	if (this->num_cols != 1 || M.num_cols != 1)
+	{
+		mError(dim_mis_match);
+		return *this;
+	}
+	if (this->num_rows != M.num_rows)
+	{
+		mError(dim_mis_match);
+		return *this;
+	}
+	
+	Matrix<T> result(this->num_rows, M.num_rows);
+	result.num_rows = this->num_rows;
+	result.num_cols = M.num_rows;
+	result.Data.resize(num_rows*M.num_rows);
+	
+	for (int i=0; i<this->num_rows; i++)
+	{
+		for (int j=0; j<M.num_rows; j++)
+		{
+			result.Data[(i*result.num_cols)+j] = this->Data[i] * M.Data[j];
+		}
+	}
+	
+	return result;
 }
 
 //Transpose of a matrix
@@ -839,17 +872,17 @@ Matrix<T> &Matrix<T>::tridiagonalSolve(const Matrix& A, const Matrix& b)
 	{
 		if (i==0)
 		{
-			cp[i] = A(i,(i+1))/A(i,i);
-			dp[i] = b(i,0)/A(i,i);
+			cp[i] = A.Data[(i*A.num_cols)+i+1]/A.Data[(i*A.num_cols)+i];
+			dp[i] = b.Data[i]/A.Data[(i*A.num_cols)+i];
 		}
 		else if (i<(num_rows-1))
 		{
-			cp[i] = A(i,(i+1)) / (A(i,i) - (cp[(i-1)]*A((i+1),i)) );
-			dp[i] = ( b(i,0) - (dp[(i-1)]*A((i+1),i) ) ) / (A(i,i) - (cp[(i-1)]*A((i+1),i)) );
+			cp[i] = A.Data[(i*A.num_cols)+i+1] / (A.Data[(i*A.num_cols)+i] - (cp[(i-1)]*A.Data[((i+1)*A.num_cols)+i]) );
+			dp[i] = ( b.Data[i] - (dp[(i-1)]*A.Data[((i+1)*A.num_cols)+i] ) ) / (A.Data[(i*A.num_cols)+i] - (cp[(i-1)]*A.Data[((i+1)*A.num_cols)+i]) );
 		}
 		else
 		{
-			dp[i] = ( b(i,0) - (dp[(i-1)]*A(i,(i-1)) ) ) / (A(i,i) - (cp[(i-1)]*A(i,(i-1))) );
+			dp[i] = ( b.Data[i] - (dp[(i-1)]*A.Data[(i*A.num_cols)+i-1] ) ) / (A.Data[(i*A.num_cols)+i] - (cp[(i-1)]*A.Data[(i*A.num_cols)+i-1]) );
 		}
 	}
 	
@@ -908,24 +941,24 @@ Matrix<T> &Matrix<T>::ladshawSolve(const Matrix& A, const Matrix& d)
 	//Forward Sweep
 	for (int i=0; i<num_rows; i++)
 	{
-		if (A(i,i) != 0.0)
+		if (A.Data[(i*A.num_cols)+i] != 0.0)
 		{
 			if (i==0)
 			{
 				ap[i] = 0.0;
-				cp[i] = A(i,(i+1))/A(i,i);
+				cp[i] = A.Data[(i*A.num_cols)+i+1]/A.Data[(i*A.num_cols)+i];
 			}
 			else if (i==(num_rows-1))
 			{
 				cp[i] = 0.0;
-				ap[i] = A(i,(i-1))/A(i,i);
+				ap[i] = A.Data[(i*A.num_cols)+i-1]/A.Data[(i*A.num_cols)+i];
 			}
 			else
 			{
-				ap[i] = A(i,(i-1))/A(i,i);
-				cp[i] = A(i,(i+1))/A(i,i);
+				ap[i] = A.Data[(i*A.num_cols)+i-1]/A.Data[(i*A.num_cols)+i];
+				cp[i] = A.Data[(i*A.num_cols)+i+1]/A.Data[(i*A.num_cols)+i];
 			}
-			dp[i] = d(i,0)/A(i,i);
+			dp[i] = d.Data[i]/A.Data[(i*A.num_cols)+i];
 		}
 		else
 		{
@@ -1412,9 +1445,9 @@ Matrix<T> &Matrix<T>::diagonalSolve(const Matrix& D, const Matrix& v)
 	//Loop over the diagonals
 	for (int i=0; i<D.num_rows; i++)
 	{
-		if (D(i,i) != 0.0)
+		if (D.Data[(i*D.num_cols)+i] != 0.0)
 		{
-			this->edit(i, 0, v(i,0)/D(i,i));
+			this->Data[i] = v.Data[i]/D.Data[(i*D.num_cols)+i];
 		}
 		else
 		{
@@ -1450,16 +1483,16 @@ Matrix<T> &Matrix<T>::upperTriangularSolve(const Matrix& U, const Matrix& v)
 		sum = 0.0;
 		for (int j=U.num_cols-1; j>i; j--)
 		{
-			sum = sum + U(i,j) * this->operator()(j, 0);
+			sum = sum + U.Data[(i*U.num_cols)+j] * this->Data[j];
 		}
-		if (U(i,i) == 0.0)
+		if (U.Data[(i*U.num_cols)+i] == 0.0)
 		{
-			mError(singular_matrix)
+			mError(singular_matrix);
 			return *this;
 		}
 		else
 		{
-			this->edit(i, 0, (v(i,0) - sum) / U(i,i));
+			this->Data[i] = (v.Data[i] - sum) / U.Data[(i*U.num_cols)+i];
 		}
 	}
 	
@@ -1475,7 +1508,7 @@ Matrix<T> &Matrix<T>::lowerTriangularSolve(const Matrix& L, const Matrix& v)
 		mError(arg_matrix_same);
 		return *this;
 	}
-	//Solves the system Ux=v when U is an upper triangular matrix
+	//Solves the system Lx=v when L is an lower triangular matrix
 	this->set_size(v.num_rows, v.num_cols);
 	
 	//Check dimensions of U and v to ensure they will work out
@@ -1491,16 +1524,16 @@ Matrix<T> &Matrix<T>::lowerTriangularSolve(const Matrix& L, const Matrix& v)
 		sum = 0.0;
 		for (int j=0; j<i; j++)
 		{
-			sum = sum + L(i,j) * this->operator()(j, 0);
+			sum = sum + L.Data[(i*L.num_cols)+j] * this->Data[j];
 		}
-		if (L(i,i) == 0.0)
+		if (L.Data[(i*L.num_cols)+i] == 0.0)
 		{
-			mError(singular_matrix)
+			mError(singular_matrix);
 			return *this;
 		}
 		else
 		{
-			this->edit(i, 0, (v(i,0) - sum) / L(i,i));
+			this->Data[i] = (v.Data[i] - sum) / L.Data[(i*L.num_cols)+i];
 		}
 	}
 	
@@ -1531,8 +1564,8 @@ Matrix<T> &Matrix<T>::upperHessenberg2Triangular(Matrix& b)
 	//Loop from top to bottow editing this and b
 	for (int i=0; i<this->num_rows-1; i++)
 	{
-		s = this->operator()(i+1,i) / sqrt( pow(this->operator()(i, i),2.0) + pow(this->operator()(i+1,i),2.0) );
-		c = this->operator()(i,i) / sqrt( pow(this->operator()(i,i),2.0) + pow(this->operator()(i+1,i),2.0) );
+		s = this->Data[((i+1)*this->num_cols)+i] / sqrt( pow(this->Data[(i*this->num_cols)+i],2.0) + pow(this->Data[((i+1)*this->num_cols)+i],2.0) );
+		c = this->Data[(i*this->num_cols)+i] / sqrt( pow(this->Data[(i*this->num_cols)+i],2.0) + pow(this->Data[((i+1)*this->num_cols)+i],2.0) );
 		
 		if (isnan(s) || isnan(c))
 		{
@@ -1540,17 +1573,17 @@ Matrix<T> &Matrix<T>::upperHessenberg2Triangular(Matrix& b)
 			return *this;
 		}
 		
-		value_i = ((b(i,0)*c) + (b(i+1,0)*s));
-		value_ip1 = (-(b(i,0)*s) + (b(i+1,0)*c));
-		b.edit(i, 0, value_i );
-		b.edit(i+1, 0, value_ip1 );
+		value_i = ((b.Data[i]*c) + (b.Data[i+1]*s));
+		value_ip1 = (-(b.Data[i]*s) + (b.Data[i+1]*c));
+		b.Data[i] = value_i;
+		b.Data[i+1] = value_ip1;
 		
 		for (int j=i; j<this->num_cols; j++)
 		{
-			value_i = ((this->operator()(i, j)*c) + (this->operator()(i+1, j)*s));
-			value_ip1 = (-(this->operator()(i, j)*s) + (this->operator()(i+1, j)*c));
-			this->edit(i, j, value_i);
-			this->edit(i+1, j, value_ip1);
+			value_i = ((this->Data[(i*this->num_cols)+j]*c) + (Data[((i+1)*this->num_cols)+j]*s));
+			value_ip1 = (-(this->Data[(i*this->num_cols)+j]*s) + (Data[((i+1)*this->num_cols)+j]*c));
+			this->Data[(i*this->num_cols)+j] = value_i;
+			this->Data[((i+1)*this->num_cols)+j] = value_ip1;
 		}
 	}
 	return *this;
@@ -1580,8 +1613,8 @@ Matrix<T> &Matrix<T>::lowerHessenberg2Triangular(Matrix& b)
 	//Loop from bottom to top editing this and b
 	for (int i=this->num_rows-1; i>0; i--)
 	{
-		s = this->operator()(i-1,i) / sqrt( pow(this->operator()(i, i),2.0) + pow(this->operator()(i-1,i),2.0) );
-		c = this->operator()(i,i) / sqrt( pow(this->operator()(i,i),2.0) + pow(this->operator()(i-1,i),2.0) );
+		s = this->Data[((i-1)*this->num_cols)+i] / sqrt( pow(this->Data[(i*this->num_cols)+i],2.0) + pow(this->Data[((i-1)*this->num_cols)+i],2.0) );
+		c = this->Data[(i*this->num_cols)+i] / sqrt( pow(this->Data[(i*this->num_cols)+i],2.0) + pow(this->Data[((i-1)*this->num_cols)+i],2.0) );
 		
 		if (isnan(s) || isnan(c))
 		{
@@ -1589,17 +1622,17 @@ Matrix<T> &Matrix<T>::lowerHessenberg2Triangular(Matrix& b)
 			return *this;
 		}
 		
-		value_i = ((b(i,0)*c) + (b(i-1,0)*s));
-		value_ip1 = (-(b(i,0)*s) + (b(i-1,0)*c));
-		b.edit(i, 0, value_i );
-		b.edit(i-1, 0, value_ip1 );
+		value_i = ((b.Data[i]*c) + (b.Data[i-1]*s));
+		value_ip1 = (-(b.Data[i]*s) + (b.Data[i-1]*c));
+		b.Data[i] = value_i;
+		b.Data[i-1] = value_ip1;
 		
 		for (int j=i; j>=0; j--)
 		{
-			value_i = ((this->operator()(i, j)*c) + (this->operator()(i-1, j)*s));
-			value_ip1 = (-(this->operator()(i, j)*s) + (this->operator()(i-1, j)*c));
-			this->edit(i, j, value_i);
-			this->edit(i-1, j, value_ip1);
+			value_i = ((this->Data[(i*this->num_cols)+j]*c) + (Data[((i-1)*this->num_cols)+j]*s));
+			value_ip1 = (-(this->Data[(i*this->num_cols)+j]*s) + (Data[((i-1)*this->num_cols)+j]*c));
+			this->Data[(i*this->num_cols)+j] = value_i;
+			this->Data[((i-1)*this->num_cols)+j] = value_ip1;
 		}
 	}
 	return *this;
@@ -1639,6 +1672,57 @@ Matrix<T> &Matrix<T>::lowerHessenbergSolve(const Matrix& H, const Matrix& v)
 	return *this;
 }
 
+// Function to solve Mx=b using QR factorization
+template <class T>
+Matrix<T> &Matrix<T>::qrSolve(const Matrix& M, const Matrix& b)
+{
+	//Check for errors
+	if (this == &M || this == &b)
+	{
+		mError(arg_matrix_same);
+		return *this;
+	}
+	if (M.num_rows != M.num_cols)
+	{
+		mError(non_square_matrix);
+		return *this;
+	}
+	if (M.num_rows != b.num_rows || b.num_cols > 1)
+	{
+		mError(dim_mis_match);
+		return *this;
+	}
+	
+	//Setup temporary variables
+	double alpha;
+	Matrix<T> w, U, R(M), Qt_b(b);
+	w.set_size(this->num_rows,1);
+	U.set_size(this->num_rows,this->num_rows);
+	
+	//Loop over the columns of R
+	for (int j=0; j<R.num_cols-1; j++)
+	{
+		w.columnExtract(j,R);
+		for (int i=0; i<j; i++)
+			w.Data[i] = 0.0;
+		if (w.Data[j] < 0.0)
+			alpha = w.norm();
+		else
+			alpha = -w.norm();
+		w.Data[j] = w.Data[j] - alpha;
+		w = (w/w.norm());
+		U = w.outer_product(w) * -2.0;
+		for (int i=0; i<U.num_rows; i++)
+			U.Data[(i*U.num_cols)+i] = 1.0 + U.Data[(i*U.num_cols)+i];
+		
+		R = U*R;
+		Qt_b = U*Qt_b;
+	}
+	this->upperTriangularSolve(R,Qt_b);
+	
+	return *this;
+}
+
 //Function to extract a column matrix 'this' from a full matrix M
 template <class T>
 Matrix<T> &Matrix<T>::columnExtract(int j, const Matrix& M)
@@ -1655,7 +1739,7 @@ Matrix<T> &Matrix<T>::columnExtract(int j, const Matrix& M)
 	
 	for (int i=0; i<M.num_rows; i++)
 	{
-		this->edit(i, 0, M(i,j));
+		this->Data[(i*this->num_cols)+0] = M.Data[(i*M.num_cols)+j];
 	}
 	return *this;
 }
@@ -1676,7 +1760,7 @@ Matrix<T> &Matrix<T>::rowExtract(int i, const Matrix& M)
 	
 	for (int j=0; j<M.num_cols; j++)
 	{
-		this->edit(0, j, M(i,j));
+		this->Data[j] = M.Data[(i*M.num_cols)+j];
 	}
 	return *this;
 }
@@ -1697,7 +1781,7 @@ Matrix<T> &Matrix<T>::columnReplace(int j, const Matrix &v)
 	}
 	for (int i=0; i<this->num_rows; i++)
 	{
-		this->edit(i, j, v(i,0));
+		this->Data[(i*this->num_cols)+j] = v.Data[i];
 	}
 	return *this;
 }
@@ -1718,7 +1802,7 @@ Matrix<T> &Matrix<T>::rowReplace(int i, const Matrix &v)
 	}
 	for (int j=0; j<this->num_cols; j++)
 	{
-		this->edit(i, j, v(0,j));
+		this->Data[(i*this->num_cols)+j] = v.Data[j];
 	}
 	return *this;
 }
@@ -1791,6 +1875,12 @@ void Matrix<T>::columnExtend(const Matrix &v)
 		}
 	}
 }
+
+/// Function to run the MACAW tests
+/** This function is callable from the UI and is used to run several
+	algorithm tests for the Matrix objects. This test should never
+	report any errors. */
+int MACAW_TESTS();
 
 
 #endif

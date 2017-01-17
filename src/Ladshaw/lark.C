@@ -2410,7 +2410,7 @@ int kmsPreconditioner( const Matrix<double>& r, Matrix<double> &Mr, const void *
 		return -1;
 	}
 	kms_dat->level++;
-	kms_dat->gmres_in[kms_dat->level-1].Output = kms_dat->Output_in;
+	kms_dat->gmres_in[kms_dat->level-1].Output = kms_dat->Output_inner;
 	
 	//Formulate the best number of inner and outer preconditioning iterates based on current status
 	double inner_par = 0;
@@ -2498,7 +2498,7 @@ int krylovMultiSpace( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax
 		mError(matrix_too_small);
 		return success;
 	}
-	kms_dat->gmres_out.Output = kms_dat->Output_out;
+	kms_dat->gmres_out.Output = kms_dat->Output_outer;
 	
 	//Preconditioner Tolerances
 	if (kms_dat->inner_reltol >= 0.5)
@@ -2573,6 +2573,51 @@ int krylovMultiSpace( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax
 	}
 	kms_dat->outer_iter = kms_dat->gmres_out.iter_total;
 	kms_dat->total_iter = kms_dat->outer_iter + kms_dat->inner_iter;
+	
+	return success;
+}
+
+//Function to perform the QR factorization of an invertable linear operator
+int QRsolve( int (*matvec) (const Matrix<double>& x, Matrix<double> &Ax, const void *data),
+			Matrix<double> &b, QR_DATA *qr_dat, const void *matvec_data)
+{
+	int success = 0;
+	
+	//Check for errors
+	if ( (*matvec) == NULL)
+	{
+		mError(nullptr_func);
+		return -1;
+	}
+	if (b.rows() < 2)
+	{
+		success = -1;
+		mError(matrix_too_small);
+		return success;
+	}
+	
+	//Setup working environment
+	qr_dat->ek.set_size(b.rows(), 1);
+	qr_dat->x.set_size(b.rows(), 1);
+	qr_dat->Ro.set_size(b.rows(), b.rows());
+	qr_dat->ek.zeros();
+	
+	//Initialize the matrix R with linear operator entries
+	for (int k=0; k<b.rows(); k++)
+	{
+		qr_dat->ek.edit(k, 0, 1.0);
+		success = (*matvec) (qr_dat->ek, qr_dat->x, matvec_data);
+		if (success != 0)
+		{
+			mError(simulation_fail);
+			return success;
+		}
+		qr_dat->Ro.columnReplace(k, qr_dat->x);
+		qr_dat->ek.edit(k, 0, 0.0);
+	}
+	
+	//Call the QR solve function from macaw
+	qr_dat->x.qrSolve(qr_dat->Ro, b);
 	
 	return success;
 }
@@ -3015,7 +3060,7 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 	}
 	if (pjfnk_dat->nl_maxit <= 0)
 		pjfnk_dat->nl_maxit = std::min(3*x.rows(),1000);
-	if (pjfnk_dat->linear_solver < GMRESLP || pjfnk_dat->linear_solver > GMRESR)
+	if (pjfnk_dat->linear_solver < GMRESLP || pjfnk_dat->linear_solver > QR)
 	{
 		//Choose the best linear solver based on problem size and availability of preconditioning
 		if (x.rows() >= 100 && (*precon) == NULL)
@@ -3083,6 +3128,10 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			std::cout << "GCR linear solver";
 		else if (pjfnk_dat->linear_solver == GMRESR)
 			std::cout << "GMRESR linear solver";
+		else if (pjfnk_dat->linear_solver == KMS)
+			std::cout << "KMS linear solver";
+		else if (pjfnk_dat->linear_solver == QR)
+			std::cout << "QR linear solver";
 		else
 			return -1;
 		if (pjfnk_dat->LineSearch == true)
@@ -3358,7 +3407,6 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 			pjfnk_dat->gmresr_dat.GMRES_Output = false;
 			pjfnk_dat->gmresr_dat.gcr_abs_tol = pjfnk_dat->lin_tol_abs;
 			pjfnk_dat->gmresr_dat.gcr_rel_tol = pjfnk_dat->lin_tol_rel;
-			pjfnk_dat->gmresr_dat.gmres_tol = pjfnk_dat->lin_tol_rel;
 			pjfnk_dat->gmresr_dat.gcr_maxit = x.rows();
 			success = gmresr(jacvec, pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->gmresr_dat, pjfnk_dat, pjfnk_dat->precon_data);
 			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->gmresr_dat.total_iter;
@@ -3387,6 +3435,76 @@ int pjfnk( int (*res) (const Matrix<double>& x, Matrix<double> &F, const void *d
 				if (pjfnk_dat->Bounce == true)
 					LS_Flag = false;
 			}
+		}
+		
+		//KMS iterative solver with restarting
+		else if (pjfnk_dat->linear_solver == KMS)
+		{
+			pjfnk_dat->kms_dat.Output_outer = pjfnk_dat->L_Output;
+			pjfnk_dat->kms_dat.Output_inner = false;
+			pjfnk_dat->kms_dat.outer_abstol = pjfnk_dat->lin_tol_abs;
+			pjfnk_dat->kms_dat.outer_reltol = pjfnk_dat->lin_tol_rel;
+			pjfnk_dat->kms_dat.maxit = x.rows();
+			success = krylovMultiSpace(jacvec,pjfnk_dat->precon, pjfnk_dat->F, &pjfnk_dat->kms_dat, pjfnk_dat, pjfnk_dat->precon_data);
+			pjfnk_dat->l_iter = pjfnk_dat->l_iter + pjfnk_dat->kms_dat.total_iter;
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->kms_dat.total_iter;
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
+			
+			if (pjfnk_dat->LineSearch == false)
+			{
+				//Form new solution
+				for (int i=0; i<x.rows(); i++)
+				{
+					pjfnk_dat->x.edit(i, 0, pjfnk_dat->x(i,0) - pjfnk_dat->kms_dat.gmres_out.x(i,0));
+					x.edit(i, 0, pjfnk_dat->x(i,0));
+				}
+			}
+			else
+			{
+				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->kms_dat.gmres_out.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
+				if (success < 0) {mError(simulation_fail); success = -1; break;}
+				//Form new solution
+				for (int i=0; i<x.rows(); i++)
+				{
+					pjfnk_dat->x.edit(i, 0, x(i,0));
+				}
+				if (pjfnk_dat->Bounce == true)
+					LS_Flag = false;
+			}
+		}
+		
+		//QR direct solver
+		else if (pjfnk_dat->linear_solver == QR)
+		{
+			success = QRsolve(jacvec, pjfnk_dat->F, &pjfnk_dat->qr_dat, pjfnk_dat);
+			pjfnk_dat->fun_call = pjfnk_dat->fun_call + x.rows();
+			pjfnk_dat->l_iter = pjfnk_dat->l_iter + x.rows();
+			if (success != 0) {mError(simulation_fail); success = -1; break;}
+			
+			if (pjfnk_dat->LineSearch == false)
+			{
+				//Form new solution
+				for (int i=0; i<x.rows(); i++)
+				{
+					pjfnk_dat->x.edit(i, 0, pjfnk_dat->x(i,0) - pjfnk_dat->qr_dat.x(i,0));
+					x.edit(i, 0, pjfnk_dat->x(i,0));
+				}
+			}
+			else
+			{
+				success	= backtrackLineSearch(pjfnk_dat->funeval, pjfnk_dat->F, x, pjfnk_dat->qr_dat.x, pjfnk_dat->nl_res, &pjfnk_dat->backtrack_dat, pjfnk_dat->res_data);
+				pjfnk_dat->fun_call = pjfnk_dat->fun_call + pjfnk_dat->backtrack_dat.fun_call;
+				if (success < 0) {mError(simulation_fail); success = -1; break;}
+				//Form new solution
+				for (int i=0; i<x.rows(); i++)
+				{
+					pjfnk_dat->x.edit(i, 0, x(i,0));
+				}
+				if (pjfnk_dat->Bounce == true)
+					LS_Flag = false;
+			}
+			
 		}
 		
 		//No other Krylov Method currently available
@@ -3572,6 +3690,729 @@ int NumericalJacobian( int (*Func) (const Matrix<double> &x, Matrix<double> &F, 
 		//Recover the jth variable before continuing
 		jac_dat->dxj(j,0) = x(j,0);
 	}
+	
+	return success;
+}
+
+//Testing grounds for the LARK Functions
+int LARK_TESTS()
+{
+	int success = 0;
+	
+	//Example 1:------------------------------------------------------------------------
+	//Building Kyrlov Subspace from linear system
+	std::cout << "------------------Begin Example 1------------------" << std::endl;
+	EX01_DATA ex01_dat;
+	int rows = 100;
+	int cols = 100;
+	int maxk = 100;
+	double bound = -1.0;
+	double time;
+	ex01_dat.M.set_size(rows, cols);
+	ex01_dat.b.set_size(rows, 1);
+	ex01_dat.M.tridiagonalFill(-1, 2, -1, false);
+	ex01_dat.b.dirichletBCFill(0, 1, bound);
+	
+	Matrix<double> solution(rows,1), guess;
+	guess.set_size(rows,1);
+	time = clock();
+	solution.ladshawSolve(ex01_dat.M,ex01_dat.b);
+	time = clock() - time;
+	std::cout << "Direct Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "Norm =\t" << (ex01_dat.b - ex01_dat.M*solution).norm() << std::endl; //(PASS)
+	
+	Matrix<double> r0(rows,1);
+	r0 = ex01_dat.b - ex01_dat.M*guess;
+	ARNOLDI_DATA arnoldi_dat;
+	arnoldi_dat.k = maxk;
+	
+	time = clock();
+	success = arnoldi(matvec_ex01,NULL,r0,&arnoldi_dat,(void *)&ex01_dat, (void *)&ex01_dat);
+	
+	Matrix<double> x;
+	success = update_arnoldi_solution(x, guess, &arnoldi_dat);
+	time = clock() - time;
+	std::cout << "Krylov Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;;
+	std::cout << "Norm =\t" << (ex01_dat.b - ex01_dat.M*x).norm() << std::endl; //(PASS)
+	GMRESLP_DATA fom_dat;
+	time = clock();
+	success = fom(matvec_ex01,precon_ex01,ex01_dat.b,&fom_dat,(void *)&ex01_dat,(void *)&ex01_dat);
+	time = clock() - time;
+	std::cout << "FULL GMRES Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "FULL GMRES Norm: " << (ex01_dat.b - ex01_dat.M*fom_dat.x).norm() << std::endl;
+	std::cout << "------------------END Example 1------------------\n" << std::endl;
+	//END Example 1:-------------------------------------------------------------------
+	
+	//Example 2: ----------------------------------------------------------------------
+	/*
+	 Solve 2x2 system defined in Saad and Schultz (1986) paper
+	 
+	 Ax = b -> A = |0  1|		b = |1|		x0 = |0|
+	 |-1 0|		    |1|			 |0|
+	 
+	 Solution: x = |-1|
+	 | 1|
+	 
+	 Any other solution technique will break down for this system because the diagonals
+	 of A are all zero. However, the system is not singular, it is just order strangely.
+	 This demonstrates that the Krylov method can be used to solve linear systems directly,
+	 where other methods may break down and fail to find a solution.
+	 
+	 */
+	std::cout << "------------------Begin Example 2------------------" << std::endl;
+	EX02_DATA ex02_dat;
+	ex02_dat.M.set_size(2, 2);
+	ex02_dat.b.set_size(2, 1);
+	Matrix<double> x0(2,1);
+	ex02_dat.M.edit(0, 0, 0); ex02_dat.M.edit(0, 1, 1);
+	ex02_dat.M.edit(1, 0, -1); ex02_dat.M.edit(1, 1, 0);
+	ex02_dat.b.ConstantICFill(1);
+	x0.ConstantICFill(0);
+	r0 = ex02_dat.b - ex02_dat.M*x0;
+	arnoldi_dat.k = 2;
+	arnoldi_dat.iter = 0;
+	time = clock();
+	success = arnoldi(matvec_ex02,NULL,r0,&arnoldi_dat,(void *)&ex02_dat,(void *)&ex02_dat);
+	std::cout << "Krylov Exit Code: " << success << std::endl;
+	success = update_arnoldi_solution(x, x0, &arnoldi_dat);
+	time = clock() - time;
+	std::cout << "Krylov Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	x.Display("x");
+	std::cout << "Norm =\t" << (ex02_dat.b - ex02_dat.M*x).norm() << std::endl; //(PASS)
+	std::cout << "------------------END Example 2------------------\n" << std::endl;
+	//END Example 2:-------------------------------------------------------------------
+	
+	//Example 3:-------------------------------------------------------------------------
+	/*
+	 
+	 Solve Example 1 iteratively using the default settings for GMRES
+	 
+	 */
+	
+	std::cout << "------------------Begin Example 3------------------" << std::endl;
+	std::cout << "Solving Example 1 with default GMRES arguments" << std::endl;
+	GMRESLP_DATA gmres_dat;
+	gmres_dat.restart = 20;
+	time = clock();
+	success = gmresLeftPreconditioned(matvec_ex01,precon_ex01,ex01_dat.b,&gmres_dat,(void *)&ex01_dat,(void *)&ex01_dat); //(PASS)
+	time = clock() - time;
+	std::cout << "GMRES Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GMRES Norm: " << (ex01_dat.b - ex01_dat.M*gmres_dat.x).norm() << std::endl;
+	std::cout << "GMRES Total Evaluations: " << gmres_dat.steps << std::endl;
+	std::cout << "------------------END Example 3------------------\n" << std::endl;
+	//END Example 3:-------------------------------------------------------------------------
+	
+	
+	//Example 4: -------------------------------------------------------------------------------
+	/*
+	 We want to see how well the GMRES implementation does at solving a more complex, sparse
+	 system of equations. One in which none of our current methods, aside from FOM, would be
+	 able to solve directly.
+	 
+	 NOTE: if I am going to use DENSE matrices with these codes, I should not use a size
+	 greater than 1000x1000. For sizes larger than this, you must use either Sparse matrices
+	 or some kind of matrix free format for evaluating the functions.
+	 */
+	std::cout << "------------------Begin Example 4------------------" << std::endl;
+	std::cout << "Solving a 3D Laplacian function with default GMRES" << std::endl;
+	EX04_DATA ex04_dat;
+	int m = 5;
+	ex04_dat.M.naturalLaplacian3D(m); //Creates a mxmxm matrix for a 3D Laplacian function
+	ex04_dat.b.set_size(m*m*m, 1);
+	ex04_dat.b.edit(0, 0, -1);
+	ex04_dat.b.edit(m*m-1, 0, -1);
+	ex04_dat.b.edit(m*m*m-1, 0, -1);
+	GMRESLP_DATA gmres_dat4;
+	gmres_dat4.restart = 20;
+	
+	time = clock();
+	success = gmresLeftPreconditioned(matvec_ex04,precon_ex04,ex04_dat.b,&gmres_dat4,(void *)&ex04_dat,(void *)&ex04_dat);
+	time = clock() - time;
+	x.ladshawSolve(ex04_dat.M, ex04_dat.b);
+	std::cout << "Precon Norm: " << (ex04_dat.b - ex04_dat.M*x).norm() << std::endl;
+	std::cout << "GMRES Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GMRES Norm: " << (ex04_dat.b - ex04_dat.M*gmres_dat4.x).norm() << std::endl;
+	std::cout << "GMRES Total Evaluations: " << gmres_dat4.steps << std::endl;
+	std::cout << "------------------END Example 4------------------\n" << std::endl;
+	
+	//END Example 4:----------------------------------------------------------------------------
+	
+	
+	//Example 5: --------------------------------------------------------------------------------
+	/*
+	 Solve example 4 using PCG algorithm and compare computation time to that of GMRES.
+	 Note that example 4 was solving a symmetric system with GMRES and performed very
+	 well. Here, we expect PCG to perform better because it requires much less memory
+	 and fewer matrix-vector multiplications
+	 
+	 This method did indeed outperform GMRES for the same symmetric problem!
+	 */
+	std::cout << "------------------Begin Example 5------------------" << std::endl;
+	std::cout << "Solving a 3D Laplacian function with default PCG" << std::endl;
+	PCG_DATA pcg_dat5;
+	time = clock();
+	success = pcg(matvec_ex04,precon_ex04,ex04_dat.b,&pcg_dat5,(void *)&ex04_dat,(void *)&ex04_dat);
+	//success = pcg(matvec_ex04,NULL,ex04_dat.b,&pcg_dat5,(void *)&ex04_dat,(void *)&ex04_dat);
+	time = clock() - time;
+	std::cout << "PCG Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "PCG Norm: " << (ex04_dat.b - ex04_dat.M*pcg_dat5.x).norm() << std::endl;
+	std::cout << "PCG Iterations: " << pcg_dat5.iter << std::endl;
+	std::cout << "------------------END Example 5------------------\n" << std::endl;
+	
+	//END Example 5:----------------------------------------------------------------------------
+	
+	//Example 6: --------------------------------------------------------------------------------
+	/*
+	 Attempt to solve example 1 with PCG. Example 1 is a non-symmetric matrix, so we do
+	 not anticipate this to converge to a reasonable solution. However, we want to see
+	 what happens in the method when the matrix is non-symmetric. Does the residual
+	 improve? What is the behavior like?
+	 
+	 The norm was reduced, but it never converged! The behavior of the norm was not
+	 very good. Was noisy and unstable, which may contribute to non-convergence. For
+	 examples 7 and 8, we will try to solve this same problem, but using BiCGSTAB.
+	 */
+	std::cout << "------------------Begin Example 6------------------" << std::endl;
+	std::cout << "Solving a 1D Non-symmetric Laplacian function with default PCG" << std::endl;
+	PCG_DATA pcg_dat6;
+	time = clock();
+	success = pcg(matvec_ex01,precon_ex01,ex01_dat.b,&pcg_dat6,(void *)&ex01_dat,(void *)&ex01_dat);
+	time = clock() - time;
+	std::cout << "PCG Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "PCG Norm: " << (ex01_dat.b - ex01_dat.M*pcg_dat6.x).norm() << std::endl;
+	std::cout << "PCG Iterations: " << pcg_dat6.iter << std::endl;
+	std::cout << "------------------END Example 6------------------\n" << std::endl;
+	
+	//END Example 6:----------------------------------------------------------------------------
+	
+	
+	//Example 7: --------------------------------------------------------------------------------
+	/*
+	 Solve the non-symmetric 1-D Laplacian with BiCGSTAB algorithm. Previous example tried
+	 and failed to solve this system with PCG. Example 3 demonstrated the the GMRES
+	 implementation was able to solve this problem and reduce the residual monotonically.
+	 Here, we expect BiCGSTAB to be able to solve the problem, but expect the residuals
+	 to not decrease monotonically. Whether or not this is more computationally efficient
+	 than GMRES will really depend on the problem we are solving.
+	 
+	 For this particular problem, BiCGSTAB too more iterations to converge than GMRES, but
+	 solved the system faster than GMRES. This is because BiCGSTAB is a much more
+	 computationally efficient algorithm that GMRES due to the recurrences in the code.
+	 */
+	std::cout << "------------------Begin Example 7------------------" << std::endl;
+	std::cout << "Solving a 1D Non-symmetric Laplacian function with default BiCGSTAB" << std::endl;
+	BiCGSTAB_DATA bicg_dat7;
+	time = clock();
+	success = bicgstab(matvec_ex01,precon_ex01,ex01_dat.b,&bicg_dat7,(void *)&ex01_dat,(void *)&ex01_dat);
+	time = clock() - time;
+	std::cout << "BiCGSTAB Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "BiCGSTAB Norm: " << (ex01_dat.b - ex01_dat.M*bicg_dat7.x).norm() << std::endl;
+	std::cout << "BiCGSTAB Iterations: " << bicg_dat7.iter << std::endl;
+	std::cout << "------------------END Example 7------------------\n" << std::endl;
+	
+	//END Example 7:----------------------------------------------------------------------------
+	
+	
+	//Example 8: --------------------------------------------------------------------------------
+	/*
+	 Solve the non-symmetric 1-D Laplacian with the CGS algorithm. This is another
+	 iterative method for solving non-symmetric linear systems that has often been
+	 implemented by engineers and scientists. In theory, BiCGSTAB should be more
+	 stable than CGS, but for some problems CGS will converge faster than BiCGSTAB.
+	 
+	 Case in point, for this example, CGS converged in 100 iterations whereas
+	 BiCGSTAB converged in 110. However, the convergence behavior of BiCGSTAB was
+	 much, much smoother than that of this CGS implementation.
+	 
+	 That is of course if we consider using preconditioning. Without preconditioning,
+	 CGS for this problem diverges and will not converge in 200 iterations, while
+	 BiCGSTAB still converges, but takes 159 iterations.
+	 
+	 The take away from this is that if a preconditioner is available, use CGS over
+	 BiCGSTAB. However, if no preconditioner is available, then use BiCGSTAB. If the
+	 linear system is not well conditioned, or if CGS and BiCGSTAB fail, then use
+	 GMRES. If the system is small enough, just use FOM. For any symmetric matrix,
+	 always use PCG. This will be a convention we adopt moving forward to developing
+	 our implementation of PJFNK for non-linear systems.
+	 */
+	std::cout << "------------------Begin Example 8------------------" << std::endl;
+	
+	//NOTE: This also demonstrates use of pointers to data structures embeded in other structures
+	PJFNK_DATA test;
+	test.res_data = (void *)&ex01_dat;
+	
+	std::cout << "Solving a 1D Non-symmetric Laplacian function with default CGS" << std::endl;
+	CGS_DATA cgs_dat8;
+	time = clock();
+	success = cgs(matvec_ex01,precon_ex01,ex01_dat.b,&cgs_dat8,test.res_data,(void *)&ex01_dat);
+	time = clock() - time;
+	std::cout << "CGS Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "CGS Norm: " << (ex01_dat.b - ex01_dat.M*cgs_dat8.x).norm() << std::endl;
+	std::cout << "CGS Iterations: " << cgs_dat8.iter << std::endl;
+	std::cout << "------------------END Example 8------------------\n" << std::endl;
+	
+	//END Example 8:----------------------------------------------------------------------------
+	
+	
+	//Example 9 and 10: ------------------------------------------------------------------------
+	
+	/*
+	 This example shows the use of both Picard and PJFNK methods for solving non-linear
+	 systems of equations. In this example, the non-linear system arises from a non-linear
+	 PDE of a 1-D Laplacian with a non-linear term k*exp(u);
+	 
+	 Solve: 		-d^2u/dx^x - k*exp(u) = 0
+	 
+	 F(u) = 0 = -u(i+1) + 2*u(i) - u(i-1) - h^2*k*exp(u(i))
+	 BCs:	u(0) = u(1) = 0
+	 
+	 Split into linear and non-linear parts for both the Picard iteration and as a
+	 preconditioner for the PJFNK method and compare the results.
+	 
+	 Note: Picard could not converge for this problem. May be too strongly non-linear...
+	 
+	 Was able to get Picard to converge after 291 Non-linear iterations, but problem size
+	 is of order 10. Very poor convergence for this problem.
+	 
+	 */
+	
+	std::cout << "------------------Begin Example 9------------------" << std::endl;
+	
+	EX09_DATA ex09_dat;
+	ex09_dat.k = 1.0;
+	ex09_dat.N = 12;
+	ex09_dat.h = 1.0/ex09_dat.N;
+	ex09_dat.N = ex09_dat.N-2;
+	ex09_dat.x.set_size(ex09_dat.N, 1);
+	ex09_dat.s.set_size(ex09_dat.N, 1);
+	ex09_dat.p.set_size(ex09_dat.N, 1);
+	ex09_dat.M.set_size(ex09_dat.N, ex09_dat.N);
+	ex09_dat.M.tridiagonalFill(-1, 2, -1, false);
+	
+	//First try to solve with Picard's Method
+	PICARD_DATA picard_dat09;
+	picard_dat09.maxit = 300;
+	time = clock();
+	success = picard(funeval_ex09, evalx_ex09, ex09_dat.x, &picard_dat09, (void *)&ex09_dat, (void *)&ex09_dat);
+	time = clock() - time;
+	success = funeval_ex09(ex09_dat.x, ex09_dat.p, (void *)&ex09_dat);
+	std::cout << "PICARD Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "PICARD Norm: " << ex09_dat.p.norm() << std::endl;
+	std::cout << "PICARD Iterations: " << picard_dat09.iter << std::endl;
+	
+	//std::cout << std::endl;
+	//ex09_dat.x.Display("x");
+	
+	std::cout << "------------------END Example 9------------------\n" << std::endl;
+	
+	std::cout << "------------------Begin Example 10------------------" << std::endl;
+	
+	ex09_dat.k = 1.0;
+	ex09_dat.N = 102;
+	ex09_dat.h = 1.0/ex09_dat.N;
+	ex09_dat.N = ex09_dat.N-2;
+	ex09_dat.x.set_size(ex09_dat.N, 1);
+	ex09_dat.s.set_size(ex09_dat.N, 1);
+	ex09_dat.p.set_size(ex09_dat.N, 1);
+	ex09_dat.M.set_size(ex09_dat.N, ex09_dat.N);
+	ex09_dat.M.tridiagonalFill(-1, 2, -1, false);
+	
+	//Next try to solve with PJFNK method
+	ex09_dat.x.ConstantICFill(0.0);
+	PJFNK_DATA pjfnk_dat10;
+	pjfnk_dat10.linear_solver = GMRESRP;
+	//pjfnk_dat10.L_Output = true;
+	//pjfnk_dat10.gmres_dat.Expand = true;
+	
+	//NOTE: You do not have to set these, they will be automatically set when PJFNK is called
+	//pjfnk_dat10.linear_solver = GMRESLP;
+	//pjfnk_dat10.lin_tol = 1e-4;
+	//pjfnk_dat10.res_data = (void *)&ex09_dat;		//Required if your functions need your data
+	//pjfnk_dat10.precon_data = (void *)&ex09_dat;	//Required if your preconditioner needs data
+	//pjfnk_dat10.funeval = (*funeval_ex10);			//Always required
+	//pjfnk_dat10.precon = (*precon_ex10);			//Optional, but recommended
+	
+	time = clock();
+	//success = pjfnk(funeval_ex10, precon_ex10, ex09_dat.x, &pjfnk_dat10, (void *)&ex09_dat, (void *)&ex09_dat);
+	success = pjfnk(funeval_ex10, NULL, ex09_dat.x, &pjfnk_dat10, (void *)&ex09_dat, NULL);
+	time = clock() - time;
+	success = funeval_ex10(ex09_dat.x, ex09_dat.p, (void *)&ex09_dat);
+	std::cout << "PJFNK Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "PJFNK Norm: " << ex09_dat.p.norm() << std::endl;
+	std::cout << "PJFNK Iterations: " << pjfnk_dat10.nl_iter << std::endl;
+	
+	//std::cout << std::endl;
+	//ex09_dat.x.Display("x");
+	
+	std::cout << "------------------END Example 10------------------\n" << std::endl;
+	
+	//END Example 9 and 10: --------------------------------------------------------------------
+	
+	//Example 11: ----------------------------------------------------------------------
+	/*
+	 Solve 2x2 system defined in Saad and Schultz (1986) paper
+	 
+	 Ax = b -> A = |0  1|		b = |1|		x0 = |0|
+	 |-1 0|		    |1|			 |0|
+	 
+	 Solution: x = |-1|
+	 | 1|
+	 
+	 Any other solution technique will break down for this system because the diagonals
+	 of A are all zero. However, the system is not singular, it is just order strangely.
+	 This demonstrates that the Krylov method can be used to solve linear systems directly,
+	 where other methods may break down and fail to find a solution.
+	 
+	 */
+	std::cout << "------------------Begin Example 11------------------" << std::endl;
+	std::cout << "Solving a 2x2 indefinite system with default Right-Preconditioned GMRES" << std::endl;
+	ex02_dat.M.set_size(2, 2);
+	ex02_dat.b.set_size(2, 1);
+	ex02_dat.M.edit(0, 0, 0); ex02_dat.M.edit(0, 1, 1);
+	ex02_dat.M.edit(1, 0, -1); ex02_dat.M.edit(1, 1, 0);
+	ex02_dat.b.ConstantICFill(1);
+	x0.ConstantICFill(0);
+	r0 = ex02_dat.b - ex02_dat.M*x0;
+	
+	GMRESRP_DATA cgmres_dat;
+	//cgmres_dat.restart = 2;
+	//cgmres_dat.maxit = 1;
+	time = clock();
+	
+	success = gmresRightPreconditioned(matvec_ex02,NULL,ex02_dat.b,&cgmres_dat,(void *)&ex02_dat,(void *)&ex02_dat);
+	std::cout << "GMRES Exit Code: " << success << std::endl;
+	
+	time = clock() - time;
+	std::cout << "GMRES Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	cgmres_dat.x.Display("gmres_x");
+	std::cout << "Norm =\t" << (ex02_dat.b - ex02_dat.M*cgmres_dat.x).norm() << std::endl; //(PASS)
+	
+	std::cout << "\nSolving a 2x2 indefinite system with default GCR" << std::endl;
+	GCR_DATA gcr11;
+	
+	time = clock();
+	
+	success = gcr(matvec_ex02,NULL,ex02_dat.b,&gcr11,(void *)&ex02_dat,(void *)&ex02_dat);
+	std::cout << "GCR Exit Code: " << success << std::endl;
+	
+	time = clock() - time;
+	std::cout << "GCR Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GCR inner iterations: " << gcr11.iter_inner << std::endl;
+	std::cout << "GCR outer iterations: " << gcr11.iter_outer << std::endl;
+	std::cout << "GCR total iterations: " << gcr11.total_iter << std::endl;
+	gcr11.x.Display("gcr_x");
+	std::cout << "Norm =\t" << (ex02_dat.b - ex02_dat.M*gcr11.x).norm() << std::endl; //FAIL!!!
+	
+	
+	std::cout << "\nSolving a 2x2 indefinite system with default GMRESR" << std::endl;
+	
+	GMRESR_DATA gmresr11;
+	
+	time = clock();
+	
+	success = gmresr(matvec_ex02,NULL,ex02_dat.b,&gmresr11,(void *)&ex02_dat,(void *)&ex02_dat);
+	std::cout << "GCR Exit Code: " << success << std::endl;
+	
+	time = clock() - time;
+	std::cout << "GCR Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GCR inner iterations: " << gmresr11.gcr_dat.iter_inner << std::endl;
+	std::cout << "GCR outer iterations: " << gmresr11.gcr_dat.iter_outer << std::endl;
+	std::cout << "GCR total iterations: " << gmresr11.gcr_dat.total_iter << std::endl;
+	gmresr11.gcr_dat.x.Display("gmresr_x");
+	std::cout << "Norm =\t" << (ex02_dat.b - ex02_dat.M*gmresr11.gcr_dat.x).norm() << std::endl; //FAIL!!!
+	
+	std::cout << "------------------END Example 11------------------\n" << std::endl;
+	//END Example 11:-------------------------------------------------------------------
+	
+	//Example 12: -------------------------------------------------------------------------------
+	/*
+	 We want to see how well the Compact GMRES implementation does at solving a more complex, sparse
+	 system of equations. One in which none of our current methods, aside from FOM, would be
+	 able to solve directly.
+	 
+	 NOTE: if I am going to use DENSE matrices with these codes, I should not use a size
+	 greater than 1000x1000. For sizes larger than this, you must use either Sparse matrices
+	 or some kind of matrix free format for evaluating the functions.
+	 */
+	std::cout << "------------------Begin Example 12------------------" << std::endl;
+	std::cout << "Solving a 3D Laplacian function with default Right-Preconditioned GMRES" << std::endl;
+	m = 5;
+	ex04_dat.M.naturalLaplacian3D(m); //Creates a mxmxm matrix for a 3D Laplacian function
+	ex04_dat.b.set_size(m*m*m, 1);
+	ex04_dat.b.edit(0, 0, -1);
+	ex04_dat.b.edit(m*m-1, 0, -1);
+	ex04_dat.b.edit(m*m*m-1, 0, -1);
+	GMRESRP_DATA cgmres_dat4;
+	//cgmres_dat4.restart = 5;
+	
+	time = clock();
+	success = gmresRightPreconditioned(matvec_ex04,precon_ex04,ex04_dat.b,&cgmres_dat4,(void *)&ex04_dat,(void *)&ex04_dat);
+	//success = gmresRightPreconditioned(matvec_ex04,NULL,ex04_dat.b,&cgmres_dat4,(void *)&ex04_dat,(void *)&ex04_dat);
+	time = clock() - time;
+	x.ladshawSolve(ex04_dat.M, ex04_dat.b);
+	std::cout << "Precon Norm: " << (ex04_dat.b - ex04_dat.M*x).norm() << std::endl;
+	std::cout << "GMRES Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GMRES Norm: " << (ex04_dat.b - ex04_dat.M*cgmres_dat4.x).norm() << std::endl;
+	std::cout << "GMRES Total Evaluations: " << cgmres_dat4.iter_total << std::endl;
+	std::cout << "GMRES Restarts: " << cgmres_dat4.iter_outer << std::endl;
+	
+	std::cout << "\nSolving a 3D Laplacian function with default GCR" << std::endl;
+	GCR_DATA gcr12;
+	//gcr12.restart = 5;
+	time = clock();
+	success = gcr(matvec_ex04,precon_ex04,ex04_dat.b,&gcr12,(void *)&ex04_dat,(void *)&ex04_dat);
+	//success = gcr(matvec_ex04,NULL,ex04_dat.b,&gcr12,(void *)&ex04_dat,(void *)&ex04_dat);
+	time = clock() - time;
+	std::cout << "GCR Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GCR Norm: " << (ex04_dat.b - ex04_dat.M*gcr12.x).norm() << std::endl; //PASS
+	std::cout << "GCR inner iterations: " << gcr12.iter_inner << std::endl;
+	std::cout << "GCR outer iterations: " << gcr12.iter_outer << std::endl;
+	std::cout << "GCR total iterations: " << gcr12.total_iter << std::endl;
+	
+	std::cout << "------------------END Example 12------------------\n" << std::endl;
+	
+	//END Example 12:----------------------------------------------------------------------------
+	
+	//Example 13: --------------------------------------------------------------------------------
+	/*
+	 Solve the non-symmetric 1-D Laplacian with CGMRES algorithm. Previous example tried
+	 and failed to solve this system with PCG. Example 3 demonstrated the the GMRES
+	 implementation was able to solve this problem and reduce the residual monotonically.
+	 Here, we expect BiCGSTAB to be able to solve the problem, but expect the residuals
+	 to not decrease monotonically. Whether or not this is more computationally efficient
+	 than GMRES will really depend on the problem we are solving.
+	 
+	 For this particular problem, BiCGSTAB too more iterations to converge than GMRES, but
+	 solved the system faster than GMRES. This is because BiCGSTAB is a much more
+	 computationally efficient algorithm that GMRES due to the recurrences in the code.
+	 */
+	std::cout << "------------------Begin Example 13------------------" << std::endl;
+	std::cout << "Solving a 1D Non-symmetric Laplacian function with default Right-Preconditioned GMRES" << std::endl;
+	GMRESRP_DATA cgmres_dat13;
+	cgmres_dat13.restart = ex01_dat.b.rows();
+	cgmres_dat13.x.set_size(ex01_dat.b.rows(), 1);
+	cgmres_dat13.restart = 100;
+	time = clock();
+	success = gmresRightPreconditioned(matvec_ex01,precon_ex01,ex01_dat.b,&cgmres_dat13,(void *)&ex01_dat,(void *)&ex01_dat);
+	//success = gmresRightPreconditioned(matvec_ex01,NULL,ex01_dat.b,&cgmres_dat13,(void *)&ex01_dat,(void *)&ex01_dat);
+	time = clock() - time;
+	std::cout << "GMRES Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GMRES Norm: " << (ex01_dat.b - ex01_dat.M*cgmres_dat13.x).norm() << std::endl;
+	std::cout << "GMRES Iterations: " << cgmres_dat13.iter_total << std::endl;
+	std::cout << "GMRES Restarts: " << cgmres_dat13.iter_outer << std::endl;
+	std::cout << "------------------END Example 13------------------\n" << std::endl;
+	
+	std::cout << "\nSolving a 1D Non-symmetric Laplacian function with default GCR" << std::endl;
+	
+	GCR_DATA gcr13;
+	gcr13.restart = 100;
+	gcr13.x.set_size(ex01_dat.b.rows(), 1);
+	time = clock();
+	success = gcr(matvec_ex01,precon_ex01,ex01_dat.b,&gcr13,(void *)&ex01_dat,(void *)&ex01_dat);
+	//success = gcr(matvec_ex01,NULL,ex01_dat.b,&gcr13,(void *)&ex01_dat,(void *)&ex01_dat);
+	time = clock() - time;
+	std::cout << "GCR Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GCR Norm: " << (ex01_dat.b - ex01_dat.M*gcr13.x).norm() << std::endl; //PASS
+	std::cout << "GCR inner iterations: " << gcr13.iter_inner << std::endl;
+	std::cout << "GCR outer iterations: " << gcr13.iter_outer << std::endl;
+	std::cout << "GCR total iterations: " << gcr13.total_iter << std::endl;
+	
+	std::cout << "\nSolving a 1D Non-symmetric Laplacian function with default GMRESR" << std::endl;
+	
+	GMRESR_DATA gmresr13;
+	//gmresr13.gmres_restart = 10;
+	time = clock();
+	success = gmresr(matvec_ex01,precon_ex01,ex01_dat.b,&gmresr13,(void *)&ex01_dat,(void *)&ex01_dat);
+	time = clock() - time;
+	std::cout << "GMRESR Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "GMRESR Norm: " << (ex01_dat.b - ex01_dat.M*gmresr13.gcr_dat.x).norm() << std::endl; //PASS
+	std::cout << "GMRESR inner iterations: " << gmresr13.gcr_dat.iter_inner << std::endl;
+	std::cout << "GMRESR outer iterations: " << gmresr13.gcr_dat.iter_outer << std::endl;
+	std::cout << "GMRESR total iterations: " << gmresr13.gcr_dat.total_iter << std::endl;
+	
+	//END Example 13:----------------------------------------------------------------------------
+	
+	std::cout << "------------------Begin Example 14------------------" << std::endl;
+	
+	ex09_dat.k = 2.0;
+	ex09_dat.N = 102;
+	ex09_dat.h = 1.0/ex09_dat.N;
+	ex09_dat.N = ex09_dat.N-2;
+	ex09_dat.x.set_size(ex09_dat.N, 1);
+	ex09_dat.s.set_size(ex09_dat.N, 1);
+	ex09_dat.p.set_size(ex09_dat.N, 1);
+	ex09_dat.M.set_size(ex09_dat.N, ex09_dat.N);
+	ex09_dat.M.tridiagonalFill(-1, 2, -1, false);
+	
+	//Next try to solve with PJFNK method
+	ex09_dat.x.ConstantICFill(0.0);
+	PJFNK_DATA pjfnk_dat14;
+	
+	//NOTE: You do not have to set these, they will be automatically set when PJFNK is called
+	pjfnk_dat14.L_Output = true;
+	pjfnk_dat14.linear_solver = KMS; //Choice 1 (PCG) and 4 (GMRES_FULL) are not choosen by PJFNK
+	pjfnk_dat14.LineSearch = true;
+	//pjfnk_dat14.Bounce = true;
+	//pjfnk_dat14.backtrack_dat.constRho = true;
+	
+	//KMS Options
+	pjfnk_dat14.kms_dat.max_level = 2;
+	pjfnk_dat14.kms_dat.inner_reltol = 0.001;
+	
+	time = clock();
+	success = pjfnk(funeval_ex10, precon_ex10, ex09_dat.x, &pjfnk_dat14, (void *)&ex09_dat, (void *)&ex09_dat);
+	//success = pjfnk(funeval_ex10, NULL, ex09_dat.x, &pjfnk_dat14, (void *)&ex09_dat, (void *)&ex09_dat);
+	time = clock() - time;
+	success = funeval_ex10(ex09_dat.x, ex09_dat.p, (void *)&ex09_dat);
+	std::cout << "PJFNK Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	std::cout << "PJFNK Norm: " << ex09_dat.p.norm() << std::endl;
+	std::cout << "PJFNK Iterations: " << pjfnk_dat14.nl_iter << std::endl;
+	
+	//std::cout << std::endl;
+	//ex09_dat.x.Display("x");
+	
+	std::cout << "------------------END Example 14------------------\n" << std::endl;
+	
+	
+	
+	
+	
+	std::cout << "------------------Begin Example 15------------------" << std::endl;
+	
+	/*
+	 *			SOLVE a 3D Laplacian without using matrices... Sparse System Handling
+	 */
+	
+	std::cout << "Solving a 125,000 Linear Equations with GMRESRP, PCG, BiCGSTAB, CGS, GMRESLP, GMRESR, and KMS" << std::endl;
+	
+	//Setup Data Structure for Sparse Laplacian
+	EX15_DATA ex15_dat;
+	ex15_dat.m =50;
+	ex15_dat.N = ex15_dat.m*ex15_dat.m*ex15_dat.m;
+	ex15_dat.b.set_size(ex15_dat.N, 1);
+	ex15_dat.b.edit(0, 0, -1);
+	ex15_dat.b.edit(ex15_dat.m*ex15_dat.m-1, 0, -1);
+	ex15_dat.b.edit(ex15_dat.m*ex15_dat.m*ex15_dat.m-1, 0, -1);
+	x.set_size(ex15_dat.N, 1);
+	
+	std::cout << "\n------------------START GMRES------------------" << std::endl;
+	
+	//Setup GMRES
+	GMRESRP_DATA gmres_dat15;
+	
+	time = clock();
+	success = gmresRightPreconditioned(matvec_ex15,NULL,ex15_dat.b,&gmres_dat15,(void *)&ex15_dat,(void *)&ex15_dat);
+	time = clock() - time;
+	std::cout << "GMRES Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	success = matvec_ex15(gmres_dat15.x, x, (void *)&ex15_dat);
+	std::cout << "GMRES Norm: " << (ex15_dat.b - x).norm() << std::endl;
+	std::cout << "GMRES Total Evaluations: " << gmres_dat15.iter_total << std::endl;
+	std::cout << "GMRES Restarts: " << gmres_dat15.iter_outer << std::endl;
+	
+	//Setup PCG
+	PCG_DATA pcg_dat15;
+	
+	std::cout << "\n------------------START PCG------------------" << std::endl;
+	
+	time = clock();
+	success = pcg(matvec_ex15, NULL, ex15_dat.b, &pcg_dat15, (void *)&ex15_dat, (void *)&ex15_dat);
+	time = clock() - time;
+	std::cout << "PCG Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	success = matvec_ex15(pcg_dat15.x, x, (void *)&ex15_dat);
+	std::cout << "PCG Norm: " << (ex15_dat.b - x).norm() << std::endl;
+	std::cout << "PCG Total Evaluations: " << pcg_dat15.iter << std::endl;
+	
+	//Setup BiCGSTAB
+	BiCGSTAB_DATA bicg_dat15;
+	
+	std::cout << "\n------------------START BiCGSTAB------------------" << std::endl;
+	
+	time = clock();
+	success = bicgstab(matvec_ex15, NULL, ex15_dat.b, &bicg_dat15, (void *)&ex15_dat, (void *)&ex15_dat);
+	time = clock() - time;
+	std::cout << "BiCGSTAB Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	success = matvec_ex15(bicg_dat15.x, x, (void *)&ex15_dat);
+	std::cout << "BiCGSTAB Norm: " << (ex15_dat.b - x).norm() << std::endl;
+	std::cout << "BiCGSTAB Total Evaluations: " << bicg_dat15.iter << std::endl;
+	
+	//Setup CGS
+	CGS_DATA cgs_dat15;
+	
+	std::cout << "\n------------------START CGS------------------" << std::endl;
+	
+	time = clock();
+	success = cgs(matvec_ex15, NULL, ex15_dat.b, &cgs_dat15, (void *)&ex15_dat, (void *)&ex15_dat);
+	time = clock() - time;
+	std::cout << "CGS Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	success = matvec_ex15(cgs_dat15.x, x, (void *)&ex15_dat);
+	std::cout << "CGS Norm: " << (ex15_dat.b - x).norm() << std::endl;
+	std::cout << "CGS Total Evaluations: " << cgs_dat15.iter << std::endl;
+	
+	
+	std::cout << "\n------------------START Left Preconditioned GMRES-------------------" << std::endl;
+	
+	GMRESLP_DATA gmres_rec15;
+	
+	time = clock();
+	success = gmresLeftPreconditioned(matvec_ex15,NULL,ex15_dat.b,&gmres_rec15,(void *)&ex15_dat,NULL);
+	time = clock() - time;
+	std::cout << "GMRES Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	success = matvec_ex15(gmres_rec15.x, x, (void *)&ex15_dat);
+	std::cout << "GMRES Norm: " << (ex15_dat.b - x).norm() << std::endl;
+	std::cout << "GMRES Total Evaluations: " << gmres_rec15.steps << std::endl;
+	std::cout << "GMRES Restarts: " << gmres_rec15.iter << std::endl;
+	
+	std::cout << "\n------------------START GCR-------------------" << std::endl;
+	
+	GCR_DATA gcr15;
+	
+	time = clock();
+	success = gcr(matvec_ex15,NULL,ex15_dat.b,&gcr15,(void *)&ex15_dat,(void *)&ex15_dat);
+	time = clock() - time;
+	std::cout << "GCR Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	success = matvec_ex15(gcr15.x, x, (void *)&ex15_dat);
+	std::cout << "GCR Norm: " << (ex15_dat.b - x).norm() << std::endl; //PASS
+	std::cout << "GCR inner iterations: " << gcr15.iter_inner << std::endl;
+	std::cout << "GCR outer iterations: " << gcr15.iter_outer << std::endl;
+	std::cout << "GCR total iterations: " << gcr15.total_iter << std::endl;
+	
+	
+	std::cout << "\n------------------START GMRESR-------------------" << std::endl;
+	
+	GMRESR_DATA gmresr15;
+	//gmresr15.GMRES_Output = true;
+	gmresr15.gmres_maxit = 1;
+	
+	time = clock();
+	success = gmresr(matvec_ex15,NULL,ex15_dat.b,&gmresr15,(void *)&ex15_dat,(void *)&ex15_dat);
+	time = clock() - time;
+	std::cout << "GMRESR Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	success = matvec_ex15(gmresr15.gcr_dat.x, x, (void *)&ex15_dat);
+	std::cout << "GMRESR Norm: " << (ex15_dat.b - x).norm() << std::endl; //PASS
+	std::cout << "GMRESR inner iterations: " << gmresr15.iter_inner << std::endl;
+	std::cout << "GMRESR outer iterations: " << gmresr15.iter_outer	<< std::endl;
+	std::cout << "GMRESR total iterations: " << gmresr15.total_iter << std::endl;
+	
+	std::cout << "\n------------------START KMS-------------------" << std::endl;
+	
+	KMS_DATA kms15;
+	kms15.Output_inner = false;
+	kms15.max_level = 2;
+	kms15.inner_reltol = 0.001;
+	
+	time = clock();
+	success = krylovMultiSpace(matvec_ex15,NULL,ex15_dat.b,&kms15,(void *)&ex15_dat,(void *)&ex15_dat);
+	time = clock() - time;
+	std::cout << "KMS Solve (s):\t" << (time / CLOCKS_PER_SEC) << std::endl;
+	success = matvec_ex15(kms15.gmres_out.x, x, (void *)&ex15_dat);
+	std::cout << "KMS Norm: " << (ex15_dat.b - x).norm() << std::endl; //PASS
+	std::cout << "KMS inner iterations: " << kms15.inner_iter << std::endl;
+	std::cout << "KMS outer iterations: " << kms15.outer_iter << std::endl;
+	std::cout << "KMS total iterations: " << kms15.total_iter << std::endl;
+	
+	
+	std::cout << "------------------END Example 15------------------\n" << std::endl;
+	
 	
 	return success;
 }

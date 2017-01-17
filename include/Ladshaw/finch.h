@@ -403,4 +403,9 @@ int burgers_bcs(const void *user_data);
 /// \endcond
 //END Specific Functions-----------------------------------------------
 
+/// Function runs a particular FINCH test
+/** The FINCH_TESTS function is used to exercise and test out the FINCH algorithms for
+	correctness, efficiency, and accuracy. This test should never report a failure. */
+int FINCH_TESTS();
+
 #endif
