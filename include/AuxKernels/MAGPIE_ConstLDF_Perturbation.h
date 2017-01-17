@@ -46,6 +46,7 @@
 
 #include "Aux_LDF.h"
 #include "flock.h"
+#include "DataStruct_StoreLoad.h"
 
 #ifndef MAGPIE_ConstLDF_Perturbation_H
 #define MAGPIE_ConstLDF_Perturbation_H
@@ -55,36 +56,6 @@ class MAGPIE_ConstLDF_Perturbation;
 
 template<>
 InputParameters validParams<MAGPIE_ConstLDF_Perturbation>();
-
-/// dataStore function for MAGPIE_DATA
-/** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
-	MOOSE. Although this program does not use these new features, our source code must include these functions
-	or the code will NO LONGER COMPILE.
- 
-	NOTE: Currently, these functions are blank, because we do not use them for anything. However, we can finalize
-	these functions by adding in separate dataStore functions for each individual data type in the data structure.
-	(See DataIO.h in moose/framework/include/restart/ for the individual functions based on type.)*/
-template<>
-inline void
-dataStore(std::ostream & stream, MAGPIE_DATA & data, void * context)
-{
-	
-}
-
-/// dataLoad function for MAGPIE_DATA
-/** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
-	MOOSE. Although this program does not use these new features, our source code must include these functions
-	or the code will NO LONGER COMPILE.
- 
-	NOTE: Currently, these functions are blank, because we do not use them for anything. However, we can finalize
-	these functions by adding in separate dataLoad functions for each individual data type in the data structure.
-	(See DataIO.h in moose/framework/include/restart/ for the individual functions based on type.)*/
-template<>
-inline void
-dataLoad(std::istream & stream, MAGPIE_DATA & data, void * context)
-{
-	
-}
 
 /// MAGPIE_ConstLDF class inherits from AuxKernel
 /** This class object inherits from Aux_LDF to calculated the adsorption perturbation of an aux variable

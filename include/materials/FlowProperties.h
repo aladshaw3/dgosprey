@@ -37,6 +37,7 @@
 
 #include "Material.h"
 #include "flock.h"
+#include "DataStruct_StoreLoad.h"
 
 #ifndef FLOWPROPERTIES_H
 #define FLOWPROPERTIES_H

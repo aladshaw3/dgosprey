@@ -40,6 +40,7 @@
 
 #include "Material.h"
 #include "flock.h"
+#include "DataStruct_StoreLoad.h"
 
 #ifndef ADSORBENTPROPERTIES_H
 #define ADSORBENTPROPERTIES_H

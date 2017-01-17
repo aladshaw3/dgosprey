@@ -44,6 +44,7 @@
 
 #include "AuxKernel.h"
 #include "flock.h"
+#include "DataStruct_StoreLoad.h"
 
 #ifndef MAGPIE_Adsorption_H
 #define MAGPIE_Adsorption_H
@@ -53,36 +54,6 @@ class MAGPIE_Adsorption;
 
 template<>
 InputParameters validParams<MAGPIE_Adsorption>();
-
-/// dataStore function for MAGPIE_DATA
-/** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
-	MOOSE. Although this program does not use these new features, our source code must include these functions
-	or the code will NO LONGER COMPILE.
- 
-	NOTE: Currently, these functions are blank, because we do not use them for anything. However, we can finalize
-	these functions by adding in separate dataStore functions for each individual data type in the data structure.
-	(See DataIO.h in moose/framework/include/restart/ for the individual functions based on type.)*/
-template<>
-inline void
-dataStore(std::ostream & stream, MAGPIE_DATA & data, void * context)
-{
-	
-}
-
-/// dataLoad function for MAGPIE_DATA
-/** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
-	MOOSE. Although this program does not use these new features, our source code must include these functions
-	or the code will NO LONGER COMPILE.
- 
-	NOTE: Currently, these functions are blank, because we do not use them for anything. However, we can finalize
-	these functions by adding in separate dataLoad functions for each individual data type in the data structure.
-	(See DataIO.h in moose/framework/include/restart/ for the individual functions based on type.)*/
-template<>
-inline void
-dataLoad(std::istream & stream, MAGPIE_DATA & data, void * context)
-{
-	
-}
 
 /// Magpie Adsorption class inherits from AuxKernel
 /** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
