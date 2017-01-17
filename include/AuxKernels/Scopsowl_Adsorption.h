@@ -60,6 +60,66 @@ class Scopsowl_Adsorption;
 template<>
 InputParameters validParams<Scopsowl_Adsorption>();
 
+/// dataStore function for SCOPSOWL_DATA
+/** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
+	MOOSE. Although this program does not use these new features, our source code must include these functions
+	or the code will NO LONGER COMPILE.
+ 
+	NOTE: Currently, these functions are blank, because we do not use them for anything. However, we can finalize
+	these functions by adding in separate dataStore functions for each individual data type in the data structure.
+	(See DataIO.h in moose/framework/include/restart/ for the individual functions based on type.)*/
+template<>
+inline void
+dataStore(std::ostream & stream, SCOPSOWL_DATA & data, void * context)
+{
+	
+}
+
+/// dataLoad function for SCOPSOWL_DATA
+/** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
+	MOOSE. Although this program does not use these new features, our source code must include these functions
+	or the code will NO LONGER COMPILE.
+ 
+	NOTE: Currently, these functions are blank, because we do not use them for anything. However, we can finalize
+	these functions by adding in separate dataLoad functions for each individual data type in the data structure.
+	(See DataIO.h in moose/framework/include/restart/ for the individual functions based on type.)*/
+template<>
+inline void
+dataLoad(std::istream & stream, SCOPSOWL_DATA & data, void * context)
+{
+	
+}
+
+/// dataStore function for MIXED_GAS
+/** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
+	MOOSE. Although this program does not use these new features, our source code must include these functions
+	or the code will NO LONGER COMPILE.
+ 
+	NOTE: Currently, these functions are blank, because we do not use them for anything. However, we can finalize
+	these functions by adding in separate dataStore functions for each individual data type in the data structure.
+	(See DataIO.h in moose/framework/include/restart/ for the individual functions based on type.)*/
+template<>
+inline void
+dataStore(std::ostream & stream, MIXED_GAS & data, void * context)
+{
+	
+}
+
+/// dataLoad function for MIXED_GAS
+/** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
+	MOOSE. Although this program does not use these new features, our source code must include these functions
+	or the code will NO LONGER COMPILE.
+ 
+	NOTE: Currently, these functions are blank, because we do not use them for anything. However, we can finalize
+	these functions by adding in separate dataLoad functions for each individual data type in the data structure.
+	(See DataIO.h in moose/framework/include/restart/ for the individual functions based on type.)*/
+template<>
+inline void
+dataLoad(std::istream & stream, MIXED_GAS & data, void * context)
+{
+	
+}
+
 /// Scopsowl Adsorption class inherits from AuxKernel
 /** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
 	calculate the adsorption kinetics for a given species in the gas phase based on parameters,
