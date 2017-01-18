@@ -179,8 +179,7 @@ double lnact_mSPD(const double *par, const void *data, int i, volatile double PI
 					lm_control_struct control = lm_control_double;
 					lmmin(1, po, 1, dat, eval_po_PI, &control, &status, lm_printout_std);
 					dat->sys_dat.total_eval = dat->sys_dat.total_eval + status.nfev;
-					if (status.info > 5)
-					{std::cout << "\nWarning! Non-convergent intermediate steps!" << std::endl; return 0.0;}
+					if (status.info > 5) {std::cout << "\nWarning! Non-convergent intermediate steps!" << std::endl; return 0.0;}
 					
 					e[j][j] = (2 * (Qst(fabs(po[0]), dat, j) + dat->gsta_dat[j].dHo[0]) ) / (Z * dat->mspd_dat[j].s);
 					
@@ -223,7 +222,7 @@ double lnact_mSPD(const double *par, const void *data, int i, volatile double PI
 						}
 					}
 					
-					e[l][j] =  sqrt( fabs(( fabs(dat->mspd_dat[l].eMax) + e[l][l] ) * ( fabs(dat->mspd_dat[j].eMax) + e[j][j] )) ) - (shift * alpha[l][j] );
+					e[l][j] =  sqrt( ( fabs(dat->mspd_dat[l].eMax) + e[l][l] ) * ( fabs(dat->mspd_dat[j].eMax) + e[j][j] ) ) - (shift * alpha[l][j] );
 					
 					e[j][l] = e[l][j];
 					
@@ -256,8 +255,7 @@ double lnact_mSPD(const double *par, const void *data, int i, volatile double PI
 						control.printflags = 0;
 						lmmin(1, po, 1, dat, eval_po_PI, &control, &status, lm_printout_std);
 						dat->sys_dat.total_eval = dat->sys_dat.total_eval + status.nfev;
-						if (status.info > 5)
-						{std::cout << "\nWarning! Gradient Estimation Failed!" << std::endl; return 0.0;}
+						if (status.info > 5) {std::cout << "\nWarning! Gradient Estimation Failed!" << std::endl; return 0.0;}
 						e[j][j] = (2 * (Qst(fabs(po[0]), dat, j) + dat->gsta_dat[j].dHo[0]) ) / (Z * dat->mspd_dat[j].s);
 					}
 					else
@@ -291,7 +289,7 @@ double lnact_mSPD(const double *par, const void *data, int i, volatile double PI
 						dat->mspd_dat[l].eta[j];
 					}
 					
-					e[l][j] =  sqrt( fabs(( fabs(dat->mspd_dat[l].eMax) + e[l][l] ) * ( fabs(dat->mspd_dat[j].eMax) + e[j][j] )) ) - (shift * alpha[l][j] );
+					e[l][j] =  sqrt( ( fabs(dat->mspd_dat[l].eMax) + e[l][l] ) * ( fabs(dat->mspd_dat[j].eMax) + e[j][j] ) ) - (shift * alpha[l][j] );
 					
 					e[j][l] = e[l][j];
 					
@@ -345,7 +343,6 @@ double grad_mSPD(const double *par, const void *data, int i)
 		grad = 0.0;
 	else
 		grad = (lnact_ph - lnact_mh) / dx;
-	
 	return grad;
 }
 
@@ -474,7 +471,7 @@ void eval_eta(const double *par, int m_dat, const void *data, double *fvec, int 
 	//Infinite Dilution of i will be indexed 0
 	ejj[0] = ( 2 * (Qst(dat->gpast_dat[j].po[j], dat, j) - (-1*dat->gsta_dat[j].dHo[0]) ) ) / ( Z * dat->mspd_dat[j].s);
 	eii[0] = ( 2 * (Qst(dat->gpast_dat[i].po[j], dat, i) - (-1*dat->gsta_dat[i].dHo[0]) ) ) / ( Z * dat->mspd_dat[i].s);
-	eij[0] = sqrt( fabs((fabs(dat->mspd_dat[i].eMax) + eii[0]) * (fabs(dat->mspd_dat[j].eMax) + ejj[0])) ) - ( fabs(par[0]) * shift);
+	eij[0] = sqrt( (fabs(dat->mspd_dat[i].eMax) + eii[0]) * (fabs(dat->mspd_dat[j].eMax) + ejj[0]) ) - ( fabs(par[0]) * shift);
 	
 	Tij[0] = exp( - (Z * (eij[0]-ejj[0])) / (2*R*dat->sys_dat.T) );
 	Tji[0] = exp( - (Z * (eij[0]-eii[0])) / (2*R*dat->sys_dat.T) );
@@ -483,7 +480,7 @@ void eval_eta(const double *par, int m_dat, const void *data, double *fvec, int 
 	//Infinite Dilution of j will be indexed 1
 	ejj[1] = ( 2 * (Qst(dat->gpast_dat[j].po[i], dat, j) - (-1*dat->gsta_dat[j].dHo[0]) ) ) / ( Z * dat->mspd_dat[j].s);
 	eii[1] = ( 2 * (Qst(dat->gpast_dat[i].po[i], dat, i) - (-1*dat->gsta_dat[i].dHo[0]) ) ) / ( Z * dat->mspd_dat[i].s);
-	eij[1] = sqrt( fabs((fabs(dat->mspd_dat[i].eMax) + eii[1]) * (fabs(dat->mspd_dat[j].eMax) + ejj[1]))) - ( fabs(par[1]) * shift);
+	eij[1] = sqrt( (fabs(dat->mspd_dat[i].eMax) + eii[1]) * (fabs(dat->mspd_dat[j].eMax) + ejj[1])) - ( fabs(par[1]) * shift);
 	
 	Tij[1] = exp( - (Z * (eij[1]-ejj[1])) / (2*R*dat->sys_dat.T) );
 	Tji[1] = exp( - (Z * (eij[1]-eii[1])) / (2*R*dat->sys_dat.T) );
@@ -503,8 +500,6 @@ void eval_GPAST(const double *par, int m_dat, const void *data, double *fvec, in
 	 * par[0] = PI			par[(i+1)] = x[i]
 	 *
 	 * n_par = 1 + dat->sys_dat.N; m_dat = n_par
-	 *
-	 * First attempt is to replicate IAST results using activity evaluations of unity
 	 */
 	MAGPIE_DATA *dat = (MAGPIE_DATA *) data;
 	
@@ -565,6 +560,12 @@ int MAGPIE(const void *data)
 	lm_status_struct status;
 	status.nfev = 0;
 	lm_control_struct control = lm_control_double;
+	control.epsilon = sqrt(DBL_EPSILON);
+	control.ftol = 1e-6;
+	control.gtol = 1e-6;
+	control.xtol = 1e-6;
+	control.stepbound = 100.0;
+	control.maxcall = 1000;
 	control.printflags = 0;
 	
 	//STEP 0: Check and correct for components whose mole fractions are zero at this sample point
@@ -729,19 +730,19 @@ int MAGPIE(const void *data)
 						par_po[0] = (dat->sys_dat.PT*dat->gpast_dat[i].y);
 					else
 						par_po[0] = (dat->sys_dat.PT*dat->gpast_dat[i].x);
-                    if (dat->sys_dat.Output == true)
-                        std::cout << "\nEvaluating Reference State Pressures...\n";
+					if (dat->sys_dat.Output == true)
+						std::cout << "\nEvaluating Reference State Pressures...\n";
 					lmmin(1,par_po,1,dat,eval_po,&control,&status,lm_printout_std);
 					dat->sys_dat.total_eval = dat->sys_dat.total_eval + status.nfev;
 					dat->sys_dat.avg_norm = dat->sys_dat.avg_norm + status.fnorm;
 					if (dat->sys_dat.max_norm < fabs(status.fnorm))
 						dat->sys_dat.max_norm = status.fnorm;
-                    if (dat->sys_dat.Output == true)
-                    {
-                        std::cout << lm_infmsg[status.info] << std::endl;
-                        std::cout << "E.Norm: "<< status.fnorm << std::endl;
-                    }
-					if (status.info > 5) {mError(simulation_fail); return status.info;}
+					if (dat->sys_dat.Output == true)
+					{
+						std::cout << lm_infmsg[status.info] << std::endl;
+						std::cout << "E.Norm: "<< status.fnorm << std::endl;
+					}
+					//if (status.info > 5) {mError(simulation_fail); return status.info;}
 					dat->gpast_dat[i].po[j] = fabs(par_po[0]);
 					dat->gpast_dat[i].gama_inf[j] = (dat->gpast_dat[j].qo / (dat->gpast_dat[i].He * dat->gpast_dat[i].po[j]));
 				}
@@ -806,7 +807,7 @@ int MAGPIE(const void *data)
 							std::cout << lm_infmsg[status.info] << std::endl;
 							std::cout << "E.Norm: "<< status.fnorm << std::endl;
 						}
-						if (status.info > 5) {mError(simulation_fail); return status.info;}
+						//if (status.info > 5) {mError(simulation_fail); return status.info;}
 						dat->mspd_dat[i].eta[j] = fabs(par_eta[0]);
 						dat->mspd_dat[j].eta[i] = fabs(par_eta[1]);
 					}
@@ -860,8 +861,8 @@ int MAGPIE(const void *data)
 			std::cout << lm_infmsg[status.info] << std::endl;
 			std::cout << "E.Norm: "<< status.fnorm << std::endl;
 		}
-		if (status.info > 5) {mError(simulation_fail); return status.info;}
-		success = status.info;
+		//if (status.info > 5) {mError(simulation_fail); return status.info;}
+		//success = status.info;
 		
 		dat->sys_dat.PI = fabs(par_gpast[0]);
 		xy1.resize(dat->sys_dat.N);
@@ -1037,8 +1038,8 @@ int MAGPIE(const void *data)
 			q1[0] = dat->gpast_dat[0].q;
 			gama1[0] = dat->mspd_dat[0].gama;
 			
-			if (status.info > 5) {mError(simulation_fail); return status.info;}
-			success = status.info;
+			//if (status.info > 5) {mError(simulation_fail); return status.info;}
+			//success = status.info;
 		}
 		
 		//Restore original data
@@ -1187,6 +1188,220 @@ int MAGPIE(const void *data)
 	q1.clear();
 	gama1.clear();
 	dat->sys_dat.N = N0;
+	
+	return success;
+}
+
+int MAGPIE_SCENARIOS(const char *inputFileName, const char *sceneFileName)
+{
+	int success = 0;
+	std::string inputName, sceneName;
+	//Check to see if files are given
+	if (inputFileName == NULL || sceneFileName == NULL)
+	{
+		std::cout << "Enter the name of the input file: ";
+		std::cin >> inputName;
+		std::cout << "Enter the name of the scenario file: ";
+		std::cin >> sceneName;
+		std::cout << "\n";
+		
+		inputFileName = inputName.c_str();
+		sceneFileName = sceneName.c_str();
+	}
+	std::ifstream inputFile( inputFileName );
+	std::ifstream sceneFile( sceneFileName );
+	
+	//Check to see if files exist
+	if (inputFile.good()==false || sceneFile.good()==false)
+	{
+		mError(file_dne);
+		return -1;
+	}
+	
+	
+	//Declarations
+	MAGPIE_DATA dat;
+	double d_read;
+	int i_read;
+	double time;
+	int num_scene;
+	int solnFlag = 0;
+	FILE *sceneResults;
+	
+	//Initializations
+	time = clock();
+	dat.sys_dat.total_eval = 0;
+	dat.sys_dat.avg_norm = 0;
+	dat.sys_dat.max_norm = 0;
+	dat.sys_dat.Recover = false;
+	dat.sys_dat.Carrier = false;
+	dat.sys_dat.Ideal = false;
+	dat.sys_dat.Output = true;
+	
+	//Check to see if file exists
+	if (inputFile.good()==false || sceneFile.good()==false)
+	{
+		mError(file_dne);
+		std::cout << "Check file names, then re-run program..." << std::endl;
+		return -1;
+	}
+	sceneResults = fopen("output/MAGPIE_Results.txt","w+");
+	if (sceneResults == nullptr)
+	{
+		system("mkdir output");
+		sceneResults = fopen("output/MAGPIE_Results.txt","w+");
+	}
+	
+	//Read in data from Input File
+	inputFile >> i_read; dat.sys_dat.N = i_read;
+	if (dat.sys_dat.N < 0) {mError(invalid_components); return -1;}
+	//resize working space for data structures
+	dat.gsta_dat.resize( dat.sys_dat.N );
+	dat.gpast_dat.resize( dat.sys_dat.N );
+	dat.mspd_dat.resize( dat.sys_dat.N );
+	for (int i=0; i<dat.sys_dat.N; i++)
+	{
+		//resize working space for parameters
+		dat.mspd_dat[i].eta.resize( dat.sys_dat.N );
+		dat.gpast_dat[i].gama_inf.resize( dat.sys_dat.N );
+		dat.gpast_dat[i].po.resize( dat.sys_dat.N );
+		inputFile >> d_read; dat.mspd_dat[i].v = d_read;
+		inputFile >> d_read; dat.gsta_dat[i].qmax = d_read;
+		inputFile >> i_read; dat.gsta_dat[i].m = i_read;
+		dat.gsta_dat[i].dHo.resize( dat.gsta_dat[i].m );
+		dat.gsta_dat[i].dSo.resize( dat.gsta_dat[i].m );
+		for (int n=0; n<dat.gsta_dat[i].m; n++)
+		{
+			inputFile >> d_read; dat.gsta_dat[i].dHo[n] = d_read;
+			inputFile >> d_read; dat.gsta_dat[i].dSo[n] = d_read;
+		}
+	}
+	//END of Input Read
+	inputFile.close();
+	
+	//Read in Scenario file and run all scenarios
+	sceneFile >> i_read;
+	if (i_read == 0)
+	{
+		dat.sys_dat.Recover = false;
+		dat.sys_dat.Carrier = false;
+	}
+	else if (i_read == 1)
+		dat.sys_dat.Recover = true;
+	else
+	{mError(invalid_boolean); return -1;}
+	
+	//Create a Header for the output file
+	fprintf(sceneResults, "T(K)\tPT(kPa)\t");
+	for (int i=0; i<dat.sys_dat.N; i++)
+		fprintf(sceneResults, "y[%i]\t", (i+1));
+	fprintf(sceneResults, "qT[mol/kg]\t");
+	for (int i=0; i<dat.sys_dat.N; i++)
+		fprintf(sceneResults, "x[%i]\t", (i+1));
+	fprintf(sceneResults, "PI[mol/kg]\n");
+	
+	//Continue Reading in Scenario file
+	sceneFile >> i_read; num_scene = i_read;
+	dat.sys_dat.Par = (dat.sys_dat.N * (dat.sys_dat.N - 1));
+	dat.sys_dat.Sys = dat.sys_dat.Par / 2;
+	std::cout << "Total Number of Components: " << dat.sys_dat.N << std::endl;
+	std::cout << "Total Number of Scenarios: " << num_scene << std::endl;
+	std::cout << "Number of Interaction Parameters: " << dat.sys_dat.Par << " per Scenario" << std::endl;
+	std::cout << "Total Number of Systems to Solve: " << (dat.sys_dat.Sys * num_scene) << std::endl;
+	std::cout << "--------------------------------------------------\n" << std::endl;
+	int sceneCount = 0;
+	double total_iter = 0;
+	do
+	{
+		sceneFile >> d_read; dat.sys_dat.PT = d_read;
+		sceneFile >> d_read; dat.sys_dat.T = d_read;
+		
+		//Start Simulation Run
+		std::cout << "Scenario #" << (sceneCount+1) << std::endl;
+		std::cout << "PT(kPa): " << dat.sys_dat.PT << "\tT(K): " << dat.sys_dat.T;
+		if (dat.sys_dat.Recover == true)
+		{
+			sceneFile >> d_read; dat.sys_dat.qT = d_read;
+			std::cout << "\tqT[M/M]: " << dat.sys_dat.qT << std::endl;
+			sceneFile >> i_read;
+			if (i_read == 0)
+				dat.sys_dat.Carrier = false;
+			else if (i_read == 1)
+				dat.sys_dat.Carrier = true;
+			else
+			{mError(invalid_boolean); return -1;}
+		}
+		else
+			std::cout << std::endl;
+		
+		//Read in the Gas or Solid Mole Fractions
+		double y_check = 0;
+		double xsum = 0;
+		for (int i=0; i<dat.sys_dat.N; i++)
+		{
+			sceneFile >> d_read;
+			if (dat.sys_dat.Recover == false)
+			{
+				dat.gpast_dat[i].y = d_read;
+				if (dat.gpast_dat[i].y > 1.0 || dat.gpast_dat[i].y < 0.0)
+				{mError(invalid_molefraction); return -1;}
+				y_check = y_check + dat.gpast_dat[i].y;
+				xsum = 1.0;
+			}
+			else
+			{
+				dat.gpast_dat[i].x = d_read;
+				if (dat.gpast_dat[i].x > 1.0 || dat.gpast_dat[i].x < 0.0)
+				{mError(invalid_molefraction); return -1;}
+				xsum = xsum + dat.gpast_dat[i].x;
+			}
+		}
+		if (y_check > (1.0 + 1e-06))
+		{mError(invalid_gas_sum); return -1;}
+		if ((xsum > (1.0 + 1e-06) || xsum < (1.0 - 1e-06)) && dat.sys_dat.qT != 0.0)
+		{mError(invalid_solid_sum); return -1;}
+		
+		//All Reads and initializations are now complete: Call MAGPIE Routine
+		solnFlag = MAGPIE((void *)&dat);
+		total_iter += dat.sys_dat.total_eval;
+		if (solnFlag < 4) {std::cout << "\nScenario simulation successful!\n" << std::endl;}
+		else {mError(scenario_fail);}
+		
+		//Retrieve data from MAGPIE simulation for file output
+		fprintf(sceneResults,"%.6g\t",dat.sys_dat.T);
+		fprintf(sceneResults,"%.6g\t",dat.sys_dat.PT);
+		for (int i=0; i<dat.sys_dat.N; i++)
+			fprintf(sceneResults,"%.6g\t",dat.gpast_dat[i].y);
+		fprintf(sceneResults,"%.6g\t",dat.sys_dat.qT);
+		for (int i=0; i<dat.sys_dat.N; i++)
+			fprintf(sceneResults,"%.6g\t",dat.gpast_dat[i].x);
+		fprintf(sceneResults,"%.6g\n",dat.sys_dat.PI);
+		
+		num_scene--;
+		sceneCount++;
+		std::cout << "--------------------------------------------------\n" << std::endl;
+	} while(num_scene>0);
+	//END of Scenario Simulations
+	sceneFile.close();
+	
+	//END of Program
+	fclose(sceneResults);
+	
+	//Clean Memory
+	dat.gsta_dat.clear();
+	dat.gpast_dat.clear();
+	dat.mspd_dat.clear();
+	
+	//Display Stats
+	time = clock() - time;
+	if (dat.sys_dat.total_eval > 0)
+	{
+		std::cout << "\nTotal Non-Linear Evaluations: " << total_iter << std::endl;
+		std::cout << "\nMaximum E. Norm Calculated: " << dat.sys_dat.max_norm << std::endl;
+		std::cout << "\nAverage Euclidean Norm: " <<
+		(dat.sys_dat.avg_norm / total_iter) << std::endl;
+	}
+	std::cout << "\nTotal Runtime: " << (time/ CLOCKS_PER_SEC) << " seconds" << std::endl;
 	
 	return success;
 }

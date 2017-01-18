@@ -43,6 +43,7 @@
 #include <float.h>				  //Line to allow use of machine constants
 #include <string>    			  //Line to allow use of c++ strings
 #include "error.h"				  //Line to allow use of custom error reporting
+#include "lark.h"				  //Line to allow use of custom numerical methods
 
 #ifndef DBL_EPSILON
 #define DBL_EPSILON    2.2204460492503131e-016 		///< Machine precision value used for approximating gradients
@@ -367,5 +368,90 @@ void eval_GPAST(const double *par, int m_dat, const void *data, double *fvec, in
  
 	\param data void pointer for the MAGPIE_DATA data structure holding all necessary information*/
 int MAGPIE(const void *data);
+
+/// Function to perform a series of MAGPIE simulations based on given input files
+/** This function is callable from the UI and is used to perform a series of isothermal equilibria evaluations
+	using the MAGPIE routines. There are two input files that must be provided: (i) inputFileName - containing
+	parameter information for the species and (ii) sceneFileName - containing information for each MAGPIE
+	simulation. Each of these files have a specific structure (see below). NOTE: this may change in future versions.
+ 
+	inputFileName Text File Structure:
+	---------------------------------
+	Integer for Number of Adsorbing Species \n
+	van der Waals Volume (cm^3/mol) of ith species \n
+	GSTA adsorption capacity (mol/kg) of ith species \n
+	Number of GSTA parameters of ith species \n
+	Enthalpy (J/mol) of nth site       [tab]       Entropy of nth site (J/K/mol)       of ith species \n
+ (repeat above for all n sites in species i) \n
+	(repeat above for all species i) \n
+ 
+	Example Input File:
+	-------------------
+	5 \n
+	17.1 \n
+	5.8797 \n
+	1 \n
+	-20351.9	-81.8369 \n
+	16.2 \n
+	5.14934 \n
+	1 \n
+	-16662.7	-74.4766 \n
+	19.7 \n
+	9.27339 \n
+	4 \n
+	-46597.5	-53.6994	\n
+	-125024	-221.073	\n
+	-193619	-356.728	\n
+	-272228	-567.459 \n
+	13.25 \n
+	4.59144 \n
+	1 \n
+	-13418.5	-84.888 \n
+	18.0 \n
+	10.0348 \n
+	1 \n
+	-20640.4	-72.6119 \n
+ 
+	(The above input file gives the parameter information for 5 adsorbing species) \n
+ 
+	sceneFileName Text File Structure:
+	---------------------------------
+	Integer Flag to mark Forward (0) or { Reverse (1) evaluations } \n
+	Number of Simulations to Run \n
+	Total Pressure (kPa) [tab] Temperature (K) { [tab] Total Adsorption (mol/kg) [tab] Carrier Gas Flag (0=false, 1=true) } \n
+	Gas/Adsorbed Mole Fractions for each species in the order given in prior file (tab separated) \n
+	(repeat above for all simulations desired) \n
+	NOTE: only provide the Total Adsorption and Carrier Flag if doing Reverse evaluations! \n
+ 
+	Example Scenario File 1:
+	------------------------
+	0 \n
+	4 \n
+	0.65	303.15 \n
+	0.364	0.318	0.318 \n
+	3.25	303.15 \n
+	0.371	0.32	0.309 \n
+	6.85	303.15 \n
+	0.388	0.299	0.313 \n
+	13.42	303.15 \n
+	0.349	0.326	0.325 \n
+ 
+	(The above scenario file is for 4 forward evaluations/simulations for a 3-adsorbing species system) \n
+ 
+	Example Scenario File 2:
+	------------------------
+	1 \n
+	4 \n
+	0.65	303.15  5.4   0\n
+	0.364	0.318	0.318 \n
+	3.25	303.15  7.7   0\n
+	0.371	0.32	0.309 \n
+	6.85	303.15  9.8   0\n
+	0.388	0.299	0.313 \n
+	13.42	303.15  10.4  0\n
+	0.349	0.326	0.325 \n
+ 
+	(The above scenario file is for 4 reverse evaluations/simulations for a 3-adsorbing species system and no carrier gas) */
+int MAGPIE_SCENARIOS(const char *inputFileName, const char *sceneFileName);
 
 #endif
