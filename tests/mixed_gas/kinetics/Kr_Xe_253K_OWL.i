@@ -592,7 +592,7 @@
 	solve_type = newton
     line_search = none    # Options: default none basic l2 bt cp (USE bt, l2, cp, or none)
 	start_time = 0.0
-	end_time = 0.04
+	end_time = 0.02
 	dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
