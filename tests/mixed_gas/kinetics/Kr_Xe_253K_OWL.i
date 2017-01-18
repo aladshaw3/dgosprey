@@ -549,30 +549,6 @@
 		execute_on = 'initial timestep_end'
  	[../]
 
-	[./Kr_solid]
-		type = ElementAverageValue
-		variable = Kr_Adsorbed
-		execute_on = 'initial timestep_end'
-	[../]
-
-	[./Kr_heat]
-		type = ElementAverageValue
-		variable = Kr_AdsorbedHeat
-		execute_on = 'initial timestep_end'
-	[../]
- 
-	[./Xe_solid]
-		type = ElementAverageValue
-		variable = Xe_Adsorbed
-		execute_on = 'initial timestep_end'
-	[../]
- 
-	[./Xe_heat]
-		type = ElementAverageValue
-		variable = Xe_AdsorbedHeat
-		execute_on = 'initial timestep_end'
-	[../]
-
  [] #END Postprocessors
 
 [Executioner]
