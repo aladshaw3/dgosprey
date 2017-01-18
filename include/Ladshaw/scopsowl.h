@@ -70,7 +70,7 @@ typedef struct
 	double ref_diffusion;					///< Reference state surface diffusivity (um^2/hr)
 	double ref_temperature;					///< Reference temperature for empirical adjustments (K)
 	double affinity;						///< Affinity parameter used in empirical adjustments (-)
-	double ref_pressure;					///< Reference pressure used in empirical adjustments (kPa)
+	double ref_pressure;					//< /Reference pressure used in empirical adjustments (kPa)
 	
 	bool Adsorbable;						///< True = species can adsorb; False = species cannot adsorb
 	
@@ -341,5 +341,139 @@ int SCOPSOWL_reset(SCOPSOWL_DATA *owl_dat);
  
 	\param owl_dat pointer to the SCOPSOWL_DATA structure (must be initialized)*/
 int SCOPSOWL(SCOPSOWL_DATA *owl_dat);
+
+/// \cond
+
+int LARGE_CYCLE_TEST(SCOPSOWL_DATA *owl_dat);
+
+/// \endcond
+
+/// Function to perform a SCOPSOWL simulation based on a set of parameters given in input files
+/** This is the primary function to be called when running a stand-alone SCOPSOWL simulation. Parameters
+	and system information for the simulation are given in a series of input files that come in as
+	character arrays. These inputs are all required to call this function.
+ 
+	\param scene Sceneario Input File
+	\param sorbent Adsorbent Input File
+	\param comp Component Input File
+	\param sorbate Adsorbate Input File*/
+
+/** \note Each input file has a particular format that must be strictly adhered to in order for the
+	simulation to be carried out correctly. The format for each input file, and an example, is provided
+	below...
+ 
+	Scenario Input Format
+	---------------------
+	System Temperature (K) [tab] Total Pressure (kPa) [tab] Gas Velocity (cm/s) \n
+	Simulation Time (hrs) [tab] Print Out Time (hrs) \n
+	BC Type (0 = Neumann, 1 = Dirichlet) \n
+	Number of Gas Species \n
+	Initial Total Adsorption (mol/kg) \n
+	Name of ith Species [tab] Adsorbable? (0 = false, 1 = true) [tab] Gas Phase Molefraction [tab] Initial Sorbed Molefraction \n
+	(repeat above for all species) \n
+ 
+	Example Scenario Input
+	----------------------
+	353.15	101.35	0.36 \n
+	4.0		0.05 \n
+	0 \n
+	5 \n
+	0.0 \n
+	N2	0	0.7634	0.0 \n
+	O2	0	0.2081	0.0 \n
+	Ar	0	0.009	0.0 \n
+	CO2	0	0.0004	0.0 \n
+	H2O	1	0.0191	0.0 \n
+ 
+	Above example is for a 5-component mixture of N2, O2, Ar, CO2, and H2O, but we are only considering the H2O as adsorbable. \n
+	
+	Adsorbent Input File
+	--------------------
+	Heterogeneous Pellet? (0 = false, 1 = true) [tab] Surface Diffusion Included? (0 = false, 1 = true) \n
+	Macro Coord. (2 = spherical, 1 = cylindrical) { [tab] Char. Length (cm) (i.e., cylinder length) } \n
+	(NOTE: Char. Length is only needed if problem is not spherical) \n
+	Pellet Radius (cm) [tab] Pellet Density (kg/L) [tab] Porosity (vol. void / vol. binder) [tab] Pore Radius (cm) \n
+	(Below is only needed if pellet is Heterogeneous) \n
+	Micro Coord. (2 = spherical, 1 = cylindrical) { [tab] Char. Length (cm) (i.e., cylinder length) } \n
+	Crystal Radius (um) [tab] Binder Fraction (vol. binder / vol. pellet) \n
+ 
+	Example Adsorbent Input
+	-----------------------
+	1	1	\n
+	2	\n
+	0.118	1.69	0.272	3.5E-6	\n
+	2	\n
+	2.0	0.175 \n
+ 
+	Above example is for a heterogeneous adsorbent with surface diffusion. The pellet and crystals are both considered
+	spherical. Pellet radius is 0.118 cm, density is 1.69 kg/L, porosity is 0.272, and pore size is 3.5e-6 cm. The pellet
+	is made up of 17.5 % binder material and contains crystals roughly 2.0 um in radius. \n
+ 
+	Component Input File
+	--------------------
+	Molar Weight of ith species (g/mol) [tab] Specific Heat of ith species (J/g/K) \n
+	Sutherland Viscosity (g/cm/s) [tab] Sutherland Temperature (K) [tab] Sutherland Constant (K) of ith species \n
+	(repeat above for all species in same order they appeared in the Scenario Input File) \n
+ 
+	Example Component Input
+	-----------------------
+	28.016	1.04	\n
+	0.0001781	300.55	111.0	\n
+	32.0	0.919	\n
+	0.0002018	292.25	127.0	\n
+	39.948	0.522	\n
+	0.0002125	273.11	144.4	\n
+	44.009	0.846	\n
+	0.000148	293.15	240.0	\n
+	18.0	1.97	\n
+	0.0001043	298.16	784.72	\n
+ 
+	Above example is a continuation of the Scenario Input example wherein each grouping represents parameters that
+	are associated with N2, O2, Ar, CO2, and H2O, respectively. The order is VERY important! \n
+ 
+	Adsorbate Input File
+	--------------------
+	{ Type of Surface Diffusion Function (0 = constant, 1 = simple Darken, 2 = theoretical Darken) } \n
+	(NOTE: The above option is only given IF the pellet was specified as Heterogeneous!) \n
+	Reference Diffusivity (um^2/hr) [tab] Activation Energy (J/mol) of ith adsorbable species\n
+	Reference Temperature (K) [tab] Affinity Constant (-) of ith adsorbable species \n
+	van der Waals Volume (cm^3/mol) of ith species \n
+	GSTA adsorption capacity (mol/kg) of ith species \n
+	Number of GSTA parameters of ith species \n
+	Enthalpy (J/mol) of nth site       [tab]       Entropy of nth site (J/K/mol)       of ith species \n
+	(repeat enthalpy and entropy for all n sites in species i) \n
+	(repeat above for all species i) \n
+ 
+	Example Adsorbate Input
+	-----------------------
+	0	\n
+	0.8814	0.0	\n
+	267.999	0.0	\n
+	13.91	\n
+	11.67	\n
+	4	\n
+	-46597.5	-53.6994	\n
+	-125024		-221.073	\n
+	-193619		-356.728	\n
+	-272228		-567.459	\n
+	1.28 	540.1	\n
+	374.99	0.01	\n
+	3.01	\n
+	1.27	\n
+	2	\n
+	-46597.5	-53.6994	\n
+	-125024		-221.073	\n
+	
+	Above example would be for a simulation involving two adsorbable species using a constant surface diffusion
+	function. Each adsorbable species has it's own set of kinetic and equilibrium parameters that must be given
+	in the same order as the species appeared in the Scenario Input. Note: we do not need to supply this
+	information for non-adsorbable species. \n
+ */
+int SCOPSOWL_SCENARIOS(const char *scene, const char *sorbent, const char *comp, const char *sorbate);
+
+/// Function to run a SCOPSOWL test simulation
+/** This function runs a test of the SCOPSOWL physics and prints out results
+	to a text file. It is callable from the UI. */
+int SCOPSOWL_TESTS();
 
 #endif

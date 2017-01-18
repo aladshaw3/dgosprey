@@ -1,6 +1,7 @@
 /*!
- *  \file scopsowl.h scopsowl.cpp
+ *  \file scopsowl.cpp scopsowl.h
  *	\brief Simultaneously Coupled Objects for Pore and Surface diffusion Operations With Linear systems
+ *
  *  \author Austin Ladshaw
  *	\date 01/29/2015
  *	\copyright This software was designed and built at the Georgia Institute
@@ -28,14 +29,14 @@ void print2file_species_header(FILE *Output, SCOPSOWL_DATA *owl_dat, int i)
 void print2file_SCOPSOWL_time_header(FILE *Output, SCOPSOWL_DATA *owl_dat, int i)
 {
 	fprintf(Output,"Time\t");
-  	fprintf(Output,"q[0] (mol/kg)\t");
-  	for (int l=0; l<owl_dat->finch_dat[i].LN; l++)
-  	{
-      	if (owl_dat->finch_dat[i].Dirichlet == false && l == owl_dat->finch_dat[i].LN-1)
-          	break;
-      	fprintf(Output,"q[%i] (mol/kg)\t",l+1);
-  	}
-  	fprintf(Output,"q Average (mol/kg)\tQst Average (J/mol)\t");
+	fprintf(Output,"q[0] (mol/kg)\t");
+	for (int l=0; l<owl_dat->finch_dat[i].LN; l++)
+	{
+		if (owl_dat->finch_dat[i].Dirichlet == false && l == owl_dat->finch_dat[i].LN-1)
+			break;
+		fprintf(Output,"q[%i] (mol/kg)\t",l+1);
+	}
+	fprintf(Output,"q Average (mol/kg)\tQst Average (J/mol)\t");
 }
 
 //Print out the header file for output
@@ -159,7 +160,7 @@ double default_adsorption(int i, int l, const void *user_data)
 		
 		//Store perturbed result in temp location
 		qEPS = dat->magpie_dat.sys_dat.qT * dat->magpie_dat.gpast_dat[i].x;
-				
+		
 		//Restore original info
 		for (int j=0; j<dat->magpie_dat.sys_dat.N; j++)
 		{
@@ -327,7 +328,7 @@ double default_adsorption(int i, int l, const void *user_data)
 			}
 			
 			
-			dq_dc = fabs( qEPS - dat->param_dat[i].qAvg(l,0) ) / eps;
+			dq_dc = ( qEPS - dat->param_dat[i].qAvg(l,0) ) / eps;
 			dat->param_dat[i].dq_dc.edit(l, 0, dq_dc);
 			
 		}
@@ -727,13 +728,12 @@ int set_SCOPSOWL_ICs(SCOPSOWL_DATA *owl_dat)
 			owl_dat->skua_dat[l].magpie_dat.sys_dat.qT = owl_dat->magpie_dat.sys_dat.qT;
 			for (int i=0; i<owl_dat->magpie_dat.sys_dat.N; i++)
 			{
-				owl_dat->skua_dat[l].param_dat[i].ref_diffusion = D_inf(owl_dat->param_dat[i].ref_diffusion, owl_dat->param_dat[i].ref_temperature, owl_dat->param_dat[i].affinity, owl_dat->y[i]*owl_dat->total_pressure, owl_dat->gas_temperature) * 1.0;
+				owl_dat->skua_dat[l].param_dat[i].ref_diffusion = D_inf(owl_dat->param_dat[i].ref_diffusion, owl_dat->param_dat[i].ref_temperature, owl_dat->param_dat[i].affinity, owl_dat->y[i]*owl_dat->total_pressure, owl_dat->gas_temperature);
 				owl_dat->skua_dat[l].param_dat[i].activation_energy = owl_dat->param_dat[i].activation_energy;
 				owl_dat->skua_dat[l].param_dat[i].ref_temperature = 0.0;
 				owl_dat->skua_dat[l].param_dat[i].affinity = 0.0;
 				
 				owl_dat->skua_dat[l].param_dat[i].xIC = owl_dat->param_dat[i].xIC;
-				
 			}
 			success = set_SKUA_ICs(&owl_dat->skua_dat[l]);
 			if (success != 0) {mError(simulation_fail); return -1;}
@@ -772,7 +772,7 @@ int set_SCOPSOWL_ICs(SCOPSOWL_DATA *owl_dat)
 			owl_dat->finch_dat[i].ko = 0.0;
 			owl_dat->finch_dat[i].vo = 0.0;
 			
-			owl_dat->finch_dat[i].kfn = (*owl_dat->eval_kf) (i,owl_dat) * 1.0;
+			owl_dat->finch_dat[i].kfn = (*owl_dat->eval_kf) (i,owl_dat);
 			owl_dat->finch_dat[i].kfnp1 = owl_dat->finch_dat[i].kfn;
 			if (owl_dat->finch_dat[i].kfn < 0.0)
 			{
@@ -843,7 +843,7 @@ int set_SCOPSOWL_ICs(SCOPSOWL_DATA *owl_dat)
 				double p_in = Pstd(owl_dat->finch_dat[i].un(l,0), owl_dat->gas_temperature);
 				if (p_out >= p_in)	owl_dat->param_dat[i].ref_pressure = p_out;
 				else owl_dat->param_dat[i].ref_pressure = p_in;
-				owl_dat->skua_dat[l].param_dat[i].ref_diffusion = D_inf(owl_dat->param_dat[i].ref_diffusion, owl_dat->param_dat[i].ref_temperature, owl_dat->param_dat[i].affinity, owl_dat->param_dat[i].ref_pressure, owl_dat->gas_temperature) * 1.0;
+				owl_dat->skua_dat[l].param_dat[i].ref_diffusion = D_inf(owl_dat->param_dat[i].ref_diffusion, owl_dat->param_dat[i].ref_temperature, owl_dat->param_dat[i].affinity, owl_dat->param_dat[i].ref_pressure, owl_dat->gas_temperature);
 				owl_dat->skua_dat[l].param_dat[i].activation_energy = owl_dat->param_dat[i].activation_energy;
 				owl_dat->skua_dat[l].param_dat[i].ref_temperature = 0.0;
 				owl_dat->skua_dat[l].param_dat[i].affinity = 0.0;
@@ -910,7 +910,7 @@ int set_SCOPSOWL_ICs(SCOPSOWL_DATA *owl_dat)
 			owl_dat->finch_dat[i].ko = 0.0;
 			owl_dat->finch_dat[i].vo = 0.0;
 			
-			owl_dat->finch_dat[i].kfn = (*owl_dat->eval_kf) (i,owl_dat) * 1.0;
+			owl_dat->finch_dat[i].kfn = (*owl_dat->eval_kf) (i,owl_dat);
 			owl_dat->finch_dat[i].kfnp1 = owl_dat->finch_dat[i].kfn;
 			if (owl_dat->finch_dat[i].kfn < 0.0)
 			{
@@ -1009,10 +1009,10 @@ int set_SCOPSOWL_ICs(SCOPSOWL_DATA *owl_dat)
 			for (int l=0; l<owl_dat->finch_dat[i].LN; l++)
 			{
 				owl_dat->finch_dat[i].Rn.edit(l, 0, (*owl_dat->eval_retard) (i,l,owl_dat));
-				owl_dat->finch_dat[i].Dn.edit(l, 0, (*owl_dat->eval_diff) (i,l,owl_dat) * 1.0);
+				owl_dat->finch_dat[i].Dn.edit(l, 0, (*owl_dat->eval_diff) (i,l,owl_dat));
 			}
 			owl_dat->finch_dat[i].Ro = (*owl_dat->eval_retard) (i,-1,owl_dat);
-			owl_dat->finch_dat[i].Do = (*owl_dat->eval_diff) (i,-1,owl_dat) * 1.0;
+			owl_dat->finch_dat[i].Do = (*owl_dat->eval_diff) (i,-1,owl_dat);
 			owl_dat->finch_dat[i].Rnp1 = owl_dat->finch_dat[i].Rn;
 			owl_dat->finch_dat[i].Dnp1 = owl_dat->finch_dat[i].Dn;
 			
@@ -1069,11 +1069,10 @@ int SCOPSOWL_preprocesses(SCOPSOWL_DATA *owl_dat)
 			{
 				double p_out = owl_dat->y[i]*owl_dat->total_pressure;
 				if (p_out >= owl_dat->param_dat[i].ref_pressure) owl_dat->param_dat[i].ref_pressure = p_out;
-				owl_dat->skua_dat[l].param_dat[i].ref_diffusion = D_inf(owl_dat->param_dat[i].ref_diffusion, owl_dat->param_dat[i].ref_temperature, owl_dat->param_dat[i].affinity, owl_dat->param_dat[i].ref_pressure, owl_dat->gas_temperature) * 1.0;
+				owl_dat->skua_dat[l].param_dat[i].ref_diffusion = D_inf(owl_dat->param_dat[i].ref_diffusion, owl_dat->param_dat[i].ref_temperature, owl_dat->param_dat[i].affinity, owl_dat->param_dat[i].ref_pressure, owl_dat->gas_temperature);
 				owl_dat->skua_dat[l].param_dat[i].activation_energy = owl_dat->param_dat[i].activation_energy;
 				owl_dat->skua_dat[l].param_dat[i].ref_temperature = 0.0;
 				owl_dat->skua_dat[l].param_dat[i].affinity = 0.0;
-				
 			}
 		}
 		owl_dat->finch_dat[i].uo = Cstd(owl_dat->magpie_dat.sys_dat.PT*owl_dat->y[i], owl_dat->magpie_dat.sys_dat.T);
@@ -1083,8 +1082,8 @@ int SCOPSOWL_preprocesses(SCOPSOWL_DATA *owl_dat)
 			mError(simulation_fail);
 			return -1;
 		}
-		owl_dat->finch_dat[i].Do = (*owl_dat->eval_diff) (i,-1,owl_dat) * 1.0;
-		owl_dat->finch_dat[i].kfnp1 = (*owl_dat->eval_kf) (i,owl_dat) * 1.0;
+		owl_dat->finch_dat[i].Do = (*owl_dat->eval_diff) (i,-1,owl_dat);
+		owl_dat->finch_dat[i].kfnp1 = (*owl_dat->eval_kf) (i,owl_dat);
 	}
 	
 	return success;
@@ -1104,7 +1103,7 @@ int set_SCOPSOWL_params(const void *user_data)
 		//Loop over all nodes
 		for (int l=0; l<owl_dat->finch_dat[i].LN; l++)
 		{
-			owl_dat->finch_dat[i].Dnp1.edit(l, 0, (*owl_dat->eval_diff) (i,l,owl_dat) * 1.0);
+			owl_dat->finch_dat[i].Dnp1.edit(l, 0, (*owl_dat->eval_diff) (i,l,owl_dat));
 		}
 	}
 	
@@ -1218,6 +1217,780 @@ int SCOPSOWL(SCOPSOWL_DATA *owl_dat)
 		else {mError(simulation_fail); owl_dat->finch_dat[0].Update = false; return -1;}
 		owl_dat->total_steps++;
 	} while (owl_dat->t < owl_dat->sim_time);
+	
+	return success;
+}
+
+//Run the large scale cycle test
+int LARGE_CYCLE_TEST(SCOPSOWL_DATA *owl_dat)
+{
+	int success = 0;
+	
+	//Set specific values for this test (H2O on MS3A)
+	/*
+	 owl_dat->total_pressure = 101.35;//kPa
+	 owl_dat->gas_temperature = 313.15;//K
+	 owl_dat->gas_velocity = 0.36;//cm/s
+	 owl_dat->sim_time = 530.0;//hr
+	 owl_dat->t_print = 0.5;
+	 owl_dat->y[0] = 0.779736;
+	 owl_dat->y[1] = 0.20736;
+	 owl_dat->y[2] = 0.00934;
+	 owl_dat->y[3] = 0.000314;
+	 owl_dat->y[4] = 0.0030325;
+	 */
+	
+	// H2O and I2 on Ag0Z
+	owl_dat->total_pressure = 101.35;//kPa
+	owl_dat->gas_temperature = 423.15;//K
+	owl_dat->gas_velocity = 1.833;//cm/s
+	owl_dat->sim_time = 200.0;//hr
+	owl_dat->t_print = 0.5;
+	owl_dat->y[0] = 0.779876175;				//-
+	owl_dat->y[1] = 0.209476;				//-
+	owl_dat->y[2] = 0.00934;				//-
+	//owl_dat->y[3] = 7.6425e-5; //I2
+	owl_dat->y[3] = 0.0; //I2
+	owl_dat->y[4] = 1.2314e-3; //H2O
+	
+	//Set Initial Conditions
+	success = set_SCOPSOWL_ICs(owl_dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//Loop till simulation complete
+	do
+	{
+		if (owl_dat->finch_dat[0].Update == true)
+		{
+			success = SCOPSOWL_reset(owl_dat);
+			if (success != 0) {mError(simulation_fail); return -1;}
+		}
+		success = set_SCOPSOWL_timestep(owl_dat);
+		if (success != 0) {mError(simulation_fail); return -1;}
+		std::cout << "Evaluating time: " << owl_dat->t << " hrs..." << std::endl;
+		
+		//I2 and H2O on Ag0Z
+		if (owl_dat->t > 25.0)
+		{
+			owl_dat->y[3] = 7.6425e-5;
+		}
+		if (owl_dat->t > 125.0)
+		{
+			owl_dat->y[4] = 0.0;
+		}
+		
+		//Cycling Info Here (H2O on MS3A)
+		/*
+		 if (owl_dat->t > 18.3)
+		 {
+			owl_dat->y[0] = 0.789994;					//-
+			owl_dat->y[1] = 0.21;					//-
+			owl_dat->y[4] = 0.000434;					//-
+			
+			double m = (0.000128 - 0.000434) / (18.8 - 18.3);
+			owl_dat->y[4] = (m * (owl_dat->t - 18.3)) + 0.000434;
+		 }
+		 if (owl_dat->t > 18.8)
+		 {
+			owl_dat->y[0] = 0.789994;					//-
+			owl_dat->y[1] = 0.21;					//-
+			owl_dat->y[4] = 0.000128;					//-
+			
+			double m = (3.6E-5 - 0.000128) / (22.1 - 18.8);
+			owl_dat->y[4] = (m * (owl_dat->t - 18.8)) + 0.000128;
+		 }
+		 if (owl_dat->t > 22.1)
+		 {
+			owl_dat->y[0] = 0.789994;					//-
+			owl_dat->y[1] = 0.21;					//-
+			owl_dat->y[4] = 3.6E-5;					//-
+			
+			double m = (2.9E-5 - 3.6E-5) / (25.3 - 22.1);
+			owl_dat->y[4] = (m * (owl_dat->t - 22.1)) + 3.6E-5;
+		 }
+		 if (owl_dat->t > 25.3)
+		 {
+			owl_dat->y[0] = 0.789994;					//-
+			owl_dat->y[1] = 0.21;					//-
+			owl_dat->y[4] = 2.9E-5;					//-
+			
+			double m = (2.0E-5 - 2.9E-5) / (42.1 - 25.3);
+			owl_dat->y[4] = (m * (owl_dat->t - 25.3)) + 2.9E-5;
+		 }
+		 if (owl_dat->t > 42.1)
+		 {
+			owl_dat->y[0] = 0.789994;					//-
+			owl_dat->y[1] = 0.21;					//-
+			owl_dat->y[4] = 2.0E-5;					//-
+			
+			double m = (1.0E-5 - 2.0E-5) / (97.1 - 42.1);
+			owl_dat->y[4] = (m * (owl_dat->t - 42.1)) + 2.0E-5;
+		 }
+		 if (owl_dat->t > 97.1)
+		 {
+			owl_dat->y[4] = 1.0E-5;
+			
+			double m = (7.2E-6 - 1.0E-5) / (150.0 - 97.1);
+			owl_dat->y[4] = (m * (owl_dat->t - 97.1)) + 1.0E-5;
+		 }
+		 if (owl_dat->t > 150.0)
+		 {
+			owl_dat->y[4] = 7.2E-6;
+		 }
+		 if (owl_dat->t > 353.4)
+		 {
+			owl_dat->y[4] = 7.2E-6;
+			
+			double m = (7.5299E-4 - 7.2E-6) / (353.8 - 353.4);
+			owl_dat->y[4] = (m * (owl_dat->t - 353.4)) + 7.2E-6;
+		 }
+		 if (owl_dat->t > 353.8)
+		 {
+			owl_dat->y[4] = 7.5299E-4;
+			
+			double m = (1.85358E-3 - 7.5299E-4) / (353.9 - 353.8);
+			owl_dat->y[4] = (m * (owl_dat->t - 353.8)) + 7.5299E-4;
+		 }
+		 if (owl_dat->t > 353.9)
+		 {
+			owl_dat->y[4] = 1.85358E-3;
+			
+			double m = (3.03265E-3 - 1.85358E-3) / (355.3 - 353.9);
+			owl_dat->y[4] = (m * (owl_dat->t - 353.9)) + 1.85358E-3;
+		 }
+		 if (owl_dat->t > 355.3)
+		 {
+			owl_dat->y[4] = 3.03265E-3;
+			
+			double m = (2.98526E-3 - 3.03265E-3) / (359.1 - 355.3);
+			owl_dat->y[4] = (m * (owl_dat->t - 355.3)) + 3.03265E-3;
+		 }
+		 if (owl_dat->t > 359.1)
+		 {
+			owl_dat->y[4] = 2.98526E-3;
+			
+			double m = (2.89248E-3 - 2.98526E-3) / (378.2 - 359.1);
+			owl_dat->y[4] = (m * (owl_dat->t - 359.1)) + 2.98526E-3;
+		 }
+		 if (owl_dat->t > 378.2)
+		 {
+			owl_dat->y[4] = 2.89248E-3;
+			
+			double m = (3.09567E-4 - 2.89248E-3) / (378.4 - 378.2);
+			owl_dat->y[4] = (m * (owl_dat->t - 378.2)) + 2.89248E-3;
+		 }
+		 if (owl_dat->t > 378.4)
+		 {
+			owl_dat->y[4] = 3.09567E-4;
+			
+			double m = (1.77397E-4 - 3.09567E-4) / (378.7 - 378.4);
+			owl_dat->y[4] = (m * (owl_dat->t - 378.4)) + 3.09567E-4;
+		 }
+		 if (owl_dat->t > 378.7)
+		 {
+			owl_dat->y[4] = 1.77397E-4;
+			
+			double m = (5.13752E-5 - 1.77397E-4) / (380.2 - 378.7);
+			owl_dat->y[4] = (m * (owl_dat->t - 378.7)) + 1.77397E-4;
+		 }
+		 if (owl_dat->t > 380.2)
+		 {
+			owl_dat->y[4] = 5.13752E-5;
+			
+			double m = (3.24215E-5 - 5.13752E-5) / (382.0 - 380.2);
+			owl_dat->y[4] = (m * (owl_dat->t - 380.2)) + 5.13752E-5;
+		 }
+		 if (owl_dat->t > 382.0)
+		 {
+			owl_dat->y[4] = 3.24215E-5;
+			
+			double m = (2.57389E-5 - 3.24215E-5) / (384.9 - 382.0);
+			owl_dat->y[4] = (m * (owl_dat->t - 382.0)) + 3.24215E-5;
+		 }
+		 if (owl_dat->t > 384.9)
+		 {
+			owl_dat->y[4] = 2.57389E-5;
+			
+			double m = (1.20E-5 - 2.57389E-5) / (450.0 - 384.9);
+			owl_dat->y[4] = (m * (owl_dat->t - 384.9)) + 2.57389E-5;
+		 }
+		 if (owl_dat->t > 450.0)
+		 {
+			owl_dat->y[4] = 1.20E-5;
+			
+			double m = (9.8E-6 - 1.20E-5) / (478.2 - 450.0);
+			owl_dat->y[4] = (m * (owl_dat->t - 450.0)) + 1.20E-5;
+		 }
+		 if (owl_dat->t > 478.2)
+		 {
+			owl_dat->y[4] = 9.8E-6;
+		 }
+		 if (owl_dat->t > 498.1)
+		 {
+			owl_dat->y[4] = 9.8E-6;
+			
+			double m = (9.934E-4 - 9.8E-6) / (498.2 - 498.1);
+			owl_dat->y[4] = (m * (owl_dat->t - 498.1)) + 9.8E-6;
+		 }
+		 if (owl_dat->t > 498.2)
+		 {
+			owl_dat->y[4] = 9.934E-4;
+			
+			double m = (2.331E-3 - 9.934E-4) / (498.3 - 498.2);
+			owl_dat->y[4] = (m * (owl_dat->t - 498.2)) + 9.934E-4;
+		 }
+		 if (owl_dat->t > 498.3)
+		 {
+			owl_dat->y[4] = 2.331E-3;
+			
+			double m = (2.8925E-3 - 2.331E-3) / (498.7 - 498.3);
+			owl_dat->y[4] = (m * (owl_dat->t - 498.3)) + 2.331E-3;
+		 }
+		 if (owl_dat->t > 498.7)
+		 {
+			owl_dat->y[4] = 2.8925E-3;
+			
+			double m = (2.9385E-3 - 2.8925E-3) / (499.7 - 498.7);
+			owl_dat->y[4] = (m * (owl_dat->t - 498.7)) + 2.8925E-3;
+		 }
+		 if (owl_dat->t > 499.7)
+		 {
+			owl_dat->y[4] = 2.9385E-3;
+			
+			double m = (2.8697E-3 - 2.9385E-3) / (503.0 - 499.7);
+			owl_dat->y[4] = (m * (owl_dat->t - 499.7)) + 2.9385E-3;
+		 }
+		 if (owl_dat->t > 503.0)
+		 {
+			owl_dat->y[4] = 2.8697E-3;
+			
+			double m = (2.9385E-3 - 2.8697E-3) / (522.1 - 503.0);
+			owl_dat->y[4] = (m * (owl_dat->t - 503.0)) + 2.8697E-3;
+		 }
+		 if (owl_dat->t > 522.1)
+		 {
+			owl_dat->y[4] = 2.9385E-3;
+			
+			double m = (3.551E-4 - 2.9385E-3) / (522.3 - 522.1);
+			owl_dat->y[4] = (m * (owl_dat->t - 522.1)) + 2.9385E-3;
+		 }
+		 if (owl_dat->t > 522.3)
+		 {
+			owl_dat->y[4] = 3.551E-4;
+			
+			double m = (2.1572E-4 - 3.551E-4) / (522.5 - 522.3);
+			owl_dat->y[4] = (m * (owl_dat->t - 522.3)) + 3.551E-4;
+		 }
+		 if (owl_dat->t > 522.5)
+		 {
+			owl_dat->y[4] = 2.1572E-4;
+			
+			double m = (3.321E-5 - 2.1572E-4) / (525.8 - 522.5);
+			owl_dat->y[4] = (m * (owl_dat->t - 522.5)) + 2.1572E-4;
+		 }
+		 if (owl_dat->t > 525.8)
+		 {
+			owl_dat->y[4] = 3.321E-5;
+			
+			double m = (2.943E-5 - 3.321E-5) / (527.0 - 525.8);
+			owl_dat->y[4] = (m * (owl_dat->t - 525.8)) + 3.321E-5;
+		 }
+		 */
+		
+		success = SCOPSOWL_Executioner(owl_dat);
+		if (success == 0)
+		{
+			std::cout << "Simulation Successful!\n" << std::endl;
+			for (int i=0; i<owl_dat->magpie_dat.sys_dat.N; i++)
+				owl_dat->finch_dat[i].Update = true;
+		}
+		else {mError(simulation_fail); owl_dat->finch_dat[0].Update = false; return -1;}
+		owl_dat->total_steps++;
+	} while (owl_dat->t < owl_dat->sim_time);
+	
+	return success;
+}
+
+//Run a particular scenario based on input files
+int SCOPSOWL_SCENARIOS(const char *scene, const char *sorbent, const char *comp, const char *sorbate)
+{
+	int success = 0;
+	std::string sceneName, sorbentName, compName, sorbateName;
+	
+	//Check the input files
+	if (scene == NULL || sorbent == NULL || comp == NULL || sorbate == NULL)
+	{
+		std::cout << "Enter name of Scenario File: ";
+		std::cin >> sceneName;
+		std::cout << "Enter name of Adsorbent Property File: ";
+		std:: cin >> sorbentName;
+		std::cout << "Enter name of Component Property File: ";
+		std::cin >> compName;
+		std::cout << "Enter name of Adsorbate Property File: ";
+		std::cin >> sorbateName;
+		std::cout << "\n";
+		
+		scene = sceneName.c_str();
+		sorbent = sorbentName.c_str();
+		comp = compName.c_str();
+		sorbate = sorbateName.c_str();
+	}
+	
+	std::ifstream sceneFile ( scene );
+	std::ifstream sorbentFile ( sorbent );
+	std::ifstream compFile ( comp );
+	std::ifstream sorbateFile ( sorbate );
+	
+	if (sceneFile.good()==false || sorbentFile.good()==false || compFile.good()==false || sorbateFile.good()==false)
+	{
+		mError(file_dne);
+		return -1;
+	}
+	
+	//Declarations
+	SCOPSOWL_DATA dat;
+	MIXED_GAS mixture;
+	double time;
+	FILE *Output;
+	int i_read;
+	double d_read;
+	std::string s_read;
+	
+	//Initializations
+	time = clock();
+	Output = fopen("output/SCOPSOWL_Output.txt","w+");
+	if (Output == nullptr)
+	{
+		system("mkdir output");
+		Output = fopen("output/SCOPSOWL_Output.txt","w+");
+	}
+	dat.Print2File = true;
+	dat.NonLinear = true;						//-
+	dat.level = 1;
+	dat.Print2Console = true;					//-
+	dat.magpie_dat.sys_dat.Output = false;
+	mixture.CheckMolefractions = true;
+	dat.total_steps = 0;
+	
+	//	(1) - Read the Scenario File
+	sceneFile >> d_read; dat.magpie_dat.sys_dat.T = d_read;
+	sceneFile >> d_read; dat.magpie_dat.sys_dat.PT = d_read;
+	dat.total_pressure = dat.magpie_dat.sys_dat.PT;
+	dat.gas_temperature = dat.magpie_dat.sys_dat.T;
+	sceneFile >> d_read; dat.gas_velocity = d_read;
+	sceneFile >> d_read; dat.sim_time = d_read;
+	sceneFile >> d_read; dat.t_print = d_read;
+	sceneFile >> i_read;
+	if (i_read == 0) dat.DirichletBC = false;
+	else if (i_read == 1) dat.DirichletBC = true;
+	else {mError(invalid_boolean); return -1;}
+	sceneFile >> i_read; dat.magpie_dat.sys_dat.N = i_read;
+	dat.magpie_dat.gpast_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.magpie_dat.gsta_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.magpie_dat.mspd_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.param_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.finch_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.y.resize(dat.magpie_dat.sys_dat.N);
+	sceneFile >> d_read; dat.magpie_dat.sys_dat.qT = d_read;
+	
+	for (int i=0; i<dat.magpie_dat.sys_dat.N; i++)
+	{
+		sceneFile >> s_read; dat.param_dat[i].speciesName = s_read;
+		sceneFile >> i_read;
+		if (i_read == 0) dat.param_dat[i].Adsorbable = false;
+		else if (i_read == 1) dat.param_dat[i].Adsorbable = true;
+		else {mError(invalid_boolean); return -1;}
+		sceneFile >> d_read; dat.y[i] = d_read;
+		sceneFile >> d_read; dat.param_dat[i].xIC = d_read;
+		dat.param_dat[i].qIntegralAvg_old = dat.param_dat[i].xIC * dat.magpie_dat.sys_dat.qT;
+		
+		//Additional magpie initializations
+		dat.magpie_dat.mspd_dat[i].eta.resize(dat.magpie_dat.sys_dat.N);
+		dat.magpie_dat.gpast_dat[i].gama_inf.resize(dat.magpie_dat.sys_dat.N);
+		dat.magpie_dat.gpast_dat[i].po.resize(dat.magpie_dat.sys_dat.N);
+	}
+	sceneFile.close();
+	
+	//Initialize gas mixture data
+	success = initialize_data(dat.magpie_dat.sys_dat.N, &mixture);
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	// Read (2) sorbentFile
+	sorbentFile >> i_read;
+	if (i_read == 0) dat.Heterogeneous = false;
+	else if (i_read == 1) dat.Heterogeneous = true;
+	else {mError(invalid_boolean); return -1;}
+	
+	sorbentFile >> i_read;
+	if (i_read == 0) dat.SurfDiff = false;
+	else if (i_read == 1) dat.SurfDiff = true;
+	else {mError(invalid_boolean); return -1;}
+	
+	sorbentFile >> i_read; dat.coord_macro = i_read;
+	if (i_read > 2 || i_read < 0) {mError(invalid_boolean); return -1;}
+	if (i_read == 0 || i_read == 1)
+	{
+		sorbentFile >> d_read; dat.char_macro = d_read;
+	}
+	else
+		dat.char_macro = 1.0;
+	sorbentFile	>> d_read; dat.pellet_radius = d_read;
+	sorbentFile >> d_read; dat.pellet_density = d_read;
+	sorbentFile >> d_read; dat.binder_porosity = d_read;
+	sorbentFile >> d_read; dat.binder_poresize = d_read;
+	if (dat.Heterogeneous == true)
+	{
+		sorbentFile >> i_read; dat.coord_micro = i_read;
+		if (i_read > 2 || i_read < 0) {mError(invalid_boolean); return -1;}
+		if (i_read == 0 || i_read == 1)
+		{
+			sorbentFile >> d_read; dat.char_micro = d_read;
+		}
+		else
+			dat.char_micro = 1.0;
+		sorbentFile >> d_read; dat.crystal_radius = d_read;
+		sorbentFile >> d_read; dat.binder_fraction = d_read;
+	}
+	else
+	{
+		dat.binder_fraction = 1.0;
+		dat.crystal_radius = 1.0;
+		dat.coord_micro = 2;
+		dat.char_micro = 1.0;
+	}
+	sorbentFile.close();
+	
+	// Read (3) compFile
+	for (int i=0; i<dat.magpie_dat.sys_dat.N; i++)
+	{
+		compFile >> d_read; mixture.species_dat[i].molecular_weight = d_read;
+		compFile >> d_read; mixture.species_dat[i].specific_heat = d_read;
+		compFile >> d_read; mixture.species_dat[i].Sutherland_Viscosity = d_read;
+		compFile >> d_read; mixture.species_dat[i].Sutherland_Temp = d_read;
+		compFile >> d_read; mixture.species_dat[i].Sutherland_Const = d_read;
+	}
+	compFile.close();
+	
+	// Read (4) sorbateFile
+	if (dat.Heterogeneous == true)
+	{
+		sorbateFile >> i_read;
+		if (i_read == 0) dat.eval_surfDiff = (*default_Dc);
+		else if (i_read == 1) dat.eval_surfDiff = (*simple_darken_Dc);
+		else if (i_read == 2) dat.eval_surfDiff = (*theoretical_darken_Dc);
+		else {mError(invalid_boolean); return -1;}
+	}
+	else
+	{
+		dat.eval_surfDiff = (*default_surf_diffusion);
+	}
+	for (int i=0; i<dat.magpie_dat.sys_dat.N; i++)
+	{
+		//Only read in data for adsorbable components in order of appearence
+		if (dat.param_dat[i].Adsorbable == true)
+		{
+			sorbateFile >> d_read; dat.param_dat[i].ref_diffusion = d_read;			//um^2/hr
+			sorbateFile >> d_read; dat.param_dat[i].activation_energy = d_read;		//J/mol
+			sorbateFile >> d_read; dat.param_dat[i].ref_temperature = d_read;		//K
+			sorbateFile >> d_read; dat.param_dat[i].affinity = d_read;				//-
+			
+			sorbateFile >> d_read; dat.magpie_dat.mspd_dat[i].v = d_read;				//cm^3/mol
+			sorbateFile >> d_read; dat.magpie_dat.gsta_dat[i].qmax = d_read;			//mol/kg
+			sorbateFile >> i_read; dat.magpie_dat.gsta_dat[i].m = i_read;				//-
+			dat.magpie_dat.gsta_dat[i].dHo.resize(dat.magpie_dat.gsta_dat[i].m);
+			dat.magpie_dat.gsta_dat[i].dSo.resize(dat.magpie_dat.gsta_dat[i].m);
+			for (int n=0; n<dat.magpie_dat.gsta_dat[i].m; n++)
+			{
+				sorbateFile >> d_read; dat.magpie_dat.gsta_dat[i].dHo[n] = d_read;	//J/mol
+				sorbateFile >> d_read; dat.magpie_dat.gsta_dat[i].dSo[n] = d_read;	//J/K/mol
+			}
+		}
+		//Otherwise, set values to zeros
+		else
+		{
+			dat.param_dat[i].ref_diffusion = 0.0;				//um^2/hr
+			dat.param_dat[i].activation_energy = 0.0;			//J/mol
+			dat.param_dat[i].ref_temperature = 0.0;				//K
+			dat.param_dat[i].affinity = 0.0;					//-
+			dat.magpie_dat.mspd_dat[i].v = 0.0;				//cm^3/mol
+			dat.magpie_dat.gsta_dat[i].qmax = 0.0;			//mol/kg
+			dat.magpie_dat.gsta_dat[i].m = 1;					//-
+			dat.magpie_dat.gsta_dat[i].dHo.resize(dat.magpie_dat.gsta_dat[i].m);
+			dat.magpie_dat.gsta_dat[i].dSo.resize(dat.magpie_dat.gsta_dat[i].m);
+			for (int n=0; n<dat.magpie_dat.gsta_dat[i].m; n++)
+			{
+				dat.magpie_dat.gsta_dat[i].dHo[n] = 0.0;	//J/mol
+				dat.magpie_dat.gsta_dat[i].dSo[n] = 0.0;	//J/K/mol
+			}
+		}
+	}
+	sorbateFile.close();
+	
+	//Call the setup function
+	success = setup_SCOPSOWL_DATA(Output, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, dat.eval_surfDiff, (void *)&dat, &mixture, &dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//Call Routine
+	success = SCOPSOWL(&dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//END execution
+	fclose(Output);
+	time = clock() - time;
+	std::cout << "Simulation Runtime: " << (time / CLOCKS_PER_SEC) << " seconds\n";
+	std::cout << "Total Evaluations: " << dat.total_steps << "\n";
+	std::cout << "Evaluations/sec: " << dat.total_steps/(time / CLOCKS_PER_SEC) << "\n";
+	
+	return success;
+}
+
+//Running tests for SCOPSOWL
+int SCOPSOWL_TESTS()
+{
+	int success = 0;
+	
+	//Declarations
+	SCOPSOWL_DATA dat;
+	MIXED_GAS mixture;
+	double time;
+	FILE *TestOutput;
+	
+	//Initializations
+	time = clock();
+	TestOutput = fopen("output/SCOPSOWL_Test_Output.txt","w+");
+	if (TestOutput == nullptr)
+	{
+		system("mkdir output");
+		TestOutput = fopen("output/SCOPSOWL_Test_Output.txt","w+");
+	}
+	dat.Print2File = true;
+	dat.NonLinear = true;						//-
+	dat.level = 1;
+	dat.Print2Console = true;					//-
+	dat.magpie_dat.sys_dat.Output = false;
+	mixture.CheckMolefractions = false;
+	dat.total_steps = 0;
+	
+	//	(1) - Scenario to Test (with initializations)
+	dat.gas_temperature = 423.15;				//K
+	dat.total_pressure = 101.35;				//kPa
+	dat.magpie_dat.sys_dat.T = dat.gas_temperature; 			//K
+	dat.magpie_dat.sys_dat.PT = dat.total_pressure;			//kPa
+	//dat.gas_velocity = 0.36;
+	dat.gas_velocity = 1.833;					//cm/s
+	dat.sim_time = 1.0;						//hrs
+	dat.t_print = 0.1;
+	dat.DirichletBC = false;					//-
+	dat.SurfDiff = false;						//-
+	dat.Heterogeneous = false;
+	dat.t = 0.0;								//hrs
+	dat.t_old = 0.0;							//hrs
+	dat.magpie_dat.sys_dat.N = 5;				//-
+	dat.magpie_dat.sys_dat.qT = 0.0;			//mol/kg
+	dat.magpie_dat.gpast_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.magpie_dat.gsta_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.magpie_dat.mspd_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.param_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.finch_dat.resize(dat.magpie_dat.sys_dat.N);
+	dat.y.resize(dat.magpie_dat.sys_dat.N);
+	
+	dat.param_dat[0].speciesName = "N2";
+	dat.param_dat[1].speciesName = "O2";
+	dat.param_dat[2].speciesName = "Ar";
+	dat.param_dat[3].speciesName = "I2";
+	dat.param_dat[4].speciesName = "H2O";
+	
+	dat.param_dat[0].Adsorbable = false;		//-
+	dat.param_dat[1].Adsorbable = false;		//-
+	dat.param_dat[2].Adsorbable = false;		//-
+	dat.param_dat[3].Adsorbable = true;		//-
+	dat.param_dat[4].Adsorbable = true;			//-
+	
+	dat.y[0] = 0.779876175;				//-
+	dat.y[1] = 0.209476;				//-
+	dat.y[2] = 0.00934;				//-
+	dat.y[3] = 7.6425e-5;
+	dat.y[4] = 1.2314e-3;
+	
+	dat.param_dat[0].xIC = 0.0;
+	dat.param_dat[1].xIC = 0.0;
+	dat.param_dat[2].xIC = 0.0;
+	dat.param_dat[3].xIC = 0.0;
+	dat.param_dat[4].xIC = 0.0;
+	
+	//Initialize gas mixture data
+	success = initialize_data(dat.magpie_dat.sys_dat.N, &mixture);
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//NOTE: Should Check Molefractions here ------------------------------
+	
+	//	(2) - Sorbent to test (with more initializations)
+	dat.coord_macro = 1;
+	dat.char_macro = 0.4;									//cm
+	dat.pellet_radius = 0.08;								//cm
+	dat.pellet_density = 3.06;								//kg/L
+	dat.binder_porosity = 0.384;							//-
+	dat.binder_poresize = 1.5E-4;							//cm
+	dat.coord_micro = 2;
+	dat.char_micro = 1.0;
+	dat.crystal_radius = 2.0;								//um
+	dat.binder_fraction = 0.175;
+	
+	/*
+	 dat.coord_macro = 1;
+	 dat.char_macro = 0.335;
+	 dat.pellet_radius = 0.08;								//cm
+	 dat.pellet_density = 0.93;								//kg/L
+	 dat.binder_porosity = 0.272;							//-
+	 dat.binder_poresize = 3.5E-6;							//cm
+	 dat.coord_micro = 2;
+	 dat.char_micro = 1.0;
+	 dat.crystal_radius = 8.0;								//um
+	 dat.binder_fraction = 0.175;
+	 */
+	
+	if (dat.Heterogeneous == false)
+	{
+		dat.binder_fraction = 1.0;
+	}
+	
+	//	(3) - Components to test
+	
+	//Set the Constants in mixture data (Had to be initialized first)
+	mixture.species_dat[0].molecular_weight = 28.016;
+	mixture.species_dat[1].molecular_weight = 32.0;
+	mixture.species_dat[2].molecular_weight = 39.948;
+	mixture.species_dat[3].molecular_weight = 253.808;
+	mixture.species_dat[4].molecular_weight = 18.0;
+	
+	mixture.species_dat[0].specific_heat = 1.04;
+	mixture.species_dat[1].specific_heat = 0.919;
+	mixture.species_dat[2].specific_heat = 0.522;
+	mixture.species_dat[3].specific_heat = 0.214;
+	mixture.species_dat[4].specific_heat = 1.97;
+	
+	mixture.species_dat[0].Sutherland_Viscosity = 0.0001781;
+	mixture.species_dat[1].Sutherland_Viscosity = 0.0002018;
+	mixture.species_dat[2].Sutherland_Viscosity = 0.0002125;
+	mixture.species_dat[3].Sutherland_Viscosity = 0.00013283;
+	mixture.species_dat[4].Sutherland_Viscosity = 0.0001043;
+	
+	mixture.species_dat[0].Sutherland_Temp = 300.55;
+	mixture.species_dat[1].Sutherland_Temp = 292.25;
+	mixture.species_dat[2].Sutherland_Temp = 273.11;
+	mixture.species_dat[3].Sutherland_Temp = 295.496;
+	mixture.species_dat[4].Sutherland_Temp = 298.16;
+	
+	mixture.species_dat[0].Sutherland_Const = 111.0;
+	mixture.species_dat[1].Sutherland_Const = 127.0;
+	mixture.species_dat[2].Sutherland_Const = 144.4;
+	mixture.species_dat[3].Sutherland_Const = 573.474;
+	mixture.species_dat[4].Sutherland_Const = 784.72;
+	
+	//	(4) - Adsorbate to test
+	for (int i=0; i<dat.magpie_dat.sys_dat.N; i++)
+	{
+		dat.magpie_dat.mspd_dat[i].eta.resize(dat.magpie_dat.sys_dat.N);
+		dat.magpie_dat.gpast_dat[i].gama_inf.resize(dat.magpie_dat.sys_dat.N);
+		dat.magpie_dat.gpast_dat[i].po.resize(dat.magpie_dat.sys_dat.N);
+		
+		if (dat.param_dat[i].Adsorbable == false)
+		{
+			dat.param_dat[i].ref_diffusion = 0.0;			//um^2/hr
+			dat.param_dat[i].activation_energy = 0.0;		//J/mol
+			dat.param_dat[i].ref_temperature = 0.0;			//K
+			dat.param_dat[i].affinity = 0.0;				//-
+			dat.magpie_dat.mspd_dat[i].v = 0.0;				//cm^3/mol
+			dat.magpie_dat.gsta_dat[i].qmax = 0.0;			//mol/kg
+			dat.magpie_dat.gsta_dat[i].m = 1;				//-
+			dat.magpie_dat.gsta_dat[i].dHo.resize(dat.magpie_dat.gsta_dat[i].m);
+			dat.magpie_dat.gsta_dat[i].dSo.resize(dat.magpie_dat.gsta_dat[i].m);
+			for (int n=0; n<dat.magpie_dat.gsta_dat[i].m; n++)
+			{
+				dat.magpie_dat.gsta_dat[i].dHo[n] = 0.0;	//J/mol
+				dat.magpie_dat.gsta_dat[i].dSo[n] = 0.0;	//J/K/mol
+			}
+		}
+		else
+		{
+			if (i==3) //I2
+			{
+				//Const Dc Parameters
+				dat.param_dat[i].ref_diffusion = 0.0;		//um^2/hr
+				dat.param_dat[i].activation_energy = 0.0;	//J/mol
+				dat.param_dat[i].ref_temperature = 0.0;			//K
+				dat.param_dat[i].affinity = 0.0;				//-
+				
+				dat.magpie_dat.mspd_dat[i].v = 18.8;			//cm^3/mol
+				dat.magpie_dat.gsta_dat[i].qmax = 1.062207984;		//mol/kg
+				dat.magpie_dat.gsta_dat[i].m = 1;				//-
+				dat.magpie_dat.gsta_dat[i].dHo.resize(dat.magpie_dat.gsta_dat[i].m);
+				dat.magpie_dat.gsta_dat[i].dSo.resize(dat.magpie_dat.gsta_dat[i].m);
+			 
+				dat.magpie_dat.gsta_dat[i].dHo[0] = -8308.67985;	//J/mol
+				dat.magpie_dat.gsta_dat[i].dSo[0] = 92.3491515;	//J/K/mol
+				
+			}
+			
+			if (i==4) //H2O
+			{
+				
+				//Const Dc Parameters
+				dat.param_dat[i].ref_diffusion = 0.0;		//um^2/hr
+				dat.param_dat[i].activation_energy = 0.0;	//J/mol
+				dat.param_dat[i].ref_temperature = 0.0;			//K
+				dat.param_dat[i].affinity = 0.0;				//-
+				
+				dat.magpie_dat.mspd_dat[i].v = 13.91;			//cm^3/mol
+				dat.magpie_dat.gsta_dat[i].qmax = 4.71;		//mol/kg
+				dat.magpie_dat.gsta_dat[i].m = 3;				//-
+				dat.magpie_dat.gsta_dat[i].dHo.resize(dat.magpie_dat.gsta_dat[i].m);
+				dat.magpie_dat.gsta_dat[i].dSo.resize(dat.magpie_dat.gsta_dat[i].m);
+			 
+				dat.magpie_dat.gsta_dat[i].dHo[0] = -43260.13434;	//J/mol
+				dat.magpie_dat.gsta_dat[i].dSo[0] = -38.88589704;	//J/K/mol
+				
+				dat.magpie_dat.gsta_dat[i].dHo[1] = -110183.2213;	//J/mol
+				dat.magpie_dat.gsta_dat[i].dSo[1] = -179.30964;	//J/K/mol
+				
+				dat.magpie_dat.gsta_dat[i].dHo[2] = -125398.6827;	//J/mol
+				dat.magpie_dat.gsta_dat[i].dSo[2] = -180.2574885;	//J/K/mol
+			}
+		}
+		
+	}
+	
+	//Setup the problem
+	if (dat.Heterogeneous == true)
+	{
+		success = setup_SCOPSOWL_DATA(TestOutput, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, default_Dc, (void *)&dat, &mixture, &dat);
+	}
+	//Setups for Homo Pellet
+	else if (dat.Heterogeneous == false && dat.SurfDiff == true)
+	{
+		success = setup_SCOPSOWL_DATA(TestOutput, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, default_surf_diffusion, (void *)&dat, &mixture, &dat);
+	}
+	else if (dat.Heterogeneous == false && dat.SurfDiff == false)
+	{
+		success = setup_SCOPSOWL_DATA(TestOutput, default_adsorption, default_retardation, default_pore_diffusion, default_filmMassTransfer, zero_surf_diffusion, (void *)&dat, &mixture, &dat);
+	}
+	else
+	{
+		//Nothing
+	}
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//Call Routine
+	success = SCOPSOWL(&dat);
+	//success = LARGE_CYCLE_TEST(&dat);
+	if (success != 0) {mError(simulation_fail); return -1;}
+	
+	//END execution
+	fclose(TestOutput);
+	time = clock() - time;
+	std::cout << "Simulation Runtime: " << (time / CLOCKS_PER_SEC) << " seconds\n";
+	std::cout << "Total Evaluations: " << dat.total_steps << "\n";
+	std::cout << "Evaluations/sec: " << dat.total_steps/(time / CLOCKS_PER_SEC) << "\n";
 	
 	return success;
 }
