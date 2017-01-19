@@ -38,4 +38,37 @@
 /// Function to return true if the file extension of the given data is .yml
 bool isYamlFile(char argv[]);
 
+/// Create a blank digital MOOSE input file for DGOSPREY
+void createMooseBlank(YamlWrapper *moose_input);
+
+/// Execute the simple user interface to read yaml files and create DGOSPREY input files
+void exec_SimpleUI(const char *file);
+
+/// Class structure for using the simple user interface
+/** The following class object is used for reading in the simple yaml input files and/or
+	data base files in order to determine the type of DGOSPREY simulation to run. After
+	reading in the appropriate information, this class must create and save a MOOSE
+	input file (.i) that is to be read in by DGOSPREY and executed. 
+ 
+	\warning THIS OBJECT IS STILL UNDER ACTIVE DEVELOPMENT*/
+class SimpleUI
+{
+public:
+	SimpleUI();								///< Default Constructor
+	~SimpleUI();							///< Default Destructor
+	
+	int readInputFile(const char *file);	///< Function to read the given yaml input file
+	
+	YamlWrapper& getYamlInput();			///< Returns reference to the YamlWrapper Object for the input file
+	YamlWrapper& getMooseInput();			///< Returns reference to the YamlWrapper that is used to build the MOOSE file
+	
+	void DisplayInput();					///< Function to display the contents of the input file
+	void DisplayOutput();					///< Function to display the contents of the MOOSE input file we are making
+	
+private:
+	yaml_cpp_class yaml_input;				///< Yaml object that will read and store the main input file
+	YamlWrapper moose_input;				///< YamlWrapper object that will be used to create the moose input file
+	
+};
+
 #endif /* SimpleUI_h */

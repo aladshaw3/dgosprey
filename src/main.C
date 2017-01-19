@@ -40,15 +40,11 @@ int main(int argc, char *argv[])
 		{
 			//Use a single node to read the yaml input file
 			if (pid == 0)
-			{
-				std::cout << "TRUE" << std::endl;
-				std::cout << "\nDo stuff before MOOSE...\n";
-				std::cout << argc << std::endl;
-				std::cout << argv[0] << std::endl;
-				std::cout << argv[1] << std::endl;
-				std::cout << argv[2] << std::endl;
-				
-			}
+				exec_SimpleUI(argv[2]);
+			
+			//Temporary Force Quit because SimpleUI is incomplete
+			MPI_Barrier(MPI_COMM_WORLD);
+			return 0;
 		}//If not a yaml file, then continue with low level MOOSE interface
 	}
 	//Synchronization step to ensure that other processors don't start before pid 0  is finished
