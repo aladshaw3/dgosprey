@@ -35,4 +35,7 @@
 #ifndef SimpleUI_h
 #define SimpleUI_h
 
+/// Function to return true if the file extension of the given data is .yml
+bool isYamlFile(char argv[]);
+
 #endif /* SimpleUI_h */

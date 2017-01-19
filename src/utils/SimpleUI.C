@@ -17,3 +17,13 @@
  */
 
 #include "SimpleUI.h"
+
+/// Function to return true if the file extension of the given data is .yml
+bool isYamlFile(char argv[])
+{
+	std::string arg = argv;
+	if((arg.substr(arg.find_last_of(".") + 1) == "yml") || (arg.substr(arg.find_last_of(".") + 1) == "yaml"))
+		return true;
+	else
+		return false;
+}

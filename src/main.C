@@ -36,15 +36,23 @@ int main(int argc, char *argv[])
 	if (argc == 3)
 	{
 		//Parse 3rd argument to determine file extension
-		if (pid == 0)
+		if (isYamlFile(argv[2]) == true)
 		{
-			std::cout << "\nDo stuff before MOOSE...\n";
-			std::cout << argc << std::endl;
-			std::cout << argv[0] << std::endl;
-			std::cout << argv[1] << std::endl;
-			std::cout << argv[2] << std::endl;
-		}
+			//Use a single node to read the yaml input file
+			if (pid == 0)
+			{
+				std::cout << "TRUE" << std::endl;
+				std::cout << "\nDo stuff before MOOSE...\n";
+				std::cout << argc << std::endl;
+				std::cout << argv[0] << std::endl;
+				std::cout << argv[1] << std::endl;
+				std::cout << argv[2] << std::endl;
+				
+			}
+		}//If not a yaml file, then continue with low level MOOSE interface
 	}
+	//Synchronization step to ensure that other processors don't start before pid 0  is finished
+	MPI_Barrier(MPI_COMM_WORLD);
 	
 	// Initialize MPI, solvers and MOOSE
 	MooseInit init(argc, argv);
