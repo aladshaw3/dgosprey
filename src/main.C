@@ -17,7 +17,7 @@
 #include "Moose.h"
 #include "MooseApp.h"
 #include "AppFactory.h"
-#include "yaml_wrapper.h"
+#include "SimpleUI.h"
 
 // Create a performance log
 PerfLog Moose::perf_log("Dgosprey");
@@ -25,13 +25,25 @@ PerfLog Moose::perf_log("Dgosprey");
 // Begin the main program.
 int main(int argc, char *argv[])
 {
-	//Do stuff before MOOSE
+	/**	Simplified command line interface for higher level control */
+	
+	//Initialize MPI environment
 	int pid;
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
-	if (pid == 0)
+	
+	//Only valid for three input arguments (simple controls)
+	if (argc == 3)
 	{
-		std::cout << "\nDo stuff before MOOSE...\n";
+		//Parse 3rd argument to determine file extension
+		if (pid == 0)
+		{
+			std::cout << "\nDo stuff before MOOSE...\n";
+			std::cout << argc << std::endl;
+			std::cout << argv[0] << std::endl;
+			std::cout << argv[1] << std::endl;
+			std::cout << argv[2] << std::endl;
+		}
 	}
 	
 	// Initialize MPI, solvers and MOOSE
