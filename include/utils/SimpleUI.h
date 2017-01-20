@@ -38,11 +38,8 @@
 /// Function to return true if the file extension of the given data is .yml
 bool isYamlFile(char argv[]);
 
-/// Create a blank digital MOOSE input file for DGOSPREY
-void createMooseBlank(YamlWrapper *moose_input);
-
 /// Execute the simple user interface to read yaml files and create DGOSPREY input files
-void exec_SimpleUI(const char *file);
+int exec_SimpleUI(const char *file);
 
 /// Class structure for using the simple user interface
 /** The following class object is used for reading in the simple yaml input files and/or
@@ -58,6 +55,8 @@ public:
 	~SimpleUI();							///< Default Destructor
 	
 	int readInputFile(const char *file);	///< Function to read the given yaml input file
+	void createMooseBlank();				///< Function to create a blank MOOSE input file based on necessary arguments
+	void createExample();					///< Function to create an example MOOSE input file (Kr_Xe_253K_OWL.i)
 	
 	YamlWrapper& getYamlInput();			///< Returns reference to the YamlWrapper Object for the input file
 	YamlWrapper& getMooseInput();			///< Returns reference to the YamlWrapper that is used to build the MOOSE file

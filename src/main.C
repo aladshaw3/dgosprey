@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 	
 	//Initialize MPI environment
 	int pid;
+	int success = 0;
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
 	
@@ -40,11 +41,38 @@ int main(int argc, char *argv[])
 		{
 			//Use a single node to read the yaml input file
 			if (pid == 0)
-				exec_SimpleUI(argv[2]);
-			
-			//Temporary Force Quit because SimpleUI is incomplete
+				success = exec_SimpleUI(argv[2]);
 			MPI_Barrier(MPI_COMM_WORLD);
-			return 0;
+			MPI_Bcast(&success,1,MPI_INT,0,MPI_COMM_WORLD);
+			
+			if (success == 0)
+			{
+				//Run MOOSE immediately, using the input file created
+				if (pid == 0)
+				{
+					std::cout << "\nCreated a MOOSE input file from given Yaml file!\n\n";
+					std::cout << "Executing DGOSPREY application with the created input file...\n\n";
+				}
+			}
+			else if (success == 1)
+			{
+				//Do not run MOOSE, send message of completed input file creation
+				if (pid == 0)
+				{
+					std::cout << "\nCreated a MOOSE input file from given Yaml file!\n\n";
+					std::cout << "You may open that file and edit it or run it with DGSOSPREY application...\n\n";
+				}
+				MPI_Finalize();
+				return 0;
+			}
+			else
+			{
+				//Some error has occured
+				if (pid == 0)
+					std::cout << "\nERROR!!! Failed to create MOOSE input file from given Yaml file!\n\n";
+				MPI_Finalize();
+				return 0;
+			}
 		}//If not a yaml file, then continue with low level MOOSE interface
 	}
 	//Synchronization step to ensure that other processors don't start before pid 0  is finished
