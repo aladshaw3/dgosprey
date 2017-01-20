@@ -50,7 +50,7 @@ int exec_SimpleUI(const char *file)
 	sui.createExample();
 	
 	//sui.DisplayInput();
-	sui.DisplayOutput();
+	//sui.DisplayOutput();
 	
 	return -1;
 }
@@ -177,6 +177,11 @@ void SimpleUI::createMooseBlank()
 	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("total_pressure","total_pressure");
 	
 	this->moose_input.addDocKey("Postprocessors");
+	this->moose_input.getDocument("Postprocessors").addHeadKey("wall_temp");
+	this->moose_input.getDocument("Postprocessors").getHeader("wall_temp").addPair("type","SideAverageValue");
+	this->moose_input.getDocument("Postprocessors").getHeader("wall_temp").addPair("boundary","'right'");
+	this->moose_input.getDocument("Postprocessors").getHeader("wall_temp").addPair("variable","wall_temp");
+	this->moose_input.getDocument("Postprocessors").getHeader("wall_temp").addPair("execute_on","'initial timestep_end'");
 	
 	this->moose_input.addDocKey("Executioner");
 	this->moose_input.getDocument("Executioner").addPair("type","Transient");
@@ -348,6 +353,212 @@ void SimpleUI::createExample()
 	this->moose_input.getDocument("Kernels").getHeader("column_AdsHeat").addPair("type","AdsorptionHeatAccumulation");
 	this->moose_input.getDocument("Kernels").getHeader("column_AdsHeat").addPair("variable","column_temp");
 	this->moose_input.getDocument("Kernels").getHeader("column_AdsHeat").addPair("solid_heats","'Kr_AdsorbedHeat Xe_AdsorbedHeat He_AdsorbedHeat'");
+	
+	this->moose_input.getDocument("Kernels").addHeadKey("Kr_DGdiff");
+	this->moose_input.getDocument("Kernels").getHeader("Kr_DGdiff").addPair("type","DGColumnMassDispersion");
+	this->moose_input.getDocument("Kernels").getHeader("Kr_DGdiff").addPair("variable","Kr");
+	this->moose_input.getDocument("Kernels").getHeader("Kr_DGdiff").addPair("index","0");
+	this->moose_input.getDocument("Kernels").addHeadKey("Kr_DGadv");
+	this->moose_input.getDocument("Kernels").getHeader("Kr_DGadv").addPair("type","DGColumnMassAdvection");
+	this->moose_input.getDocument("Kernels").getHeader("Kr_DGadv").addPair("variable","Kr");
+	
+	this->moose_input.getDocument("Kernels").addHeadKey("Xe_DGdiff");
+	this->moose_input.getDocument("Kernels").getHeader("Xe_DGdiff").addPair("type","DGColumnMassDispersion");
+	this->moose_input.getDocument("Kernels").getHeader("Xe_DGdiff").addPair("variable","Xe");
+	this->moose_input.getDocument("Kernels").getHeader("Xe_DGdiff").addPair("index","1");
+	this->moose_input.getDocument("Kernels").addHeadKey("Xe_DGadv");
+	this->moose_input.getDocument("Kernels").getHeader("Xe_DGadv").addPair("type","DGColumnMassAdvection");
+	this->moose_input.getDocument("Kernels").getHeader("Xe_DGadv").addPair("variable","Xe");
+	
+	this->moose_input.getDocument("Kernels").addHeadKey("He_DGdiff");
+	this->moose_input.getDocument("Kernels").getHeader("He_DGdiff").addPair("type","DGColumnMassDispersion");
+	this->moose_input.getDocument("Kernels").getHeader("He_DGdiff").addPair("variable","He");
+	this->moose_input.getDocument("Kernels").getHeader("He_DGdiff").addPair("index","2");
+	this->moose_input.getDocument("Kernels").addHeadKey("He_DGadv");
+	this->moose_input.getDocument("Kernels").getHeader("He_DGadv").addPair("type","DGColumnMassAdvection");
+	this->moose_input.getDocument("Kernels").getHeader("He_DGadv").addPair("variable","He");
+	
+	this->moose_input.getDocument("AuxKernels").getHeader("column_pressure").addPair("coupled_gases","'Kr Xe He'");
+	
+	this->moose_input.getDocument("AuxKernels").addHeadKey("Kr_ads");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_ads").addPair("type","Scopsowl_Adsorption");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_ads").addPair("variable","Kr_Adsorbed");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_ads").addPair("index","0");
+	this->moose_input.getDocument("AuxKernels").addHeadKey("Xe_ads");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_ads").addPair("type","Scopsowl_Adsorption");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_ads").addPair("variable","Xe_Adsorbed");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_ads").addPair("index","1");
+	this->moose_input.getDocument("AuxKernels").addHeadKey("He_ads");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_ads").addPair("type","Scopsowl_Adsorption");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_ads").addPair("variable","He_Adsorbed");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_ads").addPair("index","2");
+	
+	this->moose_input.getDocument("AuxKernels").addHeadKey("Kr_pert");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_pert").addPair("type","Scopsowl_Perturbation");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_pert").addPair("variable","Kr_Perturb");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_pert").addPair("index","0");
+	this->moose_input.getDocument("AuxKernels").addHeadKey("Xe_pert");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_pert").addPair("type","Scopsowl_Perturbation");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_pert").addPair("variable","Xe_Perturb");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_pert").addPair("index","1");
+	this->moose_input.getDocument("AuxKernels").addHeadKey("He_pert");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_pert").addPair("type","Scopsowl_Perturbation");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_pert").addPair("variable","He_Perturb");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_pert").addPair("index","2");
+	
+	this->moose_input.getDocument("AuxKernels").addHeadKey("Kr_ads_heat");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_ads_heat").addPair("type","MAGPIE_AdsorptionHeat");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_ads_heat").addPair("variable","Kr_AdsorbedHeat");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_ads_heat").addPair("solid_conc","Kr_Adsorbed");
+	this->moose_input.getDocument("AuxKernels").getHeader("Kr_ads_heat").addPair("index","0");
+	this->moose_input.getDocument("AuxKernels").addHeadKey("Xe_ads_heat");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_ads_heat").addPair("type","MAGPIE_AdsorptionHeat");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_ads_heat").addPair("variable","Xe_AdsorbedHeat");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_ads_heat").addPair("solid_conc","Xe_Adsorbed");
+	this->moose_input.getDocument("AuxKernels").getHeader("Xe_ads_heat").addPair("index","1");
+	this->moose_input.getDocument("AuxKernels").addHeadKey("He_ads_heat");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_ads_heat").addPair("type","MAGPIE_AdsorptionHeat");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_ads_heat").addPair("variable","He_AdsorbedHeat");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_ads_heat").addPair("solid_conc","He_Adsorbed");
+	this->moose_input.getDocument("AuxKernels").getHeader("He_ads_heat").addPair("index","2");
+
+	this->moose_input.getDocument("BCs").getHeader("Heat_Gas_Flux").addPair("type","DGHeatFluxLimitedBC");
+	this->moose_input.getDocument("BCs").getHeader("Heat_Gas_Flux").addPair("input_temperature","253.15");
+	this->moose_input.getDocument("BCs").getHeader("Heat_Wall_Flux").addPair("type","DGColumnWallHeatFluxLimitedBC");
+	
+	this->moose_input.getDocument("BCs").addHeadKey("Kr_Flux");
+	this->moose_input.getDocument("BCs").getHeader("Kr_Flux").addPair("type","DGMassFluxLimitedBC");
+	this->moose_input.getDocument("BCs").getHeader("Kr_Flux").addPair("variable","Kr");
+	this->moose_input.getDocument("BCs").getHeader("Kr_Flux").addPair("boundary","'top bottom'");
+	this->moose_input.getDocument("BCs").getHeader("Kr_Flux").addPair("input_temperature","253.15");
+	this->moose_input.getDocument("BCs").getHeader("Kr_Flux").addPair("input_pressure","101.35");
+	this->moose_input.getDocument("BCs").getHeader("Kr_Flux").addPair("input_molefraction","0.000131792");
+	this->moose_input.getDocument("BCs").getHeader("Kr_Flux").addPair("index","0");
+	
+	this->moose_input.getDocument("BCs").addHeadKey("Xe_Flux");
+	this->moose_input.getDocument("BCs").getHeader("Xe_Flux").addPair("type","DGMassFluxLimitedBC");
+	this->moose_input.getDocument("BCs").getHeader("Xe_Flux").addPair("variable","Xe");
+	this->moose_input.getDocument("BCs").getHeader("Xe_Flux").addPair("boundary","'top bottom'");
+	this->moose_input.getDocument("BCs").getHeader("Xe_Flux").addPair("input_temperature","253.15");
+	this->moose_input.getDocument("BCs").getHeader("Xe_Flux").addPair("input_pressure","101.35");
+	this->moose_input.getDocument("BCs").getHeader("Xe_Flux").addPair("input_molefraction","0.000863107");
+	this->moose_input.getDocument("BCs").getHeader("Xe_Flux").addPair("index","1");
+	
+	this->moose_input.getDocument("BCs").addHeadKey("He_Flux");
+	this->moose_input.getDocument("BCs").getHeader("He_Flux").addPair("type","DGMassFluxLimitedBC");
+	this->moose_input.getDocument("BCs").getHeader("He_Flux").addPair("variable","He");
+	this->moose_input.getDocument("BCs").getHeader("He_Flux").addPair("boundary","'top bottom'");
+	this->moose_input.getDocument("BCs").getHeader("He_Flux").addPair("input_temperature","253.15");
+	this->moose_input.getDocument("BCs").getHeader("He_Flux").addPair("input_pressure","101.35");
+	this->moose_input.getDocument("BCs").getHeader("He_Flux").addPair("input_molefraction","0.999005101");
+	this->moose_input.getDocument("BCs").getHeader("He_Flux").addPair("index","2");
+	
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("inner_diameter","1.7272");
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("outer_diameter","1.905");
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("bulk_porosity","0.885");
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("axial_conductivity","6.292E-05");
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("wall_density","7.7");
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("wall_heat_capacity","0.5");
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("wall_heat_trans_coef","9.0");
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("extern_heat_trans_coef","90.0");
+	this->moose_input.getDocument("Materials").getHeader("BedMaterials").addPair("coupled_gases","'Kr Xe He'");
+	
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("molecular_weight","'83.8 131.29 4.0026'");
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("comp_heat_capacity","'0.25 0.16 5.1916'");
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("comp_ref_viscosity","'0.00023219 0.00021216 0.0001885'");
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("comp_ref_temp","'273.15 273.15 273.15'");
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("comp_Sutherland_const","'266.505 232.746 80.0'");
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("flow_rate","2994.06");
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("coupled_gases","'Kr Xe He'");
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("coupled_adsorption","'Kr_Adsorbed Xe_Adsorbed He_Adsorbed'");
+	this->moose_input.getDocument("Materials").getHeader("FlowMaterials").addPair("coupled_perturbation","'Kr_Perturb Xe_Perturb He_Perturb'");
+	
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("binder_porosity","0.384");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("pellet_diameter","0.16");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("macropore_radius","1.5e-4");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("pellet_density","3.06");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("pellet_heat_capacity","1.045");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("ref_diffusion","'0 0 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("activation_energy","'0 0 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("ref_temperature","'0 0 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("affinity","'0 0 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbentMaterials").addPair("coupled_gases","'Kr Xe He'");
+	
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("coupled_gases","'Kr Xe He'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("number_sites","'2 3 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("maximum_capacity","'1.716 1.479 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("molar_volume","'20.785 25.412 0'");
+	
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("enthalpy_site_1","'-44696.86 -18455.18 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("enthalpy_site_2","'-65465.52 -35511.74 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("enthalpy_site_3","'0 -53315.13 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("enthalpy_site_4","'0 0 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("enthalpy_site_5","'0 0 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("enthalpy_site_6","'0 0 0'");
+	
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("entropy_site_1","'-170.45 -23.25 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("entropy_site_2","'-248.55 -62.45 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("entropy_site_3","'0 -100.10 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("entropy_site_4","'0 0 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("entropy_site_5","'0 0 0'");
+	this->moose_input.getDocument("Materials").getHeader("AdsorbateMaterials").addPair("entropy_site_6","'0 0 0'");
+	
+	this->moose_input.getDocument("Materials").addHeadKey("KineticMaterials");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("type","ScopsowlProperties");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("block","0");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("dirichlet_bc","false");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("heterogeneous","false");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("surface_diffusion","true");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("macro_spheres","false");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("macro_length","0.4");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("coupled_gases","'Kr Xe He'");
+	this->moose_input.getDocument("Materials").getHeader("KineticMaterials").addPair("coupled_adsorption","'Kr_Adsorbed Xe_Adsorbed He_Adsorbed'");
+	
+	this->moose_input.getDocument("Postprocessors").addHeadKey("Kr_exit");
+	this->moose_input.getDocument("Postprocessors").getHeader("Kr_exit").addPair("type","SideAverageValue");
+	this->moose_input.getDocument("Postprocessors").getHeader("Kr_exit").addPair("boundary","'top'");
+	this->moose_input.getDocument("Postprocessors").getHeader("Kr_exit").addPair("variable","Kr");
+	this->moose_input.getDocument("Postprocessors").getHeader("Kr_exit").addPair("execute_on","'initial timestep_end'");
+	
+	this->moose_input.getDocument("Postprocessors").addHeadKey("Xe_exit");
+	this->moose_input.getDocument("Postprocessors").getHeader("Xe_exit").addPair("type","SideAverageValue");
+	this->moose_input.getDocument("Postprocessors").getHeader("Xe_exit").addPair("boundary","'top'");
+	this->moose_input.getDocument("Postprocessors").getHeader("Xe_exit").addPair("variable","Xe");
+	this->moose_input.getDocument("Postprocessors").getHeader("Xe_exit").addPair("execute_on","'initial timestep_end'");
+	
+	this->moose_input.getDocument("Postprocessors").addHeadKey("He_exit");
+	this->moose_input.getDocument("Postprocessors").getHeader("He_exit").addPair("type","SideAverageValue");
+	this->moose_input.getDocument("Postprocessors").getHeader("He_exit").addPair("boundary","'top'");
+	this->moose_input.getDocument("Postprocessors").getHeader("He_exit").addPair("variable","He");
+	this->moose_input.getDocument("Postprocessors").getHeader("He_exit").addPair("execute_on","'initial timestep_end'");
+	
+	this->moose_input.getDocument("Postprocessors").addHeadKey("temp_exit");
+	this->moose_input.getDocument("Postprocessors").getHeader("temp_exit").addPair("type","SideAverageValue");
+	this->moose_input.getDocument("Postprocessors").getHeader("temp_exit").addPair("boundary","'top'");
+	this->moose_input.getDocument("Postprocessors").getHeader("temp_exit").addPair("variable","column_temp");
+	this->moose_input.getDocument("Postprocessors").getHeader("temp_exit").addPair("execute_on","'initial timestep_end'");
+	
+	this->moose_input.getDocument("Postprocessors").addHeadKey("pressure_exit");
+	this->moose_input.getDocument("Postprocessors").getHeader("pressure_exit").addPair("type","SideAverageValue");
+	this->moose_input.getDocument("Postprocessors").getHeader("pressure_exit").addPair("boundary","'top'");
+	this->moose_input.getDocument("Postprocessors").getHeader("pressure_exit").addPair("variable","total_pressure");
+	this->moose_input.getDocument("Postprocessors").getHeader("pressure_exit").addPair("execute_on","'initial timestep_end'");
+	
+	this->moose_input.getDocument("Postprocessors").addHeadKey("Kr_adsorbed");
+	this->moose_input.getDocument("Postprocessors").getHeader("Kr_adsorbed").addPair("type","ElementAverageValue");
+	this->moose_input.getDocument("Postprocessors").getHeader("Kr_adsorbed").addPair("variable","Kr_Adsorbed");
+	this->moose_input.getDocument("Postprocessors").getHeader("Kr_adsorbed").addPair("execute_on","'initial timestep_end'");
+	
+	this->moose_input.getDocument("Postprocessors").addHeadKey("Xe_adsorbed");
+	this->moose_input.getDocument("Postprocessors").getHeader("Xe_adsorbed").addPair("type","ElementAverageValue");
+	this->moose_input.getDocument("Postprocessors").getHeader("Xe_adsorbed").addPair("variable","Xe_Adsorbed");
+	this->moose_input.getDocument("Postprocessors").getHeader("Xe_adsorbed").addPair("execute_on","'initial timestep_end'");
+	
+	this->moose_input.getDocument("Executioner").addPair("end_time","50.0");
+	this->moose_input.getDocument("Executioner").addPair("dtmax","1.0");
+	
+	this->moose_input.getDocument("Executioner").getHeader("TimeStepper").addPair("type","SolutionTimeAdaptiveDT");
+	this->moose_input.getDocument("Executioner").getHeader("TimeStepper").addPair("dt","0.01");
 }
 
 //Return reference to the YamlWrapper object for the input file
