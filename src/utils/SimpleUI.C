@@ -46,8 +46,12 @@ int exec_SimpleUI(const char *file)
 		return -1;
 	}
 	
-	//create example file
+	//create example file (replace with real file)
 	sui.createExample();
+	
+	//Create output file
+	std::string arg = file;
+	sui.writeOutputFile(((arg.erase(arg.find_last_of(".") + 1)).append("i")).c_str());
 	
 	//sui.DisplayInput();
 	//sui.DisplayOutput();
@@ -69,6 +73,16 @@ SimpleUI::~SimpleUI()
 int SimpleUI::readInputFile(const char *file)
 {
 	return this->yaml_input.executeYamlRead(file);
+}
+
+// Function to write MOOSE input file
+int SimpleUI::writeOutputFile(const char *file)
+{
+	int success = 0;
+	
+	std::cout << file << std::endl;
+	
+	return success;
 }
 
 //Function to create a blank MOOSE input file

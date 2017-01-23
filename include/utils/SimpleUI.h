@@ -55,6 +55,7 @@ public:
 	~SimpleUI();							///< Default Destructor
 	
 	int readInputFile(const char *file);	///< Function to read the given yaml input file
+	int writeOutputFile(const char *file);	///< Function to write an MOOSE input file based on the yaml input file
 	void createMooseBlank();				///< Function to create a blank MOOSE input file based on necessary arguments
 	void createExample();					///< Function to create an example MOOSE input file (Kr_Xe_253K_OWL.i)
 	
