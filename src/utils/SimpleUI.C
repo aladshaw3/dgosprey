@@ -406,29 +406,29 @@ void SimpleUI::createExample()
 	this->moose_input.getDocument("Kernels").getHeader("column_AdsHeat").addPair("variable","column_temp");
 	this->moose_input.getDocument("Kernels").getHeader("column_AdsHeat").addPair("solid_heats","'Kr_AdsorbedHeat Xe_AdsorbedHeat He_AdsorbedHeat'");
 	
-	this->moose_input.getDocument("Kernels").addHeadKey("Kr_DGdiff");
-	this->moose_input.getDocument("Kernels").getHeader("Kr_DGdiff").addPair("type","DGColumnMassDispersion");
-	this->moose_input.getDocument("Kernels").getHeader("Kr_DGdiff").addPair("variable","Kr");
-	this->moose_input.getDocument("Kernels").getHeader("Kr_DGdiff").addPair("index","0");
-	this->moose_input.getDocument("Kernels").addHeadKey("Kr_DGadv");
-	this->moose_input.getDocument("Kernels").getHeader("Kr_DGadv").addPair("type","DGColumnMassAdvection");
-	this->moose_input.getDocument("Kernels").getHeader("Kr_DGadv").addPair("variable","Kr");
+	this->moose_input.getDocument("DGKernels").addHeadKey("Kr_DGdiff");
+	this->moose_input.getDocument("DGKernels").getHeader("Kr_DGdiff").addPair("type","DGColumnMassDispersion");
+	this->moose_input.getDocument("DGKernels").getHeader("Kr_DGdiff").addPair("variable","Kr");
+	this->moose_input.getDocument("DGKernels").getHeader("Kr_DGdiff").addPair("index","0");
+	this->moose_input.getDocument("DGKernels").addHeadKey("Kr_DGadv");
+	this->moose_input.getDocument("DGKernels").getHeader("Kr_DGadv").addPair("type","DGColumnMassAdvection");
+	this->moose_input.getDocument("DGKernels").getHeader("Kr_DGadv").addPair("variable","Kr");
 	
-	this->moose_input.getDocument("Kernels").addHeadKey("Xe_DGdiff");
-	this->moose_input.getDocument("Kernels").getHeader("Xe_DGdiff").addPair("type","DGColumnMassDispersion");
-	this->moose_input.getDocument("Kernels").getHeader("Xe_DGdiff").addPair("variable","Xe");
-	this->moose_input.getDocument("Kernels").getHeader("Xe_DGdiff").addPair("index","1");
-	this->moose_input.getDocument("Kernels").addHeadKey("Xe_DGadv");
-	this->moose_input.getDocument("Kernels").getHeader("Xe_DGadv").addPair("type","DGColumnMassAdvection");
-	this->moose_input.getDocument("Kernels").getHeader("Xe_DGadv").addPair("variable","Xe");
+	this->moose_input.getDocument("DGKernels").addHeadKey("Xe_DGdiff");
+	this->moose_input.getDocument("DGKernels").getHeader("Xe_DGdiff").addPair("type","DGColumnMassDispersion");
+	this->moose_input.getDocument("DGKernels").getHeader("Xe_DGdiff").addPair("variable","Xe");
+	this->moose_input.getDocument("DGKernels").getHeader("Xe_DGdiff").addPair("index","1");
+	this->moose_input.getDocument("DGKernels").addHeadKey("Xe_DGadv");
+	this->moose_input.getDocument("DGKernels").getHeader("Xe_DGadv").addPair("type","DGColumnMassAdvection");
+	this->moose_input.getDocument("DGKernels").getHeader("Xe_DGadv").addPair("variable","Xe");
 	
-	this->moose_input.getDocument("Kernels").addHeadKey("He_DGdiff");
-	this->moose_input.getDocument("Kernels").getHeader("He_DGdiff").addPair("type","DGColumnMassDispersion");
-	this->moose_input.getDocument("Kernels").getHeader("He_DGdiff").addPair("variable","He");
-	this->moose_input.getDocument("Kernels").getHeader("He_DGdiff").addPair("index","2");
-	this->moose_input.getDocument("Kernels").addHeadKey("He_DGadv");
-	this->moose_input.getDocument("Kernels").getHeader("He_DGadv").addPair("type","DGColumnMassAdvection");
-	this->moose_input.getDocument("Kernels").getHeader("He_DGadv").addPair("variable","He");
+	this->moose_input.getDocument("DGKernels").addHeadKey("He_DGdiff");
+	this->moose_input.getDocument("DGKernels").getHeader("He_DGdiff").addPair("type","DGColumnMassDispersion");
+	this->moose_input.getDocument("DGKernels").getHeader("He_DGdiff").addPair("variable","He");
+	this->moose_input.getDocument("DGKernels").getHeader("He_DGdiff").addPair("index","2");
+	this->moose_input.getDocument("DGKernels").addHeadKey("He_DGadv");
+	this->moose_input.getDocument("DGKernels").getHeader("He_DGadv").addPair("type","DGColumnMassAdvection");
+	this->moose_input.getDocument("DGKernels").getHeader("He_DGadv").addPair("variable","He");
 	
 	this->moose_input.getDocument("AuxKernels").getHeader("column_pressure").addPair("coupled_gases","'Kr Xe He'");
 	

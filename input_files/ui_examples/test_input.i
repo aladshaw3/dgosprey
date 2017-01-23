@@ -126,15 +126,6 @@
 [] #END ICs
 
 [Kernels]
-	[./He_DGadv]
-		type = DGColumnMassAdvection
-		variable = He
-	[../]
-	[./He_DGdiff]
-		index = 2
-		type = DGColumnMassDispersion
-		variable = He
-	[../]
 	[./He_accum]
 		index = 2
 		type = BedMassAccumulation
@@ -154,15 +145,6 @@
 		type = AdsorptionMassTransfer
 		variable = He
 	[../]
-	[./Kr_DGadv]
-		type = DGColumnMassAdvection
-		variable = Kr
-	[../]
-	[./Kr_DGdiff]
-		index = 0
-		type = DGColumnMassDispersion
-		variable = Kr
-	[../]
 	[./Kr_accum]
 		index = 0
 		type = BedMassAccumulation
@@ -181,15 +163,6 @@
 		solid_conc = Kr_Adsorbed
 		type = AdsorptionMassTransfer
 		variable = Kr
-	[../]
-	[./Xe_DGadv]
-		type = DGColumnMassAdvection
-		variable = Xe
-	[../]
-	[./Xe_DGdiff]
-		index = 1
-		type = DGColumnMassDispersion
-		variable = Xe
 	[../]
 	[./Xe_accum]
 		index = 1
@@ -251,6 +224,33 @@
 	[./DGcolumnConduction]
 		type = DGColumnHeatDispersion
 		variable = column_temp
+	[../]
+	[./He_DGadv]
+		type = DGColumnMassAdvection
+		variable = He
+	[../]
+	[./He_DGdiff]
+		index = 2
+		type = DGColumnMassDispersion
+		variable = He
+	[../]
+	[./Kr_DGadv]
+		type = DGColumnMassAdvection
+		variable = Kr
+	[../]
+	[./Kr_DGdiff]
+		index = 0
+		type = DGColumnMassDispersion
+		variable = Kr
+	[../]
+	[./Xe_DGadv]
+		type = DGColumnMassAdvection
+		variable = Xe
+	[../]
+	[./Xe_DGdiff]
+		index = 1
+		type = DGColumnMassDispersion
+		variable = Xe
 	[../]
 [] #END DGKernels
 
