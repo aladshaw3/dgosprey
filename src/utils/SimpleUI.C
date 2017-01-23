@@ -47,17 +47,20 @@ int exec_SimpleUI(char *file)
 		return -1;
 	}
 	
+	//Check input file for success flags
+	
+	//Perform preprocessing for finalization of MOOSE YamlWrapper object
+	
+	//Create the MOOSE YamlWrapper Object
+	
 	//create example file (replace with real file)
 	sui.createExample();
 	
-	//Create output file
+	//Create output file for MOOSE
 	std::strcpy (file, ((arg.erase(arg.find_last_of(".") + 1)).append("i")).c_str());
 	sui.writeOutputFile(file);
 	
-	//sui.DisplayInput();
-	//sui.DisplayOutput();
-	
-	return 0;
+	return 1;
 }
 
 //Default constructor
