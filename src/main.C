@@ -29,6 +29,7 @@ int main(int argc, char *argv[])
 	
 	//Initialize MPI environment
 	int pid;
+	int size;
 	int success = 0;
 	MPI_Init(&argc,&argv);
 	MPI_Comm_rank(MPI_COMM_WORLD, &pid);
@@ -41,7 +42,10 @@ int main(int argc, char *argv[])
 		{
 			//Use a single node to read the yaml input file
 			if (pid == 0)
+			{
 				success = exec_SimpleUI(argv[2]);
+				size = strlen(argv[2]);
+			}
 			MPI_Barrier(MPI_COMM_WORLD);
 			MPI_Bcast(&success,1,MPI_INT,0,MPI_COMM_WORLD);
 			
@@ -53,6 +57,29 @@ int main(int argc, char *argv[])
 					std::cout << "\nCreated a MOOSE input file from given Yaml file!\n\n";
 					std::cout << "Executing DGOSPREY application with the created input file...\n\n";
 				}
+				//Broadcast the new file name
+				MPI_Barrier(MPI_COMM_WORLD);
+				MPI_Bcast(&size,1,MPI_INT,0,MPI_COMM_WORLD);
+				char *temp;
+				if (pid == 0)
+					temp = argv[2];
+				else
+				{
+					std::string buff(size,' ');
+					std::strcpy (temp,buff.c_str());
+				}
+				MPI_Barrier(MPI_COMM_WORLD);
+				MPI_Bcast(&temp[0],size,MPI_CHAR,0,MPI_COMM_WORLD);
+				argv[2] = temp;
+				
+				//Verify that the file can be read on all processors (DO NOT REMOVE)
+				std::ifstream in(argv[2], std::ifstream::in);
+				if (in.fail())
+				{
+					std::cout << "FAILURE on processors id = " << pid << std::endl;
+					std::cout << "File read error! Try running DGOSPREY with the generated file in legacy interface...\n";
+				}
+
 			}
 			else if (success == 1)
 			{
@@ -77,6 +104,14 @@ int main(int argc, char *argv[])
 	}
 	//Synchronization step to ensure that other processors don't start before pid 0  is finished
 	MPI_Barrier(MPI_COMM_WORLD);
+	
+	//Verify that the file can be read on all processors (DO NOT REMOVE)
+	std::ifstream in(argv[2], std::ifstream::in);
+	if (in.fail())
+	{
+		std::cout << "FAILURE on processors id = " << pid << std::endl;
+		std::cout << "File read error! Try running DGOSPREY with the generated file in legacy interface...\n";
+	}
 	
 	// Initialize MPI, solvers and MOOSE
 	MooseInit init(argc, argv);

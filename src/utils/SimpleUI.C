@@ -29,7 +29,7 @@ bool isYamlFile(char argv[])
 }
 
 /// Execute the simple user interface to read yaml files and create DGOSPREY input files
-int exec_SimpleUI(const char *file)
+int exec_SimpleUI(char *file)
 {
 	//Declarations
 	int success = 0;
@@ -51,12 +51,13 @@ int exec_SimpleUI(const char *file)
 	sui.createExample();
 	
 	//Create output file
-	sui.writeOutputFile(((arg.erase(arg.find_last_of(".") + 1)).append("i")).c_str());
+	std::strcpy (file, ((arg.erase(arg.find_last_of(".") + 1)).append("i")).c_str());
+	sui.writeOutputFile(file);
 	
 	//sui.DisplayInput();
 	//sui.DisplayOutput();
 	
-	return -1;
+	return 0;
 }
 
 //Default constructor

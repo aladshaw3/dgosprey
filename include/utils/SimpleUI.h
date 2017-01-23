@@ -39,7 +39,7 @@
 bool isYamlFile(char argv[]);
 
 /// Execute the simple user interface to read yaml files and create DGOSPREY input files
-int exec_SimpleUI(const char *file);
+int exec_SimpleUI(char *file);
 
 /// Class structure for using the simple user interface
 /** The following class object is used for reading in the simple yaml input files and/or
