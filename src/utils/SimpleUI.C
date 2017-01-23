@@ -33,6 +33,7 @@ int exec_SimpleUI(const char *file)
 {
 	//Declarations
 	int success = 0;
+	std::string arg = file;
 	SimpleUI sui;
 	
 	// Create a blank digital MOOSE input file with default and required information
@@ -50,7 +51,6 @@ int exec_SimpleUI(const char *file)
 	sui.createExample();
 	
 	//Create output file
-	std::string arg = file;
 	sui.writeOutputFile(((arg.erase(arg.find_last_of(".") + 1)).append("i")).c_str());
 	
 	//sui.DisplayInput();
@@ -78,11 +78,49 @@ int SimpleUI::readInputFile(const char *file)
 // Function to write MOOSE input file
 int SimpleUI::writeOutputFile(const char *file)
 {
+	//Declarations
 	int success = 0;
+	FILE *Output;
 	
-	std::cout << file << std::endl;
+	//Open the output file for editing
+	Output = fopen(file,"w+");
 	
+	/** Will not iterate through documents because we want a specific order */
+	this->writeOutBlock(Output,"GlobalParams");
+	this->writeOutBlock(Output,"Problem");
+	this->writeOutBlock(Output,"Mesh");
+	this->writeOutBlock(Output,"Variables");
+	this->writeOutBlock(Output,"AuxVariables");
+	this->writeOutBlock(Output,"ICs");
+	this->writeOutBlock(Output,"Kernels");
+	this->writeOutBlock(Output,"DGKernels");
+	this->writeOutBlock(Output,"AuxKernels");
+	this->writeOutBlock(Output,"BCs");
+	this->writeOutBlock(Output,"Materials");
+	this->writeOutBlock(Output,"Postprocessors");
+	this->writeOutBlock(Output,"Executioner");
+	this->writeOutBlock(Output,"Preconditioning");
+	this->writeOutBlock(Output,"Outputs");
+	
+	//Close the file and return
+	fclose(Output);
 	return success;
+}
+
+//Function to write an specific block to the file
+void SimpleUI::writeOutBlock(FILE *file,std::string name)
+{
+	fprintf(file,"[%s]\n",this->moose_input.getDocument(name).getName().c_str());
+	for (auto &x: this->moose_input.getDocument(name).getDataMap())
+		fprintf(file,"\t%s = %s\n",x.first.c_str(),x.second.getValue().c_str());
+	for (auto &x: this->moose_input.getDocument(name).getHeadMap())
+	{
+		fprintf(file,"\t[./%s]\n",x.second.getName().c_str());
+		for (auto &y: x.second.getDataMap())
+			fprintf(file,"\t\t%s = %s\n",y.first.c_str(),y.second.getValue().c_str());
+		fprintf(file,"\t[../]\n");
+	}
+	fprintf(file,"[] #END %s\n\n",name.c_str());
 }
 
 //Function to create a blank MOOSE input file
