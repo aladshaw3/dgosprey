@@ -76,6 +76,7 @@ private:
 	
 	MaterialProperty<Real> & _inner_dia;						///< MaterialProperty for column inner diameter
 	MaterialProperty<Real> & _outer_dia;						///< MaterialProperty for column outer diameter
+	MaterialProperty<Real> & _bed_length;							///< MaterialProperty for column length (cm)
 	MaterialProperty<Real> & _porosity;							///< MaterialProperty for bulk porosity of the bed
 	MaterialProperty<Real> & _conductivity;						///< MaterialProperty for thermal conductivity of the bed
 	MaterialProperty<Real> & _wall_density;						///< MaterialProperty for column wall density

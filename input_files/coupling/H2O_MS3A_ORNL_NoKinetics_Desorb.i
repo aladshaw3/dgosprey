@@ -62,6 +62,11 @@
 		family = MONOMIAL
 		initial_condition = 101.35
 	[../]
+ 
+ [./h2o_moles]
+ order = CONSTANT
+ family = MONOMIAL
+	[../]
 
  	[./ambient_temp]
  		order = CONSTANT
@@ -199,6 +204,7 @@
 		type = AdsorptionMassTransfer
 		variable = H2O
 		solid_conc = H2O_Adsorbed
+#solid_pert = H2O_Perturb
 	[../]
 
 	[./diffH2O]
@@ -303,39 +309,46 @@
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
 	[../]
+ 
+ [./total_moles]
+ type = TotalMoles
+ variable = h2o_moles
+ solid = H2O_Adsorbed
+ gas = H2O
+	[../]
 
 	[./nitrogen_adsorption]
-		type = MAGPIE_Adsorption
+		type = Scopsowl_Adsorption
 		variable = N2_Adsorbed
 		index = 0
 	[../]
 
 	[./oxygen_adsorption]
-		type = MAGPIE_Adsorption
+		type = Scopsowl_Adsorption
 		variable = O2_Adsorbed
 		index = 1
 	[../]
 
 	[./water_adsorption]
-		type = MAGPIE_Adsorption
+		type = Scopsowl_Adsorption
 		variable = H2O_Adsorbed
 		index = 2
 	[../]
 
 	[./nitrogen_perturbation]
-		type = MAGPIE_Perturbation
+		type = Scopsowl_Perturbation
 		variable = N2_Perturb
 		index = 0
 	[../]
 
 	[./oxygen_perturbation]
-		type = MAGPIE_Perturbation
+		type = Scopsowl_Perturbation
 		variable = O2_Perturb
 		index = 1
 	[../]
 
 	[./water_perturbation]
-		type = MAGPIE_Perturbation
+		type = Scopsowl_Perturbation
 		variable = H2O_Perturb
 		index = 2
 	[../]
@@ -436,7 +449,7 @@
 		comp_ref_viscosity = '0.0001781 0.0002018 0.0001043'
 		comp_ref_temp = '300.55 292.25 298.16'
 		comp_Sutherland_const = '111 127 784.72'
-		flow_rate = 1.31
+		flow_rate = 1.31e8
 		temperature = column_temp
  		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O'
@@ -500,19 +513,19 @@
 
 [Postprocessors]
 
-	[./N2_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = N2
-		execute_on = 'initial timestep_end'
-	[../]
+#[./N2_exit]
+#		type = SideAverageValue
+#		boundary = 'top'
+#		variable = N2
+#		execute_on = 'initial timestep_end'
+#	[../]
 
-	[./O2_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = O2
-		execute_on = 'initial timestep_end'
-	[../]
+#	[./O2_exit]
+#		type = SideAverageValue
+#		boundary = 'top'
+#		variable = O2
+#		execute_on = 'initial timestep_end'
+#	[../]
 
 	[./H2O_exit]
 		type = SideAverageValue
@@ -548,10 +561,16 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./H2O_heat]
+	[./H2O_avg]
 		type = ElementAverageValue
-		variable = H2O_AdsorbedHeat
+		variable = H2O
 		execute_on = 'initial timestep_end'
+	[../]
+ 
+ [./H2O_total_moles]
+ type = ElementAverageValue
+ variable = h2o_moles
+ execute_on = 'initial timestep_end'
 	[../]
 
  [] #END Postprocessors
@@ -573,7 +592,7 @@
 	solve_type = newton
     line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 60.0
+	end_time = 1.0
 	dtmin = 1e-8
 	dtmax = 0.118				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'

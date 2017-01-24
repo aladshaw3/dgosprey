@@ -38,6 +38,7 @@
 #define AdsorptionMassTransfer_H
 
 #include "Kernel.h"
+#include "flock.h"
 
 /// AdsorptionHeatAccumulation class object forward declarationss
 class AdsorptionMassTransfer;

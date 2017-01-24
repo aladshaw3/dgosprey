@@ -68,6 +68,7 @@ BedProperties::BedProperties(const InputParameters & parameters)
    _Ua(getParam<Real>("extern_heat_trans_coef")),
    _inner_dia(declareProperty<Real>("inner_dia")),
    _outer_dia(declareProperty<Real>("outer_dia")),
+   _bed_length(declareProperty<Real>("bed_length")),
    _porosity(declareProperty<Real>("porosity")),
    _conductivity(declareProperty<Real>("conductivity")),
    _wall_density(declareProperty<Real>("wall_density")),
@@ -98,6 +99,7 @@ BedProperties::computeQpProperties()
   //For constant bed properties...
   _inner_dia[_qp] = _din;
   _outer_dia[_qp] = _dout;
+	_bed_length[_qp] = _length;
   _porosity[_qp] = _eb;
   _conductivity[_qp] = _Kz;
   _wall_density[_qp] = _rhow;

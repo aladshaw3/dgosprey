@@ -1,8 +1,10 @@
 /*!
- *  \file AdsorptionMassTransfer.h
- *	\brief Standard kernel for the transfer of mass via adsorption
+ *  \file TotalMoles.h
+ *	\brief Aux Kernel to calculate total moles of a gas in the bed.
+ *	\details This file is responsible for calculating the total moles of a gas in the bed.
+ *
  *  \author Austin Ladshaw
- *	\date 01/29/2015
+ *	\date 01/24/2017
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -30,38 +32,41 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#include "AuxKernel.h"
 
-#include "AdsorptionMassTransfer.h"
+#ifndef TOTALMOLES_H
+#define TOTALMOLES_H
+
+/// TotalMoles class object forward declaration
+class TotalMoles;
 
 template<>
-InputParameters validParams<AdsorptionMassTransfer>()
+InputParameters validParams<TotalMoles>();
+
+/// TotalMoles class inherits from AuxKernel
+/** This class object creates an AuxKernel for use in the MOOSE framework. The AuxKernel will
+	calculate the Total moles of a gas in the bed. */
+class TotalMoles : public AuxKernel
 {
-	InputParameters params = validParams<Kernel>();
-	params.addCoupledVar("solid_conc","Coupled variables for the solid adsorption concentrations");
-	//params.addCoupledVar("solid_pert","Coupled variables for the solid adsorption concentrations");
-	return params;
-}
+public:
+	/// Standard MOOSE public constructor
+	TotalMoles(const InputParameters & parameters);
+	
+protected:
+	/// Required MOOSE function override
+	/** This is the function that is called by the MOOSE framework when a calculation of the AuxVariable
+		is needed. You are required to override this function for any inherited AuxKernel. */
+	virtual Real computeValue();
+	
+	const MaterialProperty<Real> & _porosity;			///< Reference to the bed bulk porosity material property
+	const MaterialProperty<Real> & _pellet_density;		///< Reference to the pellet density material property
+	const MaterialProperty<Real> & _bed_length;			///< Reference to the bed length
+	const MaterialProperty<Real> & _inner_dia;			///< Reference to the bed inner diameter
+	const VariableValue & _solid;						///< Pointer to coupled adsorption at the current time
+	const VariableValue & _gas;							///< Pointer to coupled adsorption at the previous time
+	
+private:
+	
+};
 
-AdsorptionMassTransfer::AdsorptionMassTransfer(const InputParameters & parameters) :
-Kernel(parameters),
-_porosity(getMaterialProperty<Real>("porosity")),
-_pellet_density(getMaterialProperty<Real>("pellet_density")),
-_solid(coupledValue("solid_conc")),
-_solid_old(coupledValueOld("solid_conc"))
-{
-
-}
-
-Real AdsorptionMassTransfer::computeQpResidual()
-{
-	//std::cout << _solid[_qp] << "\t" << _solid_old[_qp] << std::endl;
-	return -(1.0-_porosity[_qp])*_pellet_density[_qp]*((_solid[_qp]-_solid_old[_qp])/(1.0*_dt_old))*_test[_i][_qp];
-	//return -(1.0-_porosity[_qp])*_pellet_density[_qp]*fabs( (_solid_old[_qp] - _solid[_qp]) / sqrt(DBL_EPSILON) ) * _u_dot[_qp]*_test[_i][_qp];
-}
-
-Real AdsorptionMassTransfer::computeQpJacobian()
-{
-	return 0.0;
-	//return -(1.0-_porosity[_qp])*_pellet_density[_qp]*fabs( (_solid_old[_qp] - _solid[_qp]) / sqrt(DBL_EPSILON) ) * _test[_i][_qp]*_phi[_j][_qp]*_du_dot_du[_qp];
-}
-
+#endif
