@@ -422,7 +422,7 @@
 		length = 22.86
 		inner_diameter = 1.7272
 		outer_diameter = 1.905
-		bulk_porosity = 0.798				#not known
+		bulk_porosity = 0.76				#not known
 		axial_conductivity = 6.292E-05      #not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
@@ -587,8 +587,8 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
+		type = ConstantDT
+#type = SolutionTimeAdaptiveDT
 		dt = 0.1
 	[../]
 

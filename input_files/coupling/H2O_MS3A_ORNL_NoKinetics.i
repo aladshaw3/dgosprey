@@ -222,34 +222,34 @@
  		type = WallHeatAccumulation
  		variable = wall_temp
  	[../]
-# 	[./wall_bed_trans]
-# 		type = BedWallHeatTransfer
-# 		variable = wall_temp
-# 		coupled = column_temp
-# 	[../]
-# 	[./wall_amb_trans]
-# 		type = WallAmbientHeatTransfer
-# 		variable = wall_temp
-# 		coupled = ambient_temp
-# 	[../]
+ 	[./wall_bed_trans]
+ 		type = BedWallHeatTransfer
+ 		variable = wall_temp
+ 		coupled = column_temp
+ 	[../]
+ 	[./wall_amb_trans]
+ 		type = WallAmbientHeatTransfer
+ 		variable = wall_temp
+ 		coupled = ambient_temp
+ 	[../]
 
 	[./columnAccum]
 		type = BedHeatAccumulation
 		variable = column_temp
 	[../]
-#	[./columnConduction]
-#		type = GColumnHeatDispersion
-#		variable =column_temp
-#	[../]
-#	[./columnAdvection]
-#		type = GColumnHeatAdvection
-#		variable =column_temp
-#	[../]
-#	[./columnAdsHeat]
-#		type = AdsorptionHeatAccumulation
-#		variable = column_temp
-#		solid_heats = 'N2_AdsorbedHeat O2_AdsorbedHeat H2O_AdsorbedHeat'
-#	[../]
+	[./columnConduction]
+		type = GColumnHeatDispersion
+		variable =column_temp
+	[../]
+	[./columnAdvection]
+		type = GColumnHeatAdvection
+		variable =column_temp
+	[../]
+	[./columnAdsHeat]
+		type = AdsorptionHeatAccumulation
+		variable = column_temp
+		solid_heats = 'N2_AdsorbedHeat O2_AdsorbedHeat H2O_AdsorbedHeat'
+	[../]
 
 
  [] #END Kernels
@@ -289,15 +289,15 @@
 		variable = H2O
 	[../]
 
-#	[./dg_disp_heat]
-#		type = DGColumnHeatDispersion
-#		variable = column_temp
-#	[../]
+	[./dg_disp_heat]
+		type = DGColumnHeatDispersion
+		variable = column_temp
+	[../]
 
-#	[./dg_adv_heat]
-#		type = DGColumnHeatAdvection
-#		variable = column_temp
-#	[../]
+	[./dg_adv_heat]
+		type = DGColumnHeatAdvection
+		variable = column_temp
+	[../]
 
  [] #END DGKernels
 
@@ -408,19 +408,19 @@
  		index = 2
  	[../]
 
-#	[./Heat_Gas_Flux]
-# 		type = DGHeatFluxLimitedBC
-# 		variable = column_temp
-# 		boundary = 'top bottom'
-# 		input_temperature = 303.15
-# 	[../]
+	[./Heat_Gas_Flux]
+ 		type = DGHeatFluxLimitedBC
+ 		variable = column_temp
+ 		boundary = 'top bottom'
+ 		input_temperature = 303.15
+ 	[../]
  
-#	[./Heat_Wall_Flux]
-#		type = DGColumnWallHeatFluxLimitedBC
-#		variable = column_temp
-#		boundary = 'right left'
-#		wall_temp = wall_temp
-#	[../]
+	[./Heat_Wall_Flux]
+		type = DGColumnWallHeatFluxLimitedBC
+		variable = column_temp
+		boundary = 'right left'
+		wall_temp = wall_temp
+	[../]
 
  [] #END BCs
 
@@ -431,7 +431,7 @@
 		block = 0
 		inner_diameter = 74.5
 		outer_diameter = 75.5
-		bulk_porosity = 0.62
+		bulk_porosity = 0.585
 		axial_conductivity = 6.292E-05
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
@@ -599,7 +599,7 @@
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 1.0
+	end_time = 24.0
 	dtmin = 1e-8
 	dtmax = 0.118				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
@@ -614,6 +614,7 @@ type = SolutionTimeAdaptiveDT
  [] #END Executioner
 
 [Preconditioning]
+ type = FDP
 
 [] #END Preconditioning
 

@@ -1,7 +1,7 @@
 [GlobalParams]
 	
 	length = 250.0
-	initial_dt = 0.000118
+	initial_dt = 0.0118
 
 [] #END GlobalParams
 
@@ -15,8 +15,8 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 10
- 	ny = 40
+	nx = 5
+ 	ny = 10
  	xmin = 0.0
 	xmax = 37.25 #cm
  	ymin = 0.0
@@ -419,7 +419,7 @@
 		block = 0
 		inner_diameter = 74.5
 		outer_diameter = 75.5
-		bulk_porosity = 0.62 #0.62
+		bulk_porosity = 0.585 
 		axial_conductivity = 6.292E-05
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
@@ -561,11 +561,11 @@
  	nl_rel_step_tol = 1e-10
  	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
- 	l_max_its = 100
-	nl_max_its = 10
+ 	l_max_its = 1000
+	nl_max_its = 100
 
 	solve_type = newton
-    line_search = bt    # Options: default shell none basic l2 bt cp
+    line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 24.0
 	dtmin = 1e-8
@@ -576,12 +576,13 @@
 	[./TimeStepper]
 #type = ConstantDT
 type = SolutionTimeAdaptiveDT
-		dt = 0.000118
+		dt = 0.0118
 	[../]
 
  [] #END Executioner
 
 [Preconditioning]
+ type = FDP
 
 [] #END Preconditioning
 

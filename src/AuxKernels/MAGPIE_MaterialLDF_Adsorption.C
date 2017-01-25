@@ -57,6 +57,7 @@ _surface_diffusion(getMaterialProperty<std::vector<Real> >("surface_diffusion"))
 	_exec_flags.clear();
 	_exec_flags.push_back(EXEC_INITIAL);
 	_exec_flags.push_back(EXEC_TIMESTEP_END);
+	//_exec_flags.push_back(EXEC_TIMESTEP_BEGIN);
 }
 
 Real MAGPIE_MaterialLDF_Adsorption::computeValue()

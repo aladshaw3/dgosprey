@@ -318,37 +318,37 @@
 	[../]
 
 	[./nitrogen_adsorption]
-		type = Scopsowl_Adsorption
+		type = MAGPIE_Adsorption
 		variable = N2_Adsorbed
 		index = 0
 	[../]
 
 	[./oxygen_adsorption]
-		type = Scopsowl_Adsorption
+		type = MAGPIE_Adsorption
 		variable = O2_Adsorbed
 		index = 1
 	[../]
 
 	[./water_adsorption]
-		type = Scopsowl_Adsorption
+		type = MAGPIE_Adsorption
 		variable = H2O_Adsorbed
 		index = 2
 	[../]
 
 	[./nitrogen_perturbation]
-		type = Scopsowl_Perturbation
+		type = MAGPIE_Perturbation
 		variable = N2_Perturb
 		index = 0
 	[../]
 
 	[./oxygen_perturbation]
-		type = Scopsowl_Perturbation
+		type = MAGPIE_Perturbation
 		variable = O2_Perturb
 		index = 1
 	[../]
 
 	[./water_perturbation]
-		type = Scopsowl_Perturbation
+		type = MAGPIE_Perturbation
 		variable = H2O_Perturb
 		index = 2
 	[../]
@@ -431,7 +431,7 @@
 		block = 0
 		inner_diameter = 74.5
 		outer_diameter = 75.5
-		bulk_porosity = 0.62
+		bulk_porosity = 0.585
 		axial_conductivity = 6.292E-05
 		wall_density = 8.0
 		wall_heat_capacity = 0.5

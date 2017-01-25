@@ -48,6 +48,7 @@ _porosity(getMaterialProperty<Real>("porosity")),
 _pellet_density(getMaterialProperty<Real>("pellet_density")),
 _solid(coupledValue("solid_conc")),
 _solid_old(coupledValueOld("solid_conc"))
+//_solid_old(coupledValueOlder("solid_conc"))
 //_solid_old(coupledValue("solid_pert"))
 {
 
@@ -55,7 +56,9 @@ _solid_old(coupledValueOld("solid_conc"))
 
 Real AdsorptionMassTransfer::computeQpResidual()
 {
-	//std::cout << _solid[_qp] << "\t" << _solid_old[_qp] << std::endl;
+	//std::cout << _u[_qp] << "\t" << _solid_old[_qp] << "\t" << _solid[_qp] << "\t" << _dt_old << std::endl;
+	//return 0.0;
+	//return -(1.0-_porosity[_qp])*_pellet_density[_qp]*(_solid[_qp]-_solid_old[_qp])*0.125*_dt_old*_test[_i][_qp];
 	return -(1.0-_porosity[_qp])*_pellet_density[_qp]*((_solid[_qp]-_solid_old[_qp])/(1.0*_dt_old))*_test[_i][_qp];
 	//return -(1.0-_porosity[_qp])*_pellet_density[_qp]*fabs( (_solid_old[_qp] - _solid[_qp]) / sqrt(DBL_EPSILON) ) * _u_dot[_qp]*_test[_i][_qp];
 }
