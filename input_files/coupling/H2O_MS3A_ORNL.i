@@ -199,6 +199,7 @@
 		type = AdsorptionMassTransfer
 		variable = H2O
 		solid_conc = H2O_Adsorbed
+#solid_pert = H2O_Perturb
 	[../]
 
 	[./diffH2O]
@@ -366,7 +367,7 @@
 [BCs]
 
  	[./N2_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = N2
  		boundary = 'top bottom'
  		input_temperature = 303.15
@@ -376,7 +377,7 @@
  	[../]
 
  	[./O2_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = O2
  		boundary = 'top bottom'
  		input_temperature = 303.15
@@ -386,7 +387,7 @@
  	[../]
 
  	[./H2O_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = H2O
  		boundary = 'top bottom'
  		input_temperature = 303.15
@@ -396,14 +397,14 @@
  	[../]
 
 	[./Heat_Gas_Flux]
- 		type = DGHeatFluxLimitedBC
+ 		type = DGHeatFluxBC
  		variable = column_temp
  		boundary = 'top bottom'
  		input_temperature = 303.15
  	[../]
  
 	[./Heat_Wall_Flux]
-		type = DGColumnWallHeatFluxLimitedBC
+		type = DGColumnWallHeatFluxBC
 		variable = column_temp
 		boundary = 'right left'
 		wall_temp = wall_temp
@@ -499,19 +500,18 @@
  [] #END Materials
 
 [Postprocessors]
-
-	[./N2_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = N2
-		execute_on = 'initial timestep_end'
+ 
+ [./H2O_enter]
+ type = SideAverageValue
+ boundary = 'bottom'
+ variable = H2O
+ execute_on = 'initial timestep_end'
 	[../]
-
-	[./O2_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = O2
-		execute_on = 'initial timestep_end'
+ 
+ [./H2O_avg_gas]
+ type = ElementAverageValue
+ variable = H2O
+ execute_on = 'initial timestep_end'
 	[../]
 
 	[./H2O_exit]
@@ -548,12 +548,6 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./H2O_heat]
-		type = ElementAverageValue
-		variable = H2O_AdsorbedHeat
-		execute_on = 'initial timestep_end'
-	[../]
-
  [] #END Postprocessors
 
 [Executioner]
@@ -573,7 +567,7 @@
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 600.0
+	end_time = 24.0
 	dtmin = 1e-8
 	dtmax = 0.118				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'

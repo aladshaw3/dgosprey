@@ -48,6 +48,7 @@ _porosity(getMaterialProperty<Real>("porosity")),
 _pellet_density(getMaterialProperty<Real>("pellet_density")),
 _solid(coupledValue("solid_conc")),
 _solid_old(coupledValueOld("solid_conc"))
+//_solid_old(coupledValue("solid_pert"))
 {
 
 }

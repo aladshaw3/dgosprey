@@ -1,7 +1,7 @@
 [GlobalParams]
 	
 	length = 250.0
-	initial_dt = 0.0118
+	initial_dt = 0.000118
 
 [] #END GlobalParams
 
@@ -61,11 +61,6 @@
 		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 101.35
-	[../]
- 
- [./h2o_moles]
- order = CONSTANT
- family = MONOMIAL
 	[../]
 
  	[./ambient_temp]
@@ -204,7 +199,7 @@
 		type = AdsorptionMassTransfer
 		variable = H2O
 		solid_conc = H2O_Adsorbed
- #solid_pert = H2O_Perturb
+#solid_pert = H2O_Perturb
 	[../]
 
 	[./diffH2O]
@@ -218,38 +213,38 @@
 		variable = H2O
 	[../]
 
-	[./wallAccum]
+ 	[./wallAccum]
  		type = WallHeatAccumulation
  		variable = wall_temp
  	[../]
-# 	[./wall_bed_trans]
-# 		type = BedWallHeatTransfer
-# 		variable = wall_temp
-# 		coupled = column_temp
-# 	[../]
-# 	[./wall_amb_trans]
-# 		type = WallAmbientHeatTransfer
-# 		variable = wall_temp
-# 		coupled = ambient_temp
-# 	[../]
+ 	[./wall_bed_trans]
+ 		type = BedWallHeatTransfer
+ 		variable = wall_temp
+ 		coupled = column_temp
+ 	[../]
+ 	[./wall_amb_trans]
+ 		type = WallAmbientHeatTransfer
+ 		variable = wall_temp
+ 		coupled = ambient_temp
+ 	[../]
 
 	[./columnAccum]
 		type = BedHeatAccumulation
 		variable = column_temp
 	[../]
-#	[./columnConduction]
-#		type = GColumnHeatDispersion
-#		variable =column_temp
-#	[../]
-#	[./columnAdvection]
-#		type = GColumnHeatAdvection
-#		variable =column_temp
-#	[../]
-#	[./columnAdsHeat]
-#		type = AdsorptionHeatAccumulation
-#		variable = column_temp
-#		solid_heats = 'N2_AdsorbedHeat O2_AdsorbedHeat H2O_AdsorbedHeat'
-#	[../]
+	[./columnConduction]
+		type = GColumnHeatDispersion
+		variable =column_temp
+	[../]
+	[./columnAdvection]
+		type = GColumnHeatAdvection
+		variable =column_temp
+	[../]
+	[./columnAdsHeat]
+		type = AdsorptionHeatAccumulation
+		variable = column_temp
+		solid_heats = 'N2_AdsorbedHeat O2_AdsorbedHeat H2O_AdsorbedHeat'
+	[../]
 
 
  [] #END Kernels
@@ -289,15 +284,15 @@
 		variable = H2O
 	[../]
 
-#	[./dg_disp_heat]
-#		type = DGColumnHeatDispersion
-#		variable = column_temp
-#	[../]
+	[./dg_disp_heat]
+		type = DGColumnHeatDispersion
+		variable = column_temp
+	[../]
 
-#	[./dg_adv_heat]
-#		type = DGColumnHeatAdvection
-#		variable = column_temp
-#	[../]
+	[./dg_adv_heat]
+		type = DGColumnHeatAdvection
+		variable = column_temp
+	[../]
 
  [] #END DGKernels
 
@@ -309,46 +304,39 @@
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
 	[../]
- 
- [./total_moles]
- type = TotalMoles
- variable = h2o_moles
- solid = H2O_Adsorbed
- gas = H2O
-	[../]
 
 	[./nitrogen_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = N2_Adsorbed
 		index = 0
 	[../]
 
 	[./oxygen_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = O2_Adsorbed
 		index = 1
 	[../]
 
 	[./water_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = H2O_Adsorbed
 		index = 2
 	[../]
 
 	[./nitrogen_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = N2_Perturb
 		index = 0
 	[../]
 
 	[./oxygen_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = O2_Perturb
 		index = 1
 	[../]
 
 	[./water_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = H2O_Perturb
 		index = 2
 	[../]
@@ -379,7 +367,7 @@
 [BCs]
 
  	[./N2_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = N2
  		boundary = 'top bottom'
  		input_temperature = 303.15
@@ -389,7 +377,7 @@
  	[../]
 
  	[./O2_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = O2
  		boundary = 'top bottom'
  		input_temperature = 303.15
@@ -399,7 +387,7 @@
  	[../]
 
  	[./H2O_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = H2O
  		boundary = 'top bottom'
  		input_temperature = 303.15
@@ -408,19 +396,19 @@
  		index = 2
  	[../]
 
-#	[./Heat_Gas_Flux]
-# 		type = DGHeatFluxLimitedBC
-# 		variable = column_temp
-# 		boundary = 'top bottom'
-# 		input_temperature = 303.15
-# 	[../]
+	[./Heat_Gas_Flux]
+ 		type = DGHeatFluxBC
+ 		variable = column_temp
+ 		boundary = 'top bottom'
+ 		input_temperature = 303.15
+ 	[../]
  
-#	[./Heat_Wall_Flux]
-#		type = DGColumnWallHeatFluxLimitedBC
-#		variable = column_temp
-#		boundary = 'right left'
-#		wall_temp = wall_temp
-#	[../]
+	[./Heat_Wall_Flux]
+		type = DGColumnWallHeatFluxBC
+		variable = column_temp
+		boundary = 'right left'
+		wall_temp = wall_temp
+	[../]
 
  [] #END BCs
 
@@ -431,7 +419,7 @@
 		block = 0
 		inner_diameter = 74.5
 		outer_diameter = 75.5
-		bulk_porosity = 0.62
+		bulk_porosity = 0.62 #0.62
 		axial_conductivity = 6.292E-05
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
@@ -482,7 +470,7 @@
 		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O'
 		number_sites = '0 0 4'
-		maximum_capacity = '0 0 11.67' #mol/kg
+		maximum_capacity = '0 0 11.67' #mol/kg 11.67
 		molar_volume = '0 0 13.91' #cm^3/mol
 		enthalpy_site_1 = '0 0 -46597.5'
 		enthalpy_site_2 = '0 0 -125024'
@@ -512,33 +500,25 @@
  [] #END Materials
 
 [Postprocessors]
-
-#[./N2_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = N2
-#		execute_on = 'initial timestep_end'
-#	[../]
  
-#	[./O2_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = O2
-#		execute_on = 'initial timestep_end'
-#	[../]
+ [./H2O_enter]
+ type = SideAverageValue
+ boundary = 'bottom'
+ variable = H2O
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+ [./H2O_avg_gas]
+ type = ElementAverageValue
+ variable = H2O
+ execute_on = 'initial timestep_end'
+	[../]
 
 	[./H2O_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = H2O
 		execute_on = 'initial timestep_end'
-	[../]
- 
- [./H2O_entrance]
- type = SideAverageValue
- boundary = 'bottom'
- variable = H2O
- execute_on = 'initial timestep_end'
 	[../]
 
 	[./temp_exit]
@@ -562,22 +542,10 @@
 		execute_on = 'initial timestep_end'
  	[../]
 
-	[./H2O_avg_solid]
+	[./H2O_solid]
 		type = ElementAverageValue
 		variable = H2O_Adsorbed
 		execute_on = 'initial timestep_end'
-	[../]
-
-	[./H2O_avg_gas]
- type = ElementAverageValue
- variable = H2O
- execute_on = 'initial timestep_end'
-	[../]
- 
- [./H2O_avg_total]
- type = ElementAverageValue
- variable = h2o_moles
- execute_on = 'initial timestep_end'
 	[../]
 
  [] #END Postprocessors
@@ -597,9 +565,9 @@
 	nl_max_its = 10
 
 	solve_type = newton
-    line_search = none    # Options: default shell none basic l2 bt cp
+    line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 1.0
+	end_time = 24.0
 	dtmin = 1e-8
 	dtmax = 0.118				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
@@ -608,7 +576,7 @@
 	[./TimeStepper]
 #type = ConstantDT
 type = SolutionTimeAdaptiveDT
-		dt = 0.0118
+		dt = 0.000118
 	[../]
 
  [] #END Executioner
