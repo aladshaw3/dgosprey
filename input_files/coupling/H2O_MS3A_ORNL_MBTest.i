@@ -15,8 +15,8 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 5
- 	ny = 10
+	nx = 10
+ 	ny = 40
  	xmin = 0.0
 	xmax = 37.25 #cm
  	ymin = 0.0
@@ -419,7 +419,7 @@
 		block = 0
 		inner_diameter = 74.5
 		outer_diameter = 75.5
-		bulk_porosity = 0.585 
+		bulk_porosity = 0.585
 		axial_conductivity = 6.292E-05
 		wall_density = 8.0
 		wall_heat_capacity = 0.5

@@ -204,7 +204,7 @@
 		type = AdsorptionMassTransfer
 		variable = H2O
 		solid_conc = H2O_Adsorbed
- #solid_pert = H2O_Perturb
+ solid_pert = H2O_Perturb
 	[../]
 
 	[./diffH2O]

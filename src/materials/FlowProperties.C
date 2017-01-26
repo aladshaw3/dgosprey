@@ -205,7 +205,7 @@ void FlowProperties::computeQpProperties()
 	  
 		_dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (1e-6*_column_length*_velocity[_qp]));
 	  
-		_retardation[_qp][i] = _porosity[_qp] + ((1-_porosity[_qp]) * _pellet_density[_qp] * fabs( ((*_solid_perturb[i])[_qp] - (*_solid_conc[i])[_qp]) / sqrt(DBL_EPSILON) ) );
+		_retardation[_qp][i] = _porosity[_qp] + ((1-_porosity[_qp]) * _pellet_density[_qp] * 1.0 * fabs( ((*_solid_perturb[i])[_qp] - (*_solid_conc[i])[_qp]) / sqrt(DBL_EPSILON) ) );
 		//_retardation[_qp][i] = _porosity[_qp];
 		
 		if (_yi != 0.0)
