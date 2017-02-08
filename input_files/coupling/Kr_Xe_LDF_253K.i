@@ -369,7 +369,7 @@
 [BCs]
 
  	[./Kr_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = Kr
  		boundary = 'top bottom'
  		input_temperature = 253.15
@@ -379,7 +379,7 @@
  	[../]
 
  	[./Xe_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = Xe
  		boundary = 'top bottom'
  		input_temperature = 253.15
@@ -389,7 +389,7 @@
  	[../]
 
  	[./He_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = He
  		boundary = 'top bottom'
  		input_temperature = 253.15
@@ -399,14 +399,14 @@
  	[../]
 
 	[./Heat_Gas_Flux]
- 		type = DGHeatFluxLimitedBC
+ 		type = DGHeatFluxBC
  		variable = column_temp
  		boundary = 'top bottom'
  		input_temperature = 253.15
  	[../]
  
 	[./Heat_Wall_Flux]
-		type = DGColumnWallHeatFluxLimitedBC
+		type = DGColumnWallHeatFluxBC
 		variable = column_temp
 		boundary = 'right left'
 		wall_temp = wall_temp
@@ -421,7 +421,7 @@
 		block = 0
 		length = 22.86
 		inner_diameter = 1.7272
-		outer_diameter = 1.905
+		outer_diameter = 1.9122
 		bulk_porosity = 0.798				#not known
 		axial_conductivity = 6.292E-05      #not known
 		wall_density = 7.7
@@ -440,7 +440,7 @@
 		comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 		comp_ref_temp = '273.15 273.15 273.15'
 		comp_Sutherland_const = '266.505 232.746 80.0'
-		flow_rate = 2994.06
+		flow_rate = 30
 		length = 22.86
 		temperature = column_temp
  		total_pressure = total_pressure
@@ -509,20 +509,6 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./He_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = He
-		execute_on = 'initial timestep_end'
-	[../]
-
-	[./temp_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = column_temp
-		execute_on = 'initial timestep_end'
-	[../]
-
 	[./press_exit]
 		type = SideAverageValue
 		boundary = 'top'
@@ -530,22 +516,10 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
- 	[./wall_temp]
- 		type = SideAverageValue
- 		boundary = 'right'
- 		variable = wall_temp
-		execute_on = 'initial timestep_end'
- 	[../]
 
 	[./Kr_solid]
 		type = ElementAverageValue
 		variable = Kr_Adsorbed
-		execute_on = 'initial timestep_end'
-	[../]
-
-	[./Kr_heat]
-		type = ElementAverageValue
-		variable = Kr_AdsorbedHeat
 		execute_on = 'initial timestep_end'
 	[../]
  
@@ -555,11 +529,19 @@
 		execute_on = 'initial timestep_end'
 	[../]
  
-	[./Xe_heat]
-		type = ElementAverageValue
-		variable = Xe_AdsorbedHeat
-		execute_on = 'initial timestep_end'
+ 
+	[./Kr_avg]
+ type = ElementAverageValue
+ variable = Kr
+ execute_on = 'initial timestep_end'
 	[../]
+ 
+	[./Xe_avg]
+ type = ElementAverageValue
+ variable = Xe
+ execute_on = 'initial timestep_end'
+	[../]
+ 
 
  [] #END Postprocessors
 
