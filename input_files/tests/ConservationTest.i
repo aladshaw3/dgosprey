@@ -1,17 +1,12 @@
 [GlobalParams]
 
-    vx = 0.0
     vy = 2.0
-    vz = 0.0
+
     Dxx = 1.0
     Dxy = 1.0
-    Dxz = 0
     Dyx = 1.0
-    Dyy = 2.0
-    Dyz = 0
-    Dzx = 0
-    Dzy = 0
-    Dzz = 0
+    Dyy = 1.0
+
     u_input = 1.0
 
 [] #END GlobalParams
@@ -29,9 +24,9 @@
     nx = 10
     ny = 40
     xmin = 0.0
-    xmax = 10
+    xmax = 1.0
     ymin = 0.0
-    ymax = 40
+    ymax = 1.0
 
 [] # END Mesh
 
@@ -67,6 +62,7 @@
     [./u_gadv]
         type = GAdvection
         variable = u
+
     [../]
 
     [./u_gdiff]
@@ -83,7 +79,7 @@
         variable = u
     [../]
 
-    [./u_dgadv]
+    [./u_dgdiff]
         type = DGAnisotropicDiffusion
         variable = u
     [../]
@@ -100,7 +96,7 @@
     [./u_Flux]
         type = DGFluxBC
         variable = u
-        boundary = 'top bottom'
+        boundary = 'top bottom left right'
 
     [../]
 
@@ -125,6 +121,7 @@
         type = SideAverageValue
         boundary = 'bottom'
         variable = u
+        execute_on = 'initial timestep_end'
     [../]
 
     [./u_avg]
@@ -142,7 +139,7 @@
 
     # NOTE: The default tolerances are far to strict and cause the program to crawl
     nl_rel_tol = 1e-6
-    nl_abs_tol = 1e-4
+    nl_abs_tol = 1e-6
     nl_rel_step_tol = 1e-10
     nl_abs_step_tol = 1e-10
     l_tol = 1e-6
@@ -152,7 +149,7 @@
     solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
     start_time = 0.0
-    end_time = 10.0
+    end_time = 1.0
     dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
@@ -161,7 +158,7 @@
         #Need to write a custom TimeStepper to enforce a maximum allowable dt
         type = ConstantDT
         #type = SolutionTimeAdaptiveDT
-        dt = 0.1
+        dt = 0.05
     [../]
 
 [] #END Executioner

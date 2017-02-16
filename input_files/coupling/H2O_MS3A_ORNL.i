@@ -567,7 +567,7 @@
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 24.0
+	end_time = 400.0
 	dtmin = 1e-8
 	dtmax = 0.118				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
