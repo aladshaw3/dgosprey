@@ -31,6 +31,7 @@
  */
 
 #include "yaml_wrapper.h"
+#include <cstring>
 
 #ifndef SimpleUI_h
 #define SimpleUI_h
