@@ -58,8 +58,6 @@ Real Scopsowl_Adsorption::computeValue()
 	int success = 0;
 	Real q = 0.0;
 	
-	double ymax = 0.00163;
-	
 	// Initial Conditions
 	if (_dt == 0.0)
 	{

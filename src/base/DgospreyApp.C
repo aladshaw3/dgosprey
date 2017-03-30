@@ -90,6 +90,8 @@
 #include "Scopsowl_Adsorption.h"
 #include "Scopsowl_Perturbation.h"
 
+#include "TotalMoles.h"
+
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -152,6 +154,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerAux(MAGPIE_MaterialLDF_Perturbation);
 	registerAux(Scopsowl_Adsorption);
 	registerAux(Scopsowl_Perturbation);
+	registerAux(TotalMoles);
 
 	registerInitialCondition(TotalPressureIC);
 	registerInitialCondition(ColumnTemperatureIC);

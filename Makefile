@@ -28,13 +28,12 @@ include $(MOOSE_DIR)/modules/modules.mk
 # dep apps
 APPLICATION_DIR    := $(CURDIR)
 APPLICATION_NAME   := dgosprey
-export EXTERNAL_FLAGS += -Wc++11-extensions -Wwrite-strings -Wconversion-null -std=c++11 -fpermissive
-export libmesh_CXXFLAGS+=-Wc++11-extensions -Wwrite-strings -Wconversion-null -std=c++11 -fpermissive
 BUILD_EXEC         := yes
 DEP_APPS           := $(shell $(FRAMEWORK_DIR)/scripts/find_dep_apps.py $(APPLICATION_NAME) )
 include            $(FRAMEWORK_DIR)/app.mk
 
 ###############################################################################
 # Additional special case targets should be added here
-
+#export EXTERNAL_FLAGS += -std=c++11 -fpermissive -Wunused-parameter -Wc++11-extensions -Wwrite-strings -Wconversion-null -Wunused-variable
+#export libmesh_CXXFLAGS+= -std=c++11 -fpermissive -Wunused-parameter -Wc++11-extensions -Wwrite-strings -Wconversion-null -Wunused-variable
 

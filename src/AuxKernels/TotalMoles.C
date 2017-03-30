@@ -1,8 +1,10 @@
 /*!
- *  \file AdsorptionMassTransfer.h
- *	\brief Standard kernel for the transfer of mass via adsorption
+ *  \file TotalMoles.h
+ *	\brief Aux Kernel to calculate total moles of a gas in the bed.
+ *	\details This file is responsible for calculating the total moles of a gas in the bed.
+ *
  *  \author Austin Ladshaw
- *	\date 01/29/2015
+ *	\date 01/24/2017
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -30,42 +32,37 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-
-#include "AdsorptionMassTransfer.h"
+#include "TotalMoles.h"
 
 template<>
-InputParameters validParams<AdsorptionMassTransfer>()
+InputParameters validParams<TotalMoles>()
 {
-	InputParameters params = validParams<Kernel>();
-	params.addCoupledVar("solid_conc","Coupled variables for the solid adsorption concentrations");
-	params.addCoupledVar("solid_pert","Coupled variables for the solid adsorption concentrations");
+	InputParameters params = validParams<AuxKernel>();
+	params.addCoupledVar("solid","Solid concentration variable being coupled");
+	params.addCoupledVar("gas", "Gas concentration variable being coupled");
 	return params;
 }
 
-AdsorptionMassTransfer::AdsorptionMassTransfer(const InputParameters & parameters) :
-Kernel(parameters),
+TotalMoles::TotalMoles(const InputParameters & parameters) :
+AuxKernel(parameters),
 _porosity(getMaterialProperty<Real>("porosity")),
 _pellet_density(getMaterialProperty<Real>("pellet_density")),
-_solid(coupledValue("solid_conc")),
-_solid_old(coupledValueOld("solid_conc"))
-//_solid_old(coupledValueOlder("solid_conc"))
-//_solid_old(coupledValue("solid_pert"))
+_bed_length(getMaterialProperty<Real>("bed_length")),
+_inner_dia(getMaterialProperty<Real>("inner_dia")),
+_solid(coupledValue("solid")),
+_gas(coupledValue("gas"))
 {
-
+	
 }
 
-Real AdsorptionMassTransfer::computeQpResidual()
+Real
+TotalMoles::computeValue()
 {
-	//std::cout << _u[_qp] << "\t" << _solid_old[_qp] << "\t" << _solid[_qp] << "\t" << _dt_old << std::endl;
-	//return 0.0;
-	//return -(1.0-_porosity[_qp])*_pellet_density[_qp]*(_solid[_qp]-_solid_old[_qp])*0.125*_dt_old*_test[_i][_qp];
-	return -(1.0-_porosity[_qp])*_pellet_density[_qp]*((_solid[_qp]-_solid_old[_qp])/(1.0*_dt_old))*_test[_i][_qp];
-	//return -(1.0-_porosity[_qp])*_pellet_density[_qp]*( (_solid_old[_qp] - _solid[_qp]) / sqrt(DBL_EPSILON) ) * _u_dot[_qp]*_test[_i][_qp];
+	Real moles = 0.0;
+	
+	//double volume = M_PI * _inner_dia[_qp] * _inner_dia[_qp] / 4.0 * _bed_length[_qp];
+	//moles = (volume/1000.0) * ((_porosity[_qp] * _gas[_qp]) + ((1.0-_porosity[_qp])*_pellet_density[_qp]*_solid[_qp]));
+	moles = ((_porosity[_qp] * _gas[_qp]) + ((1.0-_porosity[_qp])*_pellet_density[_qp]*_solid[_qp]));
+	
+	return moles;
 }
-
-Real AdsorptionMassTransfer::computeQpJacobian()
-{
-	return 0.0;
-	//return -(1.0-_porosity[_qp])*_pellet_density[_qp]*fabs( (_solid_old[_qp] - _solid[_qp]) / sqrt(DBL_EPSILON) ) * _test[_i][_qp]*_phi[_j][_qp]*_du_dot_du[_qp];
-}
-

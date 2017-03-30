@@ -62,6 +62,11 @@
 		family = MONOMIAL
 		initial_condition = 101.35
 	[../]
+ 
+ [./h2o_moles]
+ order = CONSTANT
+ family = MONOMIAL
+	[../]
 
  	[./ambient_temp]
  		order = CONSTANT
@@ -199,6 +204,7 @@
 		type = AdsorptionMassTransfer
 		variable = H2O
 		solid_conc = H2O_Adsorbed
+ solid_pert = H2O_Perturb
 	[../]
 
 	[./diffH2O]
@@ -212,7 +218,7 @@
 		variable = H2O
 	[../]
 
- 	[./wallAccum]
+	[./wallAccum]
  		type = WallHeatAccumulation
  		variable = wall_temp
  	[../]
@@ -302,6 +308,13 @@
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
+	[../]
+ 
+ [./total_moles]
+ type = TotalMoles
+ variable = h2o_moles
+ solid = H2O_Adsorbed
+ gas = H2O
 	[../]
 
 	[./nitrogen_adsorption]
@@ -418,7 +431,7 @@
 		block = 0
 		inner_diameter = 74.5
 		outer_diameter = 75.5
-		bulk_porosity = 0.62
+		bulk_porosity = 0.585
 		axial_conductivity = 6.292E-05
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
@@ -500,25 +513,32 @@
 
 [Postprocessors]
 
-	[./N2_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = N2
-		execute_on = 'initial timestep_end'
-	[../]
-
-	[./O2_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = O2
-		execute_on = 'initial timestep_end'
-	[../]
+#[./N2_exit]
+#		type = SideAverageValue
+#		boundary = 'top'
+#		variable = N2
+#		execute_on = 'initial timestep_end'
+#	[../]
+ 
+#	[./O2_exit]
+#		type = SideAverageValue
+#		boundary = 'top'
+#		variable = O2
+#		execute_on = 'initial timestep_end'
+#	[../]
 
 	[./H2O_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = H2O
 		execute_on = 'initial timestep_end'
+	[../]
+ 
+ [./H2O_entrance]
+ type = SideAverageValue
+ boundary = 'bottom'
+ variable = H2O
+ execute_on = 'initial timestep_end'
 	[../]
 
 	[./temp_exit]
@@ -542,16 +562,22 @@
 		execute_on = 'initial timestep_end'
  	[../]
 
-	[./H2O_solid]
+	[./H2O_avg_solid]
 		type = ElementAverageValue
 		variable = H2O_Adsorbed
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./H2O_heat]
-		type = ElementAverageValue
-		variable = H2O_AdsorbedHeat
-		execute_on = 'initial timestep_end'
+	[./H2O_avg_gas]
+ type = ElementAverageValue
+ variable = H2O
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+ [./H2O_avg_total]
+ type = ElementAverageValue
+ variable = h2o_moles
+ execute_on = 'initial timestep_end'
 	[../]
 
  [] #END Postprocessors
@@ -573,7 +599,7 @@
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 60.0
+	end_time = 24.0
 	dtmin = 1e-8
 	dtmax = 0.118				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
@@ -588,6 +614,7 @@ type = SolutionTimeAdaptiveDT
  [] #END Executioner
 
 [Preconditioning]
+ type = FDP
 
 [] #END Preconditioning
 

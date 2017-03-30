@@ -44,7 +44,7 @@
  	[./wall_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 523.15
+ 		initial_condition = 303.15
  	[../]
 
 	[./column_temp]
@@ -62,22 +62,17 @@
 		family = MONOMIAL
 		initial_condition = 101.35
 	[../]
- 
- [./h2o_moles]
- order = CONSTANT
- family = MONOMIAL
-	[../]
 
  	[./ambient_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 523.15
+ 		initial_condition = 303.15
  	[../]
 
 	[./H2O_Adsorbed]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 11.20131293
+		initial_condition = 0.0
 	[../]
 
 	[./N2_Adsorbed]
@@ -95,7 +90,7 @@
 	[./H2O_Perturb]
 		order = CONSTANT
 		family = MONOMIAL
-		initial_condition = 11.20131293
+		initial_condition = 0.0
 	[../]
 
 	[./N2_Perturb]
@@ -135,7 +130,7 @@
 	[./N2_IC]
 		type = ConcentrationIC
 		variable = N2
-		initial_mole_frac = 0.775
+		initial_mole_frac = 0.79
 		initial_press = 101.35
 		initial_temp = 303.15
 	[../]
@@ -151,7 +146,7 @@
 	[./H2O_IC]
 		type = ConcentrationIC
 		variable = H2O
-		initial_mole_frac = 0.015
+		initial_mole_frac = 0.0
  		initial_press = 101.35
  		initial_temp = 303.15
 	[../]
@@ -309,46 +304,39 @@
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
 	[../]
- 
- [./total_moles]
- type = TotalMoles
- variable = h2o_moles
- solid = H2O_Adsorbed
- gas = H2O
-	[../]
 
 	[./nitrogen_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = N2_Adsorbed
 		index = 0
 	[../]
 
 	[./oxygen_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = O2_Adsorbed
 		index = 1
 	[../]
 
 	[./water_adsorption]
-		type = MAGPIE_Adsorption
+		type = MAGPIE_MaterialLDF_Adsorption
 		variable = H2O_Adsorbed
 		index = 2
 	[../]
 
 	[./nitrogen_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = N2_Perturb
 		index = 0
 	[../]
 
 	[./oxygen_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = O2_Perturb
 		index = 1
 	[../]
 
 	[./water_perturbation]
-		type = MAGPIE_Perturbation
+		type = MAGPIE_MaterialLDF_Perturbation
 		variable = H2O_Perturb
 		index = 2
 	[../]
@@ -379,44 +367,44 @@
 [BCs]
 
  	[./N2_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = N2
  		boundary = 'top bottom'
- 		input_temperature = 523.15
+ 		input_temperature = 303.15
  		input_pressure = 101.35
- 		input_molefraction = 0.79
+ 		input_molefraction = 0.775
  		index = 0
  	[../]
 
  	[./O2_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = O2
  		boundary = 'top bottom'
- 		input_temperature = 523.15
+ 		input_temperature = 303.15
  		input_pressure = 101.35
  		input_molefraction = 0.21
  		index = 1
  	[../]
 
  	[./H2O_Flux]
-		type = DGMassFluxLimitedBC
+		type = DGMassFluxBC
  		variable = H2O
  		boundary = 'top bottom'
- 		input_temperature = 523.15
+ 		input_temperature = 303.15
  		input_pressure = 101.35
- 		input_molefraction = 0.0
+ 		input_molefraction = 0.015
  		index = 2
  	[../]
 
 	[./Heat_Gas_Flux]
- 		type = DGHeatFluxLimitedBC
+ 		type = DGHeatFluxBC
  		variable = column_temp
  		boundary = 'top bottom'
- 		input_temperature = 523.15
+ 		input_temperature = 303.15
  	[../]
  
 	[./Heat_Wall_Flux]
-		type = DGColumnWallHeatFluxLimitedBC
+		type = DGColumnWallHeatFluxBC
 		variable = column_temp
 		boundary = 'right left'
 		wall_temp = wall_temp
@@ -449,7 +437,7 @@
 		comp_ref_viscosity = '0.0001781 0.0002018 0.0001043'
 		comp_ref_temp = '300.55 292.25 298.16'
 		comp_Sutherland_const = '111 127 784.72'
-		flow_rate = 1.31e8
+		flow_rate = 2.62e8
 		temperature = column_temp
  		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O'
@@ -482,7 +470,7 @@
 		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O'
 		number_sites = '0 0 4'
-		maximum_capacity = '0 0 11.67' #mol/kg
+		maximum_capacity = '0 0 11.67' #mol/kg 11.67
 		molar_volume = '0 0 13.91' #cm^3/mol
 		enthalpy_site_1 = '0 0 -46597.5'
 		enthalpy_site_2 = '0 0 -125024'
@@ -512,20 +500,19 @@
  [] #END Materials
 
 [Postprocessors]
-
-#[./N2_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = N2
-#		execute_on = 'initial timestep_end'
-#	[../]
-
-#	[./O2_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = O2
-#		execute_on = 'initial timestep_end'
-#	[../]
+ 
+ [./H2O_enter]
+ type = SideAverageValue
+ boundary = 'bottom'
+ variable = H2O
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+ [./H2O_avg_gas]
+ type = ElementAverageValue
+ variable = H2O
+ execute_on = 'initial timestep_end'
+	[../]
 
 	[./H2O_exit]
 		type = SideAverageValue
@@ -561,18 +548,6 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./H2O_avg]
-		type = ElementAverageValue
-		variable = H2O
-		execute_on = 'initial timestep_end'
-	[../]
- 
- [./H2O_total_moles]
- type = ElementAverageValue
- variable = h2o_moles
- execute_on = 'initial timestep_end'
-	[../]
-
  [] #END Postprocessors
 
 [Executioner]
@@ -583,16 +558,16 @@
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
  	nl_rel_tol = 1e-6
  	nl_abs_tol = 1e-6
- 	nl_rel_step_tol = 1e-50
- 	nl_abs_step_tol = 1e-50
+ 	nl_rel_step_tol = 1e-10
+ 	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
- 	l_max_its = 100
-	nl_max_its = 10
+ 	l_max_its = 1000
+	nl_max_its = 100
 
 	solve_type = newton
-    line_search = bt    # Options: default shell none basic l2 bt cp
+    line_search = none    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 1.0
+	end_time = 24.0
 	dtmin = 1e-8
 	dtmax = 0.118				# Need to set a maximum for better accuracy
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
@@ -607,6 +582,7 @@ type = SolutionTimeAdaptiveDT
  [] #END Executioner
 
 [Preconditioning]
+ type = FDP
 
 [] #END Preconditioning
 
