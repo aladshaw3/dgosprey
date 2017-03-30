@@ -1,8 +1,14 @@
 /*!
- *  \file LinearDrivingForce.h
- *	\brief Standard kernel for a generic linear driving force mechanism
+ *  \file CoupledLinearLDF.h
+ *	\brief Standard kernel for a coupled linear driving force mechanism
+ *	\details This file creates a standard MOOSE kernel for a coupled linear driving force mechanism that
+ *			can be added to the non-linear residuals. It contains all the same parameters as the more
+ *			generic base class, but couples with another non-linear variable via a linear relationship.
+ *			The linear coefficient for that relationship is added as an additional parameter to be
+ *			set by the user.
+ *
  *  \author Austin Ladshaw
- *	\date 11/20/2015
+ *	\date 03/30/2017
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -30,36 +36,33 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "LinearDrivingForce.h"
+#include "CoupledLinearLDF.h"
 
 template<>
-InputParameters validParams<LinearDrivingForce>()
+InputParameters validParams<CoupledLinearLDF>()
 {
-	InputParameters params = validParams<Kernel>();
-	params.addParam<bool>("gaining",true,"True if driving force is a gaining term and false if driving force is a loss term");
-	params.addParam<Real>("ldf_coef",1.0,"Coefficient multiplied by driving force");
-	params.addParam<Real>("driving_value",1.0,"Value of driving force for the conserved quantity");
-  return params;
+	InputParameters params = validParams<LinearDrivingForce>();
+	params.addParam<Real>("linear_coef",1.0,"Coefficient multiplied by the coupled variable");
+	params.addRequiredCoupledVar("coupled","Name of the variable being coupled");
+	return params;
 }
 
 
-LinearDrivingForce::LinearDrivingForce(const InputParameters & parameters)
-  :Kernel(parameters),
-   _gaining(getParam<bool>("gaining")),
-   _coef(getParam<Real>("ldf_coef")),
-   _driving_value(getParam<Real>("driving_value"))
+CoupledLinearLDF::CoupledLinearLDF(const InputParameters & parameters)
+:LinearDrivingForce(parameters),
+_coupled_coef(getParam<Real>("linear_coef")),
+_coupled_u(coupledValue("coupled"))
 {
-	if (_gaining == true)
-		_coef = -_coef;
 }
 
-Real LinearDrivingForce::computeQpResidual()
+Real CoupledLinearLDF::computeQpResidual()
 {
-	return _test[_i][_qp] * _coef * (_driving_value - _u[_qp]);
+	_driving_value = _coupled_coef*_coupled_u[_qp];
+	return LinearDrivingForce::computeQpResidual();
 }
 
-Real LinearDrivingForce::computeQpJacobian()
+Real CoupledLinearLDF::computeQpJacobian()
 {
-  return -_phi[_j][_qp]*_test[_i][_qp]*_coef;
+	return LinearDrivingForce::computeQpJacobian();
 }
 

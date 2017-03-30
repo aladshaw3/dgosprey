@@ -93,7 +93,7 @@
 #include "TotalMoles.h"
 #include "CoupledCoeffTimeDerivative.h"
 #include "CoupledLinearForcingFunction.h"
-
+#include "CoupledLinearLDF.h"
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -146,6 +146,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(AdsorptionMassTransfer);
 	registerKernel(CoupledCoeffTimeDerivative);
 	registerKernel(CoupledLinearForcingFunction);
+	registerKernel(CoupledLinearLDF);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(MAGPIE_Adsorption);
