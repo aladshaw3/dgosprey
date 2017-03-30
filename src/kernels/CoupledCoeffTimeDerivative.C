@@ -1,13 +1,17 @@
 /*!
- *  \file LinearDrivingForce.h
- *	\brief Standard kernel for a generic coupled linear driving force mechanism
+ *  \file CoupledCoeffTimeDerivative.h
+ *	\brief Standard kernel for coupling time derivatives
+ *	\details This file creates a standard MOOSE kernel for the coupling of time derivative
+ *			functions between different non-linear variables. It will serve as the basis
+ *			for creating future heat and mass transfer kernels.
+ *
  *  \author Austin Ladshaw
- *	\date 11/20/2015
+ *	\date 03/30/2017
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Austin Ladshaw for PhD research in the area
  *             of adsorption and surface science and was developed for use
  *			   by Idaho National Laboratory and Oak Ridge National Laboratory
- *			   engineers and scientists. Portions Copyright (c) 2015, all
+ *			   engineers and scientists. Portions Copyright (c) 2017, all
  *             rights reserved.
  *
  *			   Austin Ladshaw does not claim any ownership or copyright to the
@@ -30,37 +34,46 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "LinearDrivingForce.h"
-#include "Material.h"
+#include "CoupledCoeffTimeDerivative.h"
 
 template<>
-InputParameters validParams<LinearDrivingForce>()
+InputParameters validParams<CoupledCoeffTimeDerivative>()
 {
 	InputParameters params = validParams<Kernel>();
-	params.addParam<bool>("gaining",true,"True if driving force is a gaining term and false if driving force is a loss term");
-	params.addParam<Real>("ldf_coef",1.0,"Coefficient multiplied by driving force");
-	params.addParam<Real>("driving_value",1.0,"Value of driving force for the conserved quantity");
-  return params;
+	params.addParam<bool>("gaining",false,"If coupled time derivative is a sink term, then gaining = false");
+	params.addParam<Real>("time_coeff",1.0,"Coefficient for the time derivative kernel");
+	params.addRequiredCoupledVar("coupled","Name of the variable being coupled");
+	return params;
 }
 
-
-LinearDrivingForce::LinearDrivingForce(const InputParameters & parameters)
-  :Kernel(parameters),
-   _gaining(getParam<bool>("gaining")),
-   _coef(getParam<Real>("ldf_coef")),
-   _driving_value(getParam<Real>("driving_value"))
+CoupledCoeffTimeDerivative::CoupledCoeffTimeDerivative(const InputParameters & parameters)
+: Kernel(parameters),
+	_gaining(getParam<bool>("gaining")),
+	_time_coef(getParam<Real>("time_coeff")),
+	_coupled_dot(coupledDot("coupled")),
+	_coupled_ddot(coupledDotDu("coupled")),
+	_coupled_var(coupled("coupled"))
 {
 	if (_gaining == true)
-		_coef = -_coef;
+		_time_coef = -_time_coef;
 }
 
-Real LinearDrivingForce::computeQpResidual()
+Real CoupledCoeffTimeDerivative::computeQpResidual()
 {
-	return _test[_i][_qp] * _coef * (_driving_value - _u[_qp]);
+	return _time_coef*_coupled_dot[_qp]*_test[_i][_qp];
 }
 
-Real LinearDrivingForce::computeQpJacobian()
+Real CoupledCoeffTimeDerivative::computeQpJacobian()
 {
-  return -_phi[_j][_qp]*_test[_i][_qp]*_coef;
+	return 0.0;
 }
+
+Real CoupledCoeffTimeDerivative::computeQpOffDiagJacobian(unsigned int jvar)
+{
+	if (jvar == _coupled_var)
+		return _time_coef*_test[_i][_qp] * _phi[_j][_qp] * _coupled_ddot[_qp];
+	
+	return 0.0;
+}
+
 

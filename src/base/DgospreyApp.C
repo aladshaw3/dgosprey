@@ -91,6 +91,8 @@
 #include "Scopsowl_Perturbation.h"
 
 #include "TotalMoles.h"
+#include "CoupledCoeffTimeDerivative.h"
+#include "CoupledLinearForcingFunction.h"
 
 
 template<>
@@ -142,7 +144,9 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(WallHeatAccumulation);
 	registerKernel(BedHeatAccumulation);
 	registerKernel(AdsorptionMassTransfer);
-
+	registerKernel(CoupledCoeffTimeDerivative);
+	registerKernel(CoupledLinearForcingFunction);
+	
 	registerAux(TotalColumnPressure);
 	registerAux(MAGPIE_Adsorption);
 	registerAux(MAGPIE_Perturbation);
