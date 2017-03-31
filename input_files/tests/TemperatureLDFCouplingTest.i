@@ -1,14 +1,10 @@
 [GlobalParams]
-
-    vy = 2.0
-
-    Dxx = 1.0
-    Dxy = 1.0
-    Dyx = 1.0
-    Dyy = 1.0
-
-    u_input = 1.0
-
+ vx = 0.0
+ vy = 2.0
+ 
+ Dxx = 0.02
+ Dyy = 0.2
+ 
 [] #END GlobalParams
 
 [Problem]
@@ -24,7 +20,7 @@
     nx = 10
     ny = 40
     xmin = 0.0
-    xmax = 1.0
+    xmax = 0.5
     ymin = 0.0
     ymax = 1.0
 
@@ -33,13 +29,13 @@
 [Variables]
 
     [./u]
-        order = FIRST
+        order = SECOND
         family = MONOMIAL
         intital_condition = 0
     [../]
  
 	[./v]
-		order = FIRST
+		order = SECOND
 		family = MONOMIAL
 		intital_condition = 0
 	[../]
@@ -65,7 +61,7 @@
         Coefficient = 1.0
     [../]
 
-    [./u_gadv]
+	[./u_gadv]
         type = GAdvection
         variable = u
 
@@ -89,10 +85,11 @@
 	[../]
  
 	[./v_ldf]
-		type = LinearDrivingForce
+		type = CoupledLinearLDF
 		variable = v
-		ldf_coef = 1.0
-		driving_value = 1.0
+		coupled = u
+		ldf_coef = 10.0
+		linear_coef = 1.0
 	[../]
 
 [] #END Kernels
@@ -118,12 +115,21 @@
 
 [BCs]
 
-    [./u_Flux]
+    [./u_FlowFlux]
         type = DGFluxBC
         variable = u
-        boundary = 'top bottom left right'
+		u_input = 1.0
+        boundary = 'top bottom'
 
     [../]
+ 
+	[./u_WallFlux]
+		type = DGFluxLimitedBC
+		variable = u
+		u_input = 1.0
+		boundary = 'left right'
+ 
+	[../]
 
 
 [] #END BCs
@@ -148,6 +154,13 @@
         variable = u
         execute_on = 'initial timestep_end'
     [../]
+ 
+	[./u_wall]
+		type = SideAverageValue
+		boundary = 'right'
+		variable = u
+		execute_on = 'initial timestep_end'
+	[../]
 
     [./u_avg]
         type = ElementAverageValue
@@ -166,7 +179,7 @@
 [Executioner]
 
     type = Transient
-    scheme = implicit-euler
+    scheme = bdf2
 
     # NOTE: The default tolerances are far to strict and cause the program to crawl
     nl_rel_tol = 1e-6
@@ -174,10 +187,10 @@
     nl_rel_step_tol = 1e-10
     nl_abs_step_tol = 1e-10
     l_tol = 1e-6
-    l_max_its = 1000
+    l_max_its = 100
     nl_max_its = 100
 
-    solve_type = pjfnk
+    solve_type = newton
     line_search = bt    # Options: default shell none basic l2 bt cp
     start_time = 0.0
     end_time = 2.0
@@ -186,11 +199,17 @@
     petsc_options_value = 'hypre boomeramg 100'
 
     [./TimeStepper]
-        #Need to write a custom TimeStepper to enforce a maximum allowable dt
-        type = ConstantDT
-        #type = SolutionTimeAdaptiveDT
+		type = ConstantDT
+#        type = SolutionTimeAdaptiveDT
         dt = 0.05
     [../]
+ 
+#[./Adaptivity]
+#steps = 2
+#refine_fraction = 1.0
+#coarsen_fraction = 0
+#max_h_level = 8
+#[../]
 
 [] #END Executioner
 
@@ -202,6 +221,6 @@
 
     exodus = true
     csv = true
-    print_linear_residuals = true
+    print_linear_residuals = false
 
 [] #END Outputs

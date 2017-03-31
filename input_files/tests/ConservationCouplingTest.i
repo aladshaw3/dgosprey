@@ -33,13 +33,13 @@
 [Variables]
 
     [./u]
-        order = CONSTANT
+        order = FIRST
         family = MONOMIAL
         intital_condition = 0
     [../]
  
 	[./v]
-		order = CONSTANT
+		order = FIRST
 		family = MONOMIAL
 		intital_condition = 0
 	[../]
