@@ -51,9 +51,7 @@ _input_temperature(getParam<Real>("input_temperature")),
 _input_pressure(getParam<Real>("input_pressure")),
 _input_molefraction(getParam<Real>("input_molefraction")),
 _vel(getMaterialProperty<Real>("velocity")),
-_index(getParam<unsigned int>("index")),
-_dispersion(getMaterialProperty<std::vector<Real> >("dispersion")),
-_molecular_diffusion(getMaterialProperty<std::vector<Real> >("molecular_diffusion"))
+_index(getParam<unsigned int>("index"))
 {
 
 }
@@ -64,18 +62,6 @@ DGMassFluxBC::computeQpResidual()
 	_velocity(0)=0.0;
 	_velocity(1)=_vel[_qp];
 	_velocity(2)=0.0;
-	
-	_Diffusion(0,0) =  _molecular_diffusion[_qp][_index];
-	_Diffusion(0,1) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
-	_Diffusion(0,2) = 0.0;
-	
-	_Diffusion(1,0) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
-	_Diffusion(1,1) = _dispersion[_qp][_index];
-	_Diffusion(1,2) = 0.0;
-	
-	_Diffusion(2,0) = 0.0;
-	_Diffusion(2,1) = 0.0;
-	_Diffusion(2,2) = 0.0;
 	
 	_u_input = (_input_pressure * _input_molefraction) / (8.3144621 * _input_temperature);
 		
@@ -88,18 +74,6 @@ DGMassFluxBC::computeQpJacobian()
 	_velocity(0)=0.0;
 	_velocity(1)=_vel[_qp];
 	_velocity(2)=0.0;
-	
-	_Diffusion(0,0) =  _molecular_diffusion[_qp][_index];
-	_Diffusion(0,1) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
-	_Diffusion(0,2) = 0.0;
-	
-	_Diffusion(1,0) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
-	_Diffusion(1,1) = _dispersion[_qp][_index];
-	_Diffusion(1,2) = 0.0;
-	
-	_Diffusion(2,0) = 0.0;
-	_Diffusion(2,1) = 0.0;
-	_Diffusion(2,2) = 0.0;
 	
 	_u_input = (_input_pressure * _input_molefraction) / (8.3144621 * _input_temperature);
 	

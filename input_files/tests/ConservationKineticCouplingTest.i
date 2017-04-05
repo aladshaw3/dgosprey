@@ -35,13 +35,13 @@
     [./u]
         order = FIRST
         family = MONOMIAL
-        intital_condition = 0
+        initial_condition = 0
     [../]
  
 	[./v]
 		order = FIRST
 		family = MONOMIAL
-		intital_condition = 0
+		initial_condition = 0
 	[../]
 
 

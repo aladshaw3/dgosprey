@@ -82,7 +82,6 @@ private:
 	const MaterialProperty<Real> & _vel;				///< Reference to the velocity material property
 	const MaterialProperty<Real> & _gas_density;		///< Reference to the gas density material property
 	const MaterialProperty<Real> & _gas_heat_capacity;	///< Reference to the gas heat capacity material property
-	const MaterialProperty<Real> & _conductivity;		///< Reference to the thermal conductivity material property
 	
 };
 

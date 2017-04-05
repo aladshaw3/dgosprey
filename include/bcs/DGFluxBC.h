@@ -79,16 +79,9 @@ protected:
 	/// Velocity vector in the system or at the boundary
 	RealVectorValue _velocity;
 	
-	/// Diffusivity tensory in the system or at the boundary
-	RealTensorValue _Diffusion;
-	
 	Real _vx;
 	Real _vy;
 	Real _vz;
-	
-	Real _Dxx, _Dxy, _Dxz;
-	Real _Dyx, _Dyy, _Dyz;
-	Real _Dzx, _Dzy, _Dzz;
 	
 	/// Value of the non-linear variable at the input of the boundary
 	Real _u_input;

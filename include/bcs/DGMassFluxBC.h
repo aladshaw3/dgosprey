@@ -85,8 +85,6 @@ private:
 	
 	const MaterialProperty<Real> & _vel;								///< Reference to the velocity material property
 	unsigned int _index;												///< Index of the species of interest at the boundary
-	const MaterialProperty<std::vector<Real> > & _dispersion;			///< Reference to the dispersion coefficient material property
-	const MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< Reference to the molecular diffusion material property
 	
 };
 

@@ -31,13 +31,13 @@
     [./u]
         order = SECOND
         family = MONOMIAL
-        intital_condition = 0
+        initial_condition = 298.0
     [../]
  
 	[./v]
 		order = SECOND
 		family = MONOMIAL
-		intital_condition = 0
+		initial_condition = 298.0
 	[../]
 
 
@@ -89,7 +89,7 @@
 		variable = v
 		coupled = u
 		ldf_coef = 10.0
-		linear_coef = 1.0
+		linear_coef = 2.0
 	[../]
 
 [] #END Kernels
@@ -118,7 +118,7 @@
     [./u_FlowFlux]
         type = DGFluxBC
         variable = u
-		u_input = 1.0
+		u_input = 298.0
         boundary = 'top bottom'
 
     [../]
@@ -126,7 +126,7 @@
 	[./u_WallFlux]
 		type = DGFluxLimitedBC
 		variable = u
-		u_input = 1.0
+		u_input = 298.0
 		boundary = 'left right'
  
 	[../]

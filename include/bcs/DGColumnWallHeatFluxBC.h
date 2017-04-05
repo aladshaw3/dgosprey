@@ -78,9 +78,7 @@ protected:
 private:
 	
   	const VariableValue & _wall_temp;									///< Reference to the coupled variable for wall temperature of the column
-	const MaterialProperty<Real> & _bed_wall_transfer_coeff;	///< Reference to the bed-wall transfer coefficient material property
-	const MaterialProperty<Real> & _conductivity;				///< Reference to the thermal conductivity material property
-	
+	const MaterialProperty<Real> & _bed_wall_transfer_coeff;	///< Reference to the bed-wall transfer coefficient material property	
 };
 
 #endif //DGCOLUMNWALLHEATFLUXBC_H
