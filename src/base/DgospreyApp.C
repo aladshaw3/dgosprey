@@ -37,7 +37,6 @@
 #include "ModulesApp.h"
 
 #include "LinearDrivingForce.h"
-#include "CoupledLDF.h"
 #include "BedProperties.h"
 #include "AdsorbentProperties.h"
 #include "FlowProperties.h"
@@ -131,7 +130,6 @@ void
 DgospreyApp::registerObjects(Factory & factory)
 {
 	registerKernel(LinearDrivingForce);
-	registerKernel(CoupledLDF);
 	registerMaterial(BedProperties);
 	registerMaterial(AdsorbentProperties);
 	registerMaterial(FlowProperties);

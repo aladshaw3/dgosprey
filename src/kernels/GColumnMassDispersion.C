@@ -53,10 +53,10 @@ Real
 GColumnMassDispersion::computeQpResidual()
 {
 	_Diffusion(0,0) =  _molecular_diffusion[_qp][_index];
-	_Diffusion(0,1) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
+	_Diffusion(0,1) = 0.0;
 	_Diffusion(0,2) = 0.0;
 	
-	_Diffusion(1,0) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
+	_Diffusion(1,0) = 0.0;
 	_Diffusion(1,1) = _dispersion[_qp][_index];
 	_Diffusion(1,2) = 0.0;
 	
@@ -71,10 +71,10 @@ Real
 GColumnMassDispersion::computeQpJacobian()
 {
 	_Diffusion(0,0) =  _molecular_diffusion[_qp][_index];
-	_Diffusion(0,1) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
+	_Diffusion(0,1) = 0.0;
 	_Diffusion(0,2) = 0.0;
 	
-	_Diffusion(1,0) = std::pow(std::pow(_molecular_diffusion[_qp][_index],2.0) + std::pow(_dispersion[_qp][_index],2.0),0.5);
+	_Diffusion(1,0) = 0.0;
 	_Diffusion(1,1) = _dispersion[_qp][_index];
 	_Diffusion(1,2) = 0.0;
 	
