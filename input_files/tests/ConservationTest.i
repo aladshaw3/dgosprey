@@ -2,10 +2,8 @@
 
     vy = 2.0
 
-    Dxx = 1.0
-    Dxy = 1.0
-    Dyx = 1.0
-    Dyy = 1.0
+    Dxx = 0.01
+    Dyy = 0.01
 
     u_input = 1.0
 
@@ -24,7 +22,7 @@
     nx = 10
     ny = 40
     xmin = 0.0
-    xmax = 1.0
+    xmax = 0.5
     ymin = 0.0
     ymax = 1.0
 
@@ -33,7 +31,7 @@
 [Variables]
 
     [./u]
-        order = FIRST
+        order = SECOND
         family = MONOMIAL
         initial_condition = 0
     [../]
@@ -135,7 +133,7 @@
 [Executioner]
 
     type = Transient
-    scheme = implicit-euler
+	scheme = implicit-euler
 
     # NOTE: The default tolerances are far to strict and cause the program to crawl
     nl_rel_tol = 1e-6
@@ -147,7 +145,7 @@
     nl_max_its = 10
 
     solve_type = newton
-    line_search = none    # Options: default shell none basic l2 bt cp
+    line_search = bt    # Options: default shell none basic l2 bt cp
     start_time = 0.0
     end_time = 1.0
     dtmax = 0.1
@@ -155,10 +153,9 @@
     petsc_options_value = 'hypre boomeramg 100'
 
     [./TimeStepper]
-        #Need to write a custom TimeStepper to enforce a maximum allowable dt
-        type = ConstantDT
-        #type = SolutionTimeAdaptiveDT
-        dt = 0.05
+		type = ConstantDT
+		#type = SolutionTimeAdaptiveDT
+        dt = 0.01
     [../]
 
 [] #END Executioner
@@ -171,6 +168,6 @@
 
     exodus = true
     csv = true
-    print_linear_residuals = true
+    print_linear_residuals = false
 
 [] #END Outputs

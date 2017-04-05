@@ -1,10 +1,12 @@
 [GlobalParams]
- vx = 0.0
- vy = 2.0
- 
- Dxx = 0.02
- Dyy = 0.2
- 
+
+    vy = 2.0
+
+    Dxx = 0.01
+    Dyy = 0.01
+
+    u_input = 1.0
+
 [] #END GlobalParams
 
 [Problem]
@@ -17,8 +19,8 @@
 
     type = GeneratedMesh
     dim = 2
-    nx = 10
-    ny = 40
+    nx = 3
+    ny = 10
     xmin = 0.0
     xmax = 0.5
     ymin = 0.0
@@ -31,14 +33,8 @@
     [./u]
         order = SECOND
         family = MONOMIAL
-        initial_condition = 298.0
+        initial_condition = 0
     [../]
- 
-	[./v]
-		order = SECOND
-		family = MONOMIAL
-		initial_condition = 298.0
-	[../]
 
 
 [] #END Variables
@@ -61,7 +57,7 @@
         Coefficient = 1.0
     [../]
 
-	[./u_gadv]
+    [./u_gadv]
         type = GAdvection
         variable = u
 
@@ -71,26 +67,6 @@
         type = GAnisotropicDiffusion
         variable = u
     [../]
- 
-	[./coupled_time]
-		type = CoupledCoeffTimeDerivative
-		variable = u
-		coupled = v
-	[../]
- 
-	[./v_dot]
-		type = CoefTimeDerivative
-		variable = v
-		Coefficient = 1.0
-	[../]
- 
-	[./v_ldf]
-		type = CoupledLinearLDF
-		variable = v
-		coupled = u
-		ldf_coef = 1.0
-		linear_coef = 1.5
-	[../]
 
 [] #END Kernels
 
@@ -115,21 +91,12 @@
 
 [BCs]
 
-    [./u_FlowFlux]
+    [./u_Flux]
         type = DGFluxBC
         variable = u
-		u_input = 298.0
-        boundary = 'top bottom'
+        boundary = 'top bottom left right'
 
     [../]
- 
-	[./u_WallFlux]
-		type = DGFluxLimitedBC
-		variable = u
-		u_input = 298.0
-		boundary = 'left right'
- 
-	[../]
 
 
 [] #END BCs
@@ -154,32 +121,19 @@
         variable = u
         execute_on = 'initial timestep_end'
     [../]
- 
-	[./u_wall]
-		type = SideAverageValue
-		boundary = 'right'
-		variable = u
-		execute_on = 'initial timestep_end'
-	[../]
 
     [./u_avg]
         type = ElementAverageValue
         variable = u
         execute_on = 'initial timestep_end'
     [../]
- 
-	[./v_avg]
-		type = ElementAverageValue
-		variable = v
-		execute_on = 'initial timestep_end'
-	[../]
 
 [] #END Postprocessors
 
 [Executioner]
 
     type = Transient
-    scheme = implicit-euler
+	scheme = implicit-euler
 
     # NOTE: The default tolerances are far to strict and cause the program to crawl
     nl_rel_tol = 1e-6
@@ -188,19 +142,18 @@
     nl_abs_step_tol = 1e-10
     l_tol = 1e-6
     l_max_its = 100
-    nl_max_its = 100
+    nl_max_its = 10
 
     solve_type = newton
     line_search = bt    # Options: default shell none basic l2 bt cp
     start_time = 0.0
-    end_time = 3.0
+    end_time = 1.0
     dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
 
     [./TimeStepper]
 		type = ConstantDT
-#        type = SolutionTimeAdaptiveDT
         dt = 0.05
     [../]
 

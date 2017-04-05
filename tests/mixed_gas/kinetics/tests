@@ -1,7 +1,0 @@
-[Tests]
-  [./multispecies_kinetics]
-    type = CSVDiff
-    input = Kr_Xe_253K_OWL.i
-    csvdiff = Kr_Xe_253K_OWL_out.csv
-  [../]
-[]

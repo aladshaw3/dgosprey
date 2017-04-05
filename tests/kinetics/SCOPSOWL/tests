@@ -1,7 +1,0 @@
-[Tests]
-  [./water_kinetics]
-    type = CSVDiff
-    input = H2O_SCOPSOWL_DES.i
-    csvdiff = H2O_SCOPSOWL_DES_out.csv
-  [../]
-[]

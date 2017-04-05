@@ -1,7 +1,0 @@
-[Tests]
-  [./multispecies_equilibria]
-    type = CSVDiff
-    input = Kr_Xe_INL_02.i
-    csvdiff = Kr_Xe_INL_02_out.csv
-  [../]
-[]

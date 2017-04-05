@@ -2,10 +2,8 @@
 
     vy = 2.0
 
-    Dxx = 1.0
-    Dxy = 1.0
-    Dyx = 1.0
-    Dyy = 1.0
+    Dxx = 0.01
+    Dyy = 0.01
 
     u_input = 1.0
 
@@ -24,7 +22,7 @@
     nx = 10
     ny = 40
     xmin = 0.0
-    xmax = 1.0
+    xmax = 0.5
     ymin = 0.0
     ymax = 1.0
 
@@ -33,13 +31,13 @@
 [Variables]
 
     [./u]
-        order = FIRST
+        order = SECOND
         family = MONOMIAL
         initial_condition = 0
     [../]
  
 	[./v]
-		order = FIRST
+		order = SECOND
 		family = MONOMIAL
 		initial_condition = 0
 	[../]
@@ -62,7 +60,7 @@
     [./u_dot]
         type = CoefTimeDerivative
         variable = u
-        Coefficient = 1.0
+        Coefficient = 0.5
     [../]
 
     [./u_gadv]
@@ -80,6 +78,7 @@
 		type = CoupledCoeffTimeDerivative
 		variable = u
 		coupled = v
+		time_coeff = 0.5
 	[../]
  
 	[./v_dot]
@@ -92,7 +91,7 @@
 		type = CoupledLinearLDF
 		variable = v
 		coupled = u
-		ldf_coef = 0.01
+		ldf_coef = 1.0
 		linear_coef = 1.0
 	[../]
 
@@ -175,13 +174,13 @@
     nl_rel_step_tol = 1e-10
     nl_abs_step_tol = 1e-10
     l_tol = 1e-6
-    l_max_its = 1000
+    l_max_its = 100
     nl_max_its = 100
 
-    solve_type = pjfnk
+    solve_type = newton
     line_search = bt    # Options: default shell none basic l2 bt cp
     start_time = 0.0
-    end_time = 2.0
+    end_time = 1.0
     dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
@@ -203,6 +202,6 @@
 
     exodus = true
     csv = true
-    print_linear_residuals = true
+    print_linear_residuals = false
 
 [] #END Outputs

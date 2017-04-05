@@ -1,7 +1,0 @@
-[Tests]
-  [./coupled_mass_energy_test]
-    type = Exodiff
-    input = coupled_mass_energy_test.i
-    exodiff = coupled_mass_energy_test_out.e
-  [../]
-[]

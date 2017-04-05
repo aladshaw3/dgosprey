@@ -1,7 +1,0 @@
-[Tests]
-  [./mixed_ldf_kinetics]
-    type = CSVDiff
-    input = Kr_Xe_LDF_295K.i
-    csvdiff = Kr_Xe_LDF_295K_out.csv
-  [../]
-[]

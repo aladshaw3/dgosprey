@@ -17,8 +17,8 @@
 
     type = GeneratedMesh
     dim = 2
-    nx = 10
-    ny = 40
+    nx = 5
+    ny = 10
     xmin = 0.0
     xmax = 0.5
     ymin = 0.0
@@ -29,13 +29,13 @@
 [Variables]
 
     [./u]
-        order = SECOND
+        order = FIRST
         family = MONOMIAL
         initial_condition = 298.0
     [../]
  
 	[./v]
-		order = SECOND
+		order = FIRST
 		family = MONOMIAL
 		initial_condition = 298.0
 	[../]
@@ -193,7 +193,7 @@
     solve_type = newton
     line_search = bt    # Options: default shell none basic l2 bt cp
     start_time = 0.0
-    end_time = 3.0
+    end_time = 0.5
     dtmax = 0.1
     petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
     petsc_options_value = 'hypre boomeramg 100'
