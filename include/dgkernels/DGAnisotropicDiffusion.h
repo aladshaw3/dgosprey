@@ -45,6 +45,7 @@
 #define DGANISOTROPICDIFFUSION_H
 
 #include "DGKernel.h"
+#include "MooseVariable.h"
 #include <cmath>
 
 /// DGAnisotropicDiffusion class object forward declarations

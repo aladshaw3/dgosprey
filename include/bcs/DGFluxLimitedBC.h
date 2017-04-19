@@ -42,6 +42,7 @@
 
 #include "IntegratedBC.h"
 #include "libmesh/vector_value.h"
+#include "MooseVariable.h"
 
 /// DGFluxLimitedBC class object forward declaration
 class DGFluxLimitedBC;
