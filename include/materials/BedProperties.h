@@ -1,5 +1,5 @@
 /*!
- *  \file AdsorbentProperties.h
+ *  \file BedProperties.h
  *	\brief Material Properties kernel that will setup and hold all information associated with the fixed-bed
  *	\details This file creates a material property object for various properties of the fixed bed. Those properties
  *			are used in conjunction with other kernels and materials to establish information such as heat transfer
@@ -83,10 +83,6 @@ private:
 	MaterialProperty<Real> & _wall_heat_capacity;				///< MaterialProperty for column wall heat capacity
 	MaterialProperty<Real> & _bed_wall_transfer_coeff;			///< MaterialProperty for bed-wall heat transfer coefficient
 	MaterialProperty<Real> & _wall_exterior_transfer_coeff;		///< MaterialProperty for exterior-wall heat transfer coefficient
-	
-	const VariableValue & _temperature;					///< Reference to the coupled column temperature
-	std::vector<unsigned int> _index;				///< List of indices for the species in the system
-	std::vector<const VariableValue *> _gas_conc;			///< Pointer list of the gas species concentrations 
 
 };
 

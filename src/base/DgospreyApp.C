@@ -94,6 +94,10 @@
 #include "CoupledLinearForcingFunction.h"
 #include "CoupledLinearLDF.h"
 
+#include "ThermodynamicProperties.h"
+#include "GasFlowProperties.h"
+#include "KineticProperties.h"
+
 template<>
 InputParameters validParams<DgospreyApp>()
 {
@@ -135,6 +139,9 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerMaterial(FlowProperties);
 	registerMaterial(MagpieAdsorbateProperties);
 	registerMaterial(ScopsowlProperties);
+	registerMaterial(ThermodynamicProperties);
+	registerMaterial(GasFlowProperties);
+	registerMaterial(KineticProperties);
 	
 	registerKernel(BedMassAccumulation);
 	registerKernel(BedWallHeatTransfer);
