@@ -97,6 +97,9 @@
 #include "ThermodynamicProperties.h"
 #include "GasFlowProperties.h"
 #include "KineticProperties.h"
+#include "HeatofAdsorption.h"
+#include "SolidMassTransfer.h"
+#include "SolidHeatTransfer.h"
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -152,6 +155,9 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(CoupledCoeffTimeDerivative);
 	registerKernel(CoupledLinearForcingFunction);
 	registerKernel(CoupledLinearLDF);
+	registerKernel(HeatofAdsorption);
+	registerKernel(SolidMassTransfer);
+	registerKernel(SolidHeatTransfer);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(MAGPIE_Adsorption);
