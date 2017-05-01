@@ -37,18 +37,6 @@
 		order = FIRST
 		family = MONOMIAL
 	[../]
-
-	[./wall_temp]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 220.15
-	[../]
-
-	[./column_temp]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 220.15
-	[../]
  
 	[./Kr_Adsorbed]
 		order = FIRST
@@ -57,18 +45,6 @@
 	[../]
  
 	[./Xe_Adsorbed]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 0.0
-	[../]
- 
-	[./Kr_AdsorbedHeat]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 0.0
-	[../]
- 
-	[./Xe_AdsorbedHeat]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
@@ -88,6 +64,30 @@
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 220.15
+	[../]
+ 
+	[./wall_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 220.15
+	[../]
+ 
+	[./column_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 220.15
+	[../]
+ 
+	[./Kr_AdsorbedHeat]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
+ 
+	[./Xe_AdsorbedHeat]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
 	[../]
 
 [] #END AuxVariables
@@ -134,11 +134,11 @@
 		coupled = Kr_Adsorbed
 	[../]
 
-	[./diffKr]
-		type = GColumnMassDispersion
-		variable = Kr
-		index = 0
-	[../]
+#	[./diffKr]
+#		type = GColumnMassDispersion
+#		variable = Kr
+#		index = 0
+#	[../]
 
 	[./advKr]
 		type = GColumnMassAdvection
@@ -157,11 +157,11 @@
 		coupled = Xe_Adsorbed
 	[../]
 
-	[./diffXe]
-		type = GColumnMassDispersion
-		variable = Xe
-		index = 1
-	[../]
+#	[./diffXe]
+#		type = GColumnMassDispersion
+#		variable = Xe
+#		index = 1
+#	[../]
 
 	[./advXe]
 		type = GColumnMassAdvection
@@ -174,73 +174,15 @@
 		index = 2	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
 	[../]
 
-	[./diffHe]
-		type = GColumnMassDispersion
-		variable = He
-		index = 2
-	[../]
+#	[./diffHe]
+#		type = GColumnMassDispersion
+#		variable = He
+#		index = 2
+#	[../]
 
 	[./advHe]
 		type = GColumnMassAdvection
 		variable = He
-	[../]
-
-	[./wallAccum]
-		type = WallHeatAccumulation
-		variable = wall_temp
-	[../]
- 
-	[./wall_bed_trans]
-		type = BedWallHeatTransfer
-		variable = wall_temp
-		coupled = column_temp
-	[../]
- 
-	[./wall_amb_trans]
-		type = WallAmbientHeatTransfer
-		variable = wall_temp
-		coupled = ambient_temp
-	[../]
-
-	[./columnAccum]
-		type = BedHeatAccumulation
-		variable = column_temp
-	[../]
- 
-	[./columnConduction]
-		type = GColumnHeatDispersion
-		variable =column_temp
-	[../]
- 
-	[./columnAdvection]
-		type = GColumnHeatAdvection
-		variable =column_temp
-	[../]
- 
-	[./columnAdsHeat_Kr]
-		type = SolidHeatTransfer
-		variable = column_temp
-		coupled = Kr_AdsorbedHeat
-	[../]
- 
-	[./columnAdsHeat_Xe]
-		type = SolidHeatTransfer
-		variable = column_temp
-		coupled = Xe_AdsorbedHeat
-	[../]
- 
-	[./Kr_adsheat]
-		type = HeatofAdsorption
-		variable = Kr_AdsorbedHeat
-		coupled = Kr_Adsorbed
-		index = 0
-	[../]
- 
-	[./Xe_adsheat]
-		type = HeatofAdsorption
-		variable = Xe_AdsorbedHeat
-		coupled = Xe_Adsorbed
-		index = 1
 	[../]
  
 	[./Kr_adsorption]
@@ -262,47 +204,37 @@
 
 [DGKernels]
 
-	[./dg_disp_Kr]
-		type = DGColumnMassDispersion
-		variable = Kr
-		index = 0
-	[../]
+#	[./dg_disp_Kr]
+#		type = DGColumnMassDispersion
+#		variable = Kr
+#		index = 0
+#	[../]
 
 	[./dg_adv_Kr]
 		type = DGColumnMassAdvection
 		variable = Kr
 	[../]
 
-	[./dg_disp_Xe]
-		type = DGColumnMassDispersion
-		variable = Xe
-		index = 1
-	[../]
+#	[./dg_disp_Xe]
+#		type = DGColumnMassDispersion
+#		variable = Xe
+#		index = 1
+#	[../]
 
 	[./dg_adv_Xe]
 		type = DGColumnMassAdvection
 		variable = Xe
 	[../]
 
-	[./dg_disp_He]
-		type = DGColumnMassDispersion
-		variable = He
-		index = 2
-	[../]
+#	[./dg_disp_He]
+#		type = DGColumnMassDispersion
+#		variable = He
+#		index = 2
+#	[../]
 
 	[./dg_adv_He]
 		type = DGColumnMassAdvection
 		variable = He
-	[../]
-
-	[./dg_disp_heat]
-		type = DGColumnHeatDispersion
-		variable = column_temp
-	[../]
-
-	[./dg_adv_heat]
-		type = DGColumnHeatAdvection
-		variable = column_temp
 	[../]
 
 [] #END DGKernels
@@ -349,20 +281,6 @@
 		input_pressure = 101.35
 		input_molefraction = 0.99913438
 		index = 2
-	[../]
-
-	[./Heat_Gas_Flux]
-		type = DGHeatFluxBC
-		variable = column_temp
-		boundary = 'top bottom'
-		input_temperature = 220.15
-	[../]
-
-	[./Heat_Wall_Flux]
-		type = DGColumnWallHeatFluxLimitedBC
-		variable = column_temp
-		boundary = 'right left'
-		wall_temp = wall_temp
 	[../]
 
 [] #END BCs
@@ -516,7 +434,7 @@
 [Executioner]
 
 	type = Transient
-	scheme = implicit-euler
+	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-6
@@ -525,7 +443,7 @@
 	nl_abs_step_tol = 1e-10
 	l_tol = 1e-6
 	l_max_its = 1000
-	nl_max_its = 100
+	nl_max_its = 10
 
 	solve_type = pjfnk
 	line_search = bt    # Options: default shell none basic l2 bt cp
@@ -533,7 +451,7 @@
 	end_time = 90.0
 	dtmax = 0.1
 	petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
-	petsc_options_value = 'hypre boomeramg 1000'
+	petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
@@ -548,8 +466,8 @@
 	
 	[./precond]
 		type = PBP
-		solve_order = 'Kr Xe He Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat wall_temp column_temp'
-		preconditioner = 'ILU ILU ILU ILU ILU ILU ILU ILU ILU'
+		solve_order = 'He Kr Kr_Adsorbed Xe Xe_Adsorbed'
+		preconditioner = 'AMG AMG AMG AMG AMG'
 	[../]
 
 [] #END Preconditioning

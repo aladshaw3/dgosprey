@@ -197,7 +197,7 @@ void GasFlowProperties::computeQpProperties()
 		
 		_molecular_diffusion[_qp][i] = _molecular_diffusion[_qp][i] * 1000.0 * 3600.0;
 		
-		_dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (1e-6*_column_length*_velocity[_qp]));
+		_dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (_column_length*_velocity[_qp]));
 		
 		_retardation[_qp][i] = _porosity[_qp];
 		
@@ -227,5 +227,5 @@ void GasFlowProperties::computeQpProperties()
 		_pore_diffusion[_qp][i] = avgDp(_pore_diffusion[_qp][i],Dk(_pore_size[_qp],_temperature[_qp],_mixed_gas[_qp].species_dat[i].molecular_weight)) * 3600.0;
 		
 	}
-	
+		
 }

@@ -12,8 +12,8 @@
  
 	type = GeneratedMesh
 	dim = 2
-	nx = 10
-	ny = 40
+	nx = 3
+	ny = 5
 	xmin = 0.0
 	xmax = 0.8636 #cm
 	ymin = 0.0
@@ -22,21 +22,6 @@
 [] # END Mesh
 
 [Variables]
-
-	[./Kr]
-		order = FIRST
-		family = MONOMIAL
-	[../]
-
-	[./Xe]
-		order = FIRST
-		family = MONOMIAL
-	[../]
-
-	[./He]
-		order = FIRST
-		family = MONOMIAL
-	[../]
 
 	[./wall_temp]
 		order = FIRST
@@ -48,6 +33,37 @@
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 220.15
+	[../]
+ 
+[] #END Variables
+
+[AuxVariables]
+ 
+	[./Kr]
+		order = FIRST
+		family = MONOMIAL
+	[../]
+ 
+	[./Xe]
+		order = FIRST
+		family = MONOMIAL
+	[../]
+ 
+	[./He]
+		order = FIRST
+		family = MONOMIAL
+	[../]
+
+	[./total_pressure]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 101.35
+	[../]
+
+	[./ambient_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 250.15
 	[../]
  
 	[./Kr_Adsorbed]
@@ -72,22 +88,6 @@
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
-	[../]
-
-[] #END Variables
-
-[AuxVariables]
-
-	[./total_pressure]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 101.35
-	[../]
-
-	[./ambient_temp]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 220.15
 	[../]
 
 [] #END AuxVariables
@@ -122,69 +122,6 @@
 
 [Kernels]
 
-	[./accumKr]
-		type = BedMassAccumulation
-		variable = Kr
-		index = 0   #NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-	[../]
-
-	[./Kr_MT]
-		type = SolidMassTransfer
-		variable = Kr
-		coupled = Kr_Adsorbed
-	[../]
-
-	[./diffKr]
-		type = GColumnMassDispersion
-		variable = Kr
-		index = 0
-	[../]
-
-	[./advKr]
-		type = GColumnMassAdvection
-		variable = Kr
-	[../]
-
-	[./accumXe]
-		type = BedMassAccumulation
-		variable = Xe
-		index = 1	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-	[../]
-
-	[./Xe_MT]
-		type = SolidMassTransfer
-		variable = Xe
-		coupled = Xe_Adsorbed
-	[../]
-
-	[./diffXe]
-		type = GColumnMassDispersion
-		variable = Xe
-		index = 1
-	[../]
-
-	[./advXe]
-		type = GColumnMassAdvection
-		variable = Xe
-	[../]
-
-	[./accumHe]
-		type = BedMassAccumulation
-		variable = He
-		index = 2	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-	[../]
-
-	[./diffHe]
-		type = GColumnMassDispersion
-		variable = He
-		index = 2
-	[../]
-
-	[./advHe]
-		type = GColumnMassAdvection
-		variable = He
-	[../]
-
 	[./wallAccum]
 		type = WallHeatAccumulation
 		variable = wall_temp
@@ -216,84 +153,10 @@
 		type = GColumnHeatAdvection
 		variable =column_temp
 	[../]
- 
-	[./columnAdsHeat_Kr]
-		type = SolidHeatTransfer
-		variable = column_temp
-		coupled = Kr_AdsorbedHeat
-	[../]
- 
-	[./columnAdsHeat_Xe]
-		type = SolidHeatTransfer
-		variable = column_temp
-		coupled = Xe_AdsorbedHeat
-	[../]
- 
-	[./Kr_adsheat]
-		type = HeatofAdsorption
-		variable = Kr_AdsorbedHeat
-		coupled = Kr_Adsorbed
-		index = 0
-	[../]
- 
-	[./Xe_adsheat]
-		type = HeatofAdsorption
-		variable = Xe_AdsorbedHeat
-		coupled = Xe_Adsorbed
-		index = 1
-	[../]
- 
-	[./Kr_adsorption]
-		type = CoupledLinearForcingFunction
-		variable = Kr_Adsorbed
-		coupled = Kr
-		coeff = 277.55
-	[../]
- 
-	[./Xe_adsorption]
-		type = CoupledLinearForcingFunction
-		variable = Xe_Adsorbed
-		coupled = Xe
-		coeff = 3154.93
-	[../]
-
 
 [] #END Kernels
 
 [DGKernels]
-
-	[./dg_disp_Kr]
-		type = DGColumnMassDispersion
-		variable = Kr
-		index = 0
-	[../]
-
-	[./dg_adv_Kr]
-		type = DGColumnMassAdvection
-		variable = Kr
-	[../]
-
-	[./dg_disp_Xe]
-		type = DGColumnMassDispersion
-		variable = Xe
-		index = 1
-	[../]
-
-	[./dg_adv_Xe]
-		type = DGColumnMassAdvection
-		variable = Xe
-	[../]
-
-	[./dg_disp_He]
-		type = DGColumnMassDispersion
-		variable = He
-		index = 2
-	[../]
-
-	[./dg_adv_He]
-		type = DGColumnMassAdvection
-		variable = He
-	[../]
 
 	[./dg_disp_heat]
 		type = DGColumnHeatDispersion
@@ -321,41 +184,11 @@
 
 [BCs]
 
-	[./Kr_Flux]
-		type = DGMassFluxBC
-		variable = Kr
-		boundary = 'top bottom'
-		input_temperature = 220.15
-		input_pressure = 101.35
-		input_molefraction = 0.000114729
-		index = 0
-	[../]
-
-	[./Xe_Flux]
-		type = DGMassFluxBC
-		variable = Xe
-		boundary = 'top bottom'
-		input_temperature = 220.15
-		input_pressure = 101.35
-		input_molefraction = 0.000750891
-		index = 1
-	[../]
-
-	[./He_Flux]
-		type = DGMassFluxBC
-		variable = He
-		boundary = 'top bottom'
-		input_temperature = 220.15
-		input_pressure = 101.35
-		input_molefraction = 0.99913438
-		index = 2
-	[../]
-
 	[./Heat_Gas_Flux]
 		type = DGHeatFluxBC
 		variable = column_temp
 		boundary = 'top bottom'
-		input_temperature = 220.15
+		input_temperature = 250.15
 	[../]
 
 	[./Heat_Wall_Flux]
@@ -376,7 +209,7 @@
 		inner_diameter = 1.7272
 		outer_diameter = 1.905
 		bulk_porosity = 0.798				#not known
-		axial_conductivity = 62.92      #not known
+		axial_conductivity = 62.92			#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
@@ -524,21 +357,20 @@
 	nl_rel_step_tol = 1e-10
 	nl_abs_step_tol = 1e-10
 	l_tol = 1e-6
-	l_max_its = 1000
+	l_max_its = 100
 	nl_max_its = 100
 
 	solve_type = pjfnk
 	line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 90.0
+	end_time = 0.02
 	dtmax = 0.1
 	petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
-	petsc_options_value = 'hypre boomeramg 1000'
+	petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
-		type = SolutionTimeAdaptiveDT
+		type = ConstantDT
 		dt = 0.01
 	[../]
 
@@ -548,8 +380,8 @@
 	
 	[./precond]
 		type = PBP
-		solve_order = 'Kr Xe He Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat wall_temp column_temp'
-		preconditioner = 'ILU ILU ILU ILU ILU ILU ILU ILU ILU'
+		solve_order = 'column_temp wall_temp'
+		preconditioner = 'ILU ILU'
 	[../]
 
 [] #END Preconditioning
