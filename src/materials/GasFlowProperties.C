@@ -85,17 +85,20 @@ _mixed_gas_old(declarePropertyOld< MIXED_GAS >("mixed_gas_data")),
 _film_transfer(declareProperty<std::vector<Real> >("film_transfer")),
 _pore_diffusion(declareProperty<std::vector<Real> >("pore_diffusion")),
 _temperature(coupledValue("temperature")),
+_temperature_old(coupledValueOld("temperature")),
 _total_pressure(coupledValue("total_pressure"))
 
 {
 	unsigned int n = coupledComponents("coupled_gases");
 	_index.resize(n);
 	_gas_conc.resize(n);
+	_gas_conc_old.resize(n);
 	
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
 		_index[i] = coupled("coupled_gases",i); //may only be useful for compute Jacobian Off Diagonal (see ~/projects/truck/moose/modules/chemical_reactions/ .../ CoupledConvectionReactionSub.C)
 		_gas_conc[i] = &coupledValue("coupled_gases",i);
+		_gas_conc_old[i] = &coupledValueOld("coupled_gases",i);
 	}
 	
 	/*
@@ -119,6 +122,7 @@ void GasFlowProperties::initQpStatefulProperties()
 	_retardation[_qp].resize(_gas_conc.size());
 	_film_transfer[_qp].resize(_gas_conc.size());
 	_pore_diffusion[_qp].resize(_gas_conc.size());
+	_molefrac.resize(_gas_conc.size());
 }
 
 void GasFlowProperties::computeQpProperties()
@@ -135,12 +139,10 @@ void GasFlowProperties::computeQpProperties()
 	_gas_heat_capacity[_qp] = 0.0;
 	_heat_retardation[_qp] = 0.0;
 	
-	std::vector<double> _molefrac;
-	_molefrac.resize(_gas_conc.size());
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
 		
-		Real _yi = ( ((*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp])/_total_pressure[_qp] );
+		Real _yi = ( ((*_gas_conc_old[i])[_qp] * 8.3144621 * _temperature_old[_qp])/_total_pressure[_qp] );
 		
 		if (_yi > 1.0) _yi = 1.0;
 		if (_yi < 0.0) _yi = 0.0;
@@ -154,24 +156,24 @@ void GasFlowProperties::computeQpProperties()
 		
 		Real _sum_yj_over_Dij = 0.0, _sum_yi_over_Dij_prime = 0.0;
 		
-		Real _rho_i = (_total_pressure[_qp] * _molecular_weight[i]) / (8.3144621 * _temperature[_qp]);
+		Real _rho_i = (_total_pressure[_qp] * _molecular_weight[i]) / (8.3144621 * _temperature_old[_qp]);
 		
-		Real _mu_i = _comp_ref_viscosity[i] * ( ( _comp_ref_temp[i] + _comp_Sutherland_const[i]) / ( _temperature[_qp] + _comp_Sutherland_const[i]) ) * std::pow(_temperature[_qp]/_comp_ref_temp[i],(3.0/2.0));
+		Real _mu_i = _comp_ref_viscosity[i] * ( ( _comp_ref_temp[i] + _comp_Sutherland_const[i]) / ( _temperature_old[_qp] + _comp_Sutherland_const[i]) ) * std::pow(_temperature_old[_qp]/_comp_ref_temp[i],(3.0/2.0));
 		
-		Real _phi = 0.873143 + (0.000072375 * _temperature[_qp]);
+		Real _phi = 0.873143 + (0.000072375 * _temperature_old[_qp]);
 		
 		for (unsigned int j = 0; j<_gas_conc.size(); j++)
 		{
 			if ( j != i)
 			{
-				Real _yj = ( ((*_gas_conc[j])[_qp] * 8.3144621 * _temperature[_qp])/_total_pressure[_qp] );
+				Real _yj = ( ((*_gas_conc_old[j])[_qp] * 8.3144621 * _temperature_old[_qp])/_total_pressure[_qp] );
 				
 				if (_yj > 1.0) _yj = 1.0;
 				if (_yj < 0.0) _yj = 0.0;
 				
-				Real _rho_j = (_total_pressure[_qp] * _molecular_weight[j]) / (8.3144621 * _temperature[_qp]);
+				Real _rho_j = (_total_pressure[_qp] * _molecular_weight[j]) / (8.3144621 * _temperature_old[_qp]);
 		  
-				Real _mu_j = _comp_ref_viscosity[j] * ( ( _comp_ref_temp[j] + _comp_Sutherland_const[j]) / ( _temperature[_qp] + _comp_Sutherland_const[j]) ) * std::pow(_temperature[_qp]/_comp_ref_temp[j],(3.0/2.0));
+				Real _mu_j = _comp_ref_viscosity[j] * ( ( _comp_ref_temp[j] + _comp_Sutherland_const[j]) / ( _temperature_old[_qp] + _comp_Sutherland_const[j]) ) * std::pow(_temperature_old[_qp]/_comp_ref_temp[j],(3.0/2.0));
 		  
 				Real _Dij = ( (4.0/std::pow(2.0,0.5))*std::pow((1.0/_molecular_weight[i])+(1.0/_molecular_weight[j]),0.5) );
 				_Dij = _Dij / std::pow(std::pow((_rho_i*_rho_i)/(1.385*1.385*_mu_i*_mu_i*_molecular_weight[i]),0.25)+std::pow((_rho_j*_rho_j)/(1.385*1.385*_mu_j*_mu_j*_molecular_weight[j]),0.25),2.0);
@@ -195,14 +197,10 @@ void GasFlowProperties::computeQpProperties()
 			_molecular_diffusion[_qp][i] = (1.0 - _yi) / _sum_yj_over_Dij;
 		}
 		
-		_molecular_diffusion[_qp][i] = _molecular_diffusion[_qp][i] * 1000.0 * 3600.0;
-		
-		_dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (_column_length*_velocity[_qp]));
-		
 		_retardation[_qp][i] = _porosity[_qp];
 		
 		if (_yi != 0.0)
-			_gas_viscosity[_qp] = _gas_viscosity[_qp] + (_mu_i / (1.0 + ( (113.65*_phi*_mu_i*_temperature[_qp])/(_yi*_molecular_weight[i]) ) * _sum_yi_over_Dij_prime) );
+			_gas_viscosity[_qp] = _gas_viscosity[_qp] + (_mu_i / (1.0 + ( (113.65*_phi*_mu_i*_temperature_old[_qp])/(_yi*_molecular_weight[i]) ) * _sum_yi_over_Dij_prime) );
 		else
 			_gas_viscosity[_qp] = _gas_viscosity[_qp] + 0.0;
 		
@@ -212,10 +210,17 @@ void GasFlowProperties::computeQpProperties()
 	} //ith Loop
 	
 	//Set variables for EGRET and calculate properties
-	success = set_variables(_total_pressure[_qp],_temperature[_qp],(_velocity[_qp]/3600.0),_pellet_diameter[_qp],_molefrac,&_mixed_gas[_qp]);
+	success = set_variables(_total_pressure[_qp],_temperature_old[_qp],(_velocity[_qp]/3600.0),_pellet_diameter[_qp],_molefrac,&_mixed_gas[_qp]);
 	success = calculate_properties(&_mixed_gas[_qp]);
 	
-	_gas_density[_qp] = (_total_pressure[_qp] * _gas_molecular_wieght[_qp]) / (8.3144621 * _temperature[_qp]);
+	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
+	{
+		_molecular_diffusion[_qp][i] = _mixed_gas[_qp].species_dat[i].molecular_diffusion * 3600.0;
+		
+		_dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (_column_length*_velocity[_qp]));
+	}
+	
+	_gas_density[_qp] = (_total_pressure[_qp] * _gas_molecular_wieght[_qp]) / (8.3144621 * _temperature_old[_qp]);
 	
 	_heat_retardation[_qp] = ((_gas_heat_capacity[_qp]*_gas_density[_qp]*_porosity[_qp]) + (_pellet_heat_capacity[_qp]*_pellet_density[_qp]*(1.0-_porosity[_qp])));
 	
@@ -224,8 +229,8 @@ void GasFlowProperties::computeQpProperties()
 	{
 		_film_transfer[_qp][i] = FilmMTCoeff(_mixed_gas[_qp].species_dat[i].molecular_diffusion,_pellet_diameter[_qp],_mixed_gas[_qp].Reynolds,_mixed_gas[_qp].species_dat[i].Schmidt) * 3600.0;
 		_pore_diffusion[_qp][i] = Dp(_mixed_gas[_qp].species_dat[i].molecular_diffusion,_binder_porosity[_qp]);
-		_pore_diffusion[_qp][i] = avgDp(_pore_diffusion[_qp][i],Dk(_pore_size[_qp],_temperature[_qp],_mixed_gas[_qp].species_dat[i].molecular_weight)) * 3600.0;
+		_pore_diffusion[_qp][i] = avgDp(_pore_diffusion[_qp][i],Dk(_pore_size[_qp],_temperature_old[_qp],_mixed_gas[_qp].species_dat[i].molecular_weight)) * 3600.0;
 		
 	}
-		
+	
 }

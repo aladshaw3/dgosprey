@@ -12,8 +12,8 @@
  
 	type = GeneratedMesh
 	dim = 2
-	nx = 10
-	ny = 40
+	nx = 5
+	ny = 20
 	xmin = 0.0
 	xmax = 0.8636 #cm
 	ymin = 0.0
@@ -134,11 +134,11 @@
 		coupled = Kr_Adsorbed
 	[../]
 
-#	[./diffKr]
-#		type = GColumnMassDispersion
-#		variable = Kr
-#		index = 0
-#	[../]
+	[./diffKr]
+		type = GColumnMassDispersion
+		variable = Kr
+		index = 0
+	[../]
 
 	[./advKr]
 		type = GColumnMassAdvection
@@ -157,11 +157,11 @@
 		coupled = Xe_Adsorbed
 	[../]
 
-#	[./diffXe]
-#		type = GColumnMassDispersion
-#		variable = Xe
-#		index = 1
-#	[../]
+	[./diffXe]
+		type = GColumnMassDispersion
+		variable = Xe
+		index = 1
+	[../]
 
 	[./advXe]
 		type = GColumnMassAdvection
@@ -174,11 +174,11 @@
 		index = 2	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
 	[../]
 
-#	[./diffHe]
-#		type = GColumnMassDispersion
-#		variable = He
-#		index = 2
-#	[../]
+	[./diffHe]
+		type = GColumnMassDispersion
+		variable = He
+		index = 2
+	[../]
 
 	[./advHe]
 		type = GColumnMassAdvection
@@ -204,33 +204,33 @@
 
 [DGKernels]
 
-#	[./dg_disp_Kr]
-#		type = DGColumnMassDispersion
-#		variable = Kr
-#		index = 0
-#	[../]
+	[./dg_disp_Kr]
+		type = DGColumnMassDispersion
+		variable = Kr
+		index = 0
+	[../]
 
 	[./dg_adv_Kr]
 		type = DGColumnMassAdvection
 		variable = Kr
 	[../]
 
-#	[./dg_disp_Xe]
-#		type = DGColumnMassDispersion
-#		variable = Xe
-#		index = 1
-#	[../]
+	[./dg_disp_Xe]
+		type = DGColumnMassDispersion
+		variable = Xe
+		index = 1
+	[../]
 
 	[./dg_adv_Xe]
 		type = DGColumnMassAdvection
 		variable = Xe
 	[../]
 
-#	[./dg_disp_He]
-#		type = DGColumnMassDispersion
-#		variable = He
-#		index = 2
-#	[../]
+	[./dg_disp_He]
+		type = DGColumnMassDispersion
+		variable = He
+		index = 2
+	[../]
 
 	[./dg_adv_He]
 		type = DGColumnMassAdvection
@@ -434,7 +434,7 @@
 [Executioner]
 
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-6
@@ -442,8 +442,8 @@
 	nl_rel_step_tol = 1e-10
 	nl_abs_step_tol = 1e-10
 	l_tol = 1e-6
-	l_max_its = 1000
-	nl_max_its = 10
+	l_max_its = 500
+	nl_max_its = 20
 
 	solve_type = pjfnk
 	line_search = bt    # Options: default shell none basic l2 bt cp
@@ -455,7 +455,7 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
+#		type = ConstantDT
 		type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]

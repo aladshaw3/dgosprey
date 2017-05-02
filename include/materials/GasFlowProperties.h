@@ -79,6 +79,7 @@ protected:
 	virtual void initQpStatefulProperties();
 	
 private:
+	std::vector<double> _molefrac;									///< Used internally by the object
 	std::vector<Real> _molecular_weight;							///< Molecular weights for each gas species (g/mol)
 	std::vector<Real> _comp_heat_capacity;							///< Heat capacities for each gas species (J/g/K)
 	std::vector<Real> _comp_ref_viscosity;							///< Sutherland's reference viscosity for each gas species (g/cm/s)
@@ -103,18 +104,20 @@ private:
 	
 	MaterialProperty<Real> & _heat_retardation;						///< MaterialProperty for energy balance retardation coefficient
 	MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< MaterialProperty for each species' molecular diffusion (cm^2/s)
-	MaterialProperty<std::vector<Real> > & _dispersion;			///< MaterialProperty for each species' dispersion coefficient (cm^2/hr)
-	MaterialProperty<std::vector<Real> > & _retardation;		///< MaterialProperty for each species' retardation coefficient
-	MaterialProperty< MIXED_GAS > & _mixed_gas;					///< MaterialProperty for the MIXED_GAS struct in egret.h
+	MaterialProperty<std::vector<Real> > & _dispersion;				///< MaterialProperty for each species' dispersion coefficient (cm^2/hr)
+	MaterialProperty<std::vector<Real> > & _retardation;			///< MaterialProperty for each species' retardation coefficient
+	MaterialProperty< MIXED_GAS > & _mixed_gas;						///< MaterialProperty for the MIXED_GAS struct in egret.h
 	MaterialProperty< MIXED_GAS > & _mixed_gas_old;					///< Old MaterialProperty for the MIXED_GAS struct in egret.h
 	
 	MaterialProperty<std::vector<Real> > & _film_transfer;			///< MaterialProperty for the film mass transfer coeff (cm/hr)
 	MaterialProperty<std::vector<Real> > & _pore_diffusion;			///< MaterialProperty for the pore diffusion (cm^2/hr)
 	
-	const VariableValue & _temperature;					///< Reference to the coupled column temperature
-	const VariableValue & _total_pressure;				///< Reference to the coupled column pressure
-	std::vector<unsigned int> _index;				///< Indices for the gas species in the system
+	const VariableValue & _temperature;						///< Reference to the coupled column temperature
+	const VariableValue & _temperature_old;					///< Reference to the coupled column temperature at previous time step
+	const VariableValue & _total_pressure;					///< Reference to the coupled column pressure
+	std::vector<unsigned int> _index;						///< Indices for the gas species in the system
 	std::vector<const VariableValue *> _gas_conc;			///< Pointer list to the coupled gases
+	std::vector<const VariableValue *> _gas_conc_old;		///< Pointer list to the coupled gases at previous time step
 	
 };
 

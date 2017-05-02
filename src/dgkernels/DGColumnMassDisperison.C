@@ -62,7 +62,7 @@ Real DGColumnMassDispersion::computeQpResidual(Moose::DGResidualType type)
 	_Diffusion(2,0) = 0.0;
 	_Diffusion(2,1) = 0.0;
 	_Diffusion(2,2) = 0.0;
-	
+		
 	return DGAnisotropicDiffusion::computeQpResidual(type);
 }
 
