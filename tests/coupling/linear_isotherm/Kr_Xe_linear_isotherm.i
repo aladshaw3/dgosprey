@@ -12,8 +12,8 @@
  
 	type = GeneratedMesh
 	dim = 2
-	nx = 5
-	ny = 20
+	nx = 3
+	ny = 5
 	xmin = 0.0
 	xmax = 0.8636 #cm
 	ymin = 0.0
@@ -23,47 +23,19 @@
 
 [Variables]
 
-	[./wall_temp]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 220.15
-	[../]
-
-	[./column_temp]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 220.15
-	[../]
- 
-[] #END Variables
-
-[AuxVariables]
- 
 	[./Kr]
 		order = FIRST
 		family = MONOMIAL
 	[../]
- 
+
 	[./Xe]
 		order = FIRST
 		family = MONOMIAL
 	[../]
- 
+
 	[./He]
 		order = FIRST
 		family = MONOMIAL
-	[../]
-
-	[./total_pressure]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 101.35
-	[../]
-
-	[./ambient_temp]
-		order = FIRST
-		family = MONOMIAL
-		initial_condition = 250.15
 	[../]
  
 	[./Kr_Adsorbed]
@@ -76,6 +48,34 @@
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
+	[../]
+
+[] #END Variables
+
+[AuxVariables]
+
+	[./total_pressure]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 101.35
+	[../]
+
+	[./ambient_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 220.15
+	[../]
+ 
+	[./wall_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 220.15
+	[../]
+ 
+	[./column_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 220.15
 	[../]
  
 	[./Kr_AdsorbedHeat]
@@ -122,50 +122,119 @@
 
 [Kernels]
 
-	[./wallAccum]
-		type = WallHeatAccumulation
-		variable = wall_temp
-	[../]
- 
-	[./wall_bed_trans]
-		type = BedWallHeatTransfer
-		variable = wall_temp
-		coupled = column_temp
-	[../]
- 
-	[./wall_amb_trans]
-		type = WallAmbientHeatTransfer
-		variable = wall_temp
-		coupled = ambient_temp
+	[./accumKr]
+		type = BedMassAccumulation
+		variable = Kr
+		index = 0   #NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
 	[../]
 
-	[./columnAccum]
-		type = BedHeatAccumulation
-		variable = column_temp
+	[./Kr_MT]
+		type = SolidMassTransfer
+		variable = Kr
+		coupled = Kr_Adsorbed
+	[../]
+
+	[./diffKr]
+		type = GColumnMassDispersion
+		variable = Kr
+		index = 0
+	[../]
+
+	[./advKr]
+		type = GColumnMassAdvection
+		variable = Kr
+	[../]
+
+	[./accumXe]
+		type = BedMassAccumulation
+		variable = Xe
+		index = 1	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
+	[../]
+
+	[./Xe_MT]
+		type = SolidMassTransfer
+		variable = Xe
+		coupled = Xe_Adsorbed
+	[../]
+
+	[./diffXe]
+		type = GColumnMassDispersion
+		variable = Xe
+		index = 1
+	[../]
+
+	[./advXe]
+		type = GColumnMassAdvection
+		variable = Xe
+	[../]
+
+	[./accumHe]
+		type = BedMassAccumulation
+		variable = He
+		index = 2	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
+	[../]
+
+	[./diffHe]
+		type = GColumnMassDispersion
+		variable = He
+		index = 2
+	[../]
+
+	[./advHe]
+		type = GColumnMassAdvection
+		variable = He
 	[../]
  
-	[./columnConduction]
-		type = GColumnHeatDispersion
-		variable =column_temp
+	[./Kr_adsorption]
+		type = CoupledLinearForcingFunction
+		variable = Kr_Adsorbed
+		coupled = Kr
+		coeff = 277.55
 	[../]
  
-	[./columnAdvection]
-		type = GColumnHeatAdvection
-		variable =column_temp
+	[./Xe_adsorption]
+		type = CoupledLinearForcingFunction
+		variable = Xe_Adsorbed
+		coupled = Xe
+		coeff = 3154.93
 	[../]
+
 
 [] #END Kernels
 
 [DGKernels]
 
-	[./dg_disp_heat]
-		type = DGColumnHeatDispersion
-		variable = column_temp
+	[./dg_disp_Kr]
+		type = DGColumnMassDispersion
+		variable = Kr
+		index = 0
 	[../]
 
-	[./dg_adv_heat]
-		type = DGColumnHeatAdvection
-		variable = column_temp
+	[./dg_adv_Kr]
+		type = DGColumnMassAdvection
+		variable = Kr
+	[../]
+
+	[./dg_disp_Xe]
+		type = DGColumnMassDispersion
+		variable = Xe
+		index = 1
+	[../]
+
+	[./dg_adv_Xe]
+		type = DGColumnMassAdvection
+		variable = Xe
+	[../]
+
+	[./dg_disp_He]
+		type = DGColumnMassDispersion
+		variable = He
+		index = 2
+	[../]
+
+	[./dg_adv_He]
+		type = DGColumnMassAdvection
+		variable = He
 	[../]
 
 [] #END DGKernels
@@ -184,18 +253,34 @@
 
 [BCs]
 
-	[./Heat_Gas_Flux]
-		type = DGHeatFluxBC
-		variable = column_temp
+	[./Kr_Flux]
+		type = DGMassFluxBC
+		variable = Kr
 		boundary = 'top bottom'
-		input_temperature = 250.15
+		input_temperature = 220.15
+		input_pressure = 101.35
+		input_molefraction = 0.000114729
+		index = 0
 	[../]
 
-	[./Heat_Wall_Flux]
-		type = DGColumnWallHeatFluxLimitedBC
-		variable = column_temp
-		boundary = 'right left'
-		wall_temp = wall_temp
+	[./Xe_Flux]
+		type = DGMassFluxBC
+		variable = Xe
+		boundary = 'top bottom'
+		input_temperature = 220.15
+		input_pressure = 101.35
+		input_molefraction = 0.000750891
+		index = 1
+	[../]
+
+	[./He_Flux]
+		type = DGMassFluxBC
+		variable = He
+		boundary = 'top bottom'
+		input_temperature = 220.15
+		input_pressure = 101.35
+		input_molefraction = 0.99913438
+		index = 2
 	[../]
 
 [] #END BCs
@@ -209,7 +294,7 @@
 		inner_diameter = 1.7272
 		outer_diameter = 1.905
 		bulk_porosity = 0.798				#not known
-		axial_conductivity = 0.6292			#not known
+		axial_conductivity = 0.6292      #not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
@@ -224,7 +309,7 @@
 		comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 		comp_ref_temp = '273.15 273.15 273.15'
 		comp_Sutherland_const = '266.505 232.746 80.0'
-		flow_rate = 1.0
+		flow_rate = 2994.06
 		length = 22.86
 		temperature = column_temp
 		total_pressure = total_pressure
@@ -358,12 +443,12 @@
 	nl_abs_step_tol = 1e-10
 	l_tol = 1e-6
 	l_max_its = 100
-	nl_max_its = 100
+	nl_max_its = 20
 
 	solve_type = pjfnk
 	line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
-	end_time = 1.0
+	end_time = 0.0002
 	dtmax = 0.1
 	petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
 	petsc_options_value = 'hypre boomeramg 100'
@@ -371,7 +456,8 @@
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 		type = ConstantDT
-		dt = 0.01
+#		type = SolutionTimeAdaptiveDT
+		dt = 0.0001
 	[../]
 
 [] #END Executioner
@@ -380,8 +466,8 @@
 	
 	[./precond]
 		type = PBP
-		solve_order = 'column_temp wall_temp'
-		preconditioner = 'ILU ILU'
+		solve_order = 'He Kr Kr_Adsorbed Xe Xe_Adsorbed'
+		preconditioner = 'AMG AMG AMG AMG AMG'
 	[../]
 
 [] #END Preconditioning

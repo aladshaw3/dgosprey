@@ -209,7 +209,7 @@
 		inner_diameter = 1.7272
 		outer_diameter = 1.905
 		bulk_porosity = 0.798				#not known
-		axial_conductivity = 62.92			#not known
+		axial_conductivity = 0.6292			#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
