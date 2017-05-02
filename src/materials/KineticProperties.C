@@ -46,7 +46,6 @@ InputParameters validParams<KineticProperties>()
 	params.addParam<Real>("macro_length",1.0,"Length of the cylindrical pellets (cm)");
 	params.addParam<Real>("micro_length",1.0,"Length of the cylindrical crystals (um)");
 	params.addCoupledVar("coupled_adsorption", "Adsorption concentration variables being coupled");
-	params.addCoupledVar("coupled_gases", "Gas concentrations variables being coupled");
 	
 	return params;
 }
@@ -80,14 +79,12 @@ _gas_dat(declareProperty< MIXED_GAS >("gas_data")),
 _gas_dat_old(declarePropertyOld< MIXED_GAS >("gas_data"))
 
 {
-	unsigned int n = coupledComponents("coupled_gases");
+	unsigned int n = coupledComponents("coupled_adsorption");
 	_solid_conc.resize(n);
-	_gas_conc.resize(n);
 	
 	for (unsigned int i = 0; i<_solid_conc.size(); ++i)
 	{
 		_solid_conc[i] = &coupledValue("coupled_adsorption",i);
-		_gas_conc[i] = &coupledValue("coupled_gases",i);
 	}
 }
 
@@ -105,9 +102,6 @@ void KineticProperties::initQpStatefulProperties()
 	_owl_dat[_qp].param_dat.resize(_magpie_dat[_qp].sys_dat.N);
 	_owl_dat[_qp].finch_dat.resize(_magpie_dat[_qp].sys_dat.N);
 	_owl_dat[_qp].y.resize(_magpie_dat[_qp].sys_dat.N);
-	
-	double dt_nm1 = _dt_old;
-	if (_dt_old == 0.0) dt_nm1 = _dt;
 	
 	for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
 	{
@@ -214,13 +208,7 @@ void KineticProperties::computeQpProperties()
 		_owl_dat[_qp].param_dat[i].activation_energy = _activation_energy[_qp][i];
 		_owl_dat[_qp].param_dat[i].ref_temperature = _ref_temperature[_qp][i];
 		_owl_dat[_qp].param_dat[i].affinity = _affinity_coeff[_qp][i];
-		
-		double pi = 0.0;
-		pi = (*_gas_conc[i])[_qp] * 8.3144621 * _magpie_dat[_qp].sys_dat.T;
-		if (pi < 0.0)
-			pi = 0.0;
-		
-		_owl_dat[_qp].y[i] = pi / _magpie_dat[_qp].sys_dat.PT;
+		_owl_dat[_qp].y[i] = _magpie_dat[_qp].gpast_dat[i].y;
 		
 		if (_dt == 0.0)
 			_owl_dat[_qp].param_dat[i].qIntegralAvg_old = (*_solid_conc[i])[_qp];

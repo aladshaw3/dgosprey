@@ -121,7 +121,6 @@ private:
 	MaterialProperty< MIXED_GAS > & _gas_dat_old;
 	
 	std::vector<const VariableValue *> _solid_conc;		///< Pointer list to the coupled adsorption concentrations
-	std::vector<const VariableValue *> _gas_conc;		///< Pointer list to the coupled gases
 	
 };
 

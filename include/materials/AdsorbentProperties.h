@@ -106,8 +106,10 @@ private:
 	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;			///< Pointer to MAGPIE_DATA material property
 	
 	const VariableValue & _temperature;						///< Reference to the coupled column temperature
-	std::vector<unsigned int> _index;					///< List of indices for the coupled gases
-	std::vector<const VariableValue *> _gas_conc;				///< Pointer list for the coupled gases
+	const VariableValue & _temperature_old;					///< Reference to the coupled column temperature at previous time
+	std::vector<unsigned int> _index;						///< List of indices for the coupled gases
+	std::vector<const VariableValue *> _gas_conc;			///< Pointer list for the coupled gases
+	std::vector<const VariableValue *> _gas_conc_old;		///< Pointer list for the coupled gases at previous time
 	
 };
 

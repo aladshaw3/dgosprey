@@ -89,17 +89,20 @@ _pore_size(declareProperty<Real>("pore_size")),
 _surface_diffusion(declareProperty<std::vector<Real> >("surface_diffusion")),
 _surf_diff_old(declarePropertyOld<std::vector<Real> >("surface_diffusion")),
 _magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data")),
-_temperature(coupledValue("temperature"))
+_temperature(coupledValue("temperature")),
+_temperature_old(coupledValueOld("temperature"))
 
 {
 	unsigned int n = coupledComponents("coupled_gases");
 	_index.resize(n);
 	_gas_conc.resize(n);
+	_gas_conc_old.resize(n);
 	
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
 		_index[i] = coupled("coupled_gases",i);
 		_gas_conc[i] = &coupledValue("coupled_gases",i);
+		_gas_conc_old[i] = &coupledValueOld("coupled_gases",i);
 	}
 	/*
 	 Note: When using _gas_conc[i], it must be appropriately dereferenced as follows...
@@ -147,8 +150,8 @@ void AdsorbentProperties::computeQpProperties()
 		}
 		else
 		{
-			_surface_diffusion[_qp][i] = D_o(_ref_diff[i],_act_energy[i],_temperature[_qp]);
-			_surface_diffusion[_qp][i] = D_inf(_surface_diffusion[_qp][i],_ref_temp[i],_affinity[i],p,_temperature[_qp]);
+			_surface_diffusion[_qp][i] = D_o(_ref_diff[i],_act_energy[i],_temperature_old[_qp]);
+			_surface_diffusion[_qp][i] = D_inf(_surface_diffusion[_qp][i],_ref_temp[i],_affinity[i],p,_temperature_old[_qp]);
 		}
 		
 		_ref_diffusion[_qp][i] = _ref_diff[i];

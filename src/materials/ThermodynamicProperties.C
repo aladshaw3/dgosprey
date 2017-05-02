@@ -67,6 +67,7 @@ ThermodynamicProperties::ThermodynamicProperties(const InputParameters & paramet
 :Material(parameters),
 
 _temperature(coupledValue("temperature")),
+_temperature_old(coupledValueOld("temperature")),
 _total_pressure(coupledValue("total_pressure")),
 _num_sites(getParam<std::vector<int> >("number_sites")),
 _max_capacity(getParam<std::vector<Real> >("maximum_capacity")),
@@ -91,11 +92,13 @@ _magpie_dat_old(declarePropertyOld< MAGPIE_DATA >("magpie_data"))
 	unsigned int n = coupledComponents("coupled_gases");
 	_index.resize(n);
 	_gas_conc.resize(n);
+	_gas_conc_old.resize(n);
 	
 	for (unsigned int i = 0; i<_gas_conc.size(); ++i)
 	{
 		_index[i] = coupled("coupled_gases",i);
 		_gas_conc[i] = &coupledValue("coupled_gases",i);
+		_gas_conc_old[i] = &coupledValueOld("coupled_gases",i);
 	}
 }
 
@@ -191,7 +194,7 @@ void ThermodynamicProperties::computeQpProperties()
 	_magpie_dat[_qp].sys_dat.Output = false;
 	
 	_magpie_dat[_qp].sys_dat.PT = _total_pressure[_qp];
-	_magpie_dat[_qp].sys_dat.T = _temperature[_qp];
+	_magpie_dat[_qp].sys_dat.T = _temperature_old[_qp];
 	
 	double tempPT = 0.0;
 	
@@ -199,7 +202,7 @@ void ThermodynamicProperties::computeQpProperties()
 	for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
 	{
 		double pi = 0.0;
-		pi = (*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp];
+		pi = (*_gas_conc_old[i])[_qp] * 8.3144621 * _temperature_old[_qp];
 		if (pi < 0.0)
 			pi = 0.0;
 		tempPT = pi + tempPT;
@@ -209,7 +212,7 @@ void ThermodynamicProperties::computeQpProperties()
 	for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
 	{
 		double pi = 0.0;
-		pi = (*_gas_conc[i])[_qp] * 8.3144621 * _temperature[_qp];
+		pi = (*_gas_conc_old[i])[_qp] * 8.3144621 * _temperature_old[_qp];
 		if (pi < 0.0)
 			pi = 0.0;
 		

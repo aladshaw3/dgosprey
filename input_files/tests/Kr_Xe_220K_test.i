@@ -12,8 +12,8 @@
  
 	type = GeneratedMesh
 	dim = 2
-	nx = 10
-	ny = 40
+	nx = 5
+	ny = 20
 	xmin = 0.0
 	xmax = 0.8636 #cm
 	ymin = 0.0
@@ -524,22 +524,22 @@
 	nl_rel_step_tol = 1e-10
 	nl_abs_step_tol = 1e-10
 	l_tol = 1e-6
-	l_max_its = 1000
-	nl_max_its = 100
+	l_max_its = 100
+	nl_max_its = 10
 
 	solve_type = pjfnk
-	line_search = bt    # Options: default shell none basic l2 bt cp
+	line_search = default    # Options: default none basic l2 bt
 	start_time = 0.0
 	end_time = 90.0
 	dtmax = 0.1
 	petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
-	petsc_options_value = 'hypre boomeramg 1000'
+	petsc_options_value = 'hypre boomeramg 500'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		#type = ConstantDT
+#		type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		dt = 0.001
 	[../]
 
 [] #END Executioner
@@ -548,8 +548,8 @@
 	
 	[./precond]
 		type = PBP
-		solve_order = 'Kr Xe He Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat wall_temp column_temp'
-		preconditioner = 'ILU ILU ILU ILU ILU ILU ILU ILU ILU'
+		solve_order = 'He Kr Kr_Adsorbed Kr_AdsorbedHeat Xe Xe_Adsorbed Xe_AdsorbedHeat wall_temp column_temp '
+		preconditioner = 'AMG AMG AMG AMG AMG AMG AMG AMG AMG'
 	[../]
 
 [] #END Preconditioning
