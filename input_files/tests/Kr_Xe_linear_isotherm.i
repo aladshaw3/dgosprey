@@ -450,13 +450,11 @@
 	start_time = 0.0
 	end_time = 90.0
 	dtmax = 0.1
-	petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
-	petsc_options_value = 'hypre boomeramg 100'
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		type = ConstantDT
-#		type = SolutionTimeAdaptiveDT
+#		type = ConstantDT
+		type = SolutionTimeAdaptiveDT
 		dt = 0.01
 	[../]
 
@@ -465,9 +463,10 @@
 [Preconditioning]
 	
 	[./precond]
-		type = PBP
-		solve_order = 'He Kr Kr_Adsorbed Xe Xe_Adsorbed'
-		preconditioner = 'AMG AMG AMG AMG AMG'
+		type = SMP
+		full = true
+		petsc_options_iname = '-pc_type'
+		petsc_options_value = 'lu'
 	[../]
 
 [] #END Preconditioning

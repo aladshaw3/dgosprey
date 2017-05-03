@@ -49,7 +49,8 @@ CoupledLinearForcingFunction::CoupledLinearForcingFunction(const InputParameters
 : Kernel(parameters),
 _gaining(getParam<bool>("gaining")),
 _coef(getParam<Real>("coeff")),
-_coupled_u(coupledValue("coupled"))
+_coupled_u(coupledValue("coupled")),
+_coupled_var(coupled("coupled"))
 {
 	if (_gaining == false)
 		_coef = -_coef;
@@ -63,6 +64,16 @@ Real CoupledLinearForcingFunction::computeQpResidual()
 Real CoupledLinearForcingFunction::computeQpJacobian()
 {
 	return _phi[_j][_qp]*_test[_i][_qp];
+}
+
+Real CoupledLinearForcingFunction::computeQpOffDiagJacobian(unsigned int jvar)
+{
+	/*
+	if (jvar == _coupled_var)
+		return -_coef*_phi[_j][_qp]*_test[_i][_qp];
+	 */
+	
+	return 0.0;
 }
 
 

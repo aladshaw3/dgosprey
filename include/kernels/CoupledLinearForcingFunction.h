@@ -66,9 +66,16 @@ protected:
 		system and is used in preconditioning of the linear sub-problem. */
 	virtual Real computeQpJacobian();
 	
+	/// Not Required, but aids in the preconditioning step
+	/** This function returns the off diagonal Jacobian contribution for this object. By
+		returning a non-zero value we will hopefully improve the convergence rate for the
+		cross coupling of the variables. */
+	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+	
 	bool _gaining;							///< Value is true if coefficient is positive
 	Real _coef;								///< Coefficient for the coupled function
 	const VariableValue & _coupled_u;		///< Coupled variable
+	const unsigned int _coupled_var;		///< Variable identification for the coupled variable
 	
 private:
 	

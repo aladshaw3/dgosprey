@@ -12,8 +12,8 @@
  
 	type = GeneratedMesh
 	dim = 2
-	nx = 5
-	ny = 20
+	nx = 10
+	ny = 40
 	xmin = 0.0
 	xmax = 0.8636 #cm
 	ymin = 0.0
@@ -247,14 +247,14 @@
 		type = CoupledLinearForcingFunction
 		variable = Kr_Adsorbed
 		coupled = Kr
-		coeff = 277.55
+		coeff = 9622.8
 	[../]
  
 	[./Xe_adsorption]
 		type = CoupledLinearForcingFunction
 		variable = Xe_Adsorbed
 		coupled = Xe
-		coeff = 3154.93
+		coeff = 9496.6
 	[../]
 
 
@@ -516,40 +516,37 @@
 [Executioner]
 
 	type = Transient
-	scheme = implicit-euler
+	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-6
 	nl_abs_tol = 1e-6
-	nl_rel_step_tol = 1e-10
-	nl_abs_step_tol = 1e-10
 	l_tol = 1e-6
 	l_max_its = 100
-	nl_max_its = 10
+	nl_max_its = 20
 
 	solve_type = pjfnk
-	line_search = default    # Options: default none basic l2 bt
+	line_search = bt    # Options: default none basic l2 bt
 	start_time = 0.0
 	end_time = 90.0
-	dtmax = 0.1
-	petsc_options_iname = '-pc_type -pc_hypre_type -ksp_gmres_restart'
-	petsc_options_value = 'hypre boomeramg 500'
+#	dtmax = 0.1
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 0.001
+		dt = 0.01
 	[../]
 
 [] #END Executioner
 
 [Preconditioning]
-	
+
 	[./precond]
-		type = PBP
-		solve_order = 'He Kr Kr_Adsorbed Kr_AdsorbedHeat Xe Xe_Adsorbed Xe_AdsorbedHeat wall_temp column_temp '
-		preconditioner = 'AMG AMG AMG AMG AMG AMG AMG AMG AMG'
+		type = SMP
+		full = true
+		petsc_options_iname = '-pc_type -ksp_gmres_restart'
+		petsc_options_value = 'lu 100'
 	[../]
 
 [] #END Preconditioning

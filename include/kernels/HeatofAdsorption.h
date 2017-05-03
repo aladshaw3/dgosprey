@@ -74,6 +74,12 @@ protected:
 		system and is used in preconditioning of the linear sub-problem. */
 	virtual Real computeQpJacobian();
 	
+	/// Not Required, but aids in the preconditioning step
+	/** This function returns the off diagonal Jacobian contribution for this object. By
+		returning a non-zero value we will hopefully improve the convergence rate for the
+		cross coupling of the variables. */
+	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
+	
 private:
 	unsigned int _index;									///< Index of the gaseous species to calculate adsorbtion heat for
 	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;	///< Material Property holding the MAGPIE data structure
