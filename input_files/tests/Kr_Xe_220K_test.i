@@ -12,8 +12,8 @@
  
 	type = GeneratedMesh
 	dim = 2
-	nx = 10
-	ny = 40
+	nx = 5
+	ny = 20
 	xmin = 0.0
 	xmax = 0.8636 #cm
 	ymin = 0.0
@@ -458,34 +458,46 @@
 		variable = Xe
 		execute_on = 'initial timestep_end'
 	[../]
-
-	[./He_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = He
-		execute_on = 'initial timestep_end'
+ 
+	[./Kr_avg]
+ type = ElementAverageValue
+ variable = Kr
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./Xe_avg]
+type = ElementAverageValue
+ variable = Xe
+ execute_on = 'initial timestep_end'
 	[../]
 
-	[./temp_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = column_temp
-		execute_on = 'initial timestep_end'
-	[../]
+#	[./He_exit]
+#		type = SideAverageValue
+#		boundary = 'top'
+#		variable = He
+#		execute_on = 'initial timestep_end'
+#	[../]
 
-	[./press_exit]
-		type = SideAverageValue
-		boundary = 'top'
-		variable = total_pressure
-		execute_on = 'initial timestep_end'
-	[../]
+#	[./temp_exit]
+#		type = SideAverageValue
+#		boundary = 'top'
+#		variable = column_temp
+#		execute_on = 'initial timestep_end'
+#	[../]
 
-	[./wall_temp]
-		type = SideAverageValue
-		boundary = 'right'
-		variable = wall_temp
-		execute_on = 'initial timestep_end'
-	[../]
+#	[./press_exit]
+#		type = SideAverageValue
+#		boundary = 'top'
+#		variable = total_pressure
+#		execute_on = 'initial timestep_end'
+#	[../]
+
+#	[./wall_temp]
+#		type = SideAverageValue
+#		boundary = 'right'
+#		variable = wall_temp
+#		execute_on = 'initial timestep_end'
+#	[../]
 
 	[./Kr_solid]
 		type = ElementAverageValue
@@ -493,11 +505,11 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./Kr_heat]
-		type = ElementAverageValue
-		variable = Kr_AdsorbedHeat
-		execute_on = 'initial timestep_end'
-	[../]
+#	[./Kr_heat]
+#		type = ElementAverageValue
+#		variable = Kr_AdsorbedHeat
+#		execute_on = 'initial timestep_end'
+#	[../]
 
 	[./Xe_solid]
 		type = ElementAverageValue
@@ -505,11 +517,11 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-	[./Xe_heat]
-		type = ElementAverageValue
-		variable = Xe_AdsorbedHeat
-		execute_on = 'initial timestep_end'
-	[../]
+#	[./Xe_heat]
+#		type = ElementAverageValue
+#		variable = Xe_AdsorbedHeat
+#		execute_on = 'initial timestep_end'
+#	[../]
 
 [] #END Postprocessors
 
@@ -519,14 +531,14 @@
 	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
-	nl_rel_tol = 1e-10
-	nl_abs_tol = 1e-6
+	nl_rel_tol = 1e-8
+	nl_abs_tol = 1e-8
 	l_tol = 1e-6
-	l_max_its = 500
+	l_max_its = 2000
 	nl_max_its = 50
 
 	solve_type = pjfnk
-	line_search = basic    # Options: default none basic l2 bt
+	line_search = bt    # Options: default none basic l2 bt
 	start_time = 0.0
 	end_time = 90.0
 #	dtmax = 0.1
@@ -535,7 +547,7 @@
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
 		type = SolutionTimeAdaptiveDT
-		dt = 0.01
+		dt = 0.001
 	[../]
 
 [] #END Executioner
@@ -546,7 +558,7 @@
 		type = SMP
 		full = true
 		petsc_options_iname = '-pc_type -ksp_gmres_restart'
-		petsc_options_value = 'lu 500'
+		petsc_options_value = 'lu 2000'
 	[../]
 
 [] #END Preconditioning
