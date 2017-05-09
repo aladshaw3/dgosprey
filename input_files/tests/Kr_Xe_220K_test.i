@@ -460,15 +460,15 @@
 	[../]
  
 	[./Kr_avg]
- type = ElementAverageValue
- variable = Kr
- execute_on = 'initial timestep_end'
+		type = ElementAverageValue
+		variable = Kr
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./Xe_avg]
-type = ElementAverageValue
- variable = Xe
- execute_on = 'initial timestep_end'
+		type = ElementAverageValue
+		variable = Xe
+		execute_on = 'initial timestep_end'
 	[../]
 
 #	[./He_exit]
@@ -531,8 +531,8 @@ type = ElementAverageValue
 	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
-	nl_rel_tol = 1e-8
-	nl_abs_tol = 1e-8
+	nl_rel_tol = 1e-6
+	nl_abs_tol = 1e-6
 	l_tol = 1e-6
 	l_max_its = 2000
 	nl_max_its = 50

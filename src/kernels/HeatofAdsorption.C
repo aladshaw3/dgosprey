@@ -81,7 +81,7 @@ Real HeatofAdsorption::computeQpJacobian()
 
 Real HeatofAdsorption::computeQpOffDiagJacobian(unsigned int jvar)
 {
-	/*
+	
 	MAGPIE_DATA magpie_copy;
 	magpie_copy = _magpie_dat[_qp];
 	
@@ -96,7 +96,6 @@ Real HeatofAdsorption::computeQpOffDiagJacobian(unsigned int jvar)
 		_coef = 0.0;
 	}
 	return CoupledLinearForcingFunction::computeQpOffDiagJacobian(jvar);
-	 */
-	return 0.0;
+	
 }
 
