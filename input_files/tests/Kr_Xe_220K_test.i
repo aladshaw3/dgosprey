@@ -519,14 +519,14 @@
 	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
-	nl_rel_tol = 1e-6
+	nl_rel_tol = 1e-10
 	nl_abs_tol = 1e-6
 	l_tol = 1e-6
-	l_max_its = 100
-	nl_max_its = 20
+	l_max_its = 500
+	nl_max_its = 50
 
 	solve_type = pjfnk
-	line_search = bt    # Options: default none basic l2 bt
+	line_search = basic    # Options: default none basic l2 bt
 	start_time = 0.0
 	end_time = 90.0
 #	dtmax = 0.1
@@ -546,7 +546,7 @@
 		type = SMP
 		full = true
 		petsc_options_iname = '-pc_type -ksp_gmres_restart'
-		petsc_options_value = 'lu 100'
+		petsc_options_value = 'lu 500'
 	[../]
 
 [] #END Preconditioning
