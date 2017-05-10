@@ -528,7 +528,7 @@
 [Executioner]
 
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-6
@@ -557,6 +557,7 @@
 	[./precond]
 		type = SMP
 		full = true
+		petsc_options = '-snes_converged_reason'
 		petsc_options_iname = '-pc_type -ksp_gmres_restart'
 		petsc_options_value = 'lu 2000'
 	[../]

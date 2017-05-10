@@ -45,7 +45,12 @@ TotalColumnPressure::TotalColumnPressure(const InputParameters & parameters) :
 AuxKernel(parameters),
 _temperature(coupledValue("temperature"))
 {
-  unsigned int n = coupledComponents("coupled_gases");
+	//Forces specific execution behavior of the auxkernel
+	_exec_flags.clear();
+	_exec_flags.push_back(EXEC_INITIAL);
+	_exec_flags.push_back(EXEC_TIMESTEP_END);
+	
+	unsigned int n = coupledComponents("coupled_gases");
 	_index.resize(n);
 	_gas_conc.resize(n);
 	

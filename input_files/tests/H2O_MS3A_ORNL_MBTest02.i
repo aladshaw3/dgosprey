@@ -1,6 +1,8 @@
 [GlobalParams]
 	
 	length = 250.0
+	sigma = 0   # Penalty value:  NIPG = 0   otherwise, > 0
+	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
 [] #END GlobalParams
 
@@ -40,12 +42,6 @@
 		family = MONOMIAL
 	[../]
 
- 	[./wall_temp]
- 		order = FIRST
- 		family = MONOMIAL
- 		initial_condition = 303.15
- 	[../]
-
 	[./column_temp]
  		order = FIRST
  		family = MONOMIAL
@@ -80,6 +76,12 @@
  		family = MONOMIAL
  		initial_condition = 303.15
  	[../]
+ 
+	[./wall_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 303.15
+	[../]
 
  [] #END AuxVariables
 
@@ -170,23 +172,6 @@
 		variable = H2O
 	[../]
 
- 	[./wallAccum]
- 		type = WallHeatAccumulation
- 		variable = wall_temp
- 	[../]
- 
- 	[./wall_bed_trans]
- 		type = BedWallHeatTransfer
- 		variable = wall_temp
- 		coupled = column_temp
- 	[../]
- 
- 	[./wall_amb_trans]
- 		type = WallAmbientHeatTransfer
- 		variable = wall_temp
- 		coupled = ambient_temp
- 	[../]
-
 	[./columnAccum]
 		type = BedHeatAccumulation
 		variable = column_temp
@@ -275,6 +260,7 @@
 
 	[./column_pressure]
 		type = TotalColumnPressure
+		execute_on = 'initial timestep_end'
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
@@ -338,7 +324,7 @@
 		inner_diameter = 74.5
 		outer_diameter = 75.5
 		bulk_porosity = 0.585
-		axial_conductivity = 0.6292
+		axial_conductivity = 62.92
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 6.12
@@ -460,6 +446,12 @@
 		variable = H2O_Adsorbed
 		execute_on = 'initial timestep_end'
 	[../]
+ 
+	[./H2O_heat]
+		type = ElementAverageValue
+		variable = H2O_AdsorbedHeat
+		execute_on = 'initial timestep_end'
+	[../]
 
  [] #END Postprocessors
 
@@ -469,50 +461,60 @@
 	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
-	nl_rel_tol = 1e-6
-	nl_abs_tol = 1e-6
-	l_tol = 1e-6
-	l_max_its = 3000
+	nl_rel_tol = 1e-16
+	nl_abs_tol = 1e-4
+	l_tol = 1e-8
+	l_max_its = 2000
 	nl_max_its = 50
 
-	solve_type = newton
-    line_search = none    # Options: default none l2 bt
+	solve_type = pjfnk
+    line_search = bt    # Options: default none l2 bt
 	start_time = 0.0
 	end_time = 24.0
 
 	[./TimeStepper]
 		type = SolutionTimeAdaptiveDT
-		dt = 1e-6
+		dt = 0.001
 	[../]
 
  [] #END Executioner
 
 [Preconditioning]
  
-	active = 'fdp_precond'
+	active = 'smp'
  
-	[./smp_precond]
+	[./none]
 		type = SMP
-		full = true
+		petsc_options = '-snes_converged_reason'
 		petsc_options_iname = '-pc_type -ksp_gmres_restart'
-		petsc_options_value = 'lu 3000'
+		petsc_options_value = 'lu 2000'
 	[../]
  
-	[./fdp_precond]
+	[./smp]
+		type = SMP
+		full = true
+		petsc_options = '-snes_converged_reason'
+		petsc_options_iname = '-pc_type -ksp_gmres_restart  -snes_max_funcs'
+		petsc_options_value = 'lu 2000 20000'
+	[../]
+ 
+	[./fdp]
 		type = FDP
 		full = true
+		petsc_options = '-snes_converged_reason'
 		petsc_options_iname = '-mat_fd_coloring_err -mat_fd_type'
 		petsc_options_value = '1e-6 ds'
 	[../]
  
-	[./pbp_precond]
+	[./pbp]
 		type = PBP
-		solve_order = 'N2 O2 H2O H2O_Adsorbed H2O_AdsorbedHeat wall_temp column_temp'
-		preconditioner = 'lu lu lu lu lu lu lu'
-		off_diag_row = 'N2 O2 H2O H2O_Adsorbed H2O_AdsorbedHeat wall_temp column_temp'
-		off_diag_column = 'N2 O2 H2O H2O_Adsorbed H2O_AdsorbedHeat wall_temp column_temp'
+		solve_order = 'N2 O2 H2O H2O_Adsorbed H2O_AdsorbedHeat column_temp'
+		preconditioner = 'lu lu lu lu lu lu'
+		off_diag_row =    'O2 H2O H2O H2O_Adsorbed H2O_Adsorbed H2O_Adsorbed H2O_AdsorbedHeat H2O_AdsorbedHeat H2O_AdsorbedHeat H2O_AdsorbedHeat column_temp column_temp column_temp column_temp column_temp'
+		off_diag_column = 'N2 N2  O2  N2           O2           H2O          N2               O2               H2O              H2O_Adsorbed     N2 O2 H2O H2O_Adsorbed H2O_AdsorbedHeat'
+		petsc_options = '-snes_converged_reason'
 		petsc_options_iname = '-pc_type -ksp_gmres_restart'
-		petsc_options_value = 'lu 3000'
+		petsc_options_value = 'lu 2000'
 	[../]
 
 [] #END Preconditioning
