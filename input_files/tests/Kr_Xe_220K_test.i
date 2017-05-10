@@ -1,4 +1,7 @@
 [GlobalParams]
+ 
+	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
+	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
 [] #END GlobalParams
 
@@ -531,14 +534,14 @@
 	scheme = implicit-euler
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
-	nl_rel_tol = 1e-6
-	nl_abs_tol = 1e-6
-	l_tol = 1e-6
-	l_max_its = 2000
+	nl_rel_tol = 1e-10
+	nl_abs_tol = 1e-4
+#	l_tol = 1e-6
+	l_max_its = 200
 	nl_max_its = 50
 
 	solve_type = pjfnk
-	line_search = bt    # Options: default none basic l2 bt
+	line_search = none    # Options: default none basic l2 bt
 	start_time = 0.0
 	end_time = 90.0
 #	dtmax = 0.1

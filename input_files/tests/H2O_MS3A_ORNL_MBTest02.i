@@ -1,7 +1,7 @@
 [GlobalParams]
 	
 	length = 250.0
-	sigma = 0   # Penalty value:  NIPG = 0   otherwise, > 0
+	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
 [] #END GlobalParams
@@ -199,6 +199,13 @@
 		coupled = H2O_Adsorbed
 		index = 2
 	[../]
+ 
+#	[./H2O_adsheat]
+#		type = CoupledLinearForcingFunction
+#		variable = H2O_AdsorbedHeat
+#		coupled = H2O_Adsorbed
+#		coeff = 46597.5
+#	[../]
 
 	[./H2O_adsorption]
 		type = CoupledLinearForcingFunction
@@ -324,7 +331,7 @@
 		inner_diameter = 74.5
 		outer_diameter = 75.5
 		bulk_porosity = 0.585
-		axial_conductivity = 62.92
+		axial_conductivity = 0.6292
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 6.12
@@ -458,10 +465,10 @@
 [Executioner]
 
  	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
-	nl_rel_tol = 1e-16
+	nl_rel_tol = 1e-10
 	nl_abs_tol = 1e-4
 	l_tol = 1e-8
 	l_max_its = 2000
