@@ -193,19 +193,19 @@
 		coupled = H2O_AdsorbedHeat
 	[../]
 
-	[./H2O_adsheat]
-		type = HeatofAdsorption
-		variable = H2O_AdsorbedHeat
-		coupled = H2O_Adsorbed
-		index = 2
-	[../]
- 
 #	[./H2O_adsheat]
-#		type = CoupledLinearForcingFunction
+#		type = HeatofAdsorption
 #		variable = H2O_AdsorbedHeat
 #		coupled = H2O_Adsorbed
-#		coeff = 46597.5
+#		index = 2
 #	[../]
+ 
+	[./H2O_adsheat]
+		type = CoupledLinearForcingFunction
+		variable = H2O_AdsorbedHeat
+		coupled = H2O_Adsorbed
+		coeff = 46597.5
+	[../]
 
 	[./H2O_adsorption]
 		type = CoupledLinearForcingFunction
