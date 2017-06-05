@@ -101,6 +101,8 @@
 #include "SolidMassTransfer.h"
 #include "SolidHeatTransfer.h"
 
+#include "WallTemperature.h"
+
 template<>
 InputParameters validParams<DgospreyApp>()
 {
@@ -136,7 +138,6 @@ DgospreyApp::registerApps()
 void
 DgospreyApp::registerObjects(Factory & factory)
 {
-	registerKernel(LinearDrivingForce);
 	registerMaterial(BedProperties);
 	registerMaterial(AdsorbentProperties);
 	registerMaterial(FlowProperties);
@@ -146,6 +147,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerMaterial(GasFlowProperties);
 	registerMaterial(KineticProperties);
 	
+	registerKernel(LinearDrivingForce);
 	registerKernel(BedMassAccumulation);
 	registerKernel(BedWallHeatTransfer);
 	registerKernel(WallAmbientHeatTransfer);
@@ -171,6 +173,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerAux(Scopsowl_Adsorption);
 	registerAux(Scopsowl_Perturbation);
 	registerAux(TotalMoles);
+	registerAux(WallTemperature);
 
 	registerInitialCondition(TotalPressureIC);
 	registerInitialCondition(ColumnTemperatureIC);

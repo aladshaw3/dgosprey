@@ -63,8 +63,8 @@ Real HeatofAdsorption::computeQpResidual()
 	//Call MAGPIE Simulation for Unperturbed data
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
 	{
-		double pi = magpie_copy.gpast_dat[_index].y * magpie_copy.sys_dat.PT;
-		_coef = Qst(pi,(void *)&magpie_copy,_index);
+		//double pi = magpie_copy.gpast_dat[_index].y * magpie_copy.sys_dat.PT;
+		_coef = Qst(0.0,(void *)&magpie_copy,_index);
 	}
 	else
 	{
@@ -88,8 +88,8 @@ Real HeatofAdsorption::computeQpOffDiagJacobian(unsigned int jvar)
 	//Call MAGPIE Simulation for Unperturbed data
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
 	{
-		double pi = magpie_copy.gpast_dat[_index].y * magpie_copy.sys_dat.PT;
-		_coef = Qst(pi,(void *)&magpie_copy,_index);
+		//double pi = magpie_copy.gpast_dat[_index].y * magpie_copy.sys_dat.PT;
+		_coef = Qst(0.0,(void *)&magpie_copy,_index);
 	}
 	else
 	{
@@ -98,6 +98,5 @@ Real HeatofAdsorption::computeQpOffDiagJacobian(unsigned int jvar)
 	return CoupledLinearForcingFunction::computeQpOffDiagJacobian(jvar);
 	 */
 	return 0.0;
-	
 }
 

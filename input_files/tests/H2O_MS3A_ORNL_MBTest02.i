@@ -1,7 +1,7 @@
 [GlobalParams]
 	
 	length = 250.0
-	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
+	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
 [] #END GlobalParams
@@ -193,18 +193,11 @@
 		coupled = H2O_AdsorbedHeat
 	[../]
 
-#	[./H2O_adsheat]
-#		type = HeatofAdsorption
-#		variable = H2O_AdsorbedHeat
-#		coupled = H2O_Adsorbed
-#		index = 2
-#	[../]
- 
 	[./H2O_adsheat]
-		type = CoupledLinearForcingFunction
+		type = HeatofAdsorption
 		variable = H2O_AdsorbedHeat
 		coupled = H2O_Adsorbed
-		coeff = 46597.5
+		index = 2
 	[../]
 
 	[./H2O_adsorption]
@@ -267,10 +260,16 @@
 
 	[./column_pressure]
 		type = TotalColumnPressure
-		execute_on = 'initial timestep_end'
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
+	[../]
+ 
+	[./wall_temp_calc]
+		type = WallTemperature
+		variable = wall_temp
+		column_temp = column_temp
+		ambient_temp = ambient_temp
 	[../]
 
  [] #END AuxKernels
@@ -465,13 +464,13 @@
 [Executioner]
 
  	type = Transient
-	scheme = implicit-euler
+	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10
 	nl_abs_tol = 1e-4
 	l_tol = 1e-8
-	l_max_its = 2000
+	l_max_its = 100
 	nl_max_its = 50
 
 	solve_type = pjfnk
@@ -530,6 +529,6 @@
 
 	exodus = true
 	csv = true
-	print_linear_residuals = false
+	print_linear_residuals = true
 
  [] #END Outputs
