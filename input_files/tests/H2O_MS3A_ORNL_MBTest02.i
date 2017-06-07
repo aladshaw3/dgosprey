@@ -74,7 +74,8 @@
  	[./ambient_temp]
  		order = FIRST
  		family = MONOMIAL
- 		initial_condition = 303.15
+        initial_condition = 273.15
+# 		initial_condition = 303.15
  	[../]
  
 	[./wall_temp]
@@ -345,7 +346,7 @@
 		comp_ref_viscosity = '0.0001781 0.0002018 0.0001043'
 		comp_ref_temp = '300.55 292.25 298.16'
 		comp_Sutherland_const = '111 127 784.72'
-		flow_rate = 2.62e8
+		flow_rate = 2.62e3
 		temperature = column_temp
  		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O'
@@ -476,7 +477,7 @@
 	solve_type = pjfnk
     line_search = bt    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 24.0
+	end_time = 1000.0
 
 	[./TimeStepper]
 		type = SolutionTimeAdaptiveDT
