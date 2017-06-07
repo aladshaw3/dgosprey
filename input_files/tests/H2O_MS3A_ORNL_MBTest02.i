@@ -530,6 +530,6 @@
 
 	exodus = true
 	csv = true
-	print_linear_residuals = true
+	print_linear_residuals = false
 
  [] #END Outputs

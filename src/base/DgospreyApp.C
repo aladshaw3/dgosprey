@@ -102,6 +102,7 @@
 #include "SolidHeatTransfer.h"
 
 #include "WallTemperature.h"
+#include "CoupledLangmuirForcingFunction.h"
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -160,6 +161,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(HeatofAdsorption);
 	registerKernel(SolidMassTransfer);
 	registerKernel(SolidHeatTransfer);
+    registerKernel(CoupledLangmuirForcingFunction);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(MAGPIE_Adsorption);

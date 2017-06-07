@@ -68,8 +68,10 @@ Real CoupledLinearForcingFunction::computeQpJacobian()
 
 Real CoupledLinearForcingFunction::computeQpOffDiagJacobian(unsigned int jvar)
 {
+    
 	if (jvar == _coupled_var)
 		return -_coef*_phi[_j][_qp]*_test[_i][_qp];
+     
 	
 	return 0.0;
 }
