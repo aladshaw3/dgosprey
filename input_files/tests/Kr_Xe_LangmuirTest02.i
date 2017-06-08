@@ -1,4 +1,4 @@
- [GlobalParams]
+[GlobalParams]
 
 sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
 epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
@@ -551,9 +551,9 @@ dt = 0.00025
 
 [./precond]
 type = SMP
-off_diag_row = 'Kr Kr Kr Kr Xe Xe Xe He He He He column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Kr_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
+off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
 
-off_diag_column = 'Xe column_temp Xe_Adsorbed Xe_AdsorbedHeat He Kr_Adsorbed Kr_AdsorbedHeat Kr column_temp Kr_AdsorbedHeat Xe_AdsorbedHeat Xe Xe_Adsorbed Xe_AdsorbedHeat Kr He column_temp Kr_AdsorbedHeat Xe He Kr_Adsorbed Xe_AdsorbedHeat Kr column_temp Xe_Adsorbed Xe Kr_Adsorbed Kr_AdsorbedHeat'
+off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
 
 #full = true
 petsc_options = '-snes_converged_reason'

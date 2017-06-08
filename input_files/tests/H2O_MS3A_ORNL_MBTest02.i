@@ -477,7 +477,7 @@
 	solve_type = pjfnk
     line_search = bt    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 1000.0
+	end_time = 24.0
 
 	[./TimeStepper]
 		type = SolutionTimeAdaptiveDT
