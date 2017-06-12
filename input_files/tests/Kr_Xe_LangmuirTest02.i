@@ -231,17 +231,19 @@ index = 1
 [../]
 
 [./Kr_adsorption]
-type = CoupledLinearForcingFunction
+type = CoupledLangmuirForcingFunction
 variable = Kr_Adsorbed
 coupled = Kr
-coeff = 9622.8
+langmuir_coeff = 1.0e-6
+max_capacity = 1.716
 [../]
 
 [./Xe_adsorption]
-type = CoupledLinearForcingFunction
+type = CoupledLangmuirForcingFunction
 variable = Xe_Adsorbed
 coupled = Xe
-coeff = 9496.6
+langmuir_coeff = 1.0e-6
+max_capacity = 1.479
 [../]
 
 

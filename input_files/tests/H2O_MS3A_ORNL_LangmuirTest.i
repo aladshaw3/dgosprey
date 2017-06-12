@@ -74,8 +74,8 @@ initial_condition = 101.35
 [./ambient_temp]
 order = FIRST
 family = MONOMIAL
-initial_condition = 273.15
-# 		initial_condition = 303.15
+#initial_condition = 273.15
+initial_condition = 303.15
 [../]
 
 [./wall_temp]
@@ -202,10 +202,11 @@ index = 2
 [../]
 
 [./H2O_adsorption]
-type = CoupledLinearForcingFunction
+type = CoupledLangmuirForcingFunction
 variable = H2O_Adsorbed
 coupled = H2O
-coeff = 16578.78
+langmuir_coeff = 100.0
+max_capacity = 1.17
 [../]
 
 [] #END Kernels
@@ -346,7 +347,7 @@ comp_heat_capacity = '1.04 0.919 1.97'
 comp_ref_viscosity = '0.0001781 0.0002018 0.0001043'
 comp_ref_temp = '300.55 292.25 298.16'
 comp_Sutherland_const = '111 127 784.72'
-flow_rate = 2.62e3
+flow_rate = 2.62e8
 temperature = column_temp
 total_pressure = total_pressure
 coupled_gases = 'N2 O2 H2O'
@@ -427,12 +428,12 @@ variable = H2O
 execute_on = 'initial timestep_end'
 [../]
 
-[./temp_exit]
-type = SideAverageValue
-boundary = 'top'
-variable = column_temp
-execute_on = 'initial timestep_end'
-[../]
+#[./temp_exit]
+#type = SideAverageValue
+#boundary = 'top'
+#variable = column_temp
+#execute_on = 'initial timestep_end'
+#[../]
 
 [./press_exit]
 type = SideAverageValue
@@ -454,11 +455,11 @@ variable = H2O_Adsorbed
 execute_on = 'initial timestep_end'
 [../]
 
-[./H2O_heat]
-type = ElementAverageValue
-variable = H2O_AdsorbedHeat
-execute_on = 'initial timestep_end'
-[../]
+#[./H2O_heat]
+#type = ElementAverageValue
+#variable = H2O_AdsorbedHeat
+#execute_on = 'initial timestep_end'
+#[../]
 
 [] #END Postprocessors
 
