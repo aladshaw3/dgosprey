@@ -93,6 +93,15 @@ family = MONOMIAL
 initial_condition = 220.15
 [../]
 
+[./Kr_Adsorbed_Magpie]
+order = FIRST
+family = MONOMIAL
+[../]
+
+[./Xe_Adsorbed_Magpie]
+order = FIRST
+family = MONOMIAL
+[../]
 
 [] #END AuxVariables
 
@@ -234,6 +243,7 @@ index = 1
 type = ParameterizedAdsorptionEquil
 variable = Kr_Adsorbed
 coupled = Kr
+ads_est = Kr_Adsorbed_Magpie
 index = 0
 [../]
 
@@ -241,6 +251,7 @@ index = 0
 type = ParameterizedAdsorptionEquil
 variable = Xe_Adsorbed
 coupled = Xe
+ads_est = Xe_Adsorbed_Magpie
 index = 1
 [../]
 
@@ -310,6 +321,18 @@ type = WallTemperature
 variable = wall_temp
 column_temp = column_temp
 ambient_temp = ambient_temp
+[../]
+
+[./Kr_magpie]
+type = MAGPIE_Adsorption
+variable = Kr_Adsorbed_Magpie
+index = 0
+[../]
+
+[./Xe_magpie]
+type = MAGPIE_Adsorption
+variable = Xe_Adsorbed_Magpie
+index = 1
 [../]
 
 [] #END AuxKernels
@@ -529,7 +552,7 @@ scheme = implicit-euler
 nl_rel_tol = 1e-10
 nl_abs_tol = 1e-4
 l_tol = 1e-6
-l_max_its = 200
+l_max_its = 500
 nl_max_its = 50
 
 solve_type = pjfnk
@@ -564,6 +587,10 @@ petsc_options_value = 'lu 2000 20000'
 #[./fdp]
 #type = FDP
 #full = true
+#off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
+
+#off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
+
 #petsc_options = '-snes_converged_reason'
 #petsc_options_iname = '-mat_fd_coloring_err -mat_fd_type'
 #petsc_options_value = '1e-6 ds'

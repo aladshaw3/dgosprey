@@ -41,131 +41,69 @@ InputParameters validParams<ParameterizedAdsorptionEquil>()
 {
     InputParameters params = validParams<CoupledLangmuirForcingFunction>();
     params.addParam<unsigned int>("index",0,"Index of the species that we are interested in.");
+	params.addRequiredCoupledVar("ads_est","Name of the AuxVariable estimating adsorption");
     return params;
 }
 
 ParameterizedAdsorptionEquil::ParameterizedAdsorptionEquil(const InputParameters & parameters)
 : CoupledLangmuirForcingFunction(parameters),
 _index(getParam<unsigned int>("index")),
-_magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data"))
+_magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data")),
+_q_est(coupledValue("ads_est"))
 {
     
 }
 
 Real ParameterizedAdsorptionEquil::computeQpResidual()
 {
-    double q_est = 0.0;
-    MAGPIE_DATA magpie_copy;
-    magpie_copy = _magpie_dat[_qp];
-    
-    //Call MAGPIE Simulation
-    if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
-    {
-        int success = 0;
-        success = MAGPIE( (void *)&magpie_copy );
-        if (success < 0 || success > 3)
-        {
-            for (int i=0; i<magpie_copy.sys_dat.N; i++)
-            {
-                if (i != _index)
-                {
-                    magpie_copy.gpast_dat[i].y = 0.0;
-                    magpie_copy.sys_dat.Carrier = true;
-                }
-            }
-            success = MAGPIE( (void *)&magpie_copy );
-            if (success < 0 || success > 3)
-            {
-                mError(simulation_fail);
-            }
-        }
-        else success = 0;
-        
-        q_est = magpie_copy.gpast_dat[_index].q;
-        
-    }
-    else
-    {
-        return 0.0;
-    }
-    
+	if (_magpie_dat[_qp].gsta_dat[_index].qmax == 0.0)
+		return 0.0;
+	
     _maxcap = _magpie_dat[_qp].gsta_dat[_index].qmax;
-    if (magpie_copy.gpast_dat[_index].y == 0.0)
+    if (_magpie_dat[_qp].gpast_dat[_index].y == 0.0)
     {
-        double K = dq_dp (0.0, (void *)&magpie_copy, _index)*8.3144621*_magpie_dat[_qp].sys_dat.T;
+        double K = dq_dp (0.0, (void *)&_magpie_dat[_qp], _index)*8.3144621*_magpie_dat[_qp].sys_dat.T;
         _langmuircoef = K/_maxcap;
     }
     else
     {
-        double pi = _magpie_dat[_qp].sys_dat.PT*magpie_copy.gpast_dat[_index].y;
+        double pi = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
         double ci = pi/8.3144621/_magpie_dat[_qp].sys_dat.T;
-        _langmuircoef = q_est/(ci*(_maxcap+1e-6-q_est));
+        _langmuircoef = _q_est[_qp]/(ci*(_maxcap+1e-6-_q_est[_qp]));
     }
-    
     return CoupledLangmuirForcingFunction::computeQpResidual();
 }
 
 Real ParameterizedAdsorptionEquil::computeQpJacobian()
 {
+	if (_magpie_dat[_qp].gsta_dat[_index].qmax == 0.0)
+		return 0.0;
     return CoupledLangmuirForcingFunction::computeQpJacobian();
 }
 
 Real ParameterizedAdsorptionEquil::computeQpOffDiagJacobian(unsigned int jvar)
 {
-   
+	if (_magpie_dat[_qp].gsta_dat[_index].qmax == 0.0)
+		return 0.0;
+	
     if (jvar == _coupled_var)
     {
-        double q_est = 0.0;
-        MAGPIE_DATA magpie_copy;
-        magpie_copy = _magpie_dat[_qp];
-        
-        //Call MAGPIE Simulation
-        if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
-        {
-            int success = 0;
-            success = MAGPIE( (void *)&magpie_copy );
-            if (success < 0 || success > 3)
-            {
-                for (int i=0; i<magpie_copy.sys_dat.N; i++)
-                {
-                    if (i != _index)
-                    {
-                        magpie_copy.gpast_dat[i].y = 0.0;
-                        magpie_copy.sys_dat.Carrier = true;
-                    }
-                }
-                success = MAGPIE( (void *)&magpie_copy );
-                if (success < 0 || success > 3)
-                {
-                    mError(simulation_fail);
-                }
-            }
-            else success = 0;
-            
-            q_est = magpie_copy.gpast_dat[_index].q;
-            
-        }
-        else
-        {
-            return 0.0;
-        }
-        
         _maxcap = _magpie_dat[_qp].gsta_dat[_index].qmax;
-        if (magpie_copy.gpast_dat[_index].y == 0.0)
+        if (_magpie_dat[_qp].gpast_dat[_index].y == 0.0)
         {
-            double K = dq_dp (0.0, (void *)&magpie_copy, _index)*8.3144621*_magpie_dat[_qp].sys_dat.T;
+            double K = dq_dp (0.0, (void *)&_magpie_dat[_qp], _index)*8.3144621*_magpie_dat[_qp].sys_dat.T;
             _langmuircoef = K/_maxcap;
         }
         else
         {
-            double pi = _magpie_dat[_qp].sys_dat.PT*magpie_copy.gpast_dat[_index].y;
+            double pi = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
             double ci = pi/8.3144621/_magpie_dat[_qp].sys_dat.T;
-            _langmuircoef = q_est/(ci*(_maxcap+1e-6-q_est));
+            _langmuircoef = _q_est[_qp]/(ci*(_maxcap+1e-6-_q_est[_qp]));
         }
         
         return CoupledLangmuirForcingFunction::computeQpOffDiagJacobian(jvar);
     }
-    
+ 
     return 0.0;
 }
 
