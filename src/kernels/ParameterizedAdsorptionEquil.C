@@ -60,7 +60,7 @@ Real ParameterizedAdsorptionEquil::computeQpResidual()
 		return 0.0;
 	
     _maxcap = _magpie_dat[_qp].gsta_dat[_index].qmax;
-    if (_magpie_dat[_qp].gpast_dat[_index].y == 0.0)
+    if (_magpie_dat[_qp].gpast_dat[_index].y == 0.0 || _q_est[_qp] == 0.0)
     {
         double K = dq_dp (0.0, (void *)&_magpie_dat[_qp], _index)*8.3144621*_magpie_dat[_qp].sys_dat.T;
         _langmuircoef = K/_maxcap;
@@ -69,7 +69,8 @@ Real ParameterizedAdsorptionEquil::computeQpResidual()
     {
         double pi = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
         double ci = pi/8.3144621/_magpie_dat[_qp].sys_dat.T;
-        _langmuircoef = _q_est[_qp]/(ci*(_maxcap+1e-6-_q_est[_qp]));
+        _langmuircoef = fabs(_q_est[_qp]/(ci*(_maxcap+1e-6-_q_est[_qp])));
+		//std::cout << _index << "\t" << _langmuircoef << "\t" << _q_est[_qp] << std::endl;
     }
     return CoupledLangmuirForcingFunction::computeQpResidual();
 }
@@ -83,13 +84,14 @@ Real ParameterizedAdsorptionEquil::computeQpJacobian()
 
 Real ParameterizedAdsorptionEquil::computeQpOffDiagJacobian(unsigned int jvar)
 {
+	/*
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax == 0.0)
 		return 0.0;
 	
     if (jvar == _coupled_var)
     {
         _maxcap = _magpie_dat[_qp].gsta_dat[_index].qmax;
-        if (_magpie_dat[_qp].gpast_dat[_index].y == 0.0)
+        if (_magpie_dat[_qp].gpast_dat[_index].y == 0.0 || _q_est[_qp] == 0.0)
         {
             double K = dq_dp (0.0, (void *)&_magpie_dat[_qp], _index)*8.3144621*_magpie_dat[_qp].sys_dat.T;
             _langmuircoef = K/_maxcap;
@@ -98,12 +100,12 @@ Real ParameterizedAdsorptionEquil::computeQpOffDiagJacobian(unsigned int jvar)
         {
             double pi = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
             double ci = pi/8.3144621/_magpie_dat[_qp].sys_dat.T;
-            _langmuircoef = _q_est[_qp]/(ci*(_maxcap+1e-6-_q_est[_qp]));
+            _langmuircoef = fabs(_q_est[_qp]/(ci*(_maxcap+1e-6-_q_est[_qp])));
         }
         
         return CoupledLangmuirForcingFunction::computeQpOffDiagJacobian(jvar);
     }
- 
+	*/
     return 0.0;
 }
 
