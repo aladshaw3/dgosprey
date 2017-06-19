@@ -60,6 +60,7 @@ Real ParameterizedAdsorptionEquil::computeQpResidual()
 		return 0.0;
 	
     _maxcap = _magpie_dat[_qp].gsta_dat[_index].qmax;
+	/*
     if (_magpie_dat[_qp].gpast_dat[_index].y == 0.0 || _q_est[_qp] == 0.0)
     {
         double K = dq_dp (0.0, (void *)&_magpie_dat[_qp], _index)*8.3144621*_magpie_dat[_qp].sys_dat.T;
@@ -70,8 +71,40 @@ Real ParameterizedAdsorptionEquil::computeQpResidual()
         double pi = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
         double ci = pi/8.3144621/_magpie_dat[_qp].sys_dat.T;
         _langmuircoef = fabs(_q_est[_qp]/(ci*(_maxcap+1e-6-_q_est[_qp])));
-		//std::cout << _index << "\t" << _langmuircoef << "\t" << _q_est[_qp] << std::endl;
     }
+	 */
+	/*
+	double m,T,p,c;
+	T = _magpie_dat[_qp].sys_dat.T;
+	p = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
+	c = p/R/T;
+	m = dq_dp(p, (void *)&_magpie_dat[_qp], _index);
+	double Ak,B,C;
+	Ak = m*R*T*c*c;
+	B = (2.0*m*R*T*c) - _maxcap;
+	C = m*R*T;
+	if (m == 0.0)
+		_langmuircoef = 0.0;
+	if (c == 0.0)
+		_langmuircoef = (m*R*T)/_maxcap;
+	else
+	{
+		double root = std::pow(((B*B) - (4.0*Ak*C)),0.5);
+		if ((-B+root) >= 0.0)
+			_langmuircoef = (-B+root)/(2.0*Ak);
+		else
+			_langmuircoef = (-B-root)/(2.0*Ak);
+	}
+	_langmuircoef = (m*R*T)/_maxcap;
+	 */
+	double m,T,p,theta;
+	T = _magpie_dat[_qp].sys_dat.T;
+	p = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
+	m = dq_dp(p, (void *)&_magpie_dat[_qp], _index);
+	theta = _q_est[_qp]/_maxcap;
+	_langmuircoef = (((R*T)/_maxcap)*m)/((1.0-theta)*(1.0-theta));
+
+	//std::cout << _index << "\t" << _langmuircoef << std::endl;
     return CoupledLangmuirForcingFunction::computeQpResidual();
 }
 
@@ -84,13 +117,13 @@ Real ParameterizedAdsorptionEquil::computeQpJacobian()
 
 Real ParameterizedAdsorptionEquil::computeQpOffDiagJacobian(unsigned int jvar)
 {
-	/*
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax == 0.0)
 		return 0.0;
 	
     if (jvar == _coupled_var)
     {
         _maxcap = _magpie_dat[_qp].gsta_dat[_index].qmax;
+		/*
         if (_magpie_dat[_qp].gpast_dat[_index].y == 0.0 || _q_est[_qp] == 0.0)
         {
             double K = dq_dp (0.0, (void *)&_magpie_dat[_qp], _index)*8.3144621*_magpie_dat[_qp].sys_dat.T;
@@ -102,10 +135,41 @@ Real ParameterizedAdsorptionEquil::computeQpOffDiagJacobian(unsigned int jvar)
             double ci = pi/8.3144621/_magpie_dat[_qp].sys_dat.T;
             _langmuircoef = fabs(_q_est[_qp]/(ci*(_maxcap+1e-6-_q_est[_qp])));
         }
-        
+        */
+		/*
+		double m,T,p,c;
+		T = _magpie_dat[_qp].sys_dat.T;
+		p = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
+		c = p/R/T;
+		m = dq_dp(p, (void *)&_magpie_dat[_qp], _index);
+		double Ak,B,C;
+		Ak = m*R*T*c*c;
+		B = (2.0*m*R*T*c) - _maxcap;
+		C = m*R*T;
+		if (m == 0.0)
+			_langmuircoef = 0.0;
+		if (c == 0.0)
+			_langmuircoef = (m*R*T)/_maxcap;
+		else
+		{
+			double root = std::pow(((B*B) - (4.0*Ak*C)),0.5);
+			if ((-B+root) >= 0.0)
+				_langmuircoef = (-B+root)/(2.0*Ak);
+			else
+				_langmuircoef = (-B-root)/(2.0*Ak);
+		}
+		_langmuircoef = (m*R*T)/_maxcap;
+		 */
+		double m,T,p,theta;
+		T = _magpie_dat[_qp].sys_dat.T;
+		p = _magpie_dat[_qp].sys_dat.PT*_magpie_dat[_qp].gpast_dat[_index].y;
+		m = dq_dp(p, (void *)&_magpie_dat[_qp], _index);
+		theta = _q_est[_qp]/_maxcap;
+		_langmuircoef = (((R*T)/_maxcap)*m)/((1.0-theta)*(1.0-theta));
+		
         return CoupledLangmuirForcingFunction::computeQpOffDiagJacobian(jvar);
     }
-	*/
+	
     return 0.0;
 }
 

@@ -552,7 +552,7 @@ scheme = implicit-euler
 nl_rel_tol = 1e-10
 nl_abs_tol = 1e-4
 l_tol = 1e-6
-l_max_its = 500
+l_max_its = 1000
 nl_max_its = 50
 
 solve_type = pjfnk

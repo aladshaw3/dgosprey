@@ -16,7 +16,7 @@ coord_type = RZ
 type = GeneratedMesh
 dim = 2
 nx = 5
-ny = 20
+ny = 40
 xmin = 0.0
 xmax = 0.8636 #cm
 ymin = 0.0
@@ -234,7 +234,7 @@ index = 1
 type = CoupledLangmuirForcingFunction
 variable = Kr_Adsorbed
 coupled = Kr
-langmuir_coeff = 1.0e-6
+langmuir_coeff = 1000
 max_capacity = 1.716
 [../]
 
@@ -242,7 +242,7 @@ max_capacity = 1.716
 type = CoupledLangmuirForcingFunction
 variable = Xe_Adsorbed
 coupled = Xe
-langmuir_coeff = 1.0e-6
+langmuir_coeff = 10000
 max_capacity = 1.479
 [../]
 
@@ -525,14 +525,14 @@ execute_on = 'initial timestep_end'
 [Executioner]
 
 type = Transient
-scheme = implicit-euler
+scheme = bdf2
 
 # NOTE: The default tolerances are far to strict and cause the program to crawl
 nl_rel_tol = 1e-10
 nl_abs_tol = 1e-4
 l_tol = 1e-6
-l_max_its = 200
-nl_max_its = 50
+l_max_its = 2000
+nl_max_its = 10
 
 solve_type = pjfnk
 line_search = bt    # Options: default none basic l2 bt
