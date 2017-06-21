@@ -1,4 +1,4 @@
-[GlobalParams]
+ [GlobalParams]
 
 sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
 epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
@@ -44,7 +44,7 @@ family = MONOMIAL
 [./column_temp]
 order = FIRST
 family = MONOMIAL
-initial_condition = 191.15
+initial_condition = 295.15
 [../]
 
 [./Kr_Adsorbed]
@@ -84,13 +84,13 @@ initial_condition = 101.35
 [./ambient_temp]
 order = FIRST
 family = MONOMIAL
-initial_condition = 191.15
+initial_condition = 295.15
 [../]
 
 [./wall_temp]
 order = FIRST
 family = MONOMIAL
-initial_condition = 191.15
+initial_condition = 295.15
 [../]
 
 
@@ -103,7 +103,7 @@ type = ConcentrationIC
 variable = Kr
 initial_mole_frac = 0.0
 initial_press = 101.35
-initial_temp = 191.15
+initial_temp = 295.15
 [../]
 
 [./Xe_IC]
@@ -111,7 +111,7 @@ type = ConcentrationIC
 variable = Xe
 initial_mole_frac = 0.0
 initial_press = 101.35
-initial_temp = 191.15
+initial_temp = 295.15
 [../]
 
 [./He_IC]
@@ -119,7 +119,7 @@ type = ConcentrationIC
 variable = He
 initial_mole_frac = 1.0
 initial_press = 101.35
-initial_temp = 191.15
+initial_temp = 295.15
 [../]
 
 [] #END ICs
@@ -234,7 +234,7 @@ index = 1
 type = CoupledLangmuirForcingFunction
 variable = Kr_Adsorbed
 coupled = Kr
-langmuir_coeff = 12372.62
+langmuir_coeff = 358.34
 max_capacity = 1.716
 [../]
 
@@ -242,7 +242,7 @@ max_capacity = 1.716
 type = CoupledLangmuirForcingFunction
 variable = Xe_Adsorbed
 coupled = Xe
-langmuir_coeff = 136537.3
+langmuir_coeff = 2000.0
 max_capacity = 1.479
 [../]
 
@@ -322,7 +322,7 @@ ambient_temp = ambient_temp
 type = DGMassFluxBC
 variable = Kr
 boundary = 'top bottom'
-input_temperature = 191.15
+input_temperature = 295.15
 input_pressure = 101.35
 input_molefraction = 0.001
 index = 0
@@ -332,7 +332,7 @@ index = 0
 type = DGMassFluxBC
 variable = Xe
 boundary = 'top bottom'
-input_temperature = 191.15
+input_temperature = 295.15
 input_pressure = 101.35
 input_molefraction = 0.00015
 index = 1
@@ -342,7 +342,7 @@ index = 1
 type = DGMassFluxBC
 variable = He
 boundary = 'top bottom'
-input_temperature = 191.15
+input_temperature = 295.15
 input_pressure = 101.35
 input_molefraction = 0.99885
 index = 2
@@ -352,7 +352,7 @@ index = 2
 type = DGHeatFluxBC
 variable = column_temp
 boundary = 'top bottom'
-input_temperature = 191.15
+input_temperature = 295.15
 [../]
 
 [./Heat_Wall_Flux]
@@ -372,7 +372,7 @@ block = 0
 length = 50.8
 inner_diameter = 1.905
 outer_diameter = 2.0828
-bulk_porosity = 0.9527				#not known
+bulk_porosity = 0.9386				#not known
 axial_conductivity = 0.6292      #not known
 wall_density = 7.7
 wall_heat_capacity = 0.5
@@ -388,7 +388,7 @@ comp_heat_capacity = '0.25 0.16 5.1916'
 comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 comp_ref_temp = '273.15 273.15 273.15'
 comp_Sutherland_const = '266.505 232.746 80.0'
-flow_rate = 30000.0
+flow_rate = 1.2e5
 length = 50.8
 temperature = column_temp
 total_pressure = total_pressure
@@ -401,9 +401,9 @@ block = 0
 binder_fraction = 0.175				#not known
 binder_porosity = 0.27				#not known
 crystal_radius = 1.5				#not known
-pellet_diameter = 0.056				#not known
-macropore_radius = 1.945e-7			#not Known
-pellet_density = 2.174				#not Known
+pellet_diameter = 0.045				#not known
+macropore_radius = 1.335e-7			#not Known
+pellet_density = 2.519				#not Known
 pellet_heat_capacity = 1.2  		#not known
 ref_diffusion = '0 0 0'
 activation_energy = '0 0 0'

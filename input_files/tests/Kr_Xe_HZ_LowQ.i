@@ -544,7 +544,7 @@ end_time = 90.0
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
 type = SolutionTimeAdaptiveDT
-dt = 0.001
+dt = 0.00001
 [../]
 
 [] #END Executioner

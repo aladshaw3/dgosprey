@@ -1,4 +1,4 @@
-[GlobalParams]
+ [GlobalParams]
 
 sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
 epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
@@ -388,7 +388,7 @@ comp_heat_capacity = '0.25 0.16 5.1916'
 comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 comp_ref_temp = '273.15 273.15 273.15'
 comp_Sutherland_const = '266.505 232.746 80.0'
-flow_rate = 30000.0
+flow_rate = 1.20e5
 length = 50.8
 temperature = column_temp
 total_pressure = total_pressure
@@ -544,7 +544,7 @@ end_time = 90.0
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
 type = SolutionTimeAdaptiveDT
-dt = 0.001
+dt = 0.00001
 [../]
 
 [] #END Executioner
