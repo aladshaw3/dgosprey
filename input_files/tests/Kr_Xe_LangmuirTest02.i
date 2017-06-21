@@ -544,14 +544,14 @@ type = Transient
 scheme = bdf2
 
 # NOTE: The default tolerances are far to strict and cause the program to crawl
-nl_rel_tol = 1e-10
+nl_rel_tol = 1e-6
 nl_abs_tol = 1e-4
-l_tol = 1e-6
-l_max_its = 5000
+l_tol = 1e-4
+l_max_its = 500
 nl_max_its = 30
 
 solve_type = pjfnk
-line_search = bt    # Options: default none basic l2 bt
+line_search = none    # Options: default none basic l2 bt
 start_time = 0.0
 end_time = 90.0
 #	dtmax = 0.1
@@ -560,7 +560,7 @@ end_time = 90.0
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
 type = SolutionTimeAdaptiveDT
-dt = 0.0001
+dt = 0.01
 [../]
 
 [] #END Executioner
@@ -569,9 +569,13 @@ dt = 0.0001
 
 [./precond]
 type = SMP
-off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
+#off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
 
-off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
+#off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
+ 
+off_diag_row = 'Kr Xe Kr_Adsorbed Xe_Adsorbed'
+ 
+off_diag_column = 'Kr_Adsorbed Xe_Adsorbed Kr Xe'
 
 #full = true
 petsc_options = '-snes_converged_reason'

@@ -73,7 +73,7 @@ Real CoupledExtendedLangmuirFunction::computeQpResidual()
 	double sum = 0.0;
 	for (unsigned int i = 0; i<_coupled.size(); ++i)
 	{
-		sum = _langmuircoef[i] * (*_coupled[i])[_qp];
+		sum = sum + _langmuircoef[i] * (*_coupled[i])[_qp];
 	}
 	return _u[_qp]*_test[_i][_qp]-_test[_i][_qp]*_maxcap*((_langmuircoef[_lang_index]*_coupled_i[_qp])/(1.0+sum));
 }
@@ -92,23 +92,24 @@ Real CoupledExtendedLangmuirFunction::computeQpOffDiagJacobian(unsigned int jvar
 			double sum = 0.0;
 			for (unsigned int j = 0; j<_coupled.size(); ++j)
 			{
-				sum = _langmuircoef[j] * (*_coupled[j])[_qp];
+				sum = sum + _langmuircoef[j] * (*_coupled[j])[_qp];
 			}
 			double numerator = _langmuircoef[_lang_index]*_coupled_i[_qp]*_phi[_j][_qp]*_langmuircoef[i];
 			double denom = (1.0+sum)*(1.0+sum);
 			return _test[_i][_qp]*_maxcap*numerator/denom;;
 		}
-		if (jvar == _coupled_var_i)
+	}
+	
+	if (jvar == _coupled_var_i)
+	{
+		double sum = 0.0;
+		for (unsigned int j = 0; j<_coupled.size(); ++j)
 		{
-			double sum = 0.0;
-			for (unsigned int j = 0; j<_coupled.size(); ++j)
-			{
-				sum = _langmuircoef[j] * (*_coupled[j])[_qp];
-			}
-			double numerator = _langmuircoef[_lang_index]*_phi[_j][_qp] * (1.0 + sum - _langmuircoef[_lang_index]*_coupled_i[_qp]);
-			double denom = (1.0+sum)*(1.0+sum);
-			return -_test[_i][_qp]*_maxcap*numerator/denom;
+			sum = sum + _langmuircoef[j] * (*_coupled[j])[_qp];
 		}
+		double numerator = _langmuircoef[_lang_index]*_phi[_j][_qp] * (1.0 + sum - _langmuircoef[_lang_index]*_coupled_i[_qp]);
+		double denom = (1.0+sum)*(1.0+sum);
+		return -_test[_i][_qp]*_maxcap*numerator/denom;
 	}
 	
 	return 0.0;
