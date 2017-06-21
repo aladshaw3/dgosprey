@@ -217,7 +217,7 @@ void GasFlowProperties::computeQpProperties()
 	{
 		_molecular_diffusion[_qp][i] = _mixed_gas[_qp].species_dat[i].molecular_diffusion * 3600.0;
 		
-		_dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (_column_length*_velocity[_qp]));
+		_dispersion[_qp][i] = (_porosity[_qp] * _molecular_diffusion[_qp][i] + (100.0*_pellet_diameter[_qp]*_velocity[_qp]));
 	}
 	
 	_gas_density[_qp] = (_total_pressure[_qp] * _gas_molecular_wieght[_qp]) / (8.3144621 * _temperature_old[_qp]);

@@ -391,7 +391,7 @@ length = 50.8
 inner_diameter = 1.905
 outer_diameter = 2.0828
 bulk_porosity = 0.90507				#not known
-axial_conductivity = 0.6292      #not known
+axial_conductivity = 0.06292      #not known
 wall_density = 7.7
 wall_heat_capacity = 0.5
 wall_heat_trans_coef = 9.0
@@ -472,17 +472,17 @@ variable = Xe
 execute_on = 'initial timestep_end'
 [../]
 
-[./Kr_avg]
-type = ElementAverageValue
-variable = Kr
-execute_on = 'initial timestep_end'
-[../]
+#[./Kr_avg]
+#type = ElementAverageValue
+#variable = Kr
+#execute_on = 'initial timestep_end'
+#[../]
 
-[./Xe_avg]
-type = ElementAverageValue
-variable = Xe
-execute_on = 'initial timestep_end'
-[../]
+#[./Xe_avg]
+#type = ElementAverageValue
+#variable = Xe
+#execute_on = 'initial timestep_end'
+#[../]
 
 #	[./He_exit]
 #		type = SideAverageValue
@@ -491,26 +491,26 @@ execute_on = 'initial timestep_end'
 #		execute_on = 'initial timestep_end'
 #	[../]
 
-#	[./temp_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = column_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
+	[./temp_exit]
+		type = SideAverageValue
+		boundary = 'top'
+		variable = column_temp
+		execute_on = 'initial timestep_end'
+	[../]
 
-#	[./press_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = total_pressure
-#		execute_on = 'initial timestep_end'
-#	[../]
+	[./press_exit]
+		type = SideAverageValue
+		boundary = 'top'
+		variable = total_pressure
+		execute_on = 'initial timestep_end'
+	[../]
 
-#	[./wall_temp]
-#		type = SideAverageValue
-#		boundary = 'right'
-#		variable = wall_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
+	[./wall_temp]
+		type = SideAverageValue
+		boundary = 'right'
+		variable = wall_temp
+		execute_on = 'initial timestep_end'
+	[../]
 
 [./Kr_solid]
 type = ElementAverageValue
@@ -546,21 +546,21 @@ scheme = bdf2
 # NOTE: The default tolerances are far to strict and cause the program to crawl
 nl_rel_tol = 1e-6
 nl_abs_tol = 1e-4
-l_tol = 1e-4
+l_tol = 1e-6
 l_max_its = 500
 nl_max_its = 30
 
 solve_type = pjfnk
-line_search = none    # Options: default none basic l2 bt
+line_search = basic    # Options: default none basic l2 bt
 start_time = 0.0
-end_time = 90.0
-#	dtmax = 0.1
+end_time = 180.0
+dtmax = 1.0
 
 [./TimeStepper]
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
 type = SolutionTimeAdaptiveDT
-dt = 0.01
+dt = 0.1
 [../]
 
 [] #END Executioner
@@ -573,11 +573,11 @@ type = SMP
 
 #off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
  
-off_diag_row = 'Kr Xe Kr_Adsorbed Xe_Adsorbed'
+#off_diag_row = 'Kr Xe Kr_Adsorbed Xe_Adsorbed'
  
-off_diag_column = 'Kr_Adsorbed Xe_Adsorbed Kr Xe'
+#off_diag_column = 'Kr_Adsorbed Xe_Adsorbed Kr Xe'
 
-#full = true
+full = true
 petsc_options = '-snes_converged_reason'
 petsc_options_iname = '-pc_type -ksp_gmres_restart -snes_max_funcs'
 petsc_options_value = 'lu 10000 60000'

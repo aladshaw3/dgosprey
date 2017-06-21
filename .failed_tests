@@ -1,0 +1,2 @@
+coupling/linear_isotherm.linear_isotherm_test
+executioner/precond.smp_lu_test
