@@ -75,7 +75,6 @@ protected:
     Real _maxcap;							///< Manimum Capacity
     Real _langmuircoef;						///< Langmuir Coefficient for the coupled function
     const VariableValue & _coupled_u;		///< Coupled variable
-	const VariableValue & _coupled_u_old;	///< Coupled variable at previous timestep
     const unsigned int _coupled_var;		///< Variable identification for the coupled variable
     
 private:

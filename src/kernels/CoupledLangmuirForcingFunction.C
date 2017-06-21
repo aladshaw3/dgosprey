@@ -51,7 +51,6 @@ CoupledLangmuirForcingFunction::CoupledLangmuirForcingFunction(const InputParame
 _maxcap(getParam<Real>("max_capacity")),
 _langmuircoef(getParam<Real>("langmuir_coeff")),
 _coupled_u(coupledValue("coupled")),
-_coupled_u_old(coupledValueOld("coupled")),
 _coupled_var(coupled("coupled"))
 {
     
@@ -70,7 +69,7 @@ Real CoupledLangmuirForcingFunction::computeQpJacobian()
 Real CoupledLangmuirForcingFunction::computeQpOffDiagJacobian(unsigned int jvar)
 {
     if (jvar == _coupled_var)
-        return -_test[_i][_qp]*_maxcap*((_langmuircoef*_phi[_j][_qp])/((1.0+_langmuircoef*_coupled_u[_qp])));
+        return -_test[_i][_qp]*_maxcap*((_langmuircoef*_phi[_j][_qp])/((1.0+_langmuircoef*_coupled_u[_qp])*(1.0+_langmuircoef*_coupled_u[_qp])));
     
     return 0.0;
 }

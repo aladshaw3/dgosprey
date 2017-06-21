@@ -105,6 +105,8 @@
 #include "CoupledLangmuirForcingFunction.h"
 #include "ParameterizedAdsorptionEquil.h"
 
+#include "CoupledExtendedLangmuirFunction.h"
+
 template<>
 InputParameters validParams<DgospreyApp>()
 {
@@ -164,6 +166,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(SolidHeatTransfer);
     registerKernel(CoupledLangmuirForcingFunction);
     registerKernel(ParameterizedAdsorptionEquil);
+	registerKernel(CoupledExtendedLangmuirFunction);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(MAGPIE_Adsorption);
