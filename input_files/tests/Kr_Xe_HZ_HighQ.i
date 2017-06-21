@@ -231,18 +231,20 @@ index = 1
 [../]
 
 [./Kr_adsorption]
-type = CoupledLangmuirForcingFunction
+type = CoupledExtendedLangmuirFunction
 variable = Kr_Adsorbed
-coupled = Kr
-langmuir_coeff = 12372.62
+main_coupled = Kr
+coupled_list = 'Kr Xe'
+langmuir_coeff = '12300.62 136500.3'
 max_capacity = 1.716
 [../]
 
 [./Xe_adsorption]
-type = CoupledLangmuirForcingFunction
+type = CoupledExtendedLangmuirFunction
 variable = Xe_Adsorbed
-coupled = Xe
-langmuir_coeff = 136537.3
+main_coupled = Xe
+coupled_list = 'Kr Xe'
+langmuir_coeff = '12300.62 136500.3'
 max_capacity = 1.479
 [../]
 
@@ -372,7 +374,7 @@ block = 0
 length = 50.8
 inner_diameter = 1.905
 outer_diameter = 2.0828
-bulk_porosity = 0.9527				#not known
+bulk_porosity = 0.90507				#not known
 axial_conductivity = 0.6292      #not known
 wall_density = 7.7
 wall_heat_capacity = 0.5
@@ -388,7 +390,7 @@ comp_heat_capacity = '0.25 0.16 5.1916'
 comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 comp_ref_temp = '273.15 273.15 273.15'
 comp_Sutherland_const = '266.505 232.746 80.0'
-flow_rate = 1.20e5
+flow_rate = 1.2e5
 length = 50.8
 temperature = column_temp
 total_pressure = total_pressure
@@ -399,7 +401,7 @@ coupled_gases = 'Kr Xe He'
 type = AdsorbentProperties
 block = 0
 binder_fraction = 0.175				#not known
-binder_porosity = 0.27				#not known
+binder_porosity = 0.13				#not known
 crystal_radius = 1.5				#not known
 pellet_diameter = 0.056				#not known
 macropore_radius = 1.945e-7			#not Known

@@ -230,24 +230,42 @@
  index = 1
  [../]
  
+#[./Kr_adsorption]
+#type = CoupledLangmuirForcingFunction
+#variable = Kr_Adsorbed
+#coupled = Kr
+#langmuir_coeff = 358.34
+#max_capacity = 1.716
+#[../]
+ 
+#[./Xe_adsorption]
+#type = CoupledLangmuirForcingFunction
+#variable = Xe_Adsorbed
+#coupled = Xe
+#langmuir_coeff = 2000.0
+#max_capacity = 1.479
+#[../]
+ 
 [./Kr_adsorption]
- type = CoupledLangmuirForcingFunction
- variable = Kr_Adsorbed
- coupled = Kr
- langmuir_coeff = 358.34
- max_capacity = 1.716
- [../]
+type = CoupledExtendedLangmuirFunction
+variable = Kr_Adsorbed
+main_coupled = Kr
+coupled_list = 'Kr Xe'
+langmuir_coeff = '358.34 2000.0'
+max_capacity = 1.716
+[../]
  
 [./Xe_adsorption]
- type = CoupledLangmuirForcingFunction
- variable = Xe_Adsorbed
- coupled = Xe
- langmuir_coeff = 2000.0
- max_capacity = 1.479
- [../]
+type = CoupledExtendedLangmuirFunction
+variable = Xe_Adsorbed
+main_coupled = Xe
+coupled_list = 'Kr Xe'
+langmuir_coeff = '358.34 2000.0'
+max_capacity = 1.479
+[../]
  
  
- [] #END Kernels
+[] #END Kernels
  
 [DGKernels]
  
@@ -372,7 +390,7 @@
  length = 50.8
  inner_diameter = 1.905
  outer_diameter = 2.0828
- bulk_porosity = 0.9386				#not known
+ bulk_porosity = 0.8772				#not known
  axial_conductivity = 0.6292      #not known
  wall_density = 7.7
  wall_heat_capacity = 0.5
@@ -399,7 +417,7 @@
  type = AdsorbentProperties
  block = 0
  binder_fraction = 0.175				#not known
- binder_porosity = 0.27				#not known
+ binder_porosity = 0.134				#not known
  crystal_radius = 1.5				#not known
  pellet_diameter = 0.045				#not known
  macropore_radius = 1.335e-7			#not Known
