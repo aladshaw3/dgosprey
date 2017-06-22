@@ -561,7 +561,7 @@ end_time = 90.0
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
 type = SolutionTimeAdaptiveDT
-dt = 0.001
+dt = 0.01
 [../]
 
 [] #END Executioner
@@ -570,11 +570,11 @@ dt = 0.001
 
 [./precond]
 type = SMP
-off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
+#off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
 
-off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
+#off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
 
-#full = true
+full = true
 petsc_options = '-snes_converged_reason'
 petsc_options_iname = '-pc_type -ksp_gmres_restart -snes_max_funcs'
 petsc_options_value = 'lu 2000 60000'
