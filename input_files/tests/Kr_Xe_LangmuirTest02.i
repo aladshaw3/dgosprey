@@ -2,6 +2,12 @@
 
 sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
 epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
+ 
+ flow_rate = 30000.0
+ length = 50.8
+ pellet_diameter = 0.056
+ inner_diameter = 1.905
+ dt = 0.001
 
 [] #END GlobalParams
 
@@ -387,11 +393,9 @@ wall_temp = wall_temp
 [./BedMaterials]
 type = BedProperties
 block = 0
-length = 50.8
-inner_diameter = 1.905
 outer_diameter = 2.0828
 bulk_porosity = 0.90507				#not known
-axial_conductivity = 0.06292      #not known
+axial_conductivity = 0.6292      #not known
 wall_density = 7.7
 wall_heat_capacity = 0.5
 wall_heat_trans_coef = 9.0
@@ -406,8 +410,6 @@ comp_heat_capacity = '0.25 0.16 5.1916'
 comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 comp_ref_temp = '273.15 273.15 273.15'
 comp_Sutherland_const = '266.505 232.746 80.0'
-flow_rate = 30000.0
-length = 50.8
 temperature = column_temp
 total_pressure = total_pressure
 coupled_gases = 'Kr Xe He'
@@ -416,11 +418,10 @@ coupled_gases = 'Kr Xe He'
 [./AdsorbentMaterials]
 type = AdsorbentProperties
 block = 0
-binder_porosity = 0.13				#not known
-pellet_diameter = 0.056				#not known
-macropore_radius = 1.945e-7			#not Known
-pellet_density = 2.174				#not Known
-pellet_heat_capacity = 1.2  		#not known
+binder_porosity = 0.13
+macropore_radius = 1.945e-7
+pellet_density = 2.174
+pellet_heat_capacity = 1.2
 ref_diffusion = '0 0 0'
 activation_energy = '0 0 0'
 ref_temperature = '0 0 0'
@@ -559,8 +560,8 @@ end_time = 120.0
 [./TimeStepper]
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
-type = SolutionTimeAdaptiveDT
-dt = 0.1
+#type = SolutionTimeAdaptiveDT
+type = DGOSPREY_TimeStepper
 [../]
 
 [] #END Executioner

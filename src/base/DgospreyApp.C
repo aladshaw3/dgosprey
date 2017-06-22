@@ -106,6 +106,7 @@
 #include "ParameterizedAdsorptionEquil.h"
 
 #include "CoupledExtendedLangmuirFunction.h"
+#include "DGOSPREY_TimeStepper.h"
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -209,6 +210,8 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerBoundaryCondition(DGHeatFluxLimitedBC);
 	registerBoundaryCondition(DGColumnWallHeatFluxBC);
 	registerBoundaryCondition(DGColumnWallHeatFluxLimitedBC);
+	
+	registerExecutioner(DGOSPREY_TimeStepper);
 }
 
 void
