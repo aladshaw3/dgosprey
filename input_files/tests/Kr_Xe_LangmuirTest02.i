@@ -7,7 +7,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  length = 50.8
  pellet_diameter = 0.056
  inner_diameter = 1.905
- dt = 0.001
+ dt = 0.1
 
 [] #END GlobalParams
 
