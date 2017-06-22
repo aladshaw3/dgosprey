@@ -16,7 +16,7 @@ coord_type = RZ
 type = GeneratedMesh
 dim = 2
 nx = 5
-ny = 40
+ny = 80
 xmin = 0.0
 xmax = 0.9525 #cm
 ymin = 0.0
@@ -484,12 +484,12 @@ execute_on = 'initial timestep_end'
 #execute_on = 'initial timestep_end'
 #[../]
 
-#	[./He_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = He
-#		execute_on = 'initial timestep_end'
-#	[../]
+	[./He_exit]
+		type = SideAverageValue
+		boundary = 'top'
+		variable = He
+		execute_on = 'initial timestep_end'
+	[../]
 
 	[./temp_exit]
 		type = SideAverageValue
@@ -553,8 +553,8 @@ nl_max_its = 30
 solve_type = pjfnk
 line_search = basic    # Options: default none basic l2 bt
 start_time = 0.0
-end_time = 180.0
-dtmax = 1.0
+end_time = 120.0
+#dtmax = 1.0
 
 [./TimeStepper]
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
