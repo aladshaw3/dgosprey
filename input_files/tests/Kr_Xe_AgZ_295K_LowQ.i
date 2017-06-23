@@ -553,7 +553,7 @@ max_capacity = 1.479
  nl_max_its = 30
  
  solve_type = pjfnk
- line_search = bt    # Options: default none basic l2 bt
+ line_search = basic    # Options: default none basic l2 bt
  start_time = 0.0
  end_time = 90.0
 #	dtmax = 0.1
