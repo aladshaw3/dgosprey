@@ -3,6 +3,12 @@
  sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
  epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
+ flow_rate = 1.2e5
+ length = 50.8
+ inner_diameter = 1.905
+ pellet_diameter = 0.045
+ dt = 0.01
+ 
  [] #END GlobalParams
  
 [Problem]
@@ -386,8 +392,6 @@ max_capacity = 1.479
 [./BedMaterials]
  type = BedProperties
  block = 0
- length = 50.8
- inner_diameter = 1.905
  outer_diameter = 2.0828
  bulk_porosity = 0.8772				#not known
  axial_conductivity = 0.6292      #not known
@@ -405,8 +409,6 @@ max_capacity = 1.479
  comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
  comp_ref_temp = '273.15 273.15 273.15'
  comp_Sutherland_const = '266.505 232.746 80.0'
- flow_rate = 1.2e5
- length = 50.8
  temperature = column_temp
  total_pressure = total_pressure
  coupled_gases = 'Kr Xe He'
@@ -415,11 +417,10 @@ max_capacity = 1.479
 [./AdsorbentMaterials]
  type = AdsorbentProperties
  block = 0
- binder_fraction = 0.175				#not known
- binder_porosity = 0.134				#not known
+ binder_fraction = 0.175			#not known
+ binder_porosity = 0.134			#not known
  crystal_radius = 1.5				#not known
- pellet_diameter = 0.045				#not known
- macropore_radius = 1.335e-7			#not Known
+ macropore_radius = 1.335e-7		#not Known
  pellet_density = 2.519				#not Known
  pellet_heat_capacity = 1.2  		#not known
  ref_diffusion = '0 0 0'
@@ -561,7 +562,6 @@ max_capacity = 1.479
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
  type = SolutionTimeAdaptiveDT
- dt = 0.01
  [../]
  
  [] #END Executioner
