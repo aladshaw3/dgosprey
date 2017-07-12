@@ -7,7 +7,7 @@ flow_rate = 1.2e5
 length = 50.8
 inner_diameter = 1.905
 pellet_diameter = 0.056
-dt = 0.1
+dt = 0.05
 
 [] #END GlobalParams
 
@@ -332,7 +332,7 @@ variable = Kr
 boundary = 'top bottom'
 input_temperature = 191.15
 input_pressure = 101.35
-input_molefraction = 0.001
+input_molefraction = 0.00015
 index = 0
 [../]
 
@@ -342,7 +342,7 @@ variable = Xe
 boundary = 'top bottom'
 input_temperature = 191.15
 input_pressure = 101.35
-input_molefraction = 0.00015
+input_molefraction = 0.001
 index = 1
 [../]
 

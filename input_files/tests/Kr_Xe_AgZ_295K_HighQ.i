@@ -257,7 +257,7 @@ type = CoupledExtendedLangmuirFunction
 variable = Kr_Adsorbed
 main_coupled = Kr
 coupled_list = 'Kr Xe'
-langmuir_coeff = '358.34 2000.0'
+langmuir_coeff = '200.0 6461.27'
 max_capacity = 1.716
 [../]
 
@@ -266,7 +266,7 @@ type = CoupledExtendedLangmuirFunction
 variable = Xe_Adsorbed
 main_coupled = Xe
 coupled_list = 'Kr Xe'
-langmuir_coeff = '358.34 2000.0'
+langmuir_coeff = '200.0 6461.27'
 max_capacity = 1.479
 [../]
 
@@ -347,7 +347,7 @@ variable = Kr
 boundary = 'top bottom'
 input_temperature = 295.15
 input_pressure = 101.35
-input_molefraction = 0.001
+input_molefraction = 0.00015
 index = 0
 [../]
 
@@ -357,7 +357,7 @@ variable = Xe
 boundary = 'top bottom'
 input_temperature = 295.15
 input_pressure = 101.35
-input_molefraction = 0.00015
+input_molefraction = 0.001
 index = 1
 [../]
 
