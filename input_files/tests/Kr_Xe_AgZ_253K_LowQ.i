@@ -3,6 +3,12 @@
 sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
 epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
+flow_rate = 30000.0
+length = 50.8
+inner_diameter = 1.905
+pellet_diameter = 0.045
+dt = 0.01
+
 [] #END GlobalParams
 
 [Problem]
@@ -251,7 +257,7 @@ type = CoupledExtendedLangmuirFunction
 variable = Kr_Adsorbed
 main_coupled = Kr
 coupled_list = 'Kr Xe'
-langmuir_coeff = '442.8 5000.0'
+langmuir_coeff = '300.0 7886.7'
 max_capacity = 1.716
 [../]
 
@@ -260,7 +266,7 @@ type = CoupledExtendedLangmuirFunction
 variable = Xe_Adsorbed
 main_coupled = Xe
 coupled_list = 'Kr Xe'
-langmuir_coeff = '442.8 5000.0'
+langmuir_coeff = '300.0 7886.7'
 max_capacity = 1.479
 [../]
 
@@ -341,7 +347,7 @@ variable = Kr
 boundary = 'top bottom'
 input_temperature = 253.15
 input_pressure = 101.35
-input_molefraction = 0.001
+input_molefraction = 0.00015
 index = 0
 [../]
 
@@ -351,7 +357,7 @@ variable = Xe
 boundary = 'top bottom'
 input_temperature = 253.15
 input_pressure = 101.35
-input_molefraction = 0.00015
+input_molefraction = 0.001
 index = 1
 [../]
 
@@ -386,8 +392,6 @@ wall_temp = wall_temp
 [./BedMaterials]
 type = BedProperties
 block = 0
-length = 50.8
-inner_diameter = 1.905
 outer_diameter = 2.0828
 bulk_porosity = 0.8772				#not known
 axial_conductivity = 0.6292      #not known
@@ -405,8 +409,6 @@ comp_heat_capacity = '0.25 0.16 5.1916'
 comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 comp_ref_temp = '273.15 273.15 273.15'
 comp_Sutherland_const = '266.505 232.746 80.0'
-flow_rate = 30000.0
-length = 50.8
 temperature = column_temp
 total_pressure = total_pressure
 coupled_gases = 'Kr Xe He'
@@ -418,7 +420,6 @@ block = 0
 binder_fraction = 0.175				#not known
 binder_porosity = 0.134				#not known
 crystal_radius = 1.5				#not known
-pellet_diameter = 0.045				#not known
 macropore_radius = 1.335e-7			#not Known
 pellet_density = 2.519				#not Known
 pellet_heat_capacity = 1.2  		#not known
@@ -552,7 +553,7 @@ l_max_its = 2000
 nl_max_its = 30
 
 solve_type = pjfnk
-line_search = bt    # Options: default none basic l2 bt
+line_search = basic    # Options: default none basic l2 bt
 start_time = 0.0
 end_time = 90.0
 #	dtmax = 0.1
@@ -561,7 +562,6 @@ end_time = 90.0
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
 type = SolutionTimeAdaptiveDT
-dt = 0.01
 [../]
 
 [] #END Executioner
