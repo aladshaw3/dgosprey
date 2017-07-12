@@ -575,7 +575,7 @@
  	nl_abs_step_tol = 1e-10
  	l_tol = 1e-6
  	l_max_its = 100
-	nl_max_its = 10
+	nl_max_its = 100
 
 	solve_type = newton
     line_search = none    # Options: default shell none basic l2 bt cp
@@ -587,9 +587,9 @@
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-		type = ConstantDT
-		#type = SolutionTimeAdaptiveDT
-		dt = 0.1
+#type = ConstantDT
+		type = SolutionTimeAdaptiveDT
+		dt = 0.001
 	[../]
 
  [] #END Executioner
@@ -602,6 +602,6 @@
 
 	exodus = true
 	csv = true
-	print_linear_residuals = true
+	print_linear_residuals = false
 
  [] #END Outputs
