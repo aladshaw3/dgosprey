@@ -74,7 +74,6 @@ initial_condition = 101.35
 [./ambient_temp]
 order = FIRST
 family = MONOMIAL
-#initial_condition = 273.15
 initial_condition = 303.15
 [../]
 
@@ -395,15 +394,6 @@ entropy_site_5 = '0 0 0'
 entropy_site_6 = '0 0 0'
 [../]
 
-#	[./KineticMaterials]
-#		type = KineticProperties
-#		block = 0
-#		dirichlet_bc = false
-#		heterogeneous = true
-#		surface_diffusion = true
-#       coupled_adsorption = H2O_Adsorbed (NOTE: This is causing the error. Need to have all species as adsorbed for kinetics)
-#   [../]
-
 [] #END Materials
 
 [Postprocessors]
@@ -428,12 +418,12 @@ variable = H2O
 execute_on = 'initial timestep_end'
 [../]
 
-#[./temp_exit]
-#type = SideAverageValue
-#boundary = 'top'
-#variable = column_temp
-#execute_on = 'initial timestep_end'
-#[../]
+[./temp_exit]
+type = SideAverageValue
+boundary = 'top'
+variable = column_temp
+execute_on = 'initial timestep_end'
+[../]
 
 [./press_exit]
 type = SideAverageValue
@@ -454,12 +444,6 @@ type = ElementAverageValue
 variable = H2O_Adsorbed
 execute_on = 'initial timestep_end'
 [../]
-
-#[./H2O_heat]
-#type = ElementAverageValue
-#variable = H2O_AdsorbedHeat
-#execute_on = 'initial timestep_end'
-#[../]
 
 [] #END Postprocessors
 

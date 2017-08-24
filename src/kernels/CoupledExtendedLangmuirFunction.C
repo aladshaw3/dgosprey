@@ -40,8 +40,8 @@ template<>
 InputParameters validParams<CoupledExtendedLangmuirFunction>()
 {
 	InputParameters params = validParams<Kernel>();
-	params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for Langmuir Function");
-	params.addParam< std::vector<Real> >("langmuir_coeff","Coefficient for the langmuir function");
+	params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for Langmuir Function (mol/kg)");
+	params.addParam< std::vector<Real> >("langmuir_coeff","Coefficient for the langmuir function (L/mol)");
 	params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
 	params.addRequiredCoupledVar("main_coupled","Name of the primary variable being coupled");
 	return params;

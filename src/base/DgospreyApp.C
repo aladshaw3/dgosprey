@@ -108,6 +108,8 @@
 #include "CoupledExtendedLangmuirFunction.h"
 #include "DGOSPREY_TimeStepper.h"
 
+#include "CoupledGSTAisotherm.h"
+
 template<>
 InputParameters validParams<DgospreyApp>()
 {
@@ -168,6 +170,7 @@ DgospreyApp::registerObjects(Factory & factory)
     registerKernel(CoupledLangmuirForcingFunction);
     registerKernel(ParameterizedAdsorptionEquil);
 	registerKernel(CoupledExtendedLangmuirFunction);
+	registerKernel(CoupledGSTAisotherm);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(MAGPIE_Adsorption);
