@@ -68,11 +68,6 @@ _coupled_var_u(coupled("coupled_gas")),
 _coupled_temp(coupledValue("coupled_temp")),
 _coupled_var_temp(coupled("coupled_temp"))
 {
-	unsigned int n = coupledComponents("gsta_params");
-	
-	if (n != (unsigned int)_numsites)
-		_numsites = n;
-	
 	if (_numsites <= 0.0)
 	{
 		_numsites = 1.0;

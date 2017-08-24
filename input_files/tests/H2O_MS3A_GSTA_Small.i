@@ -203,12 +203,22 @@
 		index = 2
 	[../]
  
+#	[./H2O_adsorption]
+#		type = CoupledLangmuirForcingFunction
+#		variable = H2O_Adsorbed
+#		coupled = H2O
+#		langmuir_coeff = 50000.0
+#		max_capacity = 11.67
+#	[../]
+ 
 	[./H2O_adsorption]
-		type = CoupledLangmuirForcingFunction
+		type = CoupledGSTAisotherm
 		variable = H2O_Adsorbed
-		coupled = H2O
-		langmuir_coeff = 50000.0
+		coupled_gas = H2O
+		coupled_temp = column_temp
 		max_capacity = 11.67
+		num_sites = 4
+		gsta_params = '228357.3949 22688965955 1.93815E+15 1.1268E+18'
 	[../]
  
  [] #END Kernels
@@ -467,7 +477,7 @@
  
 	[./TimeStepper]
 #type = SolutionTimeAdaptiveDT
- type = DGOSPREY_TimeStepper
+type = DGOSPREY_TimeStepper
 	[../]
  
  [] #END Executioner
