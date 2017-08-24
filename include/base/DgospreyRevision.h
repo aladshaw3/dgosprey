@@ -3,6 +3,6 @@
 #ifndef DGOSPREY_REVISION_H
 #define DGOSPREY_REVISION_H
 
-#define DGOSPREY_REVISION "git commit 3df7fd1 on 2017-06-22"
+#define DGOSPREY_REVISION "git commit ad5c391 on 2017-07-12"
 
 #endif // DGOSPREY_REVISION_H

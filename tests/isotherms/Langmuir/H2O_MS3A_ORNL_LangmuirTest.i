@@ -17,7 +17,7 @@ coord_type = RZ
 type = GeneratedMesh
 dim = 2
 nx = 5
-ny = 20
+ny = 10
 xmin = 0.0
 xmax = 37.25 #cm
 ymin = 0.0
@@ -205,7 +205,7 @@ index = 2
 type = CoupledLangmuirForcingFunction
 variable = H2O_Adsorbed
 coupled = H2O
-langmuir_coeff = 10000.0
+langmuir_coeff = 1000.0
 max_capacity = 11.67
 [../]
 
@@ -395,15 +395,6 @@ entropy_site_5 = '0 0 0'
 entropy_site_6 = '0 0 0'
 [../]
 
-#	[./KineticMaterials]
-#		type = KineticProperties
-#		block = 0
-#		dirichlet_bc = false
-#		heterogeneous = true
-#		surface_diffusion = true
-#       coupled_adsorption = H2O_Adsorbed (NOTE: This is causing the error. Need to have all species as adsorbed for kinetics)
-#   [../]
-
 [] #END Materials
 
 [Postprocessors]
@@ -428,13 +419,6 @@ variable = H2O
 execute_on = 'initial timestep_end'
 [../]
 
-#[./temp_exit]
-#type = SideAverageValue
-#boundary = 'top'
-#variable = column_temp
-#execute_on = 'initial timestep_end'
-#[../]
-
 [./press_exit]
 type = SideAverageValue
 boundary = 'top'
@@ -455,12 +439,6 @@ variable = H2O_Adsorbed
 execute_on = 'initial timestep_end'
 [../]
 
-#[./H2O_heat]
-#type = ElementAverageValue
-#variable = H2O_AdsorbedHeat
-#execute_on = 'initial timestep_end'
-#[../]
-
 [] #END Postprocessors
 
 [Executioner]
@@ -478,12 +456,12 @@ nl_max_its = 50
 solve_type = pjfnk
 line_search = bt    # Options: default none l2 bt
 start_time = 0.0
-end_time = 72.0
-dtmax = 1.0
+end_time = 0.1
+dtmax = 0.1
 
 [./TimeStepper]
-type = SolutionTimeAdaptiveDT
-dt = 0.001
+type = ConstantDT
+dt = 0.01
 [../]
 
 [] #END Executioner
@@ -501,11 +479,6 @@ petsc_options_value = 'lu 2000'
 
 [./smp]
 type = SMP
-
-#off_diag_row = 'N2 N2 N2 N2 N2 O2 O2 O2 O2 H2O H2O H2O column_temp column_temp H2O_Adsorbed'
-
-#off_diag_column = 'O2 H2O column_temp H2O_Adsorbed H2O_AdsorbedHeat H2O column_temp H2O_Adsorbed H2O_AdsorbedHeat column_temp H2O_Adsorbed H2O_AdsorbedHeat H2O_Adsorbed H2O_AdsorbedHeat H2O_AdsorbedHeat'
-
 full = true
 petsc_options = '-snes_converged_reason'
 petsc_options_iname = '-pc_type -ksp_gmres_restart  -snes_max_funcs'

@@ -21,8 +21,8 @@ coord_type = RZ
 
 type = GeneratedMesh
 dim = 2
-nx = 10
-ny = 40
+nx = 5
+ny = 20
 xmin = 0.0
 xmax = 0.9525 #cm
 ymin = 0.0
@@ -471,57 +471,17 @@ variable = Xe
 execute_on = 'initial timestep_end'
 [../]
 
-#	[./He_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = He
-#		execute_on = 'initial timestep_end'
-#	[../]
-
-#	[./temp_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = column_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
-
-#	[./press_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = total_pressure
-#		execute_on = 'initial timestep_end'
-#	[../]
-
-#	[./wall_temp]
-#		type = SideAverageValue
-#		boundary = 'right'
-#		variable = wall_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
-
 [./Kr_solid]
 type = ElementAverageValue
 variable = Kr_Adsorbed
 execute_on = 'initial timestep_end'
 [../]
 
-#	[./Kr_heat]
-#		type = ElementAverageValue
-#		variable = Kr_AdsorbedHeat
-#		execute_on = 'initial timestep_end'
-#	[../]
-
 [./Xe_solid]
 type = ElementAverageValue
 variable = Xe_Adsorbed
 execute_on = 'initial timestep_end'
 [../]
-
-#	[./Xe_heat]
-#		type = ElementAverageValue
-#		variable = Xe_AdsorbedHeat
-#		execute_on = 'initial timestep_end'
-#	[../]
 
 [] #END Postprocessors
 
@@ -540,14 +500,13 @@ nl_max_its = 30
 solve_type = pjfnk
 line_search = basic    # Options: default none basic l2 bt
 start_time = 0.0
-end_time = 10.0
+end_time = 0.4
 dtmax = 0.1
 
 [./TimeStepper]
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
-#		type = ConstantDT
-#type = SolutionTimeAdaptiveDT
-type = DGOSPREY_TimeStepper
+type = ConstantDT
+#type = DGOSPREY_TimeStepper
 [../]
 
 [] #END Executioner
@@ -556,23 +515,11 @@ type = DGOSPREY_TimeStepper
 
 [./precond]
 type = SMP
-#off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
-
-#off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
-
 full = true
 petsc_options = '-snes_converged_reason'
 petsc_options_iname = '-pc_type -ksp_gmres_restart -snes_max_funcs'
 petsc_options_value = 'lu 2000 60000'
 [../]
-
-#[./fdp]
-#type = FDP
-#full = true
-#petsc_options = '-snes_converged_reason'
-#petsc_options_iname = '-mat_fd_coloring_err -mat_fd_type'
-#petsc_options_value = '1e-6 ds'
-#[../]
 
 [] #END Preconditioning
 
