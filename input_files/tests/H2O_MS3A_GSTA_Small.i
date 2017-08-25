@@ -4,7 +4,7 @@
 	pellet_diameter = 0.236
 	inner_diameter = 2.54
 	flow_rate = 211680.0
-	dt = 0.0001
+	dt = 0.01
 	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
@@ -20,7 +20,7 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 10
+	nx = 5
  	ny = 40
  	xmin = 0.0
 	xmax = 1.27 #cm
