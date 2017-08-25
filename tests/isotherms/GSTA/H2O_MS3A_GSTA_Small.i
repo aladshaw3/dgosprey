@@ -4,7 +4,7 @@
 	pellet_diameter = 0.236
 	inner_diameter = 2.54
 	flow_rate = 211680.0
-	dt = 0.01
+	dt = 0.05
 	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
@@ -20,8 +20,8 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 5
- 	ny = 40
+	nx = 3
+ 	ny = 8
  	xmin = 0.0
 	xmax = 1.27 #cm
  	ymin = 0.0
@@ -481,12 +481,13 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt basic
 	start_time = 0.0
-	end_time = 90.0
+	end_time = 0.5
 	dtmax = 1.0
  
 	[./TimeStepper]
 		#type = SolutionTimeAdaptiveDT
-		type = DGOSPREY_TimeStepper
+		#type = DGOSPREY_TimeStepper
+		type = ConstantDT
 	[../]
  
  [] #END Executioner
