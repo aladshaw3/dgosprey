@@ -343,7 +343,7 @@
 		block = 0
 		outer_diameter = 2.84
 		bulk_porosity = 0.421
-		axial_conductivity = 6.292E-05   #0.6292
+		axial_conductivity = 62920   #6.292E-05
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 6.12

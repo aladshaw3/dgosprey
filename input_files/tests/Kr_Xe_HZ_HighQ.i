@@ -478,12 +478,12 @@ execute_on = 'initial timestep_end'
 #		execute_on = 'initial timestep_end'
 #	[../]
 
-#	[./temp_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = column_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
+	[./temp_exit]
+		type = SideAverageValue
+		boundary = 'top'
+		variable = column_temp
+		execute_on = 'initial timestep_end'
+	[../]
 
 #	[./press_exit]
 #		type = SideAverageValue
