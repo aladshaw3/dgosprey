@@ -80,7 +80,7 @@ _heat_retardation(declareProperty<Real>("heat_retardation")),
 _conductivity(declareProperty<Real>("conductivity")),
 _molecular_diffusion(declareProperty<std::vector<Real> >("molecular_diffusion")),
 _dispersion(declareProperty<std::vector<Real> >("dispersion")),
-_retardation(declareProperty<std::vector<Real> >("retardation")),
+_retardation(declareProperty<Real>("retardation")),
 _mixed_gas(declareProperty< MIXED_GAS >("mixed_gas_data")),
 _mixed_gas_old(declarePropertyOld< MIXED_GAS >("mixed_gas_data")),
 _film_transfer(declareProperty<std::vector<Real> >("film_transfer")),
@@ -120,7 +120,6 @@ void GasFlowProperties::initQpStatefulProperties()
 	
 	_molecular_diffusion[_qp].resize(_gas_conc.size());
 	_dispersion[_qp].resize(_gas_conc.size());
-	_retardation[_qp].resize(_gas_conc.size());
 	_film_transfer[_qp].resize(_gas_conc.size());
 	_pore_diffusion[_qp].resize(_gas_conc.size());
 	_molefrac.resize(_gas_conc.size());
@@ -134,6 +133,7 @@ void GasFlowProperties::computeQpProperties()
 	
 	_mixed_gas[_qp].CheckMolefractions = false;
 	_velocity[_qp] = _porosity[_qp] * (_flow_rate / (_porosity[_qp] * (M_PI/4.0) * _inner_dia[_qp] * _inner_dia[_qp]));
+	_retardation[_qp] = _porosity[_qp];
 	
 	_gas_molecular_wieght[_qp] = 0.0;
 	_gas_viscosity[_qp] = 0.0;
@@ -197,8 +197,6 @@ void GasFlowProperties::computeQpProperties()
 		{
 			_molecular_diffusion[_qp][i] = (1.0 - _yi) / _sum_yj_over_Dij;
 		}
-		
-		_retardation[_qp][i] = _porosity[_qp];
 		
 		if (_yi != 0.0)
 			_gas_viscosity[_qp] = _gas_viscosity[_qp] + (_mu_i / (1.0 + ( (113.65*_phi*_mu_i*_temperature_old[_qp])/(_yi*_molecular_weight[i]) ) * _sum_yi_over_Dij_prime) );

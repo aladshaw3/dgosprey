@@ -106,7 +106,7 @@ private:
 	MaterialProperty<Real> & _conductivity;							///< MaterialProperty for thermal conductivity of the bed
 	MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< MaterialProperty for each species' molecular diffusion (cm^2/hr)
 	MaterialProperty<std::vector<Real> > & _dispersion;				///< MaterialProperty for each species' dispersion coefficient (cm^2/hr)
-	MaterialProperty<std::vector<Real> > & _retardation;			///< MaterialProperty for each species' retardation coefficient
+	MaterialProperty<Real> & _retardation;							///< MaterialProperty for the retardation coefficient
 	MaterialProperty< MIXED_GAS > & _mixed_gas;						///< MaterialProperty for the MIXED_GAS struct in egret.h
 	MaterialProperty< MIXED_GAS > & _mixed_gas_old;					///< Old MaterialProperty for the MIXED_GAS struct in egret.h
 	
