@@ -39,7 +39,6 @@
 #include "LinearDrivingForce.h"
 #include "BedProperties.h"
 #include "AdsorbentProperties.h"
-#include "FlowProperties.h"
 #include "BedMassAccumulation.h"
 #include "BedWallHeatTransfer.h"
 #include "WallAmbientHeatTransfer.h"
@@ -72,24 +71,6 @@
 #include "DGColumnWallHeatFluxBC.h"
 #include "DGColumnWallHeatFluxLimitedBC.h"
 
-#include "MagpieAdsorbateProperties.h"
-#include "MAGPIE_Adsorption.h"
-#include "MAGPIE_Perturbation.h"
-#include "MAGPIE_AdsorptionHeat.h"
-#include "AdsorptionHeatAccumulation.h"
-#include "AdsorptionMassTransfer.h"
-
-#include "Aux_LDF.h"
-#include "MAGPIE_ConstLDF_Adsorption.h"
-#include "MAGPIE_ConstLDF_Perturbation.h"
-#include "MAGPIE_MaterialLDF_Adsorption.h"
-#include "MAGPIE_MaterialLDF_Perturbation.h"
-
-#include "ScopsowlProperties.h"
-#include "Scopsowl_Adsorption.h"
-#include "Scopsowl_Perturbation.h"
-
-#include "TotalMoles.h"
 #include "CoupledCoeffTimeDerivative.h"
 #include "CoupledLinearForcingFunction.h"
 #include "CoupledLinearLDF.h"
@@ -103,7 +84,6 @@
 
 #include "WallTemperature.h"
 #include "CoupledLangmuirForcingFunction.h"
-#include "ParameterizedAdsorptionEquil.h"
 
 #include "CoupledExtendedLangmuirFunction.h"
 #include "DGOSPREY_TimeStepper.h"
@@ -147,9 +127,6 @@ DgospreyApp::registerObjects(Factory & factory)
 {
 	registerMaterial(BedProperties);
 	registerMaterial(AdsorbentProperties);
-	registerMaterial(FlowProperties);
-	registerMaterial(MagpieAdsorbateProperties);
-	registerMaterial(ScopsowlProperties);
 	registerMaterial(ThermodynamicProperties);
 	registerMaterial(GasFlowProperties);
 	registerMaterial(KineticProperties);
@@ -160,7 +137,6 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(WallAmbientHeatTransfer);
 	registerKernel(WallHeatAccumulation);
 	registerKernel(BedHeatAccumulation);
-	registerKernel(AdsorptionMassTransfer);
 	registerKernel(CoupledCoeffTimeDerivative);
 	registerKernel(CoupledLinearForcingFunction);
 	registerKernel(CoupledLinearLDF);
@@ -168,22 +144,10 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(SolidMassTransfer);
 	registerKernel(SolidHeatTransfer);
     registerKernel(CoupledLangmuirForcingFunction);
-    registerKernel(ParameterizedAdsorptionEquil);
 	registerKernel(CoupledExtendedLangmuirFunction);
 	registerKernel(CoupledGSTAisotherm);
 	
 	registerAux(TotalColumnPressure);
-	registerAux(MAGPIE_Adsorption);
-	registerAux(MAGPIE_Perturbation);
-	registerAux(MAGPIE_AdsorptionHeat);
-	registerAux(Aux_LDF);
-	registerAux(MAGPIE_ConstLDF_Adsorption);
-	registerAux(MAGPIE_ConstLDF_Perturbation);
-	registerAux(MAGPIE_MaterialLDF_Adsorption);
-	registerAux(MAGPIE_MaterialLDF_Perturbation);
-	registerAux(Scopsowl_Adsorption);
-	registerAux(Scopsowl_Perturbation);
-	registerAux(TotalMoles);
 	registerAux(WallTemperature);
 
 	registerInitialCondition(TotalPressureIC);
@@ -208,7 +172,6 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(GColumnHeatAdvection);
 	registerDGKernel(DGColumnHeatDispersion);
 	registerKernel(GColumnHeatDispersion);
-	registerKernel(AdsorptionHeatAccumulation);
 	registerBoundaryCondition(DGHeatFluxBC);
 	registerBoundaryCondition(DGHeatFluxLimitedBC);
 	registerBoundaryCondition(DGColumnWallHeatFluxBC);

@@ -135,7 +135,6 @@
 	[./accumKr]
 		type = BedMassAccumulation
 		variable = Kr
-		index = 0   #NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
 	[../]
 
 	[./Kr_MT]
@@ -158,7 +157,6 @@
 	[./accumXe]
 		type = BedMassAccumulation
 		variable = Xe
-		index = 1	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
 	[../]
 
 	[./Xe_MT]
@@ -167,28 +165,27 @@
 		coupled = Xe_Adsorbed
 	[../]
 
-[./diffXe]
-type = GColumnMassDispersion
-variable = Xe
-index = 1
-[../]
+	[./diffXe]
+		type = GColumnMassDispersion
+		variable = Xe
+		index = 1
+	[../]
 
-[./advXe]
-type = GColumnMassAdvection
-variable = Xe
-[../]
+	[./advXe]
+		type = GColumnMassAdvection
+		variable = Xe
+	[../]
 
-[./accumHe]
-type = BedMassAccumulation
-variable = He
-index = 2	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-[../]
+	[./accumHe]
+		type = BedMassAccumulation
+		variable = He
+	[../]
 
-[./diffHe]
-type = GColumnMassDispersion
-variable = He
-index = 2
-[../]
+	[./diffHe]
+		type = GColumnMassDispersion
+		variable = He
+		index = 2
+	[../]
 
 [./advHe]
 type = GColumnMassAdvection
@@ -379,7 +376,6 @@ type = BedProperties
 block = 0
 outer_diameter = 2.0828
 bulk_porosity = 0.90507				#not known
-axial_conductivity = 0.6292      #not known
 wall_density = 7.7
 wall_heat_capacity = 0.5
 wall_heat_trans_coef = 9.0

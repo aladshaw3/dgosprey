@@ -119,7 +119,6 @@
  	[./accumN2]
  		type = BedMassAccumulation
  		variable = N2
- 		index = 0
  	[../]
 
 	[./diffN2]
@@ -136,7 +135,6 @@
  	[./accumO2]
  		type = BedMassAccumulation
  		variable = O2
- 		index = 1
  	[../]
 
 	[./diffO2]
@@ -153,7 +151,6 @@
  	[./accumH2O]
  		type = BedMassAccumulation
  		variable = H2O
- 		index = 2
  	[../]
  
 	[./H2O_MT]
@@ -331,7 +328,6 @@
 		inner_diameter = 74.5
 		outer_diameter = 75.5
 		bulk_porosity = 0.585
-		axial_conductivity = 0.6292
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 6.12

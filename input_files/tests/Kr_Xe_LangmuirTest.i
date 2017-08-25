@@ -129,7 +129,6 @@ initial_temp = 220.15
 [./accumKr]
 type = BedMassAccumulation
 variable = Kr
-index = 0   #NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
 [../]
 
 [./Kr_MT]
@@ -152,7 +151,6 @@ variable = Kr
 [./accumXe]
 type = BedMassAccumulation
 variable = Xe
-index = 1	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
 [../]
 
 [./Xe_MT]
@@ -175,7 +173,6 @@ variable = Xe
 [./accumHe]
 type = BedMassAccumulation
 variable = He
-index = 2	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
 [../]
 
 [./diffHe]
@@ -371,7 +368,6 @@ length = 22.86
 inner_diameter = 1.7272
 outer_diameter = 1.905
 bulk_porosity = 0.798				#not known
-axial_conductivity = 0.6292      #not known
 wall_density = 7.7
 wall_heat_capacity = 0.5
 wall_heat_trans_coef = 9.0
