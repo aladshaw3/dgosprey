@@ -331,7 +331,6 @@ block = 0
 inner_diameter = 74.5
 outer_diameter = 75.5
 bulk_porosity = 0.585
-axial_conductivity = 0.6292
 wall_density = 8.0
 wall_heat_capacity = 0.5
 wall_heat_trans_coef = 6.12
@@ -453,7 +452,7 @@ type = Transient
 scheme = bdf2
 
 # NOTE: The default tolerances are far to strict and cause the program to crawl
-nl_rel_tol = 1e-10
+nl_rel_tol = 1e-16
 nl_abs_tol = 1e-4
 l_tol = 1e-8
 l_max_its = 100

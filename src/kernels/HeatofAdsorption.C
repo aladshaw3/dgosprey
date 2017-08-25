@@ -57,13 +57,9 @@ _magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data"))
 
 Real HeatofAdsorption::computeQpResidual()
 {
-	MAGPIE_DATA magpie_copy;
-	magpie_copy = _magpie_dat[_qp];
-	
-	//Call MAGPIE Simulation for Unperturbed data
 	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
 	{
-		_coef = Qst(0.0,(void *)&magpie_copy,_index);
+		_coef = -_magpie_dat[_qp].gsta_dat[_index].dHo[0] + ((_magpie_dat[_qp].gsta_dat[_index].dHo[0] - (_magpie_dat[_qp].gsta_dat[_index].dHo[_magpie_dat[_qp].gsta_dat[_index].m-1]/_magpie_dat[_qp].gsta_dat[_index].m))*(_coupled_u[_qp]/_magpie_dat[_qp].gsta_dat[_index].qmax));
 	}
 	else
 	{
@@ -80,7 +76,6 @@ Real HeatofAdsorption::computeQpJacobian()
 
 Real HeatofAdsorption::computeQpOffDiagJacobian(unsigned int jvar)
 {
-	_coef = 0.0;
-	return CoupledLinearForcingFunction::computeQpOffDiagJacobian(jvar);
+	return 0.0;
 }
 

@@ -1,171 +1,171 @@
- [GlobalParams]
+[GlobalParams]
 
-sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
-epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
+	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
+	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
-flow_rate = 1.2e5
-length = 50.8
-inner_diameter = 1.905
-pellet_diameter = 0.056
-dt = 0.05
+	flow_rate = 1.2e5
+	length = 50.8
+	inner_diameter = 1.905
+	pellet_diameter = 0.056
+	dt = 0.05
 
 [] #END GlobalParams
 
 [Problem]
 
-coord_type = RZ
+	coord_type = RZ
 
 [] #END Problem
 
 [Mesh]
 
-type = GeneratedMesh
-dim = 2
-nx = 10
-ny = 40
-xmin = 0.0
-xmax = 0.9525 #cm
-ymin = 0.0
-ymax = 50.8 #cm
+	type = GeneratedMesh
+	dim = 2
+	nx = 10
+	ny = 40
+	xmin = 0.0
+	xmax = 0.9525 #cm
+	ymin = 0.0
+	ymax = 50.8 #cm
 
 [] # END Mesh
 
 [Variables]
 
-[./Kr]
-order = FIRST
-family = MONOMIAL
-[../]
+	[./Kr]
+		order = FIRST
+		family = MONOMIAL
+	[../]
 
-[./Xe]
-order = FIRST
-family = MONOMIAL
-[../]
+	[./Xe]
+		order = FIRST
+		family = MONOMIAL
+	[../]
 
-[./He]
-order = FIRST
-family = MONOMIAL
-[../]
+	[./He]
+		order = FIRST
+		family = MONOMIAL
+	[../]
 
-[./column_temp]
-order = FIRST
-family = MONOMIAL
-initial_condition = 191.15
-[../]
+	[./column_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 191.15
+	[../]
 
-[./Kr_Adsorbed]
-order = FIRST
-family = MONOMIAL
-initial_condition = 0.0
-[../]
+	[./Kr_Adsorbed]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
-[./Xe_Adsorbed]
-order = FIRST
-family = MONOMIAL
-initial_condition = 0.0
-[../]
+	[./Xe_Adsorbed]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
-[./Kr_AdsorbedHeat]
-order = FIRST
-family = MONOMIAL
-initial_condition = 0.0
-[../]
+	[./Kr_AdsorbedHeat]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
-[./Xe_AdsorbedHeat]
-order = FIRST
-family = MONOMIAL
-initial_condition = 0.0
-[../]
+	[./Xe_AdsorbedHeat]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
 [] #END Variables
 
 [AuxVariables]
 
-[./total_pressure]
-order = FIRST
-family = MONOMIAL
-initial_condition = 101.35
-[../]
+	[./total_pressure]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 101.35
+	[../]
 
-[./ambient_temp]
-order = FIRST
-family = MONOMIAL
-initial_condition = 191.15
-[../]
+	[./ambient_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 191.15
+	[../]
 
-[./wall_temp]
-order = FIRST
-family = MONOMIAL
-initial_condition = 191.15
-[../]
+	[./wall_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 191.15
+	[../]
 
 
 [] #END AuxVariables
 
 [ICs]
 
-[./Kr_IC]
-type = ConcentrationIC
-variable = Kr
-initial_mole_frac = 0.0
-initial_press = 101.35
-initial_temp = 191.15
-[../]
+	[./Kr_IC]
+		type = ConcentrationIC
+		variable = Kr
+		initial_mole_frac = 0.0
+		initial_press = 101.35
+		initial_temp = 191.15
+	[../]
 
-[./Xe_IC]
-type = ConcentrationIC
-variable = Xe
-initial_mole_frac = 0.0
-initial_press = 101.35
-initial_temp = 191.15
-[../]
+	[./Xe_IC]
+		type = ConcentrationIC
+		variable = Xe
+		initial_mole_frac = 0.0
+		initial_press = 101.35
+		initial_temp = 191.15
+	[../]
 
-[./He_IC]
-type = ConcentrationIC
-variable = He
-initial_mole_frac = 1.0
-initial_press = 101.35
-initial_temp = 191.15
-[../]
+	[./He_IC]
+		type = ConcentrationIC
+		variable = He
+		initial_mole_frac = 1.0
+		initial_press = 101.35
+		initial_temp = 191.15
+	[../]
 
 [] #END ICs
 
 [Kernels]
 
-[./accumKr]
-type = BedMassAccumulation
-variable = Kr
-index = 0   #NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-[../]
+	[./accumKr]
+		type = BedMassAccumulation
+		variable = Kr
+		index = 0   #NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
+	[../]
 
-[./Kr_MT]
-type = SolidMassTransfer
-variable = Kr
-coupled = Kr_Adsorbed
-[../]
+	[./Kr_MT]
+		type = SolidMassTransfer
+		variable = Kr
+		coupled = Kr_Adsorbed
+	[../]
 
-[./diffKr]
-type = GColumnMassDispersion
-variable = Kr
-index = 0
-[../]
+	[./diffKr]
+		type = GColumnMassDispersion
+		variable = Kr
+		index = 0
+	[../]
 
-[./advKr]
-type = GColumnMassAdvection
-variable = Kr
-[../]
+	[./advKr]
+		type = GColumnMassAdvection
+		variable = Kr
+	[../]
 
-[./accumXe]
-type = BedMassAccumulation
-variable = Xe
-index = 1	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-[../]
+	[./accumXe]
+		type = BedMassAccumulation
+		variable = Xe
+		index = 1	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
+	[../]
 
-[./Xe_MT]
-type = SolidMassTransfer
-variable = Xe
-coupled = Xe_Adsorbed
-[../]
+	[./Xe_MT]
+		type = SolidMassTransfer
+		variable = Xe
+		coupled = Xe_Adsorbed
+	[../]
 
 [./diffXe]
 type = GColumnMassDispersion
