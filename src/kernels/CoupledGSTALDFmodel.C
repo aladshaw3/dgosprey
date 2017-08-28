@@ -94,7 +94,28 @@ _surf_diff(getMaterialProperty<std::vector<Real> >("surface_diffusion"))
 
 Real CoupledGSTALDFmodel::computeLDFcoeff()
 {
-	return 0.0;
+	double part_coef = 1.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
+	double Henry = (_maxcap * _gstaparam[0])/(_numsites*Co);
+	if (std::isnan(_u[_qp]/_coupled_u[_qp]) || std::isinf(_u[_qp]/_coupled_u[_qp]))
+		part_coef = _pellet_density[_qp]*Henry;
+	else
+		part_coef = _pellet_density[_qp]*_u[_qp]/_coupled_u[_qp];
+	
+	double filmres, poreres, surfres;
+	filmres = part_coef * _pellet_diameter[_qp] / (6.0*_film_transfer[_qp][_index]);
+	if (_binder_fraction[_qp] == 0.0)
+		poreres = part_coef * _pellet_diameter[_qp] * _pellet_diameter[_qp] / (60.0*_pore_diff[_qp][_index]*_binder_porosity[_qp]);
+	else
+		poreres = part_coef * _pellet_diameter[_qp] * _pellet_diameter[_qp] / (60.0*_pore_diff[_qp][_index]*_binder_porosity[_qp]*_binder_fraction[_qp]);
+	if (_surf_diff[_qp][_index] == 0.0)
+		surfres = 0.0;
+	else
+		surfres = _crystal_radius[_qp] * _crystal_radius[_qp] / (15.0 * _surf_diff[_qp][_index]);
+	
+	double k = filmres + poreres + surfres;
+	k = 1.0/k;
+	
+	return k;
 }
 
 Real CoupledGSTALDFmodel::computeLDFjacobian()
@@ -102,58 +123,33 @@ Real CoupledGSTALDFmodel::computeLDFjacobian()
 	return 0.0;
 }
 
-Real CoupledGSTALDFmodel::computeLDFoffdiag()
+Real CoupledGSTALDFmodel::computeLDFoffdiag(unsigned int jvar)
 {
 	return 0.0;
 }
 
 Real CoupledGSTALDFmodel::computeQpResidual()
 {
-	_gstaparam.resize(_magpie_dat[_qp].gsta_dat[_index].m);
-	_numsites = _magpie_dat[_qp].gsta_dat[_index].m;
-	_maxcap = _magpie_dat[_qp].gsta_dat[_index].qmax;
-	
-	for (int n = 0; n<(int)_numsites; n++)
-	{
-		_gstaparam[n] = std::exp( lnKo(_magpie_dat[_qp].gsta_dat[_index].dHo[n], _magpie_dat[_qp].gsta_dat[_index].dSo[n], _coupled_temp[_qp]) );
-	}
-	
-	return CoupledGSTAisotherm::computeQpResidual();
+	return 0.0;
 }
 
 Real CoupledGSTALDFmodel::computeQpJacobian()
 {
-	return CoupledGSTAisotherm::computeQpJacobian();
+	return 0.0;
 }
 
 Real CoupledGSTALDFmodel::computeQpOffDiagJacobian(unsigned int jvar)
 {
-	for (int n = 0; n<(int)_numsites; n++)
-	{
-		_gstaparam[n] = std::exp( lnKo(_magpie_dat[_qp].gsta_dat[_index].dHo[n], _magpie_dat[_qp].gsta_dat[_index].dSo[n], _coupled_temp[_qp]) );
-	}
-	
 	// Off-diagonal element for coupled gas
 	if (jvar == _coupled_var_u)
 	{
-		return CoupledGSTAisotherm::computeQpOffDiagJacobian(jvar);
+		return 0.0;
 	}
 	
 	// Off-diagonal element for coupled temperature
 	if (jvar == _coupled_var_temp)
 	{
-		double a = 0.0, b = 1.0, c = 0.0, d = 0.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
-		
-		for (int n = 0; n<(int)_numsites; n++)
-		{
-			d = d + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
-			b = b + ( _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
-			
-			a = a + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * (( (double)(n+1) * std::pow((_coupled_temp[_qp]),(double)(n)) ) + (_magpie_dat[_qp].gsta_dat[_index].dHo[n]/8.3144621 * std::pow((_coupled_temp[_qp]),(double)(n-1)) )) );
-			c = c + ( _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * (( (double)(n+1) * std::pow((_coupled_temp[_qp]),(double)(n)) ) + (_magpie_dat[_qp].gsta_dat[_index].dHo[n]/8.3144621 * std::pow((_coupled_temp[_qp]),(double)(n-1)) )) );
-		}
-		
-		return -_test[_i][_qp]*(_maxcap/_numsites)*_phi[_j][_qp]*( ((a*b) - (c*d)) / (b*b) );
+		return 0.0;
 	}
 	
 	

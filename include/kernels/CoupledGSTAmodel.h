@@ -81,6 +81,12 @@ public:
 	CoupledGSTAmodel(const InputParameters & parameters);
 	
 protected:
+	/// Function to compute the isotherm parameters based on temperature
+	void computeGSTAparams();
+	
+	/// Function to compute the isotherm derivative with respect to temperature
+	Real computeGSTAtempDerivative();
+	
 	/// Required residual function for standard kernels in MOOSE
 	/** This function returns a residual contribution for this object.*/
 	virtual Real computeQpResidual();

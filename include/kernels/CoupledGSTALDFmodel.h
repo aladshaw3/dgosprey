@@ -99,7 +99,7 @@ protected:
 	Real computeLDFjacobian();
 	
 	/// Function to compute the derivative of the linear driving force coefficient with respect to gas concentration
-	Real computeLDFoffdiag();
+	Real computeLDFoffdiag(unsigned int jvar);
 	
 	/// Required residual function for standard kernels in MOOSE
 	/** This function returns a residual contribution for this object.*/
@@ -120,7 +120,7 @@ protected:
 private:
 	unsigned int _index;											///< Index of the gaseous species to calculate for
 	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;			///< Material Property holding the MAGPIE data structure
-	const MaterialProperty< Real > & _pellet_density;				///< Material Property for pellet density (g/cm^3)
+	const MaterialProperty< Real > & _pellet_density;				///< Material Property for pellet density (kg/L)
 	const MaterialProperty< Real > & _pellet_diameter;				///< Material Property for pellet diameter (cm)
 	const MaterialProperty< Real > & _crystal_radius;				///< Material Property for crystal radius (um)
 	const MaterialProperty< Real > & _binder_porosity;				///< Material Property for binder porosity (-)

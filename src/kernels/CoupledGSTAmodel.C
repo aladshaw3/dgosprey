@@ -73,7 +73,7 @@ _magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data"))
 	
 }
 
-Real CoupledGSTAmodel::computeQpResidual()
+void CoupledGSTAmodel::computeGSTAparams()
 {
 	_gstaparam.resize(_magpie_dat[_qp].gsta_dat[_index].m);
 	_numsites = _magpie_dat[_qp].gsta_dat[_index].m;
@@ -83,7 +83,27 @@ Real CoupledGSTAmodel::computeQpResidual()
 	{
 		_gstaparam[n] = std::exp( lnKo(_magpie_dat[_qp].gsta_dat[_index].dHo[n], _magpie_dat[_qp].gsta_dat[_index].dSo[n], _coupled_temp[_qp]) );
 	}
+}
+
+Real CoupledGSTAmodel::computeGSTAtempDerivative()
+{
+	double a = 0.0, b = 1.0, c = 0.0, d = 0.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
 	
+	for (int n = 0; n<(int)_numsites; n++)
+	{
+		d = d + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
+		b = b + ( _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
+		
+		a = a + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * (( (double)(n+1) * std::pow((_coupled_temp[_qp]),(double)(n)) ) + (_magpie_dat[_qp].gsta_dat[_index].dHo[n]/8.3144621 * std::pow((_coupled_temp[_qp]),(double)(n-1)) )) );
+		c = c + ( _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * (( (double)(n+1) * std::pow((_coupled_temp[_qp]),(double)(n)) ) + (_magpie_dat[_qp].gsta_dat[_index].dHo[n]/8.3144621 * std::pow((_coupled_temp[_qp]),(double)(n-1)) )) );
+	}
+	
+	return (_maxcap/_numsites)*_phi[_j][_qp]*( ((a*b) - (c*d)) / (b*b) );
+}
+
+Real CoupledGSTAmodel::computeQpResidual()
+{
+	computeGSTAparams();
 	return CoupledGSTAisotherm::computeQpResidual();
 }
 
@@ -94,10 +114,7 @@ Real CoupledGSTAmodel::computeQpJacobian()
 
 Real CoupledGSTAmodel::computeQpOffDiagJacobian(unsigned int jvar)
 {
-	for (int n = 0; n<(int)_numsites; n++)
-	{
-		_gstaparam[n] = std::exp( lnKo(_magpie_dat[_qp].gsta_dat[_index].dHo[n], _magpie_dat[_qp].gsta_dat[_index].dSo[n], _coupled_temp[_qp]) );
-	}
+	computeGSTAparams();
 	
 	// Off-diagonal element for coupled gas
 	if (jvar == _coupled_var_u)
@@ -108,18 +125,7 @@ Real CoupledGSTAmodel::computeQpOffDiagJacobian(unsigned int jvar)
 	// Off-diagonal element for coupled temperature
 	if (jvar == _coupled_var_temp)
 	{
-		double a = 0.0, b = 1.0, c = 0.0, d = 0.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
-		
-		for (int n = 0; n<(int)_numsites; n++)
-		{
-			d = d + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
-			b = b + ( _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
-			
-			a = a + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * (( (double)(n+1) * std::pow((_coupled_temp[_qp]),(double)(n)) ) + (_magpie_dat[_qp].gsta_dat[_index].dHo[n]/8.3144621 * std::pow((_coupled_temp[_qp]),(double)(n-1)) )) );
-			c = c + ( _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * (( (double)(n+1) * std::pow((_coupled_temp[_qp]),(double)(n)) ) + (_magpie_dat[_qp].gsta_dat[_index].dHo[n]/8.3144621 * std::pow((_coupled_temp[_qp]),(double)(n-1)) )) );
-		}
-		
-		return -_test[_i][_qp]*(_maxcap/_numsites)*_phi[_j][_qp]*( ((a*b) - (c*d)) / (b*b) );
+		return -_test[_i][_qp]*computeGSTAtempDerivative();
 	}
 	
 	
