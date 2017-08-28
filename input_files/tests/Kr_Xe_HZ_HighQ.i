@@ -522,8 +522,13 @@
 
 [Executioner]
 
+<<<<<<< HEAD
 	type = Transient
 	scheme = bdf2
+=======
+type = Transient
+scheme = implicit-euler
+>>>>>>> cd5ec83a1db6ffb8fdda6ffcfcf75f948d507e13
 
 		# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-8
