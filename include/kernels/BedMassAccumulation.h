@@ -68,8 +68,7 @@ protected:
 	virtual Real computeQpJacobian();
   
 private:
-	int _index;													///< Index of the species of interest for the mass accumulation
-	const MaterialProperty<std::vector<Real> > & _retardation;	///< Reference to the mass retardation coefficient material property
+	const MaterialProperty<Real> & _retardation;	///< Reference to the mass retardation coefficient material property
 };
 
 #endif //BEDMASSACCUMULATION_H

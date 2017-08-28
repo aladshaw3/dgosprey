@@ -40,8 +40,8 @@ template<>
 InputParameters validParams<CoupledLangmuirForcingFunction>()
 {
     InputParameters params = validParams<Kernel>();
-    params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for Langmuir Function");
-    params.addParam<Real>("langmuir_coeff",1.0,"Coefficient for the langmuir function");
+    params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for Langmuir Function (mol/kg)");
+    params.addParam<Real>("langmuir_coeff",1.0,"Coefficient for the langmuir function (L/mol)");
     params.addRequiredCoupledVar("coupled","Name of the variable being coupled");
     return params;
 }

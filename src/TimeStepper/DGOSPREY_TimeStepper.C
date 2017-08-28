@@ -79,8 +79,8 @@ DGOSPREY_TimeStepper::computeInitialDT()
 	double timestep = getParam<Real>("dt");
 	double alpha = 5000.0;
 	double vel = (_flow_rate / ((M_PI/4.0) * _din * _din));
-	if (timestep < (alpha/(360.0+(100.0*_pellet_dia*vel))))
-		timestep = (alpha/(360.0+(100.0*_pellet_dia*vel)));
+	if (timestep < (alpha/(360.0+(10.0*_pellet_dia*vel))))
+		timestep = (alpha/(360.0+(10.0*_pellet_dia*vel)));
 	return timestep;
 }
 

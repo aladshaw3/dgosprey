@@ -3,6 +3,12 @@
 sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
 epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
+flow_rate = 1.2e5
+length = 50.8
+inner_diameter = 1.905
+pellet_diameter = 0.056
+dt = 0.05
+
 [] #END GlobalParams
 
 [Problem]
@@ -15,12 +21,12 @@ coord_type = RZ
 
 type = GeneratedMesh
 dim = 2
-nx = 5
-ny = 20
+nx = 3
+ny = 8
 xmin = 0.0
-xmax = 0.8636 #cm
+xmax = 0.9525 #cm
 ymin = 0.0
-ymax = 22.86 #cm
+ymax = 50.8 #cm
 
 [] # END Mesh
 
@@ -44,7 +50,7 @@ family = MONOMIAL
 [./column_temp]
 order = FIRST
 family = MONOMIAL
-initial_condition = 220.15
+initial_condition = 191.15
 [../]
 
 [./Kr_Adsorbed]
@@ -84,24 +90,15 @@ initial_condition = 101.35
 [./ambient_temp]
 order = FIRST
 family = MONOMIAL
-initial_condition = 220.15
+initial_condition = 191.15
 [../]
 
 [./wall_temp]
 order = FIRST
 family = MONOMIAL
-initial_condition = 220.15
+initial_condition = 191.15
 [../]
 
-[./Kr_Adsorbed_Magpie]
-order = FIRST
-family = MONOMIAL
-[../]
-
-[./Xe_Adsorbed_Magpie]
-order = FIRST
-family = MONOMIAL
-[../]
 
 [] #END AuxVariables
 
@@ -112,7 +109,7 @@ type = ConcentrationIC
 variable = Kr
 initial_mole_frac = 0.0
 initial_press = 101.35
-initial_temp = 220.15
+initial_temp = 191.15
 [../]
 
 [./Xe_IC]
@@ -120,7 +117,7 @@ type = ConcentrationIC
 variable = Xe
 initial_mole_frac = 0.0
 initial_press = 101.35
-initial_temp = 220.15
+initial_temp = 191.15
 [../]
 
 [./He_IC]
@@ -128,7 +125,7 @@ type = ConcentrationIC
 variable = He
 initial_mole_frac = 1.0
 initial_press = 101.35
-initial_temp = 220.15
+initial_temp = 191.15
 [../]
 
 [] #END ICs
@@ -240,19 +237,21 @@ index = 1
 [../]
 
 [./Kr_adsorption]
-type = ParameterizedAdsorptionEquil
+type = CoupledExtendedLangmuirFunction
 variable = Kr_Adsorbed
-coupled = Kr
-ads_est = Kr_Adsorbed_Magpie
-index = 0
+main_coupled = Kr
+coupled_list = 'Kr Xe'
+langmuir_coeff = '4594 14600'
+max_capacity = 1.94
 [../]
 
 [./Xe_adsorption]
-type = ParameterizedAdsorptionEquil
+type = CoupledExtendedLangmuirFunction
 variable = Xe_Adsorbed
-coupled = Xe
-ads_est = Xe_Adsorbed_Magpie
-index = 1
+main_coupled = Xe
+coupled_list = 'Kr Xe'
+langmuir_coeff = '4594 14600'
+max_capacity = 1.367
 [../]
 
 
@@ -323,18 +322,6 @@ column_temp = column_temp
 ambient_temp = ambient_temp
 [../]
 
-[./Kr_magpie]
-type = MAGPIE_Adsorption
-variable = Kr_Adsorbed_Magpie
-index = 0
-[../]
-
-[./Xe_magpie]
-type = MAGPIE_Adsorption
-variable = Xe_Adsorbed_Magpie
-index = 1
-[../]
-
 [] #END AuxKernels
 
 [BCs]
@@ -343,9 +330,9 @@ index = 1
 type = DGMassFluxBC
 variable = Kr
 boundary = 'top bottom'
-input_temperature = 220.15
+input_temperature = 191.15
 input_pressure = 101.35
-input_molefraction = 0.000114729
+input_molefraction = 0.00015
 index = 0
 [../]
 
@@ -353,9 +340,9 @@ index = 0
 type = DGMassFluxBC
 variable = Xe
 boundary = 'top bottom'
-input_temperature = 220.15
+input_temperature = 191.15
 input_pressure = 101.35
-input_molefraction = 0.000750891
+input_molefraction = 0.001
 index = 1
 [../]
 
@@ -363,9 +350,9 @@ index = 1
 type = DGMassFluxBC
 variable = He
 boundary = 'top bottom'
-input_temperature = 220.15
+input_temperature = 191.15
 input_pressure = 101.35
-input_molefraction = 0.99913438
+input_molefraction = 0.99885
 index = 2
 [../]
 
@@ -373,7 +360,7 @@ index = 2
 type = DGHeatFluxBC
 variable = column_temp
 boundary = 'top bottom'
-input_temperature = 220.15
+input_temperature = 191.15
 [../]
 
 [./Heat_Wall_Flux]
@@ -390,11 +377,8 @@ wall_temp = wall_temp
 [./BedMaterials]
 type = BedProperties
 block = 0
-length = 22.86
-inner_diameter = 1.7272
-outer_diameter = 1.905
-bulk_porosity = 0.798				#not known
-axial_conductivity = 0.6292      #not known
+outer_diameter = 2.0828
+bulk_porosity = 0.90507				#not known
 wall_density = 7.7
 wall_heat_capacity = 0.5
 wall_heat_trans_coef = 9.0
@@ -409,8 +393,6 @@ comp_heat_capacity = '0.25 0.16 5.1916'
 comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
 comp_ref_temp = '273.15 273.15 273.15'
 comp_Sutherland_const = '266.505 232.746 80.0'
-flow_rate = 2994.06
-length = 22.86
 temperature = column_temp
 total_pressure = total_pressure
 coupled_gases = 'Kr Xe He'
@@ -420,12 +402,11 @@ coupled_gases = 'Kr Xe He'
 type = AdsorbentProperties
 block = 0
 binder_fraction = 0.175				#not known
-binder_porosity = 0.27				#not known
+binder_porosity = 0.13				#not known
 crystal_radius = 1.5				#not known
-pellet_diameter = 0.236				#not known
-macropore_radius = 3.5e-6			#not Known
-pellet_density = 1.69				#not Known
-pellet_heat_capacity = 1.045		#not known
+macropore_radius = 1.945e-7			#not Known
+pellet_density = 2.174				#not Known
+pellet_heat_capacity = 1.2  		#not known
 ref_diffusion = '0 0 0'
 activation_energy = '0 0 0'
 ref_temperature = '0 0 0'
@@ -489,45 +470,11 @@ variable = Xe
 execute_on = 'initial timestep_end'
 [../]
 
-#	[./He_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = He
-#		execute_on = 'initial timestep_end'
-#	[../]
-
-#	[./temp_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = column_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
-
-#	[./press_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = total_pressure
-#		execute_on = 'initial timestep_end'
-#	[../]
-
-#	[./wall_temp]
-#		type = SideAverageValue
-#		boundary = 'right'
-#		variable = wall_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
-
 [./Kr_solid]
 type = ElementAverageValue
 variable = Kr_Adsorbed
 execute_on = 'initial timestep_end'
 [../]
-
-#	[./Kr_heat]
-#		type = ElementAverageValue
-#		variable = Kr_AdsorbedHeat
-#		execute_on = 'initial timestep_end'
-#	[../]
 
 [./Xe_solid]
 type = ElementAverageValue
@@ -535,37 +482,30 @@ variable = Xe_Adsorbed
 execute_on = 'initial timestep_end'
 [../]
 
-#	[./Xe_heat]
-#		type = ElementAverageValue
-#		variable = Xe_AdsorbedHeat
-#		execute_on = 'initial timestep_end'
-#	[../]
-
 [] #END Postprocessors
 
 [Executioner]
 
 type = Transient
-scheme = implicit-euler
+scheme = bdf2
 
 # NOTE: The default tolerances are far to strict and cause the program to crawl
-nl_rel_tol = 1e-10
+nl_rel_tol = 1e-8
 nl_abs_tol = 1e-4
 l_tol = 1e-6
-l_max_its = 1000
-nl_max_its = 50
+l_max_its = 2000
+nl_max_its = 30
 
 solve_type = pjfnk
-line_search = bt    # Options: default none basic l2 bt
+line_search = basic    # Options: default none basic l2 bt
 start_time = 0.0
-end_time = 90.0
-#	dtmax = 0.1
+end_time = 0.4
+dtmax = 0.1
 
 [./TimeStepper]
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
-#		type = ConstantDT
-type = SolutionTimeAdaptiveDT
-dt = 0.00025
+type = ConstantDT
+#type = DGOSPREY_TimeStepper
 [../]
 
 [] #END Executioner
@@ -574,27 +514,11 @@ dt = 0.00025
 
 [./precond]
 type = SMP
-off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
-
-off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
-
-#full = true
+full = true
 petsc_options = '-snes_converged_reason'
 petsc_options_iname = '-pc_type -ksp_gmres_restart -snes_max_funcs'
-petsc_options_value = 'lu 2000 20000'
+petsc_options_value = 'lu 2000 60000'
 [../]
-
-#[./fdp]
-#type = FDP
-#full = true
-#off_diag_row = 'Kr Kr Kr Kr Kr Kr Kr Xe Xe Xe Xe Xe Xe He He He He He column_temp column_temp column_temp column_temp Kr_Adsorbed Kr_Adsorbed Kr_Adsorbed Xe_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat'
-
-#off_diag_column = 'Xe He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat He column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat column_temp Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_Adsorbed Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_Adsorbed Kr_AdsorbedHeat Xe_AdsorbedHeat Kr_AdsorbedHeat Xe_AdsorbedHeat Xe_AdsorbedHeat'
-
-#petsc_options = '-snes_converged_reason'
-#petsc_options_iname = '-mat_fd_coloring_err -mat_fd_type'
-#petsc_options_value = '1e-6 ds'
-#[../]
 
 [] #END Preconditioning
 

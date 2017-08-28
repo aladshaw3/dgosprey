@@ -68,7 +68,6 @@ private:
 	Real _din;				///< Column inner diameter (cm)
 	Real _dout;				///< Column outer diameter (cm)
 	Real _eb;				///< Bulk porosity of the bed
-	Real _Kz;				///< Axial thermal conductivity of the bed (J/hr/cm/K)
 	Real _rhow;				///< Density of the column wall (g/cm^3)
 	Real _hw;				///< Heat capacity of the column wall (J/g/K)
 	Real _Uw;				///< Bed-Wall heat transfer coefficient (J/hr/cm^2/K)
@@ -78,7 +77,6 @@ private:
 	MaterialProperty<Real> & _outer_dia;						///< MaterialProperty for column outer diameter
 	MaterialProperty<Real> & _bed_length;							///< MaterialProperty for column length (cm)
 	MaterialProperty<Real> & _porosity;							///< MaterialProperty for bulk porosity of the bed
-	MaterialProperty<Real> & _conductivity;						///< MaterialProperty for thermal conductivity of the bed
 	MaterialProperty<Real> & _wall_density;						///< MaterialProperty for column wall density
 	MaterialProperty<Real> & _wall_heat_capacity;				///< MaterialProperty for column wall heat capacity
 	MaterialProperty<Real> & _bed_wall_transfer_coeff;			///< MaterialProperty for bed-wall heat transfer coefficient

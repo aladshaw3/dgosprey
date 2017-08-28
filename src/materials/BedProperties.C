@@ -43,7 +43,6 @@ InputParameters validParams<BedProperties>()
 	params.addParam<Real>("inner_diameter", "Wall inner diameter (cm)");
 	params.addParam<Real>("outer_diameter","Wall outer diameter (cm)");
 	params.addParam<Real>("bulk_porosity","Bed bulk porosity");
-	params.addParam<Real>("axial_conductivity","Effective Axial Thermal Conductivity (J/hr/cm/K");
 	params.addParam<Real>("wall_density","Wall material density (g/cm^3)");
 	params.addParam<Real>("wall_heat_capacity","Wall heat capacity (J/g/K)");
 	params.addParam<Real>("wall_heat_trans_coef","Bed-Wall Heat Transfer Coefficient (J/hr/cm^2/K)");
@@ -59,7 +58,6 @@ BedProperties::BedProperties(const InputParameters & parameters)
    _din(getParam<Real>("inner_diameter")),
    _dout(getParam<Real>("outer_diameter")),
    _eb(getParam<Real>("bulk_porosity")),
-   _Kz(getParam<Real>("axial_conductivity")),
    _rhow(getParam<Real>("wall_density")),
    _hw(getParam<Real>("wall_heat_capacity")),
    _Uw(getParam<Real>("wall_heat_trans_coef")),
@@ -68,7 +66,6 @@ BedProperties::BedProperties(const InputParameters & parameters)
    _outer_dia(declareProperty<Real>("outer_dia")),
    _bed_length(declareProperty<Real>("bed_length")),
    _porosity(declareProperty<Real>("porosity")),
-   _conductivity(declareProperty<Real>("conductivity")),
    _wall_density(declareProperty<Real>("wall_density")),
    _wall_heat_capacity(declareProperty<Real>("wall_heat_capacity")),
    _bed_wall_transfer_coeff(declareProperty<Real>("bed_wall_transfer_coeff")),
@@ -86,7 +83,6 @@ BedProperties::computeQpProperties()
 	_outer_dia[_qp] = _dout;
 	_bed_length[_qp] = _length;
 	_porosity[_qp] = _eb;
-	_conductivity[_qp] = _Kz;
 	_wall_density[_qp] = _rhow;
 	_wall_heat_capacity[_qp] = _hw;
 	_bed_wall_transfer_coeff[_qp] = _Uw;

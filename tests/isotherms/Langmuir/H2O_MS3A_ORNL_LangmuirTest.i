@@ -16,8 +16,8 @@ coord_type = RZ
 
 type = GeneratedMesh
 dim = 2
-nx = 5
-ny = 20
+nx = 3
+ny = 8
 xmin = 0.0
 xmax = 37.25 #cm
 ymin = 0.0
@@ -74,6 +74,7 @@ initial_condition = 101.35
 [./ambient_temp]
 order = FIRST
 family = MONOMIAL
+#initial_condition = 273.15
 initial_condition = 303.15
 [../]
 
@@ -201,7 +202,7 @@ index = 2
 type = CoupledLangmuirForcingFunction
 variable = H2O_Adsorbed
 coupled = H2O
-langmuir_coeff = 10000.0
+langmuir_coeff = 1000.0
 max_capacity = 11.67
 [../]
 
@@ -414,13 +415,6 @@ variable = H2O
 execute_on = 'initial timestep_end'
 [../]
 
-[./temp_exit]
-type = SideAverageValue
-boundary = 'top'
-variable = column_temp
-execute_on = 'initial timestep_end'
-[../]
-
 [./press_exit]
 type = SideAverageValue
 boundary = 'top'
@@ -449,7 +443,7 @@ type = Transient
 scheme = bdf2
 
 # NOTE: The default tolerances are far to strict and cause the program to crawl
-nl_rel_tol = 1e-16
+nl_rel_tol = 1e-10
 nl_abs_tol = 1e-4
 l_tol = 1e-8
 l_max_its = 100
@@ -458,12 +452,12 @@ nl_max_its = 50
 solve_type = pjfnk
 line_search = bt    # Options: default none l2 bt
 start_time = 0.0
-end_time = 72.0
-dtmax = 1.0
+end_time = 0.1
+dtmax = 0.1
 
 [./TimeStepper]
-type = SolutionTimeAdaptiveDT
-dt = 0.001
+type = ConstantDT
+dt = 0.01
 [../]
 
 [] #END Executioner
@@ -481,11 +475,6 @@ petsc_options_value = 'lu 2000'
 
 [./smp]
 type = SMP
-
-#off_diag_row = 'N2 N2 N2 N2 N2 O2 O2 O2 O2 H2O H2O H2O column_temp column_temp H2O_Adsorbed'
-
-#off_diag_column = 'O2 H2O column_temp H2O_Adsorbed H2O_AdsorbedHeat H2O column_temp H2O_Adsorbed H2O_AdsorbedHeat column_temp H2O_Adsorbed H2O_AdsorbedHeat H2O_Adsorbed H2O_AdsorbedHeat H2O_AdsorbedHeat'
-
 full = true
 petsc_options = '-snes_converged_reason'
 petsc_options_iname = '-pc_type -ksp_gmres_restart  -snes_max_funcs'

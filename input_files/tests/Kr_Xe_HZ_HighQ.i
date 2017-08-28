@@ -1,194 +1,191 @@
- [GlobalParams]
+[GlobalParams]
 
-sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
-epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
+	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
+	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
-flow_rate = 1.2e5
-length = 50.8
-inner_diameter = 1.905
-pellet_diameter = 0.056
-dt = 0.05
+	flow_rate = 1.2e5
+	length = 50.8
+	inner_diameter = 1.905
+	pellet_diameter = 0.056
+	dt = 0.05
 
 [] #END GlobalParams
 
 [Problem]
 
-coord_type = RZ
+	coord_type = RZ
 
 [] #END Problem
 
 [Mesh]
 
-type = GeneratedMesh
-dim = 2
-nx = 5
-ny = 40
-xmin = 0.0
-xmax = 0.9525 #cm
-ymin = 0.0
-ymax = 50.8 #cm
+	type = GeneratedMesh
+	dim = 2
+	nx = 10
+	ny = 40
+	xmin = 0.0
+	xmax = 0.9525 #cm
+	ymin = 0.0
+	ymax = 50.8 #cm
 
 [] # END Mesh
 
 [Variables]
 
-[./Kr]
-order = FIRST
-family = MONOMIAL
-[../]
+	[./Kr]
+		order = FIRST
+		family = MONOMIAL
+	[../]
 
-[./Xe]
-order = FIRST
-family = MONOMIAL
-[../]
+	[./Xe]
+		order = FIRST
+		family = MONOMIAL
+	[../]
 
-[./He]
-order = FIRST
-family = MONOMIAL
-[../]
+	[./He]
+		order = FIRST
+		family = MONOMIAL
+	[../]
 
-[./column_temp]
-order = FIRST
-family = MONOMIAL
-initial_condition = 191.15
-[../]
+	[./column_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 191.15
+	[../]
 
-[./Kr_Adsorbed]
-order = FIRST
-family = MONOMIAL
-initial_condition = 0.0
-[../]
+	[./Kr_Adsorbed]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
-[./Xe_Adsorbed]
-order = FIRST
-family = MONOMIAL
-initial_condition = 0.0
-[../]
+	[./Xe_Adsorbed]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
-[./Kr_AdsorbedHeat]
-order = FIRST
-family = MONOMIAL
-initial_condition = 0.0
-[../]
+	[./Kr_AdsorbedHeat]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
-[./Xe_AdsorbedHeat]
-order = FIRST
-family = MONOMIAL
-initial_condition = 0.0
-[../]
+	[./Xe_AdsorbedHeat]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
 [] #END Variables
 
 [AuxVariables]
 
-[./total_pressure]
-order = FIRST
-family = MONOMIAL
-initial_condition = 101.35
-[../]
+	[./total_pressure]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 101.35
+	[../]
 
-[./ambient_temp]
-order = FIRST
-family = MONOMIAL
-initial_condition = 191.15
-[../]
+	[./ambient_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 191.15
+	[../]
 
-[./wall_temp]
-order = FIRST
-family = MONOMIAL
-initial_condition = 191.15
-[../]
+	[./wall_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 191.15
+	[../]
 
 
 [] #END AuxVariables
 
 [ICs]
 
-[./Kr_IC]
-type = ConcentrationIC
-variable = Kr
-initial_mole_frac = 0.0
-initial_press = 101.35
-initial_temp = 191.15
-[../]
+	[./Kr_IC]
+		type = ConcentrationIC
+		variable = Kr
+		initial_mole_frac = 0.0
+		initial_press = 101.35
+		initial_temp = 191.15
+	[../]
 
-[./Xe_IC]
-type = ConcentrationIC
-variable = Xe
-initial_mole_frac = 0.0
-initial_press = 101.35
-initial_temp = 191.15
-[../]
+	[./Xe_IC]
+		type = ConcentrationIC
+		variable = Xe
+		initial_mole_frac = 0.0
+		initial_press = 101.35
+		initial_temp = 191.15
+	[../]
 
-[./He_IC]
-type = ConcentrationIC
-variable = He
-initial_mole_frac = 1.0
-initial_press = 101.35
-initial_temp = 191.15
-[../]
+	[./He_IC]
+		type = ConcentrationIC
+		variable = He
+		initial_mole_frac = 1.0
+		initial_press = 101.35
+		initial_temp = 191.15
+	[../]
 
 [] #END ICs
 
 [Kernels]
 
-[./accumKr]
-type = BedMassAccumulation
-variable = Kr
-index = 0   #NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-[../]
+	[./accumKr]
+		type = BedMassAccumulation
+		variable = Kr
+	[../]
 
-[./Kr_MT]
-type = SolidMassTransfer
-variable = Kr
-coupled = Kr_Adsorbed
-[../]
+	[./Kr_MT]
+		type = SolidMassTransfer
+		variable = Kr
+		coupled = Kr_Adsorbed
+	[../]
 
-[./diffKr]
-type = GColumnMassDispersion
-variable = Kr
-index = 0
-[../]
+	[./diffKr]
+		type = GColumnMassDispersion
+		variable = Kr
+		index = 0
+	[../]
 
-[./advKr]
-type = GColumnMassAdvection
-variable = Kr
-[../]
+	[./advKr]
+		type = GColumnMassAdvection
+		variable = Kr
+	[../]
 
-[./accumXe]
-type = BedMassAccumulation
-variable = Xe
-index = 1	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-[../]
+	[./accumXe]
+		type = BedMassAccumulation
+		variable = Xe
+	[../]
 
-[./Xe_MT]
-type = SolidMassTransfer
-variable = Xe
-coupled = Xe_Adsorbed
-[../]
+	[./Xe_MT]
+		type = SolidMassTransfer
+		variable = Xe
+		coupled = Xe_Adsorbed
+	[../]
 
-[./diffXe]
-type = GColumnMassDispersion
-variable = Xe
-index = 1
-[../]
+	[./diffXe]
+		type = GColumnMassDispersion
+		variable = Xe
+		index = 1
+	[../]
 
-[./advXe]
-type = GColumnMassAdvection
-variable = Xe
-[../]
+	[./advXe]
+		type = GColumnMassAdvection
+		variable = Xe
+	[../]
 
-[./accumHe]
-type = BedMassAccumulation
-variable = He
-index = 2	#NOTE: NEED TO REMOVE AND CHANGE IN KERNEL
-[../]
+	[./accumHe]
+		type = BedMassAccumulation
+		variable = He
+	[../]
 
-[./diffHe]
-type = GColumnMassDispersion
-variable = He
-index = 2
-[../]
+	[./diffHe]
+		type = GColumnMassDispersion
+		variable = He
+		index = 2
+	[../]
 
 [./advHe]
 type = GColumnMassAdvection
@@ -241,8 +238,8 @@ type = CoupledExtendedLangmuirFunction
 variable = Kr_Adsorbed
 main_coupled = Kr
 coupled_list = 'Kr Xe'
-langmuir_coeff = '12300.62 136500.3'
-max_capacity = 1.716
+langmuir_coeff = '4594 14600'
+max_capacity = 1.94
 [../]
 
 [./Xe_adsorption]
@@ -250,8 +247,8 @@ type = CoupledExtendedLangmuirFunction
 variable = Xe_Adsorbed
 main_coupled = Xe
 coupled_list = 'Kr Xe'
-langmuir_coeff = '12300.62 136500.3'
-max_capacity = 1.479
+langmuir_coeff = '4594 14600'
+max_capacity = 1.367
 [../]
 
 
@@ -379,7 +376,6 @@ type = BedProperties
 block = 0
 outer_diameter = 2.0828
 bulk_porosity = 0.90507				#not known
-axial_conductivity = 0.6292      #not known
 wall_density = 7.7
 wall_heat_capacity = 0.5
 wall_heat_trans_coef = 9.0
@@ -478,12 +474,12 @@ execute_on = 'initial timestep_end'
 #		execute_on = 'initial timestep_end'
 #	[../]
 
-#	[./temp_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = column_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
+	[./temp_exit]
+		type = SideAverageValue
+		boundary = 'top'
+		variable = column_temp
+		execute_on = 'initial timestep_end'
+	[../]
 
 #	[./press_exit]
 #		type = SideAverageValue
@@ -540,13 +536,14 @@ nl_max_its = 30
 solve_type = pjfnk
 line_search = basic    # Options: default none basic l2 bt
 start_time = 0.0
-end_time = 90.0
-#	dtmax = 0.1
+end_time = 10.0
+dtmax = 0.1
 
 [./TimeStepper]
 #Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
-type = SolutionTimeAdaptiveDT
+#type = SolutionTimeAdaptiveDT
+type = DGOSPREY_TimeStepper
 [../]
 
 [] #END Executioner
