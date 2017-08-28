@@ -89,6 +89,8 @@
 #include "DGOSPREY_TimeStepper.h"
 
 #include "CoupledGSTAisotherm.h"
+#include "CoupledGSTAmodel.h"
+#include "CoupledGSTALDFmodel.h"
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -146,6 +148,8 @@ DgospreyApp::registerObjects(Factory & factory)
     registerKernel(CoupledLangmuirForcingFunction);
 	registerKernel(CoupledExtendedLangmuirFunction);
 	registerKernel(CoupledGSTAisotherm);
+	registerKernel(CoupledGSTAmodel);
+	registerKernel(CoupledGSTALDFmodel);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(WallTemperature);

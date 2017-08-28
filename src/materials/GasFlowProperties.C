@@ -240,7 +240,7 @@ void GasFlowProperties::computeQpProperties()
 		_film_transfer[_qp][i] = FilmMTCoeff(_mixed_gas[_qp].species_dat[i].molecular_diffusion,_pellet_diameter[_qp],_mixed_gas[_qp].Reynolds,_mixed_gas[_qp].species_dat[i].Schmidt) * 3600.0;
 		_pore_diffusion[_qp][i] = Dp(_mixed_gas[_qp].species_dat[i].molecular_diffusion,_binder_porosity[_qp]);
 		_pore_diffusion[_qp][i] = avgDp(_pore_diffusion[_qp][i],Dk(_pore_size[_qp],_temperature_old[_qp],_mixed_gas[_qp].species_dat[i].molecular_weight)) * 3600.0;
-		
+				
 	}
 	
 }

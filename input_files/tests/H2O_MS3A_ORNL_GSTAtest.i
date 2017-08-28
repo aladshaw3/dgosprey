@@ -1,33 +1,33 @@
-[GlobalParams]
+ [GlobalParams]
 
-	length = 12.7
+	length = 250.0
 	pellet_diameter = 0.236
-	inner_diameter = 2.54
-	flow_rate = 211680.0
-	dt = 0.01
+	inner_diameter = 74.5
+	flow_rate = 2.62e8
+	dt = 0.001
 	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
- 
- [] #END GlobalParams
 
- [Problem]
+[] #END GlobalParams
 
- 	coord_type = RZ
+[Problem]
 
- [] #END Problem
+	coord_type = RZ
+
+[] #END Problem
 
 [Mesh]
 
 	type = GeneratedMesh
 	dim = 2
 	nx = 5
- 	ny = 40
- 	xmin = 0.0
-	xmax = 1.27 #cm
- 	ymin = 0.0
-	ymax = 12.7 #cm
+	ny = 40
+	xmin = 0.0
+	xmax = 37.25 #cm
+	ymin = 0.0
+	ymax = 250.0 #cm
 
- [] # END Mesh
+[] # END Mesh
 
 [Variables]
 
@@ -47,46 +47,47 @@
 	[../]
 
 	[./column_temp]
- 		order = FIRST
- 		family = MONOMIAL
- 		initial_condition = 298.15
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 303.15
 	[../]
- 
+
 	[./H2O_Adsorbed]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
- 
+
 	[./H2O_AdsorbedHeat]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
- [] #END Variables
+
+[] #END Variables
 
 [AuxVariables]
 
 	[./total_pressure]
-		order = CONSTANT
+		order = FIRST
 		family = MONOMIAL
 		initial_condition = 101.35
 	[../]
 
- 	[./ambient_temp]
- 		order = CONSTANT
- 		family = MONOMIAL
- 		initial_condition = 298.15
- 	[../]
- 
+	[./ambient_temp]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 303.15
+	[../]
+
 	[./wall_temp]
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = 298.15
+		initial_condition = 303.15
 	[../]
 
- [] #END AuxVariables
+[] #END AuxVariables
 
 [ICs]
 
@@ -95,139 +96,111 @@
 		variable = N2
 		initial_mole_frac = 0.79
 		initial_press = 101.35
-		initial_temp = 298.15
+		initial_temp = 303.15
 	[../]
 
 	[./O2_IC]
 		type = ConcentrationIC
 		variable = O2
 		initial_mole_frac = 0.21
- 		initial_press = 101.35
- 		initial_temp = 298.15
+		initial_press = 101.35
+		initial_temp = 303.15
 	[../]
 
 	[./H2O_IC]
 		type = ConcentrationIC
 		variable = H2O
 		initial_mole_frac = 0.0
- 		initial_press = 101.35
- 		initial_temp = 298.15
+		initial_press = 101.35
+		initial_temp = 303.15
 	[../]
 
- [] #END ICs
+[] #END ICs
 
 [Kernels]
- 
+
 	[./accumN2]
 		type = BedMassAccumulation
 		variable = N2
 	[../]
- 
+
 	[./diffN2]
 		type = GColumnMassDispersion
 		variable = N2
 		index = 0
 	[../]
- 
+
 	[./advN2]
 		type = GColumnMassAdvection
 		variable = N2
 	[../]
- 
+
 	[./accumO2]
 		type = BedMassAccumulation
 		variable = O2
 	[../]
- 
+
 	[./diffO2]
 		type = GColumnMassDispersion
 		variable = O2
 		index = 1
 	[../]
- 
+
 	[./advO2]
 		type = GColumnMassAdvection
 		variable = O2
 	[../]
- 
+
 	[./accumH2O]
 		type = BedMassAccumulation
 		variable = H2O
 	[../]
- 
+
 	[./H2O_MT]
 		type = SolidMassTransfer
 		variable = H2O
 		coupled = H2O_Adsorbed
 	[../]
- 
+
 	[./diffH2O]
 		type = GColumnMassDispersion
 		variable = H2O
 		index = 2
 	[../]
- 
+
 	[./advH2O]
 		type = GColumnMassAdvection
 		variable = H2O
 	[../]
- 
+
 	[./columnAccum]
 		type = BedHeatAccumulation
 		variable = column_temp
 	[../]
- 
+
 	[./columnConduction]
 		type = GColumnHeatDispersion
 		variable =column_temp
 	[../]
- 
+
 	[./columnAdvection]
 		type = GColumnHeatAdvection
 		variable =column_temp
 	[../]
- 
+
 	[./H2O_columnAdsHeat]
 		type = SolidHeatTransfer
 		variable = column_temp
 		coupled = H2O_AdsorbedHeat
 	[../]
- 
+
 	[./H2O_adsheat]
 		type = HeatofAdsorption
 		variable = H2O_AdsorbedHeat
 		coupled = H2O_Adsorbed
 		index = 2
 	[../]
- 
-#	[./H2O_adsorption]
-#		type = CoupledLangmuirForcingFunction
-#		variable = H2O_Adsorbed
-#		coupled = H2O
-#		langmuir_coeff = 50000.0
-#		max_capacity = 11.67
-#	[../]
- 
-#	[./H2O_adsorption]
-#		type = CoupledGSTAisotherm
-#		variable = H2O_Adsorbed
-#		coupled_gas = H2O
-#		coupled_temp = column_temp
-#		max_capacity = 11.67
-#		num_sites = 4
-#		gsta_params = '228357.3949 22688965955 1.93815E+15 1.1268E+18'
-#	[../]
- 
-#	[./H2O_adsorption]
-#		type = CoupledGSTAisotherm
-#		variable = H2O_Adsorbed
-#		coupled_gas = H2O
-#		coupled_temp = column_temp
-#		max_capacity = 11.67
-#		num_sites = 1
-#		gsta_params = '2016.977'
-#	[../]
- 
+
 	[./H2O_adsorption]
 		type = CoupledGSTAmodel
 		variable = H2O_Adsorbed
@@ -235,113 +208,113 @@
 		coupled_temp = column_temp
 		index = 2
 	[../]
- 
- [] #END Kernels
- 
+
+[] #END Kernels
+
 [DGKernels]
- 
+
 	[./dg_disp_N2]
 		type = DGColumnMassDispersion
 		variable = N2
 		index = 0
 	[../]
- 
+
 	[./dg_adv_N2]
 		type = DGColumnMassAdvection
 		variable = N2
 	[../]
- 
+
 	[./dg_disp_O2]
 		type = DGColumnMassDispersion
 		variable = O2
 		index = 1
 	[../]
- 
+
 	[./dg_adv_O2]
 		type = DGColumnMassAdvection
 		variable = O2
 	[../]
- 
+
 	[./dg_disp_H2O]
 		type = DGColumnMassDispersion
 		variable = H2O
 		index = 2
 	[../]
- 
+
 	[./dg_adv_H2O]
 		type = DGColumnMassAdvection
 		variable = H2O
 	[../]
- 
+
 	[./dg_disp_heat]
 		type = DGColumnHeatDispersion
 		variable = column_temp
 	[../]
- 
+
 	[./dg_adv_heat]
 		type = DGColumnHeatAdvection
 		variable = column_temp
 	[../]
- 
- [] #END DGKernels
- 
+
+[] #END DGKernels
+
 [AuxKernels]
- 
+
 	[./column_pressure]
 		type = TotalColumnPressure
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
 	[../]
- 
+
 	[./wall_temp_calc]
 		type = WallTemperature
 		variable = wall_temp
 		column_temp = column_temp
 		ambient_temp = ambient_temp
 	[../]
- 
- [] #END AuxKernels
+
+[] #END AuxKernels
 
 [BCs]
 
- 	[./N2_Flux]
+	[./N2_Flux]
 		type = DGMassFluxBC
- 		variable = N2
- 		boundary = 'top bottom'
- 		input_temperature = 298.15
- 		input_pressure = 101.35
- 		input_molefraction = 0.78863
- 		index = 0
- 	[../]
+		variable = N2
+		boundary = 'top bottom'
+		input_temperature = 303.15
+		input_pressure = 101.35
+		input_molefraction = 0.775
+		index = 0
+	[../]
 
- 	[./O2_Flux]
+	[./O2_Flux]
 		type = DGMassFluxBC
- 		variable = O2
- 		boundary = 'top bottom'
- 		input_temperature = 298.15
- 		input_pressure = 101.35
- 		input_molefraction = 0.20974
- 		index = 1
- 	[../]
+		variable = O2
+		boundary = 'top bottom'
+		input_temperature = 303.15
+		input_pressure = 101.35
+		input_molefraction = 0.21
+		index = 1
+	[../]
 
- 	[./H2O_Flux]
+	[./H2O_Flux]
 		type = DGMassFluxBC
- 		variable = H2O
- 		boundary = 'top bottom'
- 		input_temperature = 298.15
- 		input_pressure = 101.35
- 		input_molefraction = 0.00163
- 		index = 2
- 	[../]
+		variable = H2O
+		boundary = 'top bottom'
+		input_temperature = 303.15
+		input_pressure = 101.35
+		input_molefraction = 0.015
+		index = 2
+	[../]
 
 	[./Heat_Gas_Flux]
- 		type = DGHeatFluxBC
- 		variable = column_temp
- 		boundary = 'top bottom'
- 		input_temperature = 298.15
- 	[../]
- 
+		type = DGHeatFluxBC
+		variable = column_temp
+		boundary = 'top bottom'
+		input_temperature = 303.15
+	[../]
+
 	[./Heat_Wall_Flux]
 		type = DGColumnWallHeatFluxLimitedBC
 		variable = column_temp
@@ -349,15 +322,15 @@
 		wall_temp = wall_temp
 	[../]
 
- [] #END BCs
+[] #END BCs
 
 [Materials]
 
 	[./BedMaterials]
 		type = BedProperties
 		block = 0
-		outer_diameter = 2.84
-		bulk_porosity = 0.421
+		outer_diameter = 75.5
+		bulk_porosity = 0.585
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 6.12
@@ -373,7 +346,7 @@
 		comp_ref_temp = '300.55 292.25 298.16'
 		comp_Sutherland_const = '111 127 784.72'
 		temperature = column_temp
- 		total_pressure = total_pressure
+		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O'
 	[../]
 
@@ -401,7 +374,7 @@
 		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O'
 		number_sites = '0 0 4'
-		maximum_capacity = '0 0 11.67' #mol/kg
+		maximum_capacity = '0 0 11.67' #mol/kg 11.67
 		molar_volume = '0 0 13.91' #cm^3/mol
 		enthalpy_site_1 = '0 0 -46597.5'
 		enthalpy_site_2 = '0 0 -125024'
@@ -418,95 +391,95 @@
 		entropy_site_6 = '0 0 0'
 	[../]
 
- [] #END Materials
+[] #END Materials
 
 [Postprocessors]
- 
+
 	[./H2O_enter]
 		type = SideAverageValue
 		boundary = 'bottom'
 		variable = H2O
 		execute_on = 'initial timestep_end'
 	[../]
- 
+
 	[./H2O_avg_gas]
 		type = ElementAverageValue
 		variable = H2O
 		execute_on = 'initial timestep_end'
 	[../]
- 
+
 	[./H2O_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = H2O
 		execute_on = 'initial timestep_end'
 	[../]
- 
+
 	[./temp_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = column_temp
 		execute_on = 'initial timestep_end'
 	[../]
- 
+
 	[./press_exit]
 		type = SideAverageValue
 		boundary = 'top'
 		variable = total_pressure
 		execute_on = 'initial timestep_end'
 	[../]
- 
+
 	[./wall_temp]
 		type = SideAverageValue
 		boundary = 'right'
 		variable = wall_temp
 		execute_on = 'initial timestep_end'
 	[../]
- 
+
 	[./H2O_solid]
 		type = ElementAverageValue
 		variable = H2O_Adsorbed
 		execute_on = 'initial timestep_end'
 	[../]
- 
- [] #END Postprocessors
- 
+
+[] #END Postprocessors
+
 [Executioner]
- 
+
 	type = Transient
 	scheme = bdf2
- 
+
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10
 	nl_abs_tol = 1e-4
 	l_tol = 1e-8
-	l_max_its = 100
+	l_max_its = 1000
 	nl_max_its = 50
- 
+
 	solve_type = pjfnk
-	line_search = basic    # Options: default none l2 bt basic
+	line_search = bt    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 90.0
+	end_time = 72.0
 	dtmax = 1.0
- 
+
 	[./TimeStepper]
-		#type = SolutionTimeAdaptiveDT
+#		type = SolutionTimeAdaptiveDT
 		type = DGOSPREY_TimeStepper
 	[../]
- 
- [] #END Executioner
- 
+
+[] #END Executioner
+
 [Preconditioning]
- 
+
 	active = 'smp'
- 
+
 	[./none]
 		type = SMP
 		petsc_options = '-snes_converged_reason'
 		petsc_options_iname = '-pc_type -ksp_gmres_restart'
 		petsc_options_value = 'lu 2000'
 	[../]
- 
+
 	[./smp]
 		type = SMP
 		full = true
@@ -514,7 +487,7 @@
 		petsc_options_iname = '-pc_type -ksp_gmres_restart  -snes_max_funcs'
 		petsc_options_value = 'lu 2000 20000'
 	[../]
- 
+
 	[./fdp]
 		type = FDP
 		full = true
@@ -522,7 +495,7 @@
 		petsc_options_iname = '-mat_fd_coloring_err -mat_fd_type'
 		petsc_options_value = '1e-6 ds'
 	[../]
- 
+
 	[./pbp]
 		type = PBP
 		solve_order = 'N2 O2 H2O H2O_Adsorbed H2O_AdsorbedHeat column_temp'
@@ -533,13 +506,13 @@
 		petsc_options_iname = '-pc_type -ksp_gmres_restart'
 		petsc_options_value = 'lu 2000'
 	[../]
- 
- [] #END Preconditioning
- 
+
+[] #END Preconditioning
+
 [Outputs]
- 
+
 	exodus = true
 	csv = true
 	print_linear_residuals = false
- 
- [] #END Outputs
+
+[] #END Outputs
