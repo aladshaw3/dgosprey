@@ -528,7 +528,7 @@ execute_on = 'initial timestep_end'
 [Executioner]
 
 type = Transient
-scheme = bdf2
+scheme = implicit-euler
 
 # NOTE: The default tolerances are far to strict and cause the program to crawl
 nl_rel_tol = 1e-8
