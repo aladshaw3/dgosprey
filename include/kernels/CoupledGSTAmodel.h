@@ -103,9 +103,10 @@ protected:
 	 cross coupling of the variables. */
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 	
-private:
 	unsigned int _index;									///< Index of the gaseous species to calculate adsorbtion for
 	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;	///< Material Property holding the MAGPIE data structure
+	
+private:
 	
 };
 

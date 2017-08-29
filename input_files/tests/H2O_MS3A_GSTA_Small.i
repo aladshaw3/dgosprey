@@ -228,21 +228,26 @@
 #		gsta_params = '2016.977'
 #	[../]
  
+#	[./H2O_adsorption]
+#		type = CoupledGSTAmodel
+#		variable = H2O_Adsorbed
+#		coupled_gas = H2O
+#		coupled_temp = column_temp
+#		index = 2
+#	[../]
+ 
 	[./H2O_adsorption]
-		type = CoupledGSTAmodel
+		type = CoupledGSTALDFmodel
 		variable = H2O_Adsorbed
 		coupled_gas = H2O
 		coupled_temp = column_temp
 		index = 2
 	[../]
  
-#	[./H2O_adsorption]
-#		type = CoupledGSTALDFmodel
-#		variable = H2O_Adsorbed
-#		coupled_gas = H2O
-#		coupled_temp = column_temp
-#		index = 2
-#	[../]
+	[./H2O_ads_accum]
+		type = TimeDerivative
+		variable = H2O_Adsorbed
+	[../]
  
  [] #END Kernels
  
@@ -482,7 +487,7 @@
 [Executioner]
  
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
  
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10

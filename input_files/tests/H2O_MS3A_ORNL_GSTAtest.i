@@ -201,12 +201,25 @@
 		index = 2
 	[../]
 
+#	[./H2O_adsorption]
+#		type = CoupledGSTAmodel
+#		variable = H2O_Adsorbed
+#		coupled_gas = H2O
+#		coupled_temp = column_temp
+#		index = 2
+#	[../]
+
 	[./H2O_adsorption]
-		type = CoupledGSTAmodel
+		type = CoupledGSTALDFmodel
 		variable = H2O_Adsorbed
 		coupled_gas = H2O
 		coupled_temp = column_temp
 		index = 2
+	[../]
+
+	[./H2O_ads_accum]
+		type = TimeDerivative
+		variable = H2O_Adsorbed
 	[../]
 
 [] #END Kernels
@@ -447,17 +460,17 @@
 [Executioner]
 
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10
-	nl_abs_tol = 1e-4
-	l_tol = 1e-8
-	l_max_its = 1000
-	nl_max_its = 50
+	nl_abs_tol = 1e-3
+	l_tol = 1e-10
+	l_max_its = 100
+	nl_max_its = 100
 
 	solve_type = pjfnk
-	line_search = bt    # Options: default none l2 bt
+	line_search = basic    # Options: default none l2 bt basic
 	start_time = 0.0
 	end_time = 72.0
 	dtmax = 1.0

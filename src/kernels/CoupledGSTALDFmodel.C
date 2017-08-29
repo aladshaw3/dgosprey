@@ -78,8 +78,8 @@ InputParameters validParams<CoupledGSTALDFmodel>()
 
 CoupledGSTALDFmodel::CoupledGSTALDFmodel(const InputParameters & parameters)
 : CoupledGSTAmodel(parameters),
-_index(getParam<unsigned int>("index")),
-_magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data")),
+_coupled_u_old(coupledValueOld("coupled_gas")),
+_coupled_temp_old(coupledValueOld("coupled_temp")),
 _pellet_density(getMaterialProperty<Real>("pellet_density")),
 _pellet_diameter(getMaterialProperty<Real>("pellet_diameter")),
 _crystal_radius(getMaterialProperty<Real>("crystal_radius")),
@@ -92,14 +92,17 @@ _surf_diff(getMaterialProperty<std::vector<Real> >("surface_diffusion"))
 	
 }
 
-Real CoupledGSTALDFmodel::computeLDFcoeff()
+void CoupledGSTALDFmodel::computeLDFcoeff()
 {
-	double part_coef = 1.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
+	CoupledGSTAmodel::computeGSTAparams();
+	computeGSTAequilibriumOld();
+	
+	double part_coef = 1.0, Co = 100.0 / (8.3144621 * _coupled_temp_old[_qp]);
 	double Henry = (_maxcap * _gstaparam[0])/(_numsites*Co);
-	if (std::isnan(_u[_qp]/_coupled_u[_qp]) || std::isinf(_u[_qp]/_coupled_u[_qp]))
+	if (std::isnan(_ads_equil/_coupled_u_old[_qp]) || std::isinf(_ads_equil/_coupled_u_old[_qp]))
 		part_coef = _pellet_density[_qp]*Henry;
 	else
-		part_coef = _pellet_density[_qp]*_u[_qp]/_coupled_u[_qp];
+		part_coef = _pellet_density[_qp]*_ads_equil/_coupled_u_old[_qp];
 	
 	double filmres, poreres, surfres;
 	filmres = part_coef * _pellet_diameter[_qp] / (6.0*_film_transfer[_qp][_index]);
@@ -113,43 +116,52 @@ Real CoupledGSTALDFmodel::computeLDFcoeff()
 		surfres = _crystal_radius[_qp] * _crystal_radius[_qp] / (15.0 * _surf_diff[_qp][_index]);
 	
 	double k = filmres + poreres + surfres;
-	k = 1.0/k;
+	//std::cout << 1.0/k << std::endl;
+	_ldf_coeff = (10.0/k)*(_ads_equil/_maxcap) + (1000000.0/k)*(1.0 - (_ads_equil/_maxcap));
+	//std::cout << _ldf_coeff << std::endl;
+	//_ldf_coeff = 0.1;
 	
-	return k;
 }
 
-Real CoupledGSTALDFmodel::computeLDFjacobian()
+void CoupledGSTALDFmodel::computeGSTAequilibriumOld()
 {
-	return 0.0;
-}
+	double top = 0.0, bot = 1.0, Co = 100.0 / (8.3144621 * _coupled_temp_old[_qp]);
 
-Real CoupledGSTALDFmodel::computeLDFoffdiag(unsigned int jvar)
-{
-	return 0.0;
+	for (int n = 0; n<(int)_numsites; n++)
+	{
+		top = top + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u_old[_qp]/Co),(double)(n+1)) );
+		bot = bot + ( _gstaparam[n] * std::pow((_coupled_u_old[_qp]/Co),(double)(n+1)) );
+	}
+	
+	_ads_equil = (_maxcap/_numsites)*(top/bot);
 }
 
 Real CoupledGSTALDFmodel::computeQpResidual()
 {
-	return 0.0;
+	computeLDFcoeff();
+	return _ldf_coeff*CoupledGSTAisotherm::computeQpResidual();
 }
 
 Real CoupledGSTALDFmodel::computeQpJacobian()
 {
-	return 0.0;
+	computeLDFcoeff();
+	return _test[_i][_qp]*_ldf_coeff*_phi[_j][_qp];
 }
 
 Real CoupledGSTALDFmodel::computeQpOffDiagJacobian(unsigned int jvar)
 {
+	computeLDFcoeff();
+	
 	// Off-diagonal element for coupled gas
 	if (jvar == _coupled_var_u)
 	{
-		return 0.0;
+		return -_test[_i][_qp]*_ldf_coeff*CoupledGSTAisotherm::computeGSTAconcDerivative();
 	}
 	
 	// Off-diagonal element for coupled temperature
 	if (jvar == _coupled_var_temp)
 	{
-		return 0.0;
+		return -_test[_i][_qp]*_ldf_coeff*CoupledGSTAmodel::computeGSTAtempDerivative();
 	}
 	
 	

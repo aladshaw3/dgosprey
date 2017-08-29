@@ -93,13 +93,10 @@ public:
 	
 protected:
 	/// Function to compute the linear driving force coefficient from material properties
-	Real computeLDFcoeff();
+	void computeLDFcoeff();
 	
-	/// Function to compute the derivative of the linear driving force coefficient with respect to solid concentration
-	Real computeLDFjacobian();
-	
-	/// Function to compute the derivative of the linear driving force coefficient with respect to gas concentration
-	Real computeLDFoffdiag(unsigned int jvar);
+	/// Function to compute the adsorption equilibria results based on old concentrations
+	void computeGSTAequilibriumOld();
 	
 	/// Required residual function for standard kernels in MOOSE
 	/** This function returns a residual contribution for this object.*/
@@ -117,9 +114,10 @@ protected:
 	 cross coupling of the variables. */
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 	
-private:
-	unsigned int _index;											///< Index of the gaseous species to calculate for
-	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;			///< Material Property holding the MAGPIE data structure
+	Real _ldf_coeff;												///< Parameter place holder for LDF parameter (1/hr)
+	Real _ads_equil;												///< Parameter place holder for adsorption equilibrium (mol/kg)
+	const VariableValue & _coupled_u_old;							///< Coupled old gas concentration variable
+	const VariableValue & _coupled_temp_old;						///< Coupled old gas temperature variable
 	const MaterialProperty< Real > & _pellet_density;				///< Material Property for pellet density (kg/L)
 	const MaterialProperty< Real > & _pellet_diameter;				///< Material Property for pellet diameter (cm)
 	const MaterialProperty< Real > & _crystal_radius;				///< Material Property for crystal radius (um)
@@ -128,6 +126,8 @@ private:
 	const MaterialProperty<std::vector<Real> > & _film_transfer;	///< Material Property for film transfer coef (cm/hr)
 	const MaterialProperty<std::vector<Real> > & _pore_diff;		///< Material Property for pore diffusion coef (cm^2/hr)
 	const MaterialProperty<std::vector<Real> > & _surf_diff;		///< Material Property for pore diffusion coef (um^2/hr)
+	
+private:
 	
 };
 
