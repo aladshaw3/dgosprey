@@ -95,8 +95,11 @@ protected:
 	/// Function to compute the linear driving force coefficient from material properties
 	void computeLDFcoeff();
 	
-	/// Function to compute the adsorption equilibria results based on old concentrations
-	void computeGSTAequilibriumOld();
+	/// Function to compute the scaling factor for the linear driving force coefficient
+	void computeScalingFactor();
+	
+	/// Function to compute the jacobian for the linear driving force coefficient
+	Real computeLDFjacobian();
 	
 	/// Required residual function for standard kernels in MOOSE
 	/** This function returns a residual contribution for this object.*/
@@ -115,9 +118,8 @@ protected:
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 	
 	Real _ldf_coeff;												///< Parameter place holder for LDF parameter (1/hr)
-	Real _ads_equil;												///< Parameter place holder for adsorption equilibrium (mol/kg)
-	const VariableValue & _coupled_u_old;							///< Coupled old gas concentration variable
-	const VariableValue & _coupled_temp_old;						///< Coupled old gas temperature variable
+	Real _scaling_factor;											///< Parameter used to scale the LDF parameter
+	Real _alpha, _beta;												///< Parameters for the scaling factor
 	const MaterialProperty< Real > & _pellet_density;				///< Material Property for pellet density (kg/L)
 	const MaterialProperty< Real > & _pellet_diameter;				///< Material Property for pellet diameter (cm)
 	const MaterialProperty< Real > & _crystal_radius;				///< Material Property for crystal radius (um)

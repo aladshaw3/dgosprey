@@ -73,13 +73,15 @@ template<>
 InputParameters validParams<CoupledGSTALDFmodel>()
 {
 	InputParameters params = validParams<CoupledGSTAmodel>();
+	params.addParam<Real>("alpha",4.0,"Scaling parameter for maximum LDF parameter");
+	params.addParam<Real>("beta",10.0,"Scaling parameter for minimum LDF parameter");
 	return params;
 }
 
 CoupledGSTALDFmodel::CoupledGSTALDFmodel(const InputParameters & parameters)
 : CoupledGSTAmodel(parameters),
-_coupled_u_old(coupledValueOld("coupled_gas")),
-_coupled_temp_old(coupledValueOld("coupled_temp")),
+_alpha(getParam<Real>("alpha")),
+_beta(getParam<Real>("beta")),
 _pellet_density(getMaterialProperty<Real>("pellet_density")),
 _pellet_diameter(getMaterialProperty<Real>("pellet_diameter")),
 _crystal_radius(getMaterialProperty<Real>("crystal_radius")),
@@ -89,20 +91,19 @@ _film_transfer(getMaterialProperty<std::vector<Real> >("film_transfer")),
 _pore_diff(getMaterialProperty<std::vector<Real> >("pore_diffusion")),
 _surf_diff(getMaterialProperty<std::vector<Real> >("surface_diffusion"))
 {
-	
+	if (_alpha <= 0.0)
+		_alpha = 4.0;
+	if (_beta <= 0.0)
+		_beta = 10.0;
 }
 
 void CoupledGSTALDFmodel::computeLDFcoeff()
 {
 	CoupledGSTAmodel::computeGSTAparams();
-	computeGSTAequilibriumOld();
 	
-	double part_coef = 1.0, Co = 100.0 / (8.3144621 * _coupled_temp_old[_qp]);
+	double part_coef = 1.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
 	double Henry = (_maxcap * _gstaparam[0])/(_numsites*Co);
-	if (std::isnan(_ads_equil/_coupled_u_old[_qp]) || std::isinf(_ads_equil/_coupled_u_old[_qp]))
-		part_coef = _pellet_density[_qp]*Henry;
-	else
-		part_coef = _pellet_density[_qp]*_ads_equil/_coupled_u_old[_qp];
+	part_coef = _pellet_density[_qp]*Henry;
 	
 	double filmres, poreres, surfres;
 	filmres = part_coef * _pellet_diameter[_qp] / (6.0*_film_transfer[_qp][_index]);
@@ -110,58 +111,58 @@ void CoupledGSTALDFmodel::computeLDFcoeff()
 		poreres = part_coef * _pellet_diameter[_qp] * _pellet_diameter[_qp] / (60.0*_pore_diff[_qp][_index]*_binder_porosity[_qp]);
 	else
 		poreres = part_coef * _pellet_diameter[_qp] * _pellet_diameter[_qp] / (60.0*_pore_diff[_qp][_index]*_binder_porosity[_qp]*_binder_fraction[_qp]);
-	if (_surf_diff[_qp][_index] == 0.0)
+	double surfdiff = _surf_diff[_qp][_index];
+	if (surfdiff <= 0.0)
 		surfres = 0.0;
 	else
-		surfres = _crystal_radius[_qp] * _crystal_radius[_qp] / (15.0 * _surf_diff[_qp][_index]);
-	
-	double k = filmres + poreres + surfres;
-	//std::cout << 1.0/k << std::endl;
-	_ldf_coeff = (10.0/k)*(_ads_equil/_maxcap) + (1000000.0/k)*(1.0 - (_ads_equil/_maxcap));
-	//std::cout << _ldf_coeff << std::endl;
-	//_ldf_coeff = 0.1;
-	
+	{
+		if (surfdiff < 0.001)
+			surfdiff = 0.001;
+		surfres = _crystal_radius[_qp] * _crystal_radius[_qp] / (15.0 * surfdiff);
+	}
+
+	_ldf_coeff = ((1.0/filmres) + (1.0/(poreres + surfres)));
 }
 
-void CoupledGSTALDFmodel::computeGSTAequilibriumOld()
+void CoupledGSTALDFmodel::computeScalingFactor()
 {
-	double top = 0.0, bot = 1.0, Co = 100.0 / (8.3144621 * _coupled_temp_old[_qp]);
+	_scaling_factor = (_alpha*(1.0-(_u[_qp]/_maxcap)) + _beta*(_u[_qp]/_maxcap));
+}
 
-	for (int n = 0; n<(int)_numsites; n++)
-	{
-		top = top + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u_old[_qp]/Co),(double)(n+1)) );
-		bot = bot + ( _gstaparam[n] * std::pow((_coupled_u_old[_qp]/Co),(double)(n+1)) );
-	}
-	
-	_ads_equil = (_maxcap/_numsites)*(top/bot);
+Real CoupledGSTALDFmodel::computeLDFjacobian()
+{
+	return _ldf_coeff*_phi[_j][_qp]*( (_beta/_maxcap) - ((_alpha/_maxcap)) );
 }
 
 Real CoupledGSTALDFmodel::computeQpResidual()
 {
 	computeLDFcoeff();
-	return _ldf_coeff*CoupledGSTAisotherm::computeQpResidual();
+	computeScalingFactor();
+	return _ldf_coeff*_scaling_factor*CoupledGSTAisotherm::computeQpResidual();
 }
 
 Real CoupledGSTALDFmodel::computeQpJacobian()
 {
 	computeLDFcoeff();
-	return _test[_i][_qp]*_ldf_coeff*_phi[_j][_qp];
+	computeScalingFactor();
+	return _test[_i][_qp]*_ldf_coeff*_scaling_factor*_phi[_j][_qp] + _test[_i][_qp]*_u[_qp]*computeLDFjacobian();
 }
 
 Real CoupledGSTALDFmodel::computeQpOffDiagJacobian(unsigned int jvar)
 {
 	computeLDFcoeff();
+	computeScalingFactor();
 	
 	// Off-diagonal element for coupled gas
 	if (jvar == _coupled_var_u)
 	{
-		return -_test[_i][_qp]*_ldf_coeff*CoupledGSTAisotherm::computeGSTAconcDerivative();
+		return -_test[_i][_qp]*_ldf_coeff*_scaling_factor*CoupledGSTAisotherm::computeGSTAconcDerivative();
 	}
 	
 	// Off-diagonal element for coupled temperature
 	if (jvar == _coupled_var_temp)
 	{
-		return -_test[_i][_qp]*_ldf_coeff*CoupledGSTAmodel::computeGSTAtempDerivative();
+		return -_test[_i][_qp]*_ldf_coeff*_scaling_factor*CoupledGSTAmodel::computeGSTAtempDerivative();
 	}
 	
 	
