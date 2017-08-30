@@ -1,8 +1,19 @@
 /*!
- *  \file CoupledGSTAisotherm.h
- *	\brief Standard kernel for coupling non-linear variables via the GSTA isotherm model
+ *  \file CoupledGSTAmodel.h
+ *	\brief Standard kernel for coupling non-linear variables via the GSTA model
  *	\details This file creates a standard MOOSE kernel for the coupling of non-linear variables
- *			together via the GSTA isotherm model.
+ *			together via the GSTA model, which includes estimating model parameters from material
+ *			properties files. The primary difference between this kernel and the CoupledGSTAisotherm
+ *			kernel is the coupling of the material properties.
+ *
+ *			This kernel extends the CoupledGSTAisotherm kernel by calculating the model parameters from
+ *			information in the ThermodynamicProperties material. The Kno parameters (described below) are
+ *			to be estimated from the site enthalpies (dHno) and entropies (dSno) using the van't Hoff
+ *			expression (shown below). Thus, this model is inherently a function of temperature and will
+ *			require a different form of coupling with the temperature parameter.
+ *
+ *			van't Hoff: ln(Kno) = -dHno/(R*T) + dSno/R
+ *			where R is the gas law constant and T is the column temperature.
  *
  *			GSTA isotherm: q = (q_max / m) * SUM(n*Kno*(p/Po)^n)/(1+SUM(Kno*(p/Po)^n))
  *			where q is amount adsorbed, q_max is the maximum capacity, m is the number of adsorption sites
@@ -16,7 +27,7 @@
  *			Ideal Gas Law: p = C*R*T
  *
  *  \author Austin Ladshaw, Alexander Wiechert
- *	\date 08/24/2017
+ *	\date 08/28/2017
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Alexander Wiechert for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -44,54 +55,37 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "CoupledGSTAisotherm.h"
+#include "CoupledGSTAmodel.h"
 
 template<>
-InputParameters validParams<CoupledGSTAisotherm>()
+InputParameters validParams<CoupledGSTAmodel>()
 {
-	InputParameters params = validParams<Kernel>();
-	params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for GSTA isotherm (mol/kg)");
-	params.addParam<Real>("num_sites",1.0,"Number of adsorption sites for GSTA isotherm");
-	params.addParam< std::vector<Real> >("gsta_params","Isotherm parameters for the GSTA isotherm");
-	params.addRequiredCoupledVar("coupled_gas","Name of the gas species to couple with");
-	params.addRequiredCoupledVar("coupled_temp","Name of the temperature variable to couple with");
+	InputParameters params = validParams<CoupledGSTAisotherm>();
+	params.addParam<unsigned int>("index",0,"Index of the species that we are interested in.");
 	return params;
 }
 
-CoupledGSTAisotherm::CoupledGSTAisotherm(const InputParameters & parameters)
-: Kernel(parameters),
-_maxcap(getParam<Real>("max_capacity")),
-_numsites(getParam<Real>("num_sites")),
-_gstaparam(getParam<std::vector<Real> >("gsta_params")),
-_coupled_u(coupledValue("coupled_gas")),
-_coupled_var_u(coupled("coupled_gas")),
-_coupled_temp(coupledValue("coupled_temp")),
-_coupled_var_temp(coupled("coupled_temp"))
+CoupledGSTAmodel::CoupledGSTAmodel(const InputParameters & parameters)
+: CoupledGSTAisotherm(parameters),
+_index(getParam<unsigned int>("index")),
+_magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data"))
 {
-	if (_numsites <= 0.0)
-	{
-		_numsites = 1.0;
-		_maxcap = 0.0;
-	}
 	
-	if (_maxcap < 0.0)
-		_maxcap = 0.0;
 }
 
-Real CoupledGSTAisotherm::computeGSTAequilibrium()
+void CoupledGSTAmodel::computeGSTAparams()
 {
-	double top = 0.0, bot = 1.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
+	_gstaparam.resize(_magpie_dat[_qp].gsta_dat[_index].m);
+	_numsites = _magpie_dat[_qp].gsta_dat[_index].m;
+	_maxcap = _magpie_dat[_qp].gsta_dat[_index].qmax;
 	
 	for (int n = 0; n<(int)_numsites; n++)
 	{
-		top = top + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
-		bot = bot + ( _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
+		_gstaparam[n] = std::exp( lnKo(_magpie_dat[_qp].gsta_dat[_index].dHo[n], _magpie_dat[_qp].gsta_dat[_index].dSo[n], _coupled_temp[_qp]) );
 	}
-	
-	return (_maxcap/_numsites)*(top/bot);
 }
 
-Real CoupledGSTAisotherm::computeGSTAconcDerivative()
+Real CoupledGSTAmodel::computeGSTAtempDerivative()
 {
 	double a = 0.0, b = 1.0, c = 0.0, d = 0.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
 	
@@ -100,46 +94,38 @@ Real CoupledGSTAisotherm::computeGSTAconcDerivative()
 		d = d + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
 		b = b + ( _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
 		
-		a = a + ( (double)(n+1) * (double)(n+1) * _gstaparam[n] * std::pow((1.0/Co),(double)(n+1)) * std::pow((_coupled_u[_qp]),(double)(n)) );
-		c = c + ( (double)(n+1) * _gstaparam[n] * std::pow((1.0/Co),(double)(n+1)) * std::pow((_coupled_u[_qp]),(double)(n)) );
+		a = a + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * (( (double)(n+1) * std::pow((_coupled_temp[_qp]),(double)(n)) ) + (_magpie_dat[_qp].gsta_dat[_index].dHo[n]/8.3144621 * std::pow((_coupled_temp[_qp]),(double)(n-1)) )) );
+		c = c + ( _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * (( (double)(n+1) * std::pow((_coupled_temp[_qp]),(double)(n)) ) + (_magpie_dat[_qp].gsta_dat[_index].dHo[n]/8.3144621 * std::pow((_coupled_temp[_qp]),(double)(n-1)) )) );
 	}
-
+	
 	return (_maxcap/_numsites)*_phi[_j][_qp]*( ((a*b) - (c*d)) / (b*b) );
 }
 
-Real CoupledGSTAisotherm::computeQpResidual()
+Real CoupledGSTAmodel::computeQpResidual()
 {
-	return _u[_qp]*_test[_i][_qp]-_test[_i][_qp]*computeGSTAequilibrium();
+	computeGSTAparams();
+	return CoupledGSTAisotherm::computeQpResidual();
 }
 
-Real CoupledGSTAisotherm::computeQpJacobian()
+Real CoupledGSTAmodel::computeQpJacobian()
 {
-	return _phi[_j][_qp]*_test[_i][_qp];
+	return CoupledGSTAisotherm::computeQpJacobian();
 }
 
-Real CoupledGSTAisotherm::computeQpOffDiagJacobian(unsigned int jvar)
+Real CoupledGSTAmodel::computeQpOffDiagJacobian(unsigned int jvar)
 {
+	computeGSTAparams();
+	
 	// Off-diagonal element for coupled gas
 	if (jvar == _coupled_var_u)
 	{
-		return -_test[_i][_qp]*computeGSTAconcDerivative();
+		return CoupledGSTAisotherm::computeQpOffDiagJacobian(jvar);
 	}
 	
 	// Off-diagonal element for coupled temperature
 	if (jvar == _coupled_var_temp)
 	{
-		double a = 0.0, b = 1.0, c = 0.0, d = 0.0, Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
-		
-		for (int n = 0; n<(int)_numsites; n++)
-		{
-			d = d + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
-			b = b + ( _gstaparam[n] * std::pow((_coupled_u[_qp]/Co),(double)(n+1)) );
-			
-			a = a + ( (double)(n+1) * (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * std::pow((_coupled_temp[_qp]),(double)(n)) );
-			c = c + ( (double)(n+1) * _gstaparam[n] * std::pow((_coupled_u[_qp]*8.3144621/100.0),(double)(n+1)) * std::pow((_coupled_temp[_qp]),(double)(n)) );
-		}
-		
-		return -_test[_i][_qp]*(_maxcap/_numsites)*_phi[_j][_qp]*( ((a*b) - (c*d)) / (b*b) );
+		return -_test[_i][_qp]*computeGSTAtempDerivative();
 	}
 	
 	

@@ -101,7 +101,7 @@ private:
 	const MaterialProperty<Real> & _pellet_diameter;				///< Coupled material property for the adsorbent pellet diameter
 	const MaterialProperty<Real> & _binder_porosity;				///< MaterialProperty for the binder porosity
 	const MaterialProperty<Real> & _pore_size;						///< MaterialProperty for the macropore radius (cm)
-	
+		
 	MaterialProperty<Real> & _heat_retardation;						///< MaterialProperty for energy balance retardation coefficient
 	MaterialProperty<Real> & _conductivity;							///< MaterialProperty for thermal conductivity of the bed
 	MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< MaterialProperty for each species' molecular diffusion (cm^2/hr)
