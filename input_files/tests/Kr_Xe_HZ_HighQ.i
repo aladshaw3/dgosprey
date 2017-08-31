@@ -1,13 +1,13 @@
 [GlobalParams]
 
-	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
+	sigma = 0   # Penalty value:  NIPG = 0   otherwise, > 0
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
 	flow_rate = 1.2e5
 	length = 50.8
 	inner_diameter = 1.905
 	pellet_diameter = 0.056
-	dt = 0.05
+	dt = 0.5
 
 [] #END GlobalParams
 
@@ -233,22 +233,38 @@
 		index = 1
 	[../]
 
-	[./Kr_adsorption]
-		type = CoupledExtendedLangmuirFunction
-		variable = Kr_Adsorbed
-		main_coupled = Kr
-		coupled_list = 'Kr Xe'
-		langmuir_coeff = '4594 14600'
-		max_capacity = 1.94
-	[../]
+#	[./Kr_adsorption]
+#		type = CoupledExtendedLangmuirFunction
+#		variable = Kr_Adsorbed
+#		main_coupled = Kr
+#		coupled_list = 'Kr Xe'
+#		langmuir_coeff = '4594 14600'
+#		max_capacity = 1.94
+#	[../]
 
+#	[./Xe_adsorption]
+#		type = CoupledExtendedLangmuirFunction
+#		variable = Xe_Adsorbed
+#		main_coupled = Xe
+#		coupled_list = 'Kr Xe'
+#		langmuir_coeff = '4594 14600'
+#		max_capacity = 1.367
+#	[../]
+ 
+	[./Kr_adsorption]
+		type = CoupledGSTAmodel
+		variable = Kr_Adsorbed
+		coupled_gas = Kr
+		coupled_temp = column_temp
+		index = 0
+	[../]
+ 
 	[./Xe_adsorption]
-		type = CoupledExtendedLangmuirFunction
+		type = CoupledGSTAmodel
 		variable = Xe_Adsorbed
-		main_coupled = Xe
-		coupled_list = 'Kr Xe'
-		langmuir_coeff = '4594 14600'
-		max_capacity = 1.367
+		coupled_gas = Xe
+		coupled_temp = column_temp
+		index = 1
 	[../]
 
 
@@ -522,20 +538,15 @@
 
 [Executioner]
 
-<<<<<<< HEAD
 	type = Transient
-	scheme = bdf2
-=======
-type = Transient
-scheme = implicit-euler
->>>>>>> cd5ec83a1db6ffb8fdda6ffcfcf75f948d507e13
+	scheme = implicit-euler
 
 		# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-8
 	nl_abs_tol = 1e-4
 	l_tol = 1e-6
-	l_max_its = 2000
-	nl_max_its = 30
+	l_max_its = 100
+	nl_max_its = 50
 
 	solve_type = pjfnk
 	line_search = basic    # Options: default none basic l2 bt
@@ -546,8 +557,8 @@ scheme = implicit-euler
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
 #		type = ConstantDT
-#		type = SolutionTimeAdaptiveDT
-		type = DGOSPREY_TimeStepper
+		type = SolutionTimeAdaptiveDT
+#		type = DGOSPREY_TimeStepper
 	[../]
 
 [] #END Executioner

@@ -51,21 +51,16 @@ InputParameters validParams<HeatofAdsorption>()
 HeatofAdsorption::HeatofAdsorption(const InputParameters & parameters)
 : CoupledLinearForcingFunction(parameters),
 _index(getParam<unsigned int>("index")),
-_magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data"))
+_magpie_dat(getMaterialProperty< MAGPIE_DATA >("magpie_data")),
+_ads_heat(getMaterialProperty<std::vector<Real> >("adsorption_heat"))
 {
+	if (_gaining == false)
+		_coef = -_coef;
 }
 
 Real HeatofAdsorption::computeQpResidual()
 {
-	if (_magpie_dat[_qp].gsta_dat[_index].qmax > 0.0)
-	{
-		_coef = -_magpie_dat[_qp].gsta_dat[_index].dHo[0] + ((_magpie_dat[_qp].gsta_dat[_index].dHo[0] - (_magpie_dat[_qp].gsta_dat[_index].dHo[_magpie_dat[_qp].gsta_dat[_index].m-1]/_magpie_dat[_qp].gsta_dat[_index].m))*(_coupled_u[_qp]/_magpie_dat[_qp].gsta_dat[_index].qmax));
-	}
-	else
-	{
-		_coef = 0.0;
-	}
-	
+	_coef = _ads_heat[_qp][_index];
 	return CoupledLinearForcingFunction::computeQpResidual();
 }
 
@@ -76,6 +71,7 @@ Real HeatofAdsorption::computeQpJacobian()
 
 Real HeatofAdsorption::computeQpOffDiagJacobian(unsigned int jvar)
 {
+	_coef = _ads_heat[_qp][_index];
 	return 0.0;
 }
 

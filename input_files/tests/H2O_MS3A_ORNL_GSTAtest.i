@@ -5,7 +5,7 @@
 	inner_diameter = 74.5
 	flow_rate = 2.62e8
 	dt = 0.001
-	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
+	sigma = 0   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
 [] #END GlobalParams
@@ -214,6 +214,8 @@
 		variable = H2O_Adsorbed
 		coupled_gas = H2O
 		coupled_temp = column_temp
+		alpha = 10.0
+		beta = 20.0
 		index = 2
 	[../]
 
@@ -460,14 +462,14 @@
 [Executioner]
 
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10
 	nl_abs_tol = 1e-3
-	l_tol = 1e-10
+	l_tol = 1e-8
 	l_max_its = 100
-	nl_max_its = 100
+	nl_max_its = 50
 
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt basic
@@ -476,8 +478,8 @@
 	dtmax = 1.0
 
 	[./TimeStepper]
-#		type = SolutionTimeAdaptiveDT
-		type = DGOSPREY_TimeStepper
+		type = SolutionTimeAdaptiveDT
+#		type = DGOSPREY_TimeStepper
 	[../]
 
 [] #END Executioner

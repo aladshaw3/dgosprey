@@ -98,6 +98,12 @@ protected:
 	/// Function to compute the scaling factor for the linear driving force coefficient
 	void computeScalingFactor();
 	
+	/// Function to compute the temperature derivative of the partition coefficient
+	Real computePartCoeffTempDerivative();
+	
+	/// Function to compute the temperature derivative of the LDF coefficient
+	Real computeLDFoffdiag();
+	
 	/// Function to compute the jacobian for the linear driving force coefficient
 	Real computeLDFjacobian();
 	
@@ -120,6 +126,7 @@ protected:
 	Real _ldf_coeff;												///< Parameter place holder for LDF parameter (1/hr)
 	Real _scaling_factor;											///< Parameter used to scale the LDF parameter
 	Real _alpha, _beta;												///< Parameters for the scaling factor
+	const VariableValue & _coupled_temp_old;						///< Reference to the coupled temperature at previous time step
 	const MaterialProperty< Real > & _pellet_density;				///< Material Property for pellet density (kg/L)
 	const MaterialProperty< Real > & _pellet_diameter;				///< Material Property for pellet diameter (cm)
 	const MaterialProperty< Real > & _crystal_radius;				///< Material Property for crystal radius (um)

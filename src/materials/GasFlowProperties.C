@@ -223,15 +223,15 @@ void GasFlowProperties::computeQpProperties()
 		double ScNum = kin_vis / _molecular_diffusion[_qp][i] / _porosity[_qp];
 		
 		if (ReNum == 0.0)
-			_dispersion[_qp][i] = 200.0 * _pellet_diameter[_qp] * _molecular_diffusion[_qp][i] / _porosity[_qp] / _inner_dia[_qp];
+			_dispersion[_qp][i] = 400.0 * _pellet_diameter[_qp] * _molecular_diffusion[_qp][i] / _porosity[_qp] / _inner_dia[_qp];
 		else
-			_dispersion[_qp][i] = 10.0 * pre_coef * ((20.0/ReNum/ScNum) + 0.5);
+			_dispersion[_qp][i] = 20.0 * pre_coef * ((20.0/ReNum/ScNum) + 0.5);
 	}
 	
 	double gas_cond = 4.21756e-5 + (7.19974e-7 * _temperature_old[_qp]); //J/s/cm/K
 	double PrNum = _gas_heat_capacity[_qp] * _gas_viscosity[_qp] / gas_cond;
 	double PeNum = ((0.73 * _porosity[_qp]) / (ReNum * PrNum)) + (0.5/(1.0+((9.7 * _porosity[_qp]) / (ReNum * PrNum))));
-	_conductivity[_qp] = PeNum * _gas_heat_capacity[_qp] * _gas_density[_qp] * fabs(_velocity[_qp]) * _pellet_diameter[_qp];
+	_conductivity[_qp] = 40.0* PeNum * _gas_heat_capacity[_qp] * _gas_density[_qp] * fabs(_velocity[_qp]) * _pellet_diameter[_qp];
 	_heat_retardation[_qp] = ((_gas_heat_capacity[_qp]*_gas_density[_qp]*_porosity[_qp]) + (_pellet_heat_capacity[_qp]*_pellet_density[_qp]*(1.0-_porosity[_qp])));
 	
 	// Calculate Film Mass Transfer and Pore Diffusion
