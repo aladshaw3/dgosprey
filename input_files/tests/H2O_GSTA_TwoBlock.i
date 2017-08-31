@@ -1,6 +1,6 @@
  [GlobalParams]
 
-length = 250.0
+length = 250
 pellet_diameter = 0.236
 inner_diameter = 74.5
 flow_rate = 2.62e8
@@ -25,7 +25,7 @@ ny = 20
 xmin = 0.0
 xmax = 37.25 #cm
 ymin = 0.0
-ymax = 250.0 #cm
+ymax = 100.0 #cm
 
 [] # END Mesh
 
@@ -48,8 +48,8 @@ ymax = 250.0 #cm
     [./interface]
         type = SideSetsBetweenSubdomains
         depends_on = 'column_one column_two'
-        master_block = '0 1'
-        paired_block = '0 1'
+        master_block = 0
+        paired_block = 1
         new_boundary = 'interface'
 [../]
 
@@ -480,7 +480,7 @@ ymax = 250.0 #cm
 #       coupled_adsorption = H2O_Adsorbed (NOTE: This is causing the error. Need to have all species as adsorbed for kinetics)
 #   [../]
 
-    [./BedMaterials]
+    [./BedMaterials_Two]
         type = BedProperties
         block = 1
         outer_diameter = 75.5
@@ -492,7 +492,7 @@ ymax = 250.0 #cm
         extern_heat_trans_coef = 6.12
     [../]
 
-    [./FlowMaterials]
+    [./FlowMaterials_Two]
         type = GasFlowProperties
         block = 1
         molecular_weight = '28.016 32 18'
@@ -505,7 +505,7 @@ ymax = 250.0 #cm
         coupled_gases = 'N2 O2 H2O'
     [../]
 
-    [./AdsorbentMaterials]
+    [./AdsorbentMaterials_Two]
         type = AdsorbentProperties
         block = 1
         binder_fraction = 0.175
@@ -523,7 +523,7 @@ ymax = 250.0 #cm
     [../]
 
 
-    [./AdsorbateMaterials]
+    [./AdsorbateMaterials_Two]
         type = ThermodynamicProperties
         block = 1
         temperature = column_temp
@@ -547,7 +547,7 @@ ymax = 250.0 #cm
         entropy_site_6 = '0 0 0'
     [../]
 
-#	[./KineticMaterials]
+#	[./KineticMaterials_Two]
 #		type = KineticProperties
 #		block = 1
 #		dirichlet_bc = false
