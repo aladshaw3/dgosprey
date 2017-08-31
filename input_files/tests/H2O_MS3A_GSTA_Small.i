@@ -241,6 +241,8 @@
 		variable = H2O_Adsorbed
 		coupled_gas = H2O
 		coupled_temp = column_temp
+		alpha = 5.0
+		beta = 15.0
 		index = 2
 	[../]
  
@@ -503,8 +505,8 @@
 	dtmax = 1.0
  
 	[./TimeStepper]
-		#type = SolutionTimeAdaptiveDT
-		type = DGOSPREY_TimeStepper
+		type = SolutionTimeAdaptiveDT
+#		type = DGOSPREY_TimeStepper
 	[../]
  
  [] #END Executioner
