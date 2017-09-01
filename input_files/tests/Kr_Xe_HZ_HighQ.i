@@ -1,6 +1,6 @@
 [GlobalParams]
 
-	sigma = 0   # Penalty value:  NIPG = 0   otherwise, > 0
+	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
 	flow_rate = 1.2e5
@@ -251,8 +251,24 @@
 #		max_capacity = 1.367
 #	[../]
  
+#	[./Kr_adsorption]
+#		type = CoupledGSTAmodel
+#		variable = Kr_Adsorbed
+#		coupled_gas = Kr
+#		coupled_temp = column_temp
+#		index = 0
+#	[../]
+#
+#	[./Xe_adsorption]
+#		type = CoupledGSTAmodel
+#		variable = Xe_Adsorbed
+#		coupled_gas = Xe
+#		coupled_temp = column_temp
+#		index = 1
+#	[../]
+ 
 	[./Kr_adsorption]
-		type = CoupledGSTAmodel
+		type = CoupledGSTALDFmodel
 		variable = Kr_Adsorbed
 		coupled_gas = Kr
 		coupled_temp = column_temp
@@ -260,7 +276,7 @@
 	[../]
  
 	[./Xe_adsorption]
-		type = CoupledGSTAmodel
+		type = CoupledGSTALDFmodel
 		variable = Xe_Adsorbed
 		coupled_gas = Xe
 		coupled_temp = column_temp
@@ -482,13 +498,6 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-#	[./He_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = He
-#		execute_on = 'initial timestep_end'
-#	[../]
-
 	[./temp_exit]
 		type = SideAverageValue
 		boundary = 'top'
@@ -496,19 +505,12 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-#	[./press_exit]
-#		type = SideAverageValue
-#		boundary = 'top'
-#		variable = total_pressure
-#		execute_on = 'initial timestep_end'
-#	[../]
-
-#	[./wall_temp]
-#		type = SideAverageValue
-#		boundary = 'right'
-#		variable = wall_temp
-#		execute_on = 'initial timestep_end'
-#	[../]
+	[./wall_temp]
+		type = SideAverageValue
+		boundary = 'right'
+		variable = wall_temp
+		execute_on = 'initial timestep_end'
+	[../]
 
 	[./Kr_solid]
 		type = ElementAverageValue
@@ -516,35 +518,23 @@
 		execute_on = 'initial timestep_end'
 	[../]
 
-#	[./Kr_heat]
-#		type = ElementAverageValue
-#		variable = Kr_AdsorbedHeat
-#		execute_on = 'initial timestep_end'
-#	[../]
-
 	[./Xe_solid]
 		type = ElementAverageValue
 		variable = Xe_Adsorbed
 		execute_on = 'initial timestep_end'
 	[../]
 
-#	[./Xe_heat]
-#		type = ElementAverageValue
-#		variable = Xe_AdsorbedHeat
-#		execute_on = 'initial timestep_end'
-#	[../]
-
 [] #END Postprocessors
 
 [Executioner]
 
 	type = Transient
-	scheme = implicit-euler
+	scheme = bdf2
 
 		# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-8
 	nl_abs_tol = 1e-4
-	l_tol = 1e-6
+	l_tol = 1e-8
 	l_max_its = 100
 	nl_max_its = 50
 

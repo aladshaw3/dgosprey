@@ -5,7 +5,7 @@
 	inner_diameter = 2.54
 	flow_rate = 211680.0
 	dt = 0.01
-	sigma = 0   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
+	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
  [] #END GlobalParams
@@ -241,15 +241,8 @@
 		variable = H2O_Adsorbed
 		coupled_gas = H2O
 		coupled_temp = column_temp
-		alpha = 0.00005
-		beta = 0.00005
 		index = 2
 	[../]
-
-#	[./H2O_ads_accum]
-#		type = TimeDerivative
-#		variable = H2O_Adsorbed
-#	[../]
  
  [] #END Kernels
  
@@ -372,7 +365,7 @@
 		type = BedProperties
 		block = 0
 		outer_diameter = 2.84
-		bulk_porosity = 0.521
+		bulk_porosity = 0.541
 		wall_density = 8.0
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 6.12
@@ -489,11 +482,11 @@
 [Executioner]
  
 	type = Transient
-	scheme = implicit-euler
+	scheme = bdf2
  
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10
-	nl_abs_tol = 1e-3
+	nl_abs_tol = 1e-4
 	l_tol = 1e-8
 	l_max_its = 100
 	nl_max_its = 50
@@ -526,8 +519,8 @@
 		type = SMP
 		full = true
 		petsc_options = '-snes_converged_reason'
-		petsc_options_iname = '-pc_type -ksp_gmres_restart  -snes_max_funcs'
-		petsc_options_value = 'lu 2000 20000'
+		petsc_options_iname = '-pc_type -sub_pc_type -pc_hypre_type -ksp_gmres_restart  -snes_max_funcs'
+		petsc_options_value = 'bjacobi ilu boomeramg 2000 20000'
 	[../]
  
 	[./fdp]

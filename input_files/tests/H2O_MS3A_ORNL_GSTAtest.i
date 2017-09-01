@@ -4,8 +4,8 @@
 	pellet_diameter = 0.236
 	inner_diameter = 74.5
 	flow_rate = 2.62e8
-	dt = 0.001
-	sigma = 0   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
+	dt = 0.01
+	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 
 [] #END GlobalParams
@@ -20,8 +20,8 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 5
-	ny = 40
+	nx = 50
+	ny = 400
 	xmin = 0.0
 	xmax = 37.25 #cm
 	ymin = 0.0
@@ -211,23 +211,23 @@
 #		gsta_params = '228357.3949 22688965955 1.93815E+15 1.1268E+18'
 #	[../]
 
-#	[./H2O_adsorption]
-#		type = CoupledGSTAmodel
-#		variable = H2O_Adsorbed
-#		coupled_gas = H2O
-#		coupled_temp = column_temp
-#		index = 2
-#	[../]
-
 	[./H2O_adsorption]
-		type = CoupledGSTALDFmodel
+		type = CoupledGSTAmodel
 		variable = H2O_Adsorbed
 		coupled_gas = H2O
 		coupled_temp = column_temp
-		alpha = 0.00005
-		beta = 0.00005
 		index = 2
 	[../]
+
+#	[./H2O_adsorption]
+#		type = CoupledGSTALDFmodel
+#		variable = H2O_Adsorbed
+#		coupled_gas = H2O
+#		coupled_temp = column_temp
+#		alpha = 20
+#		beta = 40
+#		index = 2
+#	[../]
 
 #	[./H2O_ads_accum]
 #		type = TimeDerivative
@@ -472,14 +472,14 @@
 [Executioner]
 
 	type = Transient
-	scheme = implicit-euler
+	scheme = bdf2
 
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10
 	nl_abs_tol = 1e-3
 	l_tol = 1e-8
-	l_max_its = 100
-	nl_max_its = 50
+	l_max_its = 10000
+	nl_max_its = 500
 
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt basic
@@ -493,6 +493,26 @@
 	[../]
 
 [] #END Executioner
+
+#NOTE: Mesh adaptivity does not work with our stateful material properties files!
+#[Adaptivity]
+#	marker = errorfrac
+#	steps = 2
+#	[./Indicators]
+#		[./error]
+#			type = GradientJumpIndicator
+#			variable = H2O
+#		[../]
+#	[../]
+#		[./Markers]
+#			[./errorfrac]
+#				type = ErrorFractionMarker
+#				refine = 0.5
+#				coarsen = 0
+#				indicator = error
+#			[../]
+#		[../]
+#[]
 
 [Preconditioning]
 
@@ -538,6 +558,6 @@
 
 	exodus = true
 	csv = true
-	print_linear_residuals = false
+	print_linear_residuals = true
 
 [] #END Outputs

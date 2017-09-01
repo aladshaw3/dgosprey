@@ -73,8 +73,8 @@ template<>
 InputParameters validParams<CoupledGSTALDFmodel>()
 {
 	InputParameters params = validParams<CoupledGSTAmodel>();
-	params.addParam<Real>("alpha",10.0,"Scaling parameter for maximum LDF parameter");
-	params.addParam<Real>("beta",20.0,"Scaling parameter for minimum LDF parameter");
+	params.addParam<Real>("alpha",20.0,"Scaling parameter for maximum LDF parameter");
+	params.addParam<Real>("beta",40.0,"Scaling parameter for minimum LDF parameter");
 	return params;
 }
 
@@ -88,14 +88,17 @@ _pellet_diameter(getMaterialProperty<Real>("pellet_diameter")),
 _crystal_radius(getMaterialProperty<Real>("crystal_radius")),
 _binder_porosity(getMaterialProperty<Real>("binder_porosity")),
 _binder_fraction(getMaterialProperty<Real>("binder_ratio")),
+_velocity(getMaterialProperty<Real>("velocity")),
+_diameter(getMaterialProperty<Real>("inner_dia")),
+_dispersion(getMaterialProperty<std::vector<Real> >("dispersion")),
 _film_transfer(getMaterialProperty<std::vector<Real> >("film_transfer")),
 _pore_diff(getMaterialProperty<std::vector<Real> >("pore_diffusion")),
 _surf_diff(getMaterialProperty<std::vector<Real> >("surface_diffusion"))
 {
 	if (_alpha <= 0.0)
-		_alpha = 10.0;
+		_alpha = 20.0;
 	if (_beta <= 0.0)
-		_beta = 20.0;
+		_beta = 40.0;
 }
 
 void CoupledGSTALDFmodel::computeLDFcoeff()
@@ -122,12 +125,15 @@ void CoupledGSTALDFmodel::computeLDFcoeff()
 		surfres = _crystal_radius[_qp] * _crystal_radius[_qp] / (15.0 * surfdiff);
 	}
 
-	_ldf_coeff = ((1.0/filmres) + (1.0/(poreres + surfres)))* (6.0*_film_transfer[_qp][_index]) / _pellet_diameter[_qp];
+	_ldf_coeff = ((1.0/filmres) + (1.0/(poreres + surfres)));
 }
 
 void CoupledGSTALDFmodel::computeScalingFactor()
 {
-	_scaling_factor = (_alpha*(1.0-(_u[_qp]/_maxcap)) + _beta*(_u[_qp]/_maxcap));
+	//std::cout << "vel = " << _velocity[_qp] << std::endl;
+	//std::cout << "disp = " << _dispersion[_qp][_index] << std::endl;
+	//std::cout << _velocity[_qp] * _diameter[_qp] / _dispersion[_qp][_index] << std::endl;
+	_scaling_factor = (_alpha*(_velocity[_qp] * _diameter[_qp] / _dispersion[_qp][_index])*(1.0-(_u[_qp]/_maxcap)) + _beta*(_velocity[_qp] * _diameter[_qp] / _dispersion[_qp][_index])*(_u[_qp]/_maxcap));
 }
 
 Real CoupledGSTALDFmodel::computePartCoeffTempDerivative()
@@ -169,7 +175,7 @@ Real CoupledGSTALDFmodel::computeLDFoffdiag()
 
 Real CoupledGSTALDFmodel::computeLDFjacobian()
 {
-	return _ldf_coeff*_phi[_j][_qp]*( (_beta/_maxcap) - ((_alpha/_maxcap)) );
+	return _ldf_coeff*_phi[_j][_qp]*( (_beta*(_velocity[_qp] * _diameter[_qp] / _dispersion[_qp][_index])/_maxcap) - ((_alpha*(_velocity[_qp] * _diameter[_qp] / _dispersion[_qp][_index])/_maxcap)) );
 }
 
 Real CoupledGSTALDFmodel::computeQpResidual()
