@@ -642,7 +642,7 @@ scheme = implicit-euler
 
 # NOTE: The default tolerances are far to strict and cause the program to crawl
 nl_rel_tol = 1e-12
-nl_abs_tol = 1e-4
+nl_abs_tol = 1e-3
 l_tol = 1e-8
 l_max_its = 200
 nl_max_its = 50
@@ -650,7 +650,7 @@ nl_max_its = 50
 solve_type = pjfnk
 line_search = bt    # Options: default none l2 bt
 start_time = 0.0
-end_time = 200.0
+end_time = 100.0
 
 [./TimeStepper]
 type = SolutionTimeAdaptiveDT

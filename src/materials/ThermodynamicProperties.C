@@ -87,7 +87,8 @@ _entropy_5(getParam<std::vector<Real> >("entropy_site_5")),
 _entropy_6(getParam<std::vector<Real> >("entropy_site_6")),
 
 _magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data")),
-_magpie_dat_old(declarePropertyOld< MAGPIE_DATA >("magpie_data"))
+_magpie_dat_old(declarePropertyOld< MAGPIE_DATA >("magpie_data")),
+_ads_heat(declareProperty<std::vector<Real> >("adsorption_heat"))
 {
 	unsigned int n = coupledComponents("coupled_gases");
 	_index.resize(n);
@@ -108,6 +109,7 @@ void ThermodynamicProperties::initQpStatefulProperties()
 	_magpie_dat[_qp].gpast_dat.resize(_magpie_dat[_qp].sys_dat.N);
 	_magpie_dat[_qp].gsta_dat.resize(_magpie_dat[_qp].sys_dat.N);
 	_magpie_dat[_qp].mspd_dat.resize(_magpie_dat[_qp].sys_dat.N);
+	_ads_heat[_qp].resize(_gas_conc.size());
 	
 	for (int i=0; i<_magpie_dat[_qp].sys_dat.N; i++)
 	{
@@ -165,6 +167,8 @@ void ThermodynamicProperties::initQpStatefulProperties()
 					_magpie_dat[_qp].gsta_dat[i].dSo[n] = 0.0;
 				}
 			}
+			
+			_ads_heat[_qp][i] = -_enthalpy_1[i];
 		}
 		//This species will not adsorb
 		else
@@ -179,6 +183,7 @@ void ThermodynamicProperties::initQpStatefulProperties()
 				_magpie_dat[_qp].gsta_dat[i].dHo[n] = 0.0;
 				_magpie_dat[_qp].gsta_dat[i].dSo[n] = 0.0;
 			}
+			_ads_heat[_qp][i] = 0.0;
 		}
 	}
 }
@@ -231,6 +236,8 @@ void ThermodynamicProperties::computeQpProperties()
 			_magpie_dat[_qp].sys_dat.Carrier = true;
 			_magpie_dat[_qp].gpast_dat[i].y = 0.0;
 		}
+		
+		_ads_heat[_qp][i] = -_enthalpy_1[i];
 	}
 	
 }
