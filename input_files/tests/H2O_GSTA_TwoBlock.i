@@ -1,6 +1,6 @@
  [GlobalParams]
 
-length = 250
+length = 250.0
 pellet_diameter = 0.236
 inner_diameter = 74.5
 flow_rate = 2.62e8
@@ -25,7 +25,7 @@ ny = 20
 xmin = 0.0
 xmax = 37.25 #cm
 ymin = 0.0
-ymax = 100.0 #cm
+ymax = 250.0 #cm
 
 [] # END Mesh
 
@@ -128,7 +128,6 @@ ymax = 100.0 #cm
 [ICs]
 
     [./N2_IC]
-        block = '0 1'
         type = ConcentrationIC
         variable = N2
         initial_mole_frac = 0.79
@@ -137,7 +136,6 @@ ymax = 100.0 #cm
     [../]
 
     [./O2_IC]
-        block = '0 1'
         type = ConcentrationIC
         variable = O2
         initial_mole_frac = 0.21
@@ -146,7 +144,6 @@ ymax = 100.0 #cm
     [../]
 
     [./H2O_IC]
-        block = '0 1'
         type = ConcentrationIC
         variable = H2O
         initial_mole_frac = 0.0
@@ -644,8 +641,8 @@ type = Transient
 scheme = implicit-euler
 
 # NOTE: The default tolerances are far to strict and cause the program to crawl
-nl_rel_tol = 1e-10
-nl_abs_tol = 1e-4
+nl_rel_tol = 1e-12
+nl_abs_tol = 1e-3
 l_tol = 1e-8
 l_max_its = 200
 nl_max_its = 50
@@ -653,7 +650,7 @@ nl_max_its = 50
 solve_type = pjfnk
 line_search = bt    # Options: default none l2 bt
 start_time = 0.0
-end_time = 200.0
+end_time = 100.0
 
 [./TimeStepper]
 type = SolutionTimeAdaptiveDT
