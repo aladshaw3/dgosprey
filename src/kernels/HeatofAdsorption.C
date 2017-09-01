@@ -72,6 +72,7 @@ Real HeatofAdsorption::computeQpJacobian()
 Real HeatofAdsorption::computeQpOffDiagJacobian(unsigned int jvar)
 {
 	_coef = _ads_heat[_qp][_index];
+	//return CoupledLinearForcingFunction::computeQpOffDiagJacobian(jvar);
 	return 0.0;
 }
 

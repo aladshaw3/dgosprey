@@ -68,6 +68,7 @@
 /****************************************************************/
 
 #include "CoupledGSTAmodel.h"
+#include "TimeDerivative.h"
 
 #ifndef CoupledGSTALDFmodel_h
 #define CoupledGSTALDFmodel_h

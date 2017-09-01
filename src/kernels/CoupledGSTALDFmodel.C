@@ -122,7 +122,7 @@ void CoupledGSTALDFmodel::computeLDFcoeff()
 		surfres = _crystal_radius[_qp] * _crystal_radius[_qp] / (15.0 * surfdiff);
 	}
 
-	_ldf_coeff = ((1.0/filmres) + (1.0/(poreres + surfres)));
+	_ldf_coeff = ((1.0/filmres) + (1.0/(poreres + surfres)))* (6.0*_film_transfer[_qp][_index]) / _pellet_diameter[_qp];
 }
 
 void CoupledGSTALDFmodel::computeScalingFactor()
@@ -176,14 +176,14 @@ Real CoupledGSTALDFmodel::computeQpResidual()
 {
 	computeLDFcoeff();
 	computeScalingFactor();
-	return _ldf_coeff*_scaling_factor*CoupledGSTAisotherm::computeQpResidual();
+	return _ldf_coeff*_scaling_factor*CoupledGSTAisotherm::computeQpResidual() + _test[_i][_qp] * _u_dot[_qp];
 }
 
 Real CoupledGSTALDFmodel::computeQpJacobian()
 {
 	computeLDFcoeff();
 	computeScalingFactor();
-	return _test[_i][_qp]*_ldf_coeff*_scaling_factor*_phi[_j][_qp] + _test[_i][_qp]*_u[_qp]*computeLDFjacobian();
+	return _test[_i][_qp]*_ldf_coeff*_scaling_factor*_phi[_j][_qp] + _test[_i][_qp]*_u[_qp]*computeLDFjacobian() + _test[_i][_qp] * _phi[_j][_qp] * _du_dot_du[_qp];
 }
 
 Real CoupledGSTALDFmodel::computeQpOffDiagJacobian(unsigned int jvar)
