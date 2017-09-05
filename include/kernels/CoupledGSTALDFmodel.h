@@ -18,7 +18,7 @@
  *			into a single lumped rate parameter (k). Those parameters all come from material properties 
  *			files in the DGOSPREY framework.
  *
- *			Resistance-in-series: (1/k) = (rhop*q*rp/(3*kf*C)) + (rhop*q*rp*rp/(15*ep*Dp)) + (rc*rc/(15*Dc))
+ *			Resistance-in-series: k = 1/(rhop*q*rp/(3*kf*C)) + (1/((rhop*q*rp*rp/(15*ep*Dp)) + (rc*rc/(15*Dc)))
  *			where rhop is the particle density, q is the adsorption, rp is the particle radius, kf is the film
  *			mass transfer parameter, C is the concentration in the gas phase, ep is the particle porosity,
  *			Dp is the pore diffusion parameter, rc is the adsorbent crystal radius, and Dc is the surface 
@@ -127,15 +127,11 @@ protected:
 	Real _ldf_coeff;												///< Parameter place holder for LDF parameter (1/hr)
 	Real _scaling_factor;											///< Parameter used to scale the LDF parameter
 	Real _alpha, _beta;												///< Parameters for the scaling factor
-	const VariableValue & _coupled_temp_old;						///< Reference to the coupled temperature at previous time step
 	const MaterialProperty< Real > & _pellet_density;				///< Material Property for pellet density (kg/L)
 	const MaterialProperty< Real > & _pellet_diameter;				///< Material Property for pellet diameter (cm)
 	const MaterialProperty< Real > & _crystal_radius;				///< Material Property for crystal radius (um)
 	const MaterialProperty< Real > & _binder_porosity;				///< Material Property for binder porosity (-)
 	const MaterialProperty< Real > & _binder_fraction;				///< Material Property for binder fraction (-)
-	const MaterialProperty< Real > & _velocity;						///< Material Property for gas velocity (cm/hr)
-	const MaterialProperty< Real > & _diameter;						///< Material Property for column diameter (cm)
-	const MaterialProperty<std::vector<Real> > & _dispersion;		///< Material Property for dispersion coef (cm^2/hr)
 	const MaterialProperty<std::vector<Real> > & _film_transfer;	///< Material Property for film transfer coef (cm/hr)
 	const MaterialProperty<std::vector<Real> > & _pore_diff;		///< Material Property for pore diffusion coef (cm^2/hr)
 	const MaterialProperty<std::vector<Real> > & _surf_diff;		///< Material Property for pore diffusion coef (um^2/hr)

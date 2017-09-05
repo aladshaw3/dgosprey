@@ -20,8 +20,8 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 50
-	ny = 400
+	nx = 5
+	ny = 80
 	xmin = 0.0
 	xmax = 37.25 #cm
 	ymin = 0.0
@@ -32,17 +32,17 @@
 [Variables]
 
 	[./N2]
-		order = FIRST
+		order = CONSTANT
 		family = MONOMIAL
 	[../]
 
 	[./O2]
-		order = FIRST
+		order = CONSTANT
 		family = MONOMIAL
 	[../]
 
 	[./H2O]
-		order = FIRST
+		order = CONSTANT
 		family = MONOMIAL
 	[../]
 
@@ -53,13 +53,13 @@
 	[../]
 
 	[./H2O_Adsorbed]
-		order = FIRST
+		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
 
 	[./H2O_AdsorbedHeat]
-		order = FIRST
+		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
@@ -70,7 +70,7 @@
 [AuxVariables]
 
 	[./total_pressure]
-		order = FIRST
+		order = CONSTANT
 		family = MONOMIAL
 		initial_condition = 101.35
 	[../]
@@ -224,14 +224,9 @@
 #		variable = H2O_Adsorbed
 #		coupled_gas = H2O
 #		coupled_temp = column_temp
-#		alpha = 20
-#		beta = 40
+#		alpha = 10
+#		beta = 20
 #		index = 2
-#	[../]
-
-#	[./H2O_ads_accum]
-#		type = TimeDerivative
-#		variable = H2O_Adsorbed
 #	[../]
 
 [] #END Kernels
@@ -478,8 +473,8 @@
 	nl_rel_tol = 1e-10
 	nl_abs_tol = 1e-3
 	l_tol = 1e-8
-	l_max_its = 10000
-	nl_max_its = 500
+	l_max_its = 1000
+	nl_max_its = 50
 
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt basic
@@ -558,6 +553,6 @@
 
 	exodus = true
 	csv = true
-	print_linear_residuals = true
+	print_linear_residuals = false
 
 [] #END Outputs
