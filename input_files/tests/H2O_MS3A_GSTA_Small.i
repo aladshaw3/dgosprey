@@ -1,6 +1,6 @@
 [GlobalParams]
 
-	length = 12.7
+	length = 6.35
 	pellet_diameter = 0.236
 	inner_diameter = 2.54
 	flow_rate = 211680.0
@@ -25,7 +25,7 @@
  	xmin = 0.0
 	xmax = 1.27 #cm
  	ymin = 0.0
-	ymax = 12.7 #cm
+	ymax = 6.35 #cm
 
  [] # END Mesh
 
@@ -522,7 +522,7 @@
 		full = true
 		petsc_options = '-snes_converged_reason'
 		petsc_options_iname = '-pc_type -sub_pc_type -pc_hypre_type -ksp_gmres_restart  -snes_max_funcs'
-		petsc_options_value = 'bjacobi ilu boomeramg 2000 20000'
+		petsc_options_value = 'lu ilu boomeramg 2000 20000'
 	[../]
  
 	[./fdp]

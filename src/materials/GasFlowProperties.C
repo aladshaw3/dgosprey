@@ -44,7 +44,6 @@ InputParameters validParams<GasFlowProperties>()
 	params.addParam<std::vector<Real> >("comp_ref_temp","Reference temperature for each gas phase component (K)");
 	params.addParam<std::vector<Real> >("comp_Sutherland_const","Sutherland's constant for each gas phase component (K)");
 	params.addParam<Real>("flow_rate","Volumetric flow rate in the system (cm^3/hr)");
-	params.addParam<Real>("length","Length of the column (cm)");
 	params.addCoupledVar("temperature","Coupled variable for temperature");
 	params.addCoupledVar("total_pressure","Coupled variable for total pressure");
 	params.addCoupledVar("coupled_gases", "Gas concentration variables being coupled");
@@ -61,7 +60,6 @@ _comp_ref_viscosity(getParam<std::vector<Real> >("comp_ref_viscosity")),
 _comp_ref_temp(getParam<std::vector<Real> >("comp_ref_temp")),
 _comp_Sutherland_const(getParam<std::vector<Real> >("comp_Sutherland_const")),
 _flow_rate(getParam<Real>("flow_rate")),
-_column_length(getParam<Real>("length")),
 
 _velocity(declareProperty<Real>("velocity")),
 _gas_density(declareProperty<Real>("gas_density")),

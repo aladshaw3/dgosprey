@@ -54,40 +54,40 @@
 [Variables]
  
 	[./N2]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 	[../]
  
 	[./O2]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 	[../]
  
 	[./H2O]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 	[../]
  
 	[./column_temp]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 		initial_condition = 298.15
 	[../]
  
 	[./H2O_Adsorbed]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
  
 	[./H2O_AdsorbedHeat]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
@@ -98,22 +98,22 @@
 [AuxVariables]
  
 	[./total_pressure]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 		initial_condition = 101.35
 	[../]
  
 	[./ambient_temp]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 		initial_condition = 298.15
 	[../]
  
 	[./wall_temp]
-		block = '0 1'
-		order = CONSTANT
+		block = '0'
+		order = FIRST
 		family = MONOMIAL
 		initial_condition = 298.15
 	[../]
@@ -123,7 +123,7 @@
 [ICs]
  
 	[./N2_IC]
-		block = '0 1'
+		block = '0'
 		type = ConcentrationIC
 		variable = N2
 		initial_mole_frac = 0.79
@@ -132,7 +132,7 @@
 	[../]
  
 	[./O2_IC]
-		block = '0 1'
+		block = '0'
 		type = ConcentrationIC
 		variable = O2
 		initial_mole_frac = 0.21
@@ -141,7 +141,7 @@
 	[../]
  
 	[./H2O_IC]
-		block = '0 1'
+		block = '0'
 		type = ConcentrationIC
 		variable = H2O
 		initial_mole_frac = 0.0
@@ -154,96 +154,96 @@
 [Kernels]
  
 	[./accumN2]
-		block = '0 1'
+		block = '0'
 		type = BedMassAccumulation
 		variable = N2
 	[../]
  
 	[./diffN2]
-		block = '0 1'
+		block = '0'
 		type = GColumnMassDispersion
 		variable = N2
 		index = 0
 	[../]
  
 	[./advN2]
-		block = '0 1'
+		block = '0'
 		type = GColumnMassAdvection
 		variable = N2
 	[../]
  
 	[./accumO2]
-		block = '0 1'
+		block = '0'
 		type = BedMassAccumulation
 		variable = O2
 	[../]
  
 	[./diffO2]
-		block = '0 1'
+		block = '0'
 		type = GColumnMassDispersion
 		variable = O2
 		index = 1
 	[../]
  
 	[./advO2]
-		block = '0 1'
+		block = '0'
 		type = GColumnMassAdvection
 		variable = O2
 	[../]
  
 	[./accumH2O]
-		block = '0 1'
+		block = '0'
 		type = BedMassAccumulation
 		variable = H2O
 	[../]
  
 	[./H2O_MT]
-		block = '0 1'
+		block = '0'
 		type = SolidMassTransfer
 		variable = H2O
 		coupled = H2O_Adsorbed
 	[../]
  
 	[./diffH2O]
-		block = '0 1'
+		block = '0'
 		type = GColumnMassDispersion
 		variable = H2O
 		index = 2
 	[../]
  
 	[./advH2O]
-		block = '0 1'
+		block = '0'
 		type = GColumnMassAdvection
 		variable = H2O
 	[../]
  
 	[./columnAccum]
-		block = '0 1'
+		block = '0'
 		type = BedHeatAccumulation
 		variable = column_temp
 	[../]
  
 	[./columnConduction]
-		block = '0 1'
+		block = '0'
 		type = GColumnHeatDispersion
 		variable =column_temp
 	[../]
  
 	[./columnAdvection]
-		block = '0 1'
+		block = '0'
 		type = GColumnHeatAdvection
 		variable =column_temp
 	[../]
  
 	[./H2O_columnAdsHeat]
-		block = '0 1'
+		block = '0'
 		type = SolidHeatTransfer
 		variable = column_temp
 		coupled = H2O_AdsorbedHeat
 	[../]
  
 	[./H2O_adsheat]
-		block = '0 1'
+		block = '0'
 		type = HeatofAdsorption
 		variable = H2O_AdsorbedHeat
 		coupled = H2O_Adsorbed
@@ -251,7 +251,7 @@
 	[../]
  
 #	[./H2O_adsorption]
-#		block = '0 1'
+#		block = '0'
 #		type = CoupledLangmuirForcingFunction
 #		variable = H2O_Adsorbed
 #		coupled = H2O
@@ -260,7 +260,7 @@
 #	[../]
  
 #	[./H2O_adsorption]
-#		block = '0 1'
+#		block = '0'
 #		type = CoupledGSTAisotherm
 #		variable = H2O_Adsorbed
 #		coupled_gas = H2O
@@ -271,7 +271,7 @@
 #	[../]
  
     [./H2O_adsorption]
-		block = '0 1'
+		block = '0'
         type = CoupledGSTALDFmodel
         variable = H2O_Adsorbed
         coupled_gas = H2O
@@ -284,52 +284,52 @@
 [DGKernels]
  
 	[./dg_disp_N2]
-		block = '0 1'
+		block = '0'
 		type = DGColumnMassDispersion
 		variable = N2
 		index = 0
 	[../]
  
 	[./dg_adv_N2]
-		block = '0 1'
+		block = '0'
 		type = DGColumnMassAdvection
 		variable = N2
 	[../]
  
 	[./dg_disp_O2]
-		block = '0 1'
+		block = '0'
 		type = DGColumnMassDispersion
 		variable = O2
 		index = 1
 	[../]
  
 	[./dg_adv_O2]
-		block = '0 1'
+		block = '0'
 		type = DGColumnMassAdvection
 		variable = O2
 	[../]
  
 	[./dg_disp_H2O]
-		block = '0 1'
+		block = '0'
 		type = DGColumnMassDispersion
 		variable = H2O
 		index = 2
 	[../]
  
 	[./dg_adv_H2O]
-		block = '0 1'
+		block = '0'
 		type = DGColumnMassAdvection
 		variable = H2O
 	[../]
  
 	[./dg_disp_heat]
-		block = '0 1'
+		block = '0'
 		type = DGColumnHeatDispersion
 		variable = column_temp
 	[../]
  
 	[./dg_adv_heat]
-		block = '0 1'
+		block = '0'
 		type = DGColumnHeatAdvection
 		variable = column_temp
 	[../]
@@ -339,7 +339,7 @@
 [AuxKernels]
  
 	[./column_pressure]
-		block = '0 1'
+		block = '0'
 		type = TotalColumnPressure
 		variable = total_pressure
 		temperature = column_temp
@@ -347,7 +347,7 @@
 	[../]
  
 	[./wall_temp_calc]
-		block = '0 1'
+		block = '0'
 		type = WallTemperature
 		variable = wall_temp
 		column_temp = column_temp
@@ -358,47 +358,10 @@
  
 [BCs]
  
-	[./N2_Flux]
-		type = DGMassFluxBC
-		variable = N2
-		boundary = 'top bottom'
-		input_temperature = 298.15
-		input_pressure = 101.35
-		input_molefraction = 0.78863
-		index = 0
-	[../]
-
-	[./O2_Flux]
-		type = DGMassFluxBC
-		variable = O2
-		boundary = 'top bottom'
-		input_temperature = 298.15
-		input_pressure = 101.35
-		input_molefraction = 0.20974
-		index = 1
-	[../]
-
-	[./H2O_Flux]
-		type = DGMassFluxBC
-		variable = H2O
-		boundary = 'top bottom'
-		input_temperature = 298.15
-		input_pressure = 101.35
-		input_molefraction = 0.00163
-		index = 2
-	[../]
-
-	[./Heat_Gas_Flux]
-		type = DGHeatFluxBC
-		variable = column_temp
-		boundary = 'top bottom'
-		input_temperature = 303.15
-	[../]
- 
 #	[./N2_Flux]
 #		type = DGMassFluxBC
 #		variable = N2
-#		boundary = 'interface bottom'
+#		boundary = 'top bottom'
 #		input_temperature = 298.15
 #		input_pressure = 101.35
 #		input_molefraction = 0.78863
@@ -408,7 +371,7 @@
 #	[./O2_Flux]
 #		type = DGMassFluxBC
 #		variable = O2
-#		boundary = 'interface bottom'
+#		boundary = 'top bottom'
 #		input_temperature = 298.15
 #		input_pressure = 101.35
 #		input_molefraction = 0.20974
@@ -418,7 +381,7 @@
 #	[./H2O_Flux]
 #		type = DGMassFluxBC
 #		variable = H2O
-#		boundary = 'interface bottom'
+#		boundary = 'top bottom'
 #		input_temperature = 298.15
 #		input_pressure = 101.35
 #		input_molefraction = 0.00163
@@ -428,9 +391,46 @@
 #	[./Heat_Gas_Flux]
 #		type = DGHeatFluxBC
 #		variable = column_temp
-#		boundary = 'interface bottom'
+#		boundary = 'top bottom'
 #		input_temperature = 303.15
 #	[../]
+ 
+	[./N2_Flux]
+		type = DGMassFluxBC
+		variable = N2
+		boundary = 'interface bottom'
+		input_temperature = 298.15
+		input_pressure = 101.35
+		input_molefraction = 0.78863
+		index = 0
+	[../]
+
+	[./O2_Flux]
+		type = DGMassFluxBC
+		variable = O2
+		boundary = 'interface bottom'
+		input_temperature = 298.15
+		input_pressure = 101.35
+		input_molefraction = 0.20974
+		index = 1
+	[../]
+
+	[./H2O_Flux]
+		type = DGMassFluxBC
+		variable = H2O
+		boundary = 'interface bottom'
+		input_temperature = 298.15
+		input_pressure = 101.35
+		input_molefraction = 0.00163
+		index = 2
+	[../]
+
+	[./Heat_Gas_Flux]
+		type = DGHeatFluxBC
+		variable = column_temp
+		boundary = 'interface bottom'
+		input_temperature = 303.15
+	[../]
  
 	[./Heat_Wall_Flux]
 		type = DGColumnWallHeatFluxLimitedBC

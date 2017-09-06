@@ -86,7 +86,6 @@ private:
 	std::vector<Real> _comp_ref_temp;								///< Sutherland's reference temperature for each species (K)
 	std::vector<Real> _comp_Sutherland_const;						///< Sutherland's constant for each gas species (K)
 	Real _flow_rate;												///< Inlet flow rate for the fixed-bed column (cm^3/hr)
-	Real _column_length;											///< Length of the fixed-bed column (cm)
 	
 	MaterialProperty<Real> & _velocity;								///< MaterialProperty for the linear velocity in the bed (cm/hr)
 	MaterialProperty<Real> & _gas_density;							///< MaterialProperty for the gas density (g/cm^3)
