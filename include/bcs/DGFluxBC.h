@@ -2,7 +2,7 @@
  *  \file DGFluxBC.h
  *	\brief Boundary Condition kernel for the flux across a boundary of the domain
  *	\details This file creates a generic boundary condition kernel for the flux of material accross
- *			a boundary. The flux is based on a diffusivity tensor and a velocity vector and is valid
+ *			a boundary. The flux is based on a velocity vector and is valid
  *			in all directions and all boundaries of a DG method. Since the DG method's flux boundary
  *			conditions are essitially the same for input and ouput boundaries, this kernel will check
  *			the sign of the flux normal to the boundary and determine automattically whether it is 
@@ -58,7 +58,7 @@ InputParameters validParams<DGFluxBC>();
 /// DGFluxBC class object inherits from IntegratedBC object
 /** This class object inherits from the IntegratedBC object.
 	All public and protected members of this class are required function overrides.
-	The flux BC uses the velocity and diffusivity in the system to apply a boundary
+	The flux BC uses the velocity in the system to apply a boundary
 	condition based on whether or not material is leaving or entering the boundary. */
 class DGFluxBC : public IntegratedBC
 {
