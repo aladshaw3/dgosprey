@@ -392,7 +392,7 @@
 		type = DGHeatFluxBC
 		variable = column_temp
 		boundary = 'top bottom'
-		input_temperature = 303.15
+		input_temperature = 298.15
 	[../]
  
 	[./Heat_Wall_Flux]

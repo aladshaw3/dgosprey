@@ -171,12 +171,6 @@
         type = DGAdvection
         variable = u
     [../]
- 
-#[./u_dgadv_cond]
-#block = '1'
-#type = DGAdvection
-#variable = u
-#[../]
 
     [./u_dgdiff]
  		block = '0'
@@ -198,13 +192,6 @@
         variable = u
         boundary = 'top bottom'
     [../]
- 
-#	[./u_Flux_Interface]
-#		type = DGFluxInterfaceBC
-#		variable = u
-#		boundary = 'interface01'
-#	[../]
-
 
 [] #END BCs
 

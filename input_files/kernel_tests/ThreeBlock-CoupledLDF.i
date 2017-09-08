@@ -191,13 +191,6 @@
         variable = u
         boundary = 'top bottom'
     [../]
- 
-#	[./u_Flux_Interface]
-#		type = DGFluxInterfaceBC
-#		variable = u
-#		boundary = 'interface01'
-#	[../]
-
 
 [] #END BCs
 
