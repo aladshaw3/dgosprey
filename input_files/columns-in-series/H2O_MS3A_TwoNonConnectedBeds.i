@@ -64,26 +64,32 @@
 		new_boundary = 'interface_122'
 	[../]
  
-#	[./wall_1]
-#		type = SideSetsAroundSubdomain
-#		block = '0'
-#		new_boundary = 'wall_1'
-#		normal = '1 0 0'
-#	[../]
-#
-#	[./wall_12]
-#		type = SideSetsAroundSubdomain
-#		block = '1'
-#		new_boundary = 'wall_12'
-#		normal = '1 0 0'
-#	[../]
-#
-#	[./wall_2]
-#		type = SideSetsAroundSubdomain
-#		block = '2'
-#		new_boundary = 'wall_2'
-#		normal = '1 0 0'
-#	[../]
+	[./wall_1]
+		type = SideSetsAroundSubdomain
+		block = '0'
+		new_boundary = 'wall_1'
+		normal = '1 0 0'
+		force_prepare = true
+		depends_on = column_1
+	[../]
+
+	[./wall_12]
+		type = SideSetsAroundSubdomain
+		block = '1'
+		new_boundary = 'wall_12'
+		normal = '1 0 0'
+		force_prepare = true
+		depends_on = conduit_12
+	[../]
+
+	[./wall_2]
+		type = SideSetsAroundSubdomain
+		block = '2'
+		new_boundary = 'wall_2'
+		normal = '1 0 0'
+		force_prepare = true
+		depends_on = column_2
+	[../]
  
  [] #END MeshModifiers
  
@@ -147,8 +153,22 @@
 		initial_condition = 298.15
 	[../]
  
-	[./wall_temp]
-		block = '0 1 2'
+	[./wall_temp_1]
+		block = '0'
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 298.15
+	[../]
+ 
+	[./wall_temp_12]
+		block = '1'
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 298.15
+	[../]
+ 
+	[./wall_temp_2]
+		block = '2'
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 298.15
@@ -156,6 +176,7 @@
  
  [] #END AuxVariables
  
+#Consider custom ICs for all variables to set values based on blocks
 [ICs]
  
 	[./N2_IC]
@@ -382,12 +403,28 @@
 		coupled_gases = 'N2 O2 H2O'
 	[../]
  
-	[./wall_temp_calc]
-		block = '0 1 2'
+	[./wall_temp_calc_1]
+		block = '0'
 		type = WallTemperature
-		variable = wall_temp
+		variable = wall_temp_1
 		column_temp = column_temp
 		ambient_temp = ambient_temp
+	[../]
+ 
+	[./wall_temp_calc_12]
+		block = '1'
+		type = WallTemperature
+		variable = wall_temp_12
+		column_temp = column_temp
+		ambient_temp = 303.15
+	[../]
+ 
+	[./wall_temp_calc_2]
+		block = '2'
+		type = WallTemperature
+		variable = wall_temp_2
+		column_temp = column_temp
+		ambient_temp = 313.15
 	[../]
  
  [] #END AuxKernels
@@ -431,11 +468,25 @@
 		input_temperature = 298.15
 	[../]
  
-	[./Heat_Wall_Flux]
+	[./Heat_Wall_Flux_1]
 		type = DGColumnWallHeatFluxLimitedBC
 		variable = column_temp
-		boundary = 'right left'
-		wall_temp = wall_temp
+		boundary = 'wall_1 left'
+		wall_temp = wall_temp_1
+	[../]
+ 
+	[./Heat_Wall_Flux_12]
+		type = DGColumnWallHeatFluxLimitedBC
+		variable = column_temp
+		boundary = 'wall_12 left'
+		wall_temp = wall_temp_12
+	[../]
+ 
+	[./Heat_Wall_Flux_2]
+		type = DGColumnWallHeatFluxLimitedBC
+		variable = column_temp
+		boundary = 'wall_2 left'
+		wall_temp = wall_temp_2
 	[../]
  
  [] #END BCs
@@ -720,10 +771,24 @@
 		execute_on = 'initial timestep_end'
 	[../]
  
-	[./wall_temp]
+	[./wall_temp_1]
 		type = SideAverageValue
-		boundary = 'right'
-		variable = wall_temp
+		boundary = 'wall_1'
+		variable = wall_temp_1
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./wall_temp_12]
+		type = SideAverageValue
+		boundary = 'wall_12'
+		variable = wall_temp_12
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./wall_temp_2]
+		type = SideAverageValue
+		boundary = 'wall_2'
+		variable = wall_temp_2
 		execute_on = 'initial timestep_end'
 	[../]
  
