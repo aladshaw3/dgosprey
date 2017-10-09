@@ -95,6 +95,11 @@ _surf_diff(getMaterialProperty<std::vector<Real> >("surface_diffusion"))
 		_alpha = 15.0;
 	if (_beta <= 0.0)
 		_beta = 15.0;
+	
+	if (_alpha >= 30.0)
+		_alpha = 30.0;
+	if (_beta >= 30.0)
+		_beta = 30.0;
 }
 
 void CoupledGSTALDFmodel::computeLDFcoeff()
