@@ -48,8 +48,8 @@ class CoupledExtendedLangmuirModel;
 template<>
 InputParameters validParams<CoupledExtendedLangmuirModel>();
 
-/// CoupledExtendedLangmuirFunction class object inherits from Kernel object
-/** This class object inherits from the Kernel object in the MOOSE framework.
+/// CoupledExtendedLangmuirFunction class object inherits from CoupledExtendedLangmuirFunction object
+/** This class object inherits from the CoupledExtendedLangmuirFunction object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
 	The kernel interfaces the set of non-linear variables to couple an extended Langmuir
 	forcing function between given objects. */

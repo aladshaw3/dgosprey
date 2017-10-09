@@ -1,45 +1,36 @@
 /*!
- *  \file CoupledGSTALDFAmodel.h
- *	\brief Standard kernel for coupling non-linear variables via the GSTA model with LDF kinetics
+ *  \file CoupledLangmuirLDFAmodel.h
+ *	\brief Standard kernel for coupling non-linear variables via the langmuir model with LDF kinetics
  *	\details This file creates a standard MOOSE kernel for the coupling of non-linear variables
- *			together via the GSTA model, and applies linear driving force kinetics for the rate 
+ *			together via the langmuir model, and applies linear driving force kinetics for the rate
  *			of adsorption.
  *
- *			This kernel extends the CoupledGSTAmodel kernel by calculating the model parameters from
- *			information in the ThermodynamicProperties material. In addition, it calculates the Linear Driving Force
- *			parameter by estimating the overall LDF rate coefficient from material properties. 
- *			The Kno parameters (described below) are to be estimated from the site enthalpies (dHno) 
- *			and entropies (dSno) using the van't Hoff expression (shown below). Thus, this model 
- *			is inherently a function of temperature and will require a different form of coupling 
+ *			This kernel extends the CoupledLangmuirModel kernel by calculating the model parameters from
+ *			information in the input file for enthalpy and entropy. In addition, it calculates the Linear Driving Force
+ *			parameter by estimating the overall LDF rate coefficient from material properties.
+ *			The langmuir parameter (K) (described below) are to be estimated from the site enthalpies (dH)
+ *			and entropies (dS) using the van't Hoff expression (shown below). Thus, this model
+ *			is inherently a function of temperature and will require a different form of coupling
  *			with the temperature parameter.
  *
  *			In addition, the linear driving force parameter (k) is estimated using the Resistance-in-Series
  *			model, which couples film mass transfer (kf), pore diffusion (Dp), and surface diffusion (Dc)
- *			into a single lumped rate parameter (k). Those parameters all come from material properties 
+ *			into a single lumped rate parameter (k). Those parameters all come from material properties
  *			files in the DGOSPREY framework.
  *
  *			Resistance-in-series: k = 1/(rhop*q*rp/(3*kf*C)) + (1/((rhop*q*rp*rp/(15*ep*Dp)) + (rc*rc/(15*Dc)))
  *			where rhop is the particle density, q is the adsorption, rp is the particle radius, kf is the film
  *			mass transfer parameter, C is the concentration in the gas phase, ep is the particle porosity,
- *			Dp is the pore diffusion parameter, rc is the adsorbent crystal radius, and Dc is the surface 
+ *			Dp is the pore diffusion parameter, rc is the adsorbent crystal radius, and Dc is the surface
  *			diffusion parameter.
  *
- *			van't Hoff: ln(Kno) = -dHno/(R*T) + dSno/R
+ *			van't Hoff: ln(K) = -dH/(R*T) + dS/R
  *			where R is the gas law constant and T is the column temperature.
  *
- *			GSTA isotherm: q = (q_max / m) * SUM(n*Kno*(p/Po)^n)/(1+SUM(Kno*(p/Po)^n))
- *			where q is amount adsorbed, q_max is the maximum capacity, m is the number of adsorption sites
- *			and Kno are the dimensionless equilibrium parameters. Also, p is partial pressure of gas and Po
- *			is taken as a reference state pressure (100 kPa).
- *
- *	\note	For the use of this kernel, our coupled variable with be a gas concentration in mol/L (C), therefore,
- *			we need to use ideal gas law to rewrite the GSTA model in terms of C as opposed to p. Thus, we are also
- *			forced to couple with kernel with column temperature.
- *
- *			Ideal Gas Law: p = C*R*T
+ *			Langmuir isotherm: q = q_max * (K*c)/(1+(K*c))
  *
  *  \author Austin Ladshaw, Alexander Wiechert
- *	\date 08/28/2017
+ *	\date 10/09/2017
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Alexander Wiechert for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -67,30 +58,30 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "CoupledGSTAmodel.h"
+#include "CoupledLangmuirModel.h"
 #include "TimeDerivative.h"
 
-#ifndef CoupledGSTALDFmodel_h
-#define CoupledGSTALDFmodel_h
+#ifndef CoupledLangmuirLDFModel_h
+#define CoupledLangmuirLDFModel_h
 
-/// CoupledGSTALDFmodel class object forward declarationss
-class CoupledGSTALDFmodel;
+/// CoupledLangmuirLDFModel class object forward declarationss
+class CoupledLangmuirLDFModel;
 
 template<>
-InputParameters validParams<CoupledGSTALDFmodel>();
+InputParameters validParams<CoupledLangmuirLDFModel>();
 
-/// CoupledGSTALDFmodel class object inherits from CoupledGSTAmodel object
-/** This class object inherits from the CoupledGSTAmodel and LinearDrivingForce object 
-	in the DGOSPREY framework. All public and protected members of this class are required 
-	function overrides. The kernel interfaces the two non-linear variables to couple the GSTA
-	isotherm model with concentration and temperature. Parameters of the GSTA model are determined 
-	through the parameters in the ThermodynamicProperties file. LinearDrivingForce parameters are
+/// CoupledGSTALDFmodel class object inherits from CoupledLangmuirModel object
+/** This class object inherits from the CoupledGSTAmodel and LinearDrivingForce object
+	in the DGOSPREY framework. All public and protected members of this class are required
+	function overrides. The kernel interfaces the two non-linear variables to couple the Langmuir
+	isotherm model with concentration and temperature. Parameters of the Langmuir model are determined
+	through the input parameters of enthalpy and entropy. Linear Driving Force parameters are
 	determined through GasFlowProperties, AdsorbentProperties, and ThermodynamicProperties.*/
-class CoupledGSTALDFmodel : public CoupledGSTAmodel
+class CoupledLangmuirLDFModel : public CoupledLangmuirModel
 {
 public:
 	/// Required constructor for objects in MOOSE
-	CoupledGSTALDFmodel(const InputParameters & parameters);
+	CoupledLangmuirLDFModel(const InputParameters & parameters);
 	
 protected:
 	/// Function to compute the linear driving force coefficient from material properties
@@ -140,4 +131,4 @@ private:
 	
 };
 
-#endif /* CoupledGSTALDFmodel_h */
+#endif /* CoupledLangmuirLDFModel_h */

@@ -1,5 +1,5 @@
 /*!
- *  \file CoupledGSTLDFAmodel.h
+ *  \file CoupledGSTALDFAmodel.h
  *	\brief Standard kernel for coupling non-linear variables via the GSTA model with LDF kinetics
  *	\details This file creates a standard MOOSE kernel for the coupling of non-linear variables
  *			together via the GSTA model, and applies linear driving force kinetics for the rate
