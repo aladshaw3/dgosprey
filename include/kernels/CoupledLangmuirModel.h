@@ -1,12 +1,13 @@
 /*!
- *  \file CoupledExtendedLangmuirFunction.h
- *	\brief Standard kernel for coupling a vector non-linear variables via an extended langmuir function
- *	\details This file creates a standard MOOSE kernel for the coupling of a vector non-linear variables
- *			together via an extended langmuir forcing function, 
- *			i.e., variable = b_i * K_i * coupled_variable_i / 1 + sum(j, K_j * coupled_variable_j).
+ *  \file CoupledLangmuirModel.h
+ *	\brief Standard kernel for coupling non-linear variables via a langmuir model
+ *	\details This file creates a standard MOOSE kernel for the coupling of non-linear variables
+ *			together via a langmuir forcing function, i.e., variable = b * K * coupled_variable / 1 + K * coupled_variable.
+ *			In this kernel, the Langmuir parameter (K) is a function of the non-linear variable temperature through
+ *			the van't Hoff expression: ln(K) = -dH/(R*T) + dS/R
  *
  *  \author Austin Ladshaw, Alexander Wiechert
- *	\date 06/21/2017
+ *	\date 10/09/2017
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Alexander Wiechert for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -34,37 +35,35 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#include "CoupledLangmuirForcingFunction.h"
+#include "flock.h"
 
-#ifndef CoupledExtendedLangmuirFunction_h
-#define CoupledExtendedLangmuirFunction_h
+#ifndef CoupledLangmuirModel_h
+#define CoupledLangmuirModel_h
 
-/// CoupledExtendedLangmuirFunction class object forward declarationss
-class CoupledExtendedLangmuirFunction;
+/// CoupledLangmuirModel class object forward declarationss
+class CoupledLangmuirModel;
 
 template<>
-InputParameters validParams<CoupledExtendedLangmuirFunction>();
+InputParameters validParams<CoupledLangmuirModel>();
 
-/// CoupledExtendedLangmuirFunction class object inherits from Kernel object
+/// CoupledLangmuirModel class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
-	The kernel interfaces the set of non-linear variables to couple an extended Langmuir 
-	forcing function between given objects. */
-class CoupledExtendedLangmuirFunction : public Kernel
+	The kernel interfaces the two non-linear variables to couple a Langmuir forcing
+	function between given objects. */
+class CoupledLangmuirModel : public CoupledLangmuirForcingFunction
 {
 public:
 	/// Required constructor for objects in MOOSE
-	CoupledExtendedLangmuirFunction(const InputParameters & parameters);
+	CoupledLangmuirModel(const InputParameters & parameters);
 	
 protected:
-	/// Function to compute the Extended Langmuir Equilibrium value
-	Real computeExtLangmuirEquilibrium();
+	/// Function to compute the Langmuir equilibria constant from the coupled temperature
+	void computeLangmuirCoefficient();
 	
-	/// Function to compute the Jacobi for the main coupled concentration
-	Real computeExtLangmuirConcJacobi();
-	
-	/// Function to compute the off-diagonal Jacobi for the other coupled concentrations
-	Real computeExtLangmuirOffJacobi(int i);
+	/// Function to compute the Langmuir derivative with respect to temperature
+	Real computeLangTempDerivative();
 	
 	/// Required residual function for standard kernels in MOOSE
 	/** This function returns a residual contribution for this object.*/
@@ -82,13 +81,10 @@ protected:
 	 cross coupling of the variables. */
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 	
-	Real _maxcap;										///< Manimum Capacity for the primary adsorbed species
-	std::vector<Real> _langmuircoef;					///< Langmuir Coefficients for the coupled variables
-	std::vector<const VariableValue *> _coupled;		///< Pointer list to the coupled gases
-	std::vector<unsigned int> _coupled_vars;			///< Indices for the gas species in the system
-	const VariableValue & _coupled_i;					///< Primary Coupled variable
-	const unsigned int _coupled_var_i;					///< Variable identification for the primary coupled variable
-	int _lang_index;									///< Index for primary langmuir coefficient
+	Real _enthalpy;							///< Value of reaction enthalpy (J/mol)
+	Real _entropy;							///< Value of reaction entropy (J/K/mol)
+	const VariableValue & _coupled_temp;	///< Coupled gas temperature variable
+	const unsigned int _coupled_var_temp;	///< Variable identification for the coupled temperature variable
 	
 private:
 	
@@ -96,4 +92,4 @@ private:
 
 
 
-#endif /* CoupledExtendedLangmuirFunction */
+#endif /* CoupledLangmuirModel_h */

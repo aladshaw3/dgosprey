@@ -7,7 +7,7 @@
 	length = 50.8
 	inner_diameter = 1.905
 	pellet_diameter = 0.056
-	dt = 0.5
+	dt = 0.1
 
 [] #END GlobalParams
 
@@ -241,7 +241,7 @@
 #		langmuir_coeff = '4594 14600'
 #		max_capacity = 1.94
 #	[../]
-
+#
 #	[./Xe_adsorption]
 #		type = CoupledExtendedLangmuirFunction
 #		variable = Xe_Adsorbed
@@ -250,6 +250,28 @@
 #		langmuir_coeff = '4594 14600'
 #		max_capacity = 1.367
 #	[../]
+ 
+	[./Kr_adsorption]
+		type = CoupledExtendedLangmuirModel
+		variable = Kr_Adsorbed
+		main_coupled = Kr
+		coupled_temp = column_temp
+		coupled_list = 'Kr Xe'
+		enthalpies = '-17306 -22684'
+		entropies = '-23.4 -23.4'
+		max_capacity = 1.9375
+	[../]
+
+	[./Xe_adsorption]
+		type = CoupledExtendedLangmuirModel
+		variable = Xe_Adsorbed
+		main_coupled = Xe
+		coupled_temp = column_temp
+		coupled_list = 'Kr Xe'
+		enthalpies = '-17306 -22684'
+		entropies = '-23.4 -23.4'
+		max_capacity = 1.3666
+	[../]
  
 #	[./Kr_adsorption]
 #		type = CoupledGSTAmodel
@@ -267,21 +289,41 @@
 #		index = 1
 #	[../]
  
-	[./Kr_adsorption]
-		type = CoupledGSTALDFmodel
-		variable = Kr_Adsorbed
-		coupled_gas = Kr
-		coupled_temp = column_temp
-		index = 0
-	[../]
+#	[./Kr_adsorption]
+#		type = CoupledGSTALDFmodel
+#		variable = Kr_Adsorbed
+#		coupled_gas = Kr
+#		coupled_temp = column_temp
+#		index = 0
+#	[../]
+#
+#	[./Xe_adsorption]
+#		type = CoupledGSTALDFmodel
+#		variable = Xe_Adsorbed
+#		coupled_gas = Xe
+#		coupled_temp = column_temp
+#		index = 1
+#	[../]
  
-	[./Xe_adsorption]
-		type = CoupledGSTALDFmodel
-		variable = Xe_Adsorbed
-		coupled_gas = Xe
-		coupled_temp = column_temp
-		index = 1
-	[../]
+#	[./Kr_adsorption]
+#		type = CoupledLangmuirModel
+#		variable = Kr_Adsorbed
+#		coupled = Kr
+#		coupled_temp = column_temp
+#		enthalpy = -17306
+#		entropy = -23.4
+#		max_capacity = 1.9375
+#	[../]
+#
+#	[./Xe_adsorption]
+#		type = CoupledLangmuirModel
+#		variable = Xe_Adsorbed
+#		coupled = Xe
+#		coupled_temp = column_temp
+#		enthalpy = -22684
+#		entropy = -23.4
+#		max_capacity = 1.3666
+#	[../]
 
 
 [] #END Kernels
@@ -410,7 +452,7 @@
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
-		extern_heat_trans_coef = 90.0       #not known
+		extern_heat_trans_coef = 9.0       #not known
 	[../]
 
 	[./FlowMaterials]
@@ -529,14 +571,14 @@
 [Executioner]
 
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
 
 		# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-8
 	nl_abs_tol = 1e-4
 	l_tol = 1e-8
 	l_max_its = 100
-	nl_max_its = 50
+	nl_max_its = 20
 
 	solve_type = pjfnk
 	line_search = basic    # Options: default none basic l2 bt

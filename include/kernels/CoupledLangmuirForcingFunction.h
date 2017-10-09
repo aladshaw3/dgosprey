@@ -56,6 +56,9 @@ public:
     CoupledLangmuirForcingFunction(const InputParameters & parameters);
     
 protected:
+	/// Function to compute the Langmuir derivative with respect to concentration
+	Real computeLangConcDerivative();
+	
     /// Required residual function for standard kernels in MOOSE
     /** This function returns a residual contribution for this object.*/
     virtual Real computeQpResidual();

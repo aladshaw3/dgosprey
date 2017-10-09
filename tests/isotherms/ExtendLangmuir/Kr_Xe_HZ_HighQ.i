@@ -237,21 +237,25 @@ index = 1
 [../]
 
 [./Kr_adsorption]
-type = CoupledExtendedLangmuirFunction
+type = CoupledExtendedLangmuirModel
 variable = Kr_Adsorbed
 main_coupled = Kr
+coupled_temp = column_temp
 coupled_list = 'Kr Xe'
-langmuir_coeff = '4594 14600'
-max_capacity = 1.94
+enthalpies = '-17306 -22684'
+entropies = '-23.4 -23.4'
+max_capacity = 1.9375
 [../]
 
 [./Xe_adsorption]
-type = CoupledExtendedLangmuirFunction
+type = CoupledExtendedLangmuirModel
 variable = Xe_Adsorbed
 main_coupled = Xe
+coupled_temp = column_temp
 coupled_list = 'Kr Xe'
-langmuir_coeff = '4594 14600'
-max_capacity = 1.367
+enthalpies = '-17306 -22684'
+entropies = '-23.4 -23.4'
+max_capacity = 1.3666
 [../]
 
 

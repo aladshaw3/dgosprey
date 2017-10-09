@@ -17,11 +17,11 @@
 	type = GeneratedMesh
 	dim = 2
 	nx = 5
-	ny = 40
+	ny = 60
 	xmin = 0.0
 	xmax = 1.27 #cm
 	ymin = 0.0
-	ymax = 13.7 #cm
+	ymax = 30.4 #cm
  
  [] # END Mesh
  
@@ -30,22 +30,22 @@
 	[./column_1]
 		type = SubdomainBoundingBox
 		block_id = 0
-		top_right = '1.27 6.35 0'
+		top_right = '1.27 12.7 0'
 		bottom_left = '0 0 0'
 	[../]
  
 	[./conduit_12]
 		type = SubdomainBoundingBox
 		block_id = 1
-		top_right = '1.27 7.35 0'
-		bottom_left = '0 6.35 0'
+		top_right = '1.27 17.7 0'
+		bottom_left = '0 12.7 0'
 	[../]
  
 	[./column_2]
 		type = SubdomainBoundingBox
 		block_id = 2
-		top_right = '1.27 13.7 0'
-		bottom_left = '0 7.35 0'
+		top_right = '1.27 30.4 0'
+		bottom_left = '0 17.7 0'
 	[../]
  
 	[./interface_112]
@@ -416,7 +416,7 @@
 		type = WallTemperature
 		variable = wall_temp_12
 		column_temp = column_temp
-		ambient_temp = 303.15
+		ambient_temp = ambient_temp
 	[../]
  
 	[./wall_temp_calc_2]
@@ -424,7 +424,7 @@
 		type = WallTemperature
 		variable = wall_temp_2
 		column_temp = column_temp
-		ambient_temp = 313.15
+		ambient_temp = ambient_temp
 	[../]
  
  [] #END AuxKernels
@@ -563,6 +563,7 @@
         entropy_site_6 = '0 0 0'
 	[../]
  
+# Properties for the conduit between beds
 	[./BedMaterials_12]
 		type = BedProperties
 		block = 1
@@ -570,10 +571,10 @@
 		inner_diameter = 2.54
 		outer_diameter = 2.84
 		bulk_porosity = 1.0
-		wall_density = 8.0
-		wall_heat_capacity = 0.5
-		wall_heat_trans_coef = 6.12
-		extern_heat_trans_coef = 6.12
+		wall_density = 12.0
+		wall_heat_capacity = 1.5
+		wall_heat_trans_coef = 9.12
+		extern_heat_trans_coef = 9.12
 	[../]
  
 	[./FlowMaterials_12]
@@ -818,13 +819,13 @@
 	nl_abs_tol = 1e-4
 	l_tol = 1e-8
 	l_max_its = 200
-	nl_max_its = 50
+	nl_max_its = 30
  
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt
 	start_time = 0.0
 	end_time = 90.0
-	dtmax = 1.0
+	dtmax = 0.5
 	
 	[./TimeStepper]
 		type = SolutionTimeAdaptiveDT

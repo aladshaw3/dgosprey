@@ -92,6 +92,9 @@
 #include "CoupledGSTAmodel.h"
 #include "CoupledGSTALDFmodel.h"
 
+#include "CoupledLangmuirModel.h"
+#include "CoupledExtendedLangmuirModel.h"
+
 template<>
 InputParameters validParams<DgospreyApp>()
 {
@@ -150,6 +153,8 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(CoupledGSTAisotherm);
 	registerKernel(CoupledGSTAmodel);
 	registerKernel(CoupledGSTALDFmodel);
+	registerKernel(CoupledLangmuirModel);
+	registerKernel(CoupledExtendedLangmuirModel);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(WallTemperature);

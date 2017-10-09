@@ -56,6 +56,11 @@ _coupled_var(coupled("coupled"))
     
 }
 
+Real CoupledLangmuirForcingFunction::computeLangConcDerivative()
+{
+	return _maxcap*((_langmuircoef*_phi[_j][_qp])/((1.0+_langmuircoef*_coupled_u[_qp])*(1.0+_langmuircoef*_coupled_u[_qp])));
+}
+
 Real CoupledLangmuirForcingFunction::computeQpResidual()
 {
     return _u[_qp]*_test[_i][_qp]-_test[_i][_qp]*_maxcap*((_langmuircoef*_coupled_u[_qp])/(1.0+_langmuircoef*_coupled_u[_qp]));
@@ -69,7 +74,7 @@ Real CoupledLangmuirForcingFunction::computeQpJacobian()
 Real CoupledLangmuirForcingFunction::computeQpOffDiagJacobian(unsigned int jvar)
 {
     if (jvar == _coupled_var)
-        return -_test[_i][_qp]*_maxcap*((_langmuircoef*_phi[_j][_qp])/((1.0+_langmuircoef*_coupled_u[_qp])*(1.0+_langmuircoef*_coupled_u[_qp])));
+        return -_test[_i][_qp]*computeLangConcDerivative();
     
     return 0.0;
 }
