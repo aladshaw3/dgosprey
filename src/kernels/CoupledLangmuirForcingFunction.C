@@ -56,6 +56,11 @@ _coupled_var(coupled("coupled"))
     
 }
 
+Real CoupledLangmuirForcingFunction::computeLangmuirEquilibrium()
+{
+	return _maxcap*((_langmuircoef*_coupled_u[_qp])/(1.0+_langmuircoef*_coupled_u[_qp]));
+}
+
 Real CoupledLangmuirForcingFunction::computeLangConcDerivative()
 {
 	return _maxcap*((_langmuircoef*_phi[_j][_qp])/((1.0+_langmuircoef*_coupled_u[_qp])*(1.0+_langmuircoef*_coupled_u[_qp])));
@@ -63,7 +68,7 @@ Real CoupledLangmuirForcingFunction::computeLangConcDerivative()
 
 Real CoupledLangmuirForcingFunction::computeQpResidual()
 {
-    return _u[_qp]*_test[_i][_qp]-_test[_i][_qp]*_maxcap*((_langmuircoef*_coupled_u[_qp])/(1.0+_langmuircoef*_coupled_u[_qp]));
+    return _u[_qp]*_test[_i][_qp]-_test[_i][_qp]*computeLangmuirEquilibrium();
 }
 
 Real CoupledLangmuirForcingFunction::computeQpJacobian()

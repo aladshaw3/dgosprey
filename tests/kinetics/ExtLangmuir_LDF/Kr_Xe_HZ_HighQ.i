@@ -21,8 +21,8 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 5
-	ny = 40
+	nx = 3
+	ny = 8
 	xmin = 0.0
 	xmax = 0.9525 #cm
 	ymin = 0.0
@@ -232,46 +232,6 @@
 		coupled = Xe_Adsorbed
 		index = 1
 	[../]
-
-#	[./Kr_adsorption]
-#		type = CoupledExtendedLangmuirFunction
-#		variable = Kr_Adsorbed
-#		main_coupled = Kr
-#		coupled_list = 'Kr Xe'
-#		langmuir_coeff = '4594 14600'
-#		max_capacity = 1.94
-#	[../]
-#
-#	[./Xe_adsorption]
-#		type = CoupledExtendedLangmuirFunction
-#		variable = Xe_Adsorbed
-#		main_coupled = Xe
-#		coupled_list = 'Kr Xe'
-#		langmuir_coeff = '4594 14600'
-#		max_capacity = 1.367
-#	[../]
- 
-#	[./Kr_adsorption]
-#		type = CoupledExtendedLangmuirModel
-#		variable = Kr_Adsorbed
-#		main_coupled = Kr
-#		coupled_temp = column_temp
-#		coupled_list = 'Kr Xe'
-#		enthalpies = '-17306 -22684'
-#		entropies = '-23.4 -23.4'
-#		max_capacity = 1.9375
-#	[../]
-#
-#	[./Xe_adsorption]
-#		type = CoupledExtendedLangmuirModel
-#		variable = Xe_Adsorbed
-#		main_coupled = Xe
-#		coupled_temp = column_temp
-#		coupled_list = 'Kr Xe'
-#		enthalpies = '-17306 -22684'
-#		entropies = '-23.4 -23.4'
-#		max_capacity = 1.3666
-#	[../]
  
 	[./Kr_adsorption]
 		type = CoupledExtendedLangmuirLDFModel
@@ -301,81 +261,6 @@
 		beta = 15.0
 	[../]
  
-#	[./Kr_adsorption]
-#		type = CoupledGSTAmodel
-#		variable = Kr_Adsorbed
-#		coupled_gas = Kr
-#		coupled_temp = column_temp
-#		index = 0
-#	[../]
-#
-#	[./Xe_adsorption]
-#		type = CoupledGSTAmodel
-#		variable = Xe_Adsorbed
-#		coupled_gas = Xe
-#		coupled_temp = column_temp
-#		index = 1
-#	[../]
- 
-#	[./Kr_adsorption]
-#		type = CoupledGSTALDFmodel
-#		variable = Kr_Adsorbed
-#		coupled_gas = Kr
-#		coupled_temp = column_temp
-#		index = 0
-#	[../]
-#
-#	[./Xe_adsorption]
-#		type = CoupledGSTALDFmodel
-#		variable = Xe_Adsorbed
-#		coupled_gas = Xe
-#		coupled_temp = column_temp
-#		index = 1
-#	[../]
- 
-#	[./Kr_adsorption]
-#		type = CoupledLangmuirModel
-#		variable = Kr_Adsorbed
-#		coupled = Kr
-#		coupled_temp = column_temp
-#		enthalpy = -17306
-#		entropy = -23.4
-#		max_capacity = 1.9375
-#	[../]
-#
-#	[./Xe_adsorption]
-#		type = CoupledLangmuirModel
-#		variable = Xe_Adsorbed
-#		coupled = Xe
-#		coupled_temp = column_temp
-#		enthalpy = -22684
-#		entropy = -23.4
-#		max_capacity = 1.3666
-#	[../]
- 
-#	[./Kr_adsorption]
-#		type = CoupledLangmuirLDFModel
-#		variable = Kr_Adsorbed
-#		coupled = Kr
-#		coupled_temp = column_temp
-#		enthalpy = -17306
-#		entropy = -23.4
-#		max_capacity = 1.9375
-#		index = 0
-#	[../]
-#
-#	[./Xe_adsorption]
-#		type = CoupledLangmuirLDFModel
-#		variable = Xe_Adsorbed
-#		coupled = Xe
-#		coupled_temp = column_temp
-#		enthalpy = -22684
-#		entropy = -23.4
-#		max_capacity = 1.3666
-#		index = 1
-#	[../]
-
-
 [] #END Kernels
 
 [DGKernels]
@@ -633,14 +518,12 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none basic l2 bt
 	start_time = 0.0
-	end_time = 10.0
+	end_time = 0.3
 	dtmax = 0.1
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
-#		type = ConstantDT
-		type = SolutionTimeAdaptiveDT
-#		type = DGOSPREY_TimeStepper
+		type = ConstantDT
 	[../]
 
 [] #END Executioner

@@ -1,12 +1,12 @@
 /*!
- *  \file CoupledLangmuirLDFModel.h
- *	\brief Standard kernel for coupling non-linear variables via the langmuir model with LDF kinetics
+ *  \file CoupledExtendedLangmuirLDFModel.h
+ *	\brief Standard kernel for coupling non-linear variables via the extended langmuir model with LDF kinetics
  *	\details This file creates a standard MOOSE kernel for the coupling of non-linear variables
- *			together via the langmuir model, and applies linear driving force kinetics for the rate
+ *			together via the extended langmuir model, and applies linear driving force kinetics for the rate
  *			of adsorption.
  *
- *			This kernel extends the CoupledLangmuirModel kernel by calculating the model parameters from
- *			information in the input file for enthalpy and entropy. In addition, it calculates the Linear Driving Force
+ *			This kernel extends the CoupledExtendedLangmuirModel kernel by calculating the model parameters from
+ *			information in the input file for enthalpies and entropies. In addition, it calculates the Linear Driving Force
  *			parameter by estimating the overall LDF rate coefficient from material properties.
  *			The langmuir parameter (K) (described below) are to be estimated from the site enthalpies (dH)
  *			and entropies (dS) using the van't Hoff expression (shown below). Thus, this model
@@ -24,13 +24,13 @@
  *			Dp is the pore diffusion parameter, rc is the adsorbent crystal radius, and Dc is the surface
  *			diffusion parameter.
  *
- *			van't Hoff: ln(K) = -dH/(R*T) + dS/R
+ *			van't Hoff: ln(K_i) = -dH_i/(R*T) + dS_i/R
  *			where R is the gas law constant and T is the column temperature.
  *
- *			Langmuir isotherm: q = q_max * (K*c)/(1+(K*c))
+ *			Extended Langmuir isotherm: q_i = q_max_i * SUM(K_i*c_i)/(1+SUM(K_j*c_j))
  *
  *  \author Austin Ladshaw, Alexander Wiechert
- *	\date 10/09/2017
+ *	\date 10/10/2017
  *	\copyright This kernel was designed and built at the Georgia Institute
  *             of Technology by Alexander Wiechert for PhD research in the area
  *             of adsorption and surface science and was developed for use
@@ -58,30 +58,30 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "CoupledLangmuirModel.h"
+#include "CoupledExtendedLangmuirModel.h"
 #include "TimeDerivative.h"
 
-#ifndef CoupledLangmuirLDFModel_h
-#define CoupledLangmuirLDFModel_h
+#ifndef CoupledExtendedLangmuirLDFModel_h
+#define CoupledExtendedLangmuirLDFModel_h
 
-/// CoupledLangmuirLDFModel class object forward declarationss
-class CoupledLangmuirLDFModel;
+/// CoupledExtendedLangmuirLDFModel class object forward declarationss
+class CoupledExtendedLangmuirLDFModel;
 
 template<>
-InputParameters validParams<CoupledLangmuirLDFModel>();
+InputParameters validParams<CoupledExtendedLangmuirLDFModel>();
 
-/// CoupledLangmuirLDFModel class object inherits from CoupledLangmuirModel object
-/** This class object inherits from the CoupledLangmuirModel
+/// CoupledExtendedLangmuirLDFModel class object inherits from CoupledExtendedLangmuirModel object
+/** This class object inherits from the CoupledExtendedLangmuirModel
 	in the DGOSPREY framework. All public and protected members of this class are required
 	function overrides. The kernel interfaces the two non-linear variables to couple the Langmuir
 	isotherm model with concentration and temperature. Parameters of the Langmuir model are determined
 	through the input parameters of enthalpy and entropy. Linear Driving Force parameters are
 	determined through GasFlowProperties, AdsorbentProperties, and ThermodynamicProperties.*/
-class CoupledLangmuirLDFModel : public CoupledLangmuirModel
+class CoupledExtendedLangmuirLDFModel : public CoupledExtendedLangmuirModel
 {
 public:
 	/// Required constructor for objects in MOOSE
-	CoupledLangmuirLDFModel(const InputParameters & parameters);
+	CoupledExtendedLangmuirLDFModel(const InputParameters & parameters);
 	
 protected:
 	/// Function to compute the linear driving force coefficient from material properties
@@ -132,4 +132,5 @@ private:
 	
 };
 
-#endif /* CoupledLangmuirLDFModel_h */
+
+#endif /* CoupledExtendedLangmuirLDFModel_h */

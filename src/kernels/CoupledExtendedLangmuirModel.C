@@ -121,7 +121,7 @@ Real CoupledExtendedLangmuirModel::computeQpOffDiagJacobian(unsigned int jvar)
 	//Off-diagonal for temperature
 	if (jvar == _coupled_var_temp)
 	{
-		//return -_test[_i][_qp]*computeExtLangmuirTempJacobi();
+		return -_test[_i][_qp]*computeExtLangmuirTempJacobi();
 	}
 	
 	return 0.0;

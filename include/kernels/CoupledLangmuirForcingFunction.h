@@ -56,6 +56,9 @@ public:
     CoupledLangmuirForcingFunction(const InputParameters & parameters);
     
 protected:
+	/// Function to compute the Langmuir equilibrium
+	Real computeLangmuirEquilibrium();
+	
 	/// Function to compute the Langmuir derivative with respect to concentration
 	Real computeLangConcDerivative();
 	
