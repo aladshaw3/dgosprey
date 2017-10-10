@@ -567,7 +567,7 @@
 	[./BedMaterials_12]
 		type = BedProperties
 		block = 1
-		length = 1.0
+		length = 5.0
 		inner_diameter = 2.54
 		outer_diameter = 2.84
 		bulk_porosity = 1.0
