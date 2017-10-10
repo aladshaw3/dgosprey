@@ -634,7 +634,7 @@
 	line_search = basic    # Options: default none basic l2 bt
 	start_time = 0.0
 	end_time = 10.0
-	dtmax = 0.1
+	dtmax = 0.5
 
 	[./TimeStepper]
 		#Need to write a custom TimeStepper to enforce a maximum allowable dt
