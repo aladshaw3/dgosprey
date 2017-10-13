@@ -42,7 +42,12 @@
 	family = MONOMIAL
  [../]
  
-[./He]
+[./N2]
+	order = FIRST
+	family = MONOMIAL
+ [../]
+ 
+ [./O2]
 	order = FIRST
 	family = MONOMIAL
  [../]
@@ -65,13 +70,25 @@
 	initial_condition = 0.0
  [../]
  
+ [./N2_Adsorbed]
+	order = FIRST
+	family = MONOMIAL
+	initial_condition = 0.0
+ [../]
+ 
 [./Kr_AdsorbedHeat]
 	order = FIRST
 	family = MONOMIAL
 	initial_condition = 0.0
-[../]
+ [../]
  
 [./Xe_AdsorbedHeat]
+	order = FIRST
+	family = MONOMIAL
+	initial_condition = 0.0
+ [../]
+ 
+ [./N2_AdsorbedHeat]
 	order = FIRST
 	family = MONOMIAL
 	initial_condition = 0.0
@@ -120,10 +137,18 @@
 	initial_temp = 295.15
  [../]
  
-[./He_IC]
+[./N2_IC]
 	type = ConcentrationIC
-	variable = He
-	initial_mole_frac = 1.0
+	variable = N2
+	initial_mole_frac = 0.8
+	initial_press = 101.35
+	initial_temp = 295.15
+ [../]
+ 
+ [./O2_IC]
+	type = ConcentrationIC
+	variable = O2
+	initial_mole_frac = 0.2
 	initial_press = 101.35
 	initial_temp = 295.15
  [../]
@@ -176,20 +201,42 @@
 	variable = Xe
  [../]
  
-[./accumHe]
+[./accumN2]
 	type = BedMassAccumulation
-	variable = He
+	variable = N2
  [../]
  
-[./diffHe]
+ [./N2_MT]
+	type = SolidMassTransfer
+	variable = N2
+	coupled = N2_Adsorbed
+ [../]
+ 
+[./diffN2]
 	type = GColumnMassDispersion
-	variable = He
+	variable = N2
 	index = 2
  [../]
  
-[./advHe]
+[./advN2]
 	type = GColumnMassAdvection
-	variable = He
+	variable = N2
+ [../]
+ 
+ [./accumO2]
+	type = BedMassAccumulation
+	variable = O2
+ [../]
+ 
+[./diffO2]
+	type = GColumnMassDispersion
+	variable = O2
+	index = 3
+ [../]
+ 
+[./advO2]
+	type = GColumnMassAdvection
+	variable = O2
  [../]
  
 [./columnAccum]
@@ -219,6 +266,12 @@
 	coupled = Xe_AdsorbedHeat
  [../]
  
+ [./columnAdsHeat_N2]
+	type = SolidHeatTransfer
+	variable = column_temp
+	coupled = N2_AdsorbedHeat
+ [../]
+ 
 [./Kr_adsheat]
 	type = HeatofAdsorption
 	variable = Kr_AdsorbedHeat
@@ -233,15 +286,22 @@
 	index = 1
  [../]
  
+ [./N2_adsheat]
+	type = HeatofAdsorption
+	variable = N2_AdsorbedHeat
+	coupled = N2_Adsorbed
+	index = 2
+ [../]
+ 
 [./Kr_adsorption]
 	type = CoupledExtendedLangmuirLDFModel
 	variable = Kr_Adsorbed
 	main_coupled = Kr
 	coupled_temp = column_temp
-	coupled_list = 'Kr Xe'
-	enthalpies = '-3883 -1920'
-	entropies = '35 71.6'
-	max_capacity = 1.3466
+	coupled_list = 'Kr Xe N2'
+	enthalpies = '-30153 -23595 -12262'
+	entropies = '-95.02 -23.5 -26.18'
+	max_capacity = 1.35
 	index = 0
 	alpha = 15.0
 	beta = 15.0
@@ -252,15 +312,28 @@
 	variable = Xe_Adsorbed
 	main_coupled = Xe
 	coupled_temp = column_temp
-	coupled_list = 'Kr Xe'
-	enthalpies = '-3883 -1920'
-	entropies = '35 71.6'
-	max_capacity = 1.206
+	coupled_list = 'Kr Xe N2'
+	enthalpies = '-30153 -23595 -12262'
+	entropies = '-95.02 -23.5 -26.18'
+	max_capacity = 1.53
 	index = 1
 	alpha = 15.0
 	beta = 15.0
  [../]
  
+ [./N2_adsorption]
+	type = CoupledExtendedLangmuirLDFModel
+	variable = N2_Adsorbed
+	main_coupled = N2
+	coupled_temp = column_temp
+	coupled_list = 'Kr Xe N2'
+	enthalpies = '-30153 -23595 -12262'
+	entropies = '-95.02 -23.5 -26.18'
+	max_capacity = 0.035
+	index = 2
+	alpha = 15.0
+	beta = 15.0
+ [../]
  
 [] #END Kernels
  
@@ -288,15 +361,26 @@
 	variable = Xe
  [../]
  
-[./dg_disp_He]
+[./dg_disp_N2]
 	type = DGColumnMassDispersion
-	variable = He
+	variable = N2
 	index = 2
  [../]
  
-[./dg_adv_He]
+[./dg_adv_N2]
 	type = DGColumnMassAdvection
-	variable = He
+	variable = N2
+ [../]
+ 
+ [./dg_disp_O2]
+	type = DGColumnMassDispersion
+	variable = O2
+	index = 3
+ [../]
+ 
+[./dg_adv_O2]
+	type = DGColumnMassAdvection
+	variable = O2
  [../]
  
 [./dg_disp_heat]
@@ -318,7 +402,7 @@
 	execute_on = 'initial timestep_end'
 	variable = total_pressure
 	temperature = column_temp
-	coupled_gases = 'Kr Xe He'
+	coupled_gases = 'Kr Xe N2 O2'
  [../]
  
  
@@ -339,7 +423,7 @@
 	boundary = 'top bottom'
 	input_temperature = 295.15
 	input_pressure = 101.35
-	input_molefraction = 0.00015
+	input_molefraction = 0.000150122
 	index = 0
  [../]
  
@@ -349,18 +433,28 @@
 	boundary = 'top bottom'
 	input_temperature = 295.15
 	input_pressure = 101.35
-	input_molefraction = 0.001
+	input_molefraction = 0.00099807
 	index = 1
  [../]
  
-[./He_Flux]
+[./N2_Flux]
 	type = DGMassFluxBC
-	variable = He
+	variable = N2
 	boundary = 'top bottom'
 	input_temperature = 295.15
 	input_pressure = 101.35
-	input_molefraction = 0.99885
+	input_molefraction = 0.7885
 	index = 2
+ [../]
+ 
+ [./O2_Flux]
+	type = DGMassFluxBC
+	variable = O2
+	boundary = 'top bottom'
+	input_temperature = 295.15
+	input_pressure = 101.35
+	input_molefraction = 0.21035
+	index = 3
  [../]
  
 [./Heat_Gas_Flux]
@@ -395,14 +489,14 @@
 [./FlowMaterials]
 	type = GasFlowProperties
 	block = 0
-	molecular_weight = '83.8 131.29 4.0026'
-	comp_heat_capacity = '0.25 0.16 5.1916'
-	comp_ref_viscosity = '0.00023219 0.00021216 0.0001885'
-	comp_ref_temp = '273.15 273.15 273.15'
-	comp_Sutherland_const = '266.505 232.746 80.0'
+	molecular_weight = '83.8 131.29 28.016 32'
+	comp_heat_capacity = '0.25 0.16 1.04 0.919'
+	comp_ref_viscosity = '0.00023219 0.00021216 0.0001781 0.0002018'
+	comp_ref_temp = '273.15 273.15 300.55 292.25'
+	comp_Sutherland_const = '266.505 232.746 111 127'
 	temperature = column_temp
 	total_pressure = total_pressure
-	coupled_gases = 'Kr Xe He'
+	coupled_gases = 'Kr Xe N2 O2'
  [../]
  
 [./AdsorbentMaterials]
@@ -414,12 +508,12 @@
 	macropore_radius = 1.335e-7		#not Known
 	pellet_density = 2.519				#not Known
 	pellet_heat_capacity = 1.2  		#not known
-	ref_diffusion = '0 0 0'
-	activation_energy = '0 0 0'
-	ref_temperature = '0 0 0'
-	affinity = '0 0 0'
+	ref_diffusion = '0 0 0 0'
+	activation_energy = '0 0 0 0'
+	ref_temperature = '0 0 0 0'
+	affinity = '0 0 0 0'
 	temperature = column_temp
-	coupled_gases = 'Kr Xe He'
+	coupled_gases = 'Kr Xe N2 O2'
  [../]
  
 [./AdsorbateMaterials]
@@ -427,25 +521,25 @@
 	block = 0
 	temperature = column_temp
 	total_pressure = total_pressure
-	coupled_gases = 'Kr Xe He'
-	number_sites = '2 3 0'
-	maximum_capacity = '1.716 1.479 0' #mol/kg
-	molar_volume = '20.785 25.412 0' #cm^3/mol
+	coupled_gases = 'Kr Xe N2 O2'
+	number_sites = '1 1 1 0'
+	maximum_capacity = '1.35 1.53 0.035 0' #mol/kg
+	molar_volume = '20.785 25.412 15.8 0' #cm^3/mol
  
-	enthalpy_site_1 = '-44696.86 -18455.18 0'
-	enthalpy_site_2 = '-65465.52 -35511.74 0'
-	enthalpy_site_3 = '0 -53315.13 0'
-	enthalpy_site_4 = '0 0 0'
-	enthalpy_site_5 = '0 0 0'
-	enthalpy_site_6 = '0 0 0'
+	enthalpy_site_1 = '-30153 -23595 -12262 0'
+	enthalpy_site_2 = '0 0 0 0'
+	enthalpy_site_3 = '0 0 0 0'
+	enthalpy_site_4 = '0 0 0 0'
+	enthalpy_site_5 = '0 0 0 0'
+	enthalpy_site_6 = '0 0 0 0'
  
-	entropy_site_1 = '-170.45 -23.25 0'
-	entropy_site_2 = '-248.55 -62.45 0'
-	entropy_site_3 = '0 -100.10 0'
-	entropy_site_4 = '0 0 0'
-	entropy_site_5 = '0 0 0'
-	entropy_site_6 = '0 0 0'
-[../]
+	entropy_site_1 = '-95.02 -23.50 -26.18 0'
+	entropy_site_2 = '0 0 0 0'
+	entropy_site_3 = '0 0 0 0'
+	entropy_site_4 = '0 0 0 0'
+	entropy_site_5 = '0 0 0 0'
+	entropy_site_6 = '0 0 0 0'
+ [../]
  
  [] #END Materials
  
@@ -465,6 +559,13 @@
 	execute_on = 'initial timestep_end'
  [../]
  
+ [./N2_exit]
+	type = SideAverageValue
+	boundary = 'top'
+	variable = N2
+	execute_on = 'initial timestep_end'
+ [../]
+ 
 [./Kr_avg]
 	type = ElementAverageValue
 	variable = Kr
@@ -474,6 +575,12 @@
 [./Xe_avg]
 	type = ElementAverageValue
 	variable = Xe
+	execute_on = 'initial timestep_end'
+ [../]
+ 
+ [./N2_avg]
+	type = ElementAverageValue
+	variable = N2
 	execute_on = 'initial timestep_end'
  [../]
  
@@ -496,11 +603,16 @@
 	variable = Kr_Adsorbed
 	execute_on = 'initial timestep_end'
  [../]
-
  
 [./Xe_solid]
 	type = ElementAverageValue
 	variable = Xe_Adsorbed
+	execute_on = 'initial timestep_end'
+ [../]
+ 
+ [./N2_solid]
+	type = ElementAverageValue
+	variable = N2_Adsorbed
 	execute_on = 'initial timestep_end'
  [../]
  
@@ -509,7 +621,7 @@
 [Executioner]
  
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
  
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10
@@ -521,7 +633,7 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none basic l2 bt
 	start_time = 0.0
-	end_time = 40.0
+	end_time = 5.0
 	dtmax = 0.5
  
 	[./TimeStepper]
@@ -541,7 +653,7 @@
 	petsc_options = '-snes_converged_reason'
 	petsc_options_iname = '-pc_type -ksp_gmres_restart -snes_max_funcs'
 	petsc_options_value = 'lu 2000 60000'
-[../]
+ [../]
  
  [] #END Preconditioning
  

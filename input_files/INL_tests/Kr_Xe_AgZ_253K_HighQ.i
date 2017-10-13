@@ -299,8 +299,8 @@
 	main_coupled = Kr
 	coupled_temp = column_temp
 	coupled_list = 'Kr Xe N2'
-	enthalpies = '-30153 -21936 -10629'
-	entropies = '-95.02 -23.5 -22.0'
+	enthalpies = '-30153 -23595 -12262'
+	entropies = '-95.02 -23.5 -26.18'
 	max_capacity = 1.35
 	index = 0
 	alpha = 15.0
@@ -313,8 +313,8 @@
 	main_coupled = Xe
 	coupled_temp = column_temp
 	coupled_list = 'Kr Xe N2'
-	enthalpies = '-30153 -21936 -10629'
-	entropies = '-95.02 -23.5 -22.0'
+	enthalpies = '-30153 -23595 -12262'
+	entropies = '-95.02 -23.5 -26.18'
 	max_capacity = 1.53
 	index = 1
 	alpha = 15.0
@@ -327,9 +327,9 @@
 	main_coupled = N2
 	coupled_temp = column_temp
 	coupled_list = 'Kr Xe N2'
-	enthalpies = '-30153 -21936 -10629'
-	entropies = '-95.02 -23.5 -22.0'
-	max_capacity = 0.45
+	enthalpies = '-30153 -23595 -12262'
+	entropies = '-95.02 -23.5 -26.18'
+	max_capacity = 0.035
 	index = 2
 	alpha = 15.0
 	beta = 15.0
@@ -423,7 +423,7 @@
 	boundary = 'top bottom'
 	input_temperature = 253.15
 	input_pressure = 101.35
-	input_molefraction = 0.00015
+	input_molefraction = 0.000128689
 	index = 0
  [../]
  
@@ -433,7 +433,7 @@
 	boundary = 'top bottom'
 	input_temperature = 253.15
 	input_pressure = 101.35
-	input_molefraction = 0.001
+	input_molefraction = 0.000857934
 	index = 1
  [../]
  
@@ -443,7 +443,7 @@
 	boundary = 'top bottom'
 	input_temperature = 253.15
 	input_pressure = 101.35
-	input_molefraction = 0.80
+	input_molefraction = 0.67775
 	index = 2
  [../]
  
@@ -453,7 +453,7 @@
 	boundary = 'top bottom'
 	input_temperature = 253.15
 	input_pressure = 101.35
-	input_molefraction = 0.19885
+	input_molefraction = 0.32126
 	index = 3
  [../]
  
@@ -523,17 +523,17 @@
 	total_pressure = total_pressure
 	coupled_gases = 'Kr Xe N2 O2'
 	number_sites = '1 1 1 0'
-	maximum_capacity = '1.35 1.53 0.45 0' #mol/kg
+	maximum_capacity = '1.35 1.53 0.035 0' #mol/kg
 	molar_volume = '20.785 25.412 15.8 0' #cm^3/mol
  
-	enthalpy_site_1 = '-30153 -21936 -10629 0'
+	enthalpy_site_1 = '-30153 -23595 -12262 0'
 	enthalpy_site_2 = '0 0 0 0'
 	enthalpy_site_3 = '0 0 0 0'
 	enthalpy_site_4 = '0 0 0 0'
 	enthalpy_site_5 = '0 0 0 0'
 	enthalpy_site_6 = '0 0 0 0'
  
-	entropy_site_1 = '-95.02 -23.50 -22.0 0'
+	entropy_site_1 = '-95.02 -23.50 -26.18 0'
 	entropy_site_2 = '0 0 0 0'
 	entropy_site_3 = '0 0 0 0'
 	entropy_site_4 = '0 0 0 0'
@@ -633,7 +633,7 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none basic l2 bt
 	start_time = 0.0
-	end_time = 20.0
+	end_time = 5.0
 	dtmax = 0.5
  
 	[./TimeStepper]
