@@ -1,6 +1,6 @@
 [GlobalParams]
 
-	dt = 0.1
+	dt = 0.01
 	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
@@ -420,8 +420,8 @@
 	main_coupled = Kr
 	coupled_temp = column_temp
 	coupled_list = 'Kr Xe N2'
-	enthalpies = '-30153 -23595 -12262'
-	entropies = '-95.02 -23.5 -26.18'
+	enthalpies = '-30153 -23713 -9580'
+	entropies = '-95.02 -22.59 -25.74'
 	max_capacity = 1.35
 	index = 0
 	alpha = 15.0
@@ -435,9 +435,9 @@
 	main_coupled = Xe
 	coupled_temp = column_temp
 	coupled_list = 'Kr Xe N2'
-	enthalpies = '-30153 -23595 -12262'
-	entropies = '-95.02 -23.5 -26.18'
-	max_capacity = 1.53
+	enthalpies = '-30153 -23713 -9580'
+	entropies = '-95.02 -22.59 -25.74'
+	max_capacity = 1.07
 	index = 1
 	alpha = 15.0
 	beta = 15.0
@@ -450,9 +450,9 @@
 	main_coupled = N2
 	coupled_temp = column_temp
 	coupled_list = 'Kr Xe N2'
-	enthalpies = '-30153 -23595 -12262'
-	entropies = '-95.02 -23.5 -26.18'
-	max_capacity = 0.035
+	enthalpies = '-30153 -23713 -9580'
+	entropies = '-95.02 -22.59 -25.74'
+	max_capacity = 0.097
 	index = 2
 	alpha = 15.0
 	beta = 15.0
@@ -738,17 +738,17 @@
 		total_pressure = total_pressure
 		coupled_gases = 'Kr Xe N2 O2'
 		number_sites = '1 1 1 0'
-		maximum_capacity = '1.35 1.53 0.035 0' #mol/kg
+		maximum_capacity = '1.35 1.07 0.097 0' #mol/kg
 		molar_volume = '20.785 25.412 15.8 0' #cm^3/mol
  
-		enthalpy_site_1 = '-30153 -23595 -12262 0'
+		enthalpy_site_1 = '-30153 -23713 -9580 0'
 		enthalpy_site_2 = '0 0 0 0'
 		enthalpy_site_3 = '0 0 0 0'
 		enthalpy_site_4 = '0 0 0 0'
 		enthalpy_site_5 = '0 0 0 0'
 		enthalpy_site_6 = '0 0 0 0'
  
-		entropy_site_1 = '-95.02 -23.50 -26.18 0'
+		entropy_site_1 = '-95.02 -22.59 -25.74 0'
 		entropy_site_2 = '0 0 0 0'
 		entropy_site_3 = '0 0 0 0'
 		entropy_site_4 = '0 0 0 0'
@@ -1081,7 +1081,7 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 90.0
+	end_time = 40.0
 	dtmax = 0.5
 	
 	[./TimeStepper]
