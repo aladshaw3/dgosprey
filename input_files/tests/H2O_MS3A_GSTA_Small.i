@@ -1,6 +1,6 @@
 [GlobalParams]
 
-	length = 6.35
+	length = 12.7
 	pellet_diameter = 0.236
 	inner_diameter = 2.54
 	flow_rate = 211680.0
@@ -25,7 +25,7 @@
  	xmin = 0.0
 	xmax = 1.27 #cm
  	ymin = 0.0
-	ymax = 6.35 #cm
+	ymax = 12.7 #cm
 
  [] # END Mesh
 
@@ -484,7 +484,7 @@
 [Executioner]
  
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
  
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10

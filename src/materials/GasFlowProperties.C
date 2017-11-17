@@ -220,10 +220,10 @@ void GasFlowProperties::computeQpProperties()
 		_molecular_diffusion[_qp][i] = _mixed_gas[_qp].species_dat[i].molecular_diffusion * 3600.0;
 		double ScNum = kin_vis / _molecular_diffusion[_qp][i] / _porosity[_qp];
 		
-		if (ReNum == 0.0)
-			_dispersion[_qp][i] = 400.0 * _pellet_diameter[_qp] * _molecular_diffusion[_qp][i] / _porosity[_qp] / _inner_dia[_qp];
+		if (fabs(ReNum) < sqrt(DBL_EPSILON))
+			_dispersion[_qp][i] = 20.0 * _pellet_diameter[_qp] * _molecular_diffusion[_qp][i] / _porosity[_qp] / _inner_dia[_qp];
 		else
-			_dispersion[_qp][i] = 20.0 * pre_coef * ((20.0/ReNum/ScNum) + 0.5);
+			_dispersion[_qp][i] = (1.0-exp(-4.02e-8*std::pow(_flow_rate,1.8)))*pre_coef * ((20.0/ReNum/ScNum) + 0.5) + (1.0-exp(-4.02e-8*std::pow(_flow_rate,1.8)))*fabs(_velocity[_qp])*_inner_dia[_qp];
 	}
 	
 	double gas_cond = 4.21756e-5 + (7.19974e-7 * _temperature_old[_qp]); //J/s/cm/K

@@ -7,7 +7,7 @@
 	length = 22.86
 	inner_diameter = 1.7272
 	pellet_diameter = 0.045
-	dt = 0.01
+	dt = 0.1
  
  [] #END GlobalParams
  
@@ -165,11 +165,11 @@
 	coupled = Xe_Adsorbed
  [../]
  
-#[./diffXe]
-#	type = GColumnMassDispersion
-#	variable = Xe
-#	index = 1
-#[../]
+[./diffXe]
+	type = GColumnMassDispersion
+	variable = Xe
+	index = 1
+[../]
  
 [./advXe]
 	type = GColumnMassAdvection
@@ -234,7 +234,7 @@
  [../]
  
 [./Kr_adsorption]
-	type = CoupledExtendedLangmuirModel
+	type = CoupledExtendedLangmuirLDFModel
 	variable = Kr_Adsorbed
 	main_coupled = Kr
 	coupled_temp = column_temp
@@ -243,10 +243,12 @@
 	entropies = '-95.0 -23.5'
 	max_capacity = 3.32
 	index = 0
+	alpha = 15.0
+	beta = 15.0
  [../]
  
 [./Xe_adsorption]
-	type = CoupledExtendedLangmuirModel
+	type = CoupledExtendedLangmuirLDFModel
 	variable = Xe_Adsorbed
 	main_coupled = Xe
 	coupled_temp = column_temp
@@ -255,6 +257,8 @@
 	entropies = '-95.0 -23.5'
 	max_capacity = 1.53
 	index = 1
+	alpha = 15.0
+	beta = 15.0
  [../]
  
 [] #END Kernels
@@ -272,11 +276,11 @@
 	variable = Kr
  [../]
  
-#[./dg_disp_Xe]
-#	type = DGColumnMassDispersion
-#	variable = Xe
-#	index = 1
-#[../]
+[./dg_disp_Xe]
+	type = DGColumnMassDispersion
+	variable = Xe
+	index = 1
+[../]
  
 [./dg_adv_Xe]
 	type = DGColumnMassAdvection
@@ -380,7 +384,7 @@
 	type = BedProperties
 	block = 0
 	outer_diameter = 1.905
-	bulk_porosity = 0.876   #0.876
+	bulk_porosity = 0.865
 	wall_density = 7.7
 	wall_heat_capacity = 0.5
 	wall_heat_trans_coef = 9.0
@@ -407,7 +411,7 @@
 	binder_porosity = 0.134			#not known
 	crystal_radius = 0.0				#not known
 	macropore_radius = 1.335e-7		#not Known
-	pellet_density = 2.519				#2.519
+	pellet_density = 2.519
 	pellet_heat_capacity = 1.2  		#not known
 	ref_diffusion = '0 0 0'
 	activation_energy = '0 0 0'
@@ -516,7 +520,7 @@
 [Executioner]
  
 	type = Transient
-	scheme = bdf2
+	scheme = implicit-euler
  
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10
