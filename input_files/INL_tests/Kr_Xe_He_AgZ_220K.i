@@ -239,9 +239,9 @@
 	main_coupled = Kr
 	coupled_temp = column_temp
 	coupled_list = 'Kr Xe'
-	enthalpies = '-30153 -21936'
-	entropies = '-95.0 -23.5'
-	max_capacity = 3.32
+	enthalpies = '-25572 -24049'
+	entropies = '-69.9 -31.8'
+	max_capacity = 2.23
 	index = 0
 	alpha = 15.0
 	beta = 15.0
@@ -253,9 +253,9 @@
 	main_coupled = Xe
 	coupled_temp = column_temp
 	coupled_list = 'Kr Xe'
-	enthalpies = '-30153 -21936'
-	entropies = '-95.0 -23.5'
-	max_capacity = 1.53
+	enthalpies = '-25572 -24049'
+	entropies = '-69.9 -31.8'
+	max_capacity = 1.49
 	index = 1
 	alpha = 15.0
 	beta = 15.0
@@ -428,17 +428,17 @@
 	total_pressure = total_pressure
 	coupled_gases = 'Kr Xe He'
 	number_sites = '1 1 0'
-	maximum_capacity = '3.32 1.53 0' #mol/kg
+	maximum_capacity = '2.23 1.49 0' #mol/kg
 	molar_volume = '20.785 25.412 0' #cm^3/mol
  
-	enthalpy_site_1 = '-30153 -21935 0'
+	enthalpy_site_1 = '-25572 -24049 0'
 	enthalpy_site_2 = '0 0 0'
 	enthalpy_site_3 = '0 0 0'
 	enthalpy_site_4 = '0 0 0'
 	enthalpy_site_5 = '0 0 0'
 	enthalpy_site_6 = '0 0 0'
  
-	entropy_site_1 = '-95.0 -23.5 0'
+	entropy_site_1 = '-69.9 -31.8 0'
 	entropy_site_2 = '0 0 0'
 	entropy_site_3 = '0 0 0'
 	entropy_site_4 = '0 0 0'
