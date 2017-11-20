@@ -17,11 +17,11 @@
 	type = GeneratedMesh
 	dim = 2
 	nx = 5
-	ny = 80
+	ny = 81
 	xmin = 0.0
 	xmax = 0.9525 #cm
 	ymin = 0.0
-	ymax = 106.6 #cm
+	ymax = 102.1 #cm
  
  [] # END Mesh
  
@@ -37,15 +37,15 @@
 	[./conduit_12]
 		type = SubdomainBoundingBox
 		block_id = 1
-		top_right = '0.9525 55.8 0'
+		top_right = '0.9525 51.3 0'
 		bottom_left = '0 50.8 0'
 	[../]
  
 	[./column_2]
 		type = SubdomainBoundingBox
 		block_id = 2
-		top_right = '0.9525 106.6 0'
-		bottom_left = '0 55.8 0'
+		top_right = '0.9525 102.1 0'
+		bottom_left = '0 51.3 0'
 	[../]
  
 	[./interface_112]
@@ -235,7 +235,7 @@
 		type = ConcentrationIC
 		block = '0 1 2'
 		variable = N2
-		initial_mole_frac = 0.8
+		initial_mole_frac = 0.0
 		initial_press = 101.35
 		initial_temp = 253.15
 	[../]
@@ -244,7 +244,7 @@
 		type = ConcentrationIC
 		block = '0 1 2'
 		variable = O2
-		initial_mole_frac = 0.2
+		initial_mole_frac = 1.0
 		initial_press = 101.35
 		initial_temp = 253.15
 	[../]
@@ -763,7 +763,7 @@
 		length = 5.0
 		inner_diameter = 1.905
 		outer_diameter = 2.0828
-		bulk_porosity = 0.8772				#not known
+		bulk_porosity = 1.0				#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
@@ -834,7 +834,7 @@
 		length = 50.8
 		inner_diameter = 1.905
 		outer_diameter = 2.0828
-		bulk_porosity = 0.90507				#not known
+		bulk_porosity = 0.905				#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
@@ -931,13 +931,6 @@
 		execute_on = 'initial timestep_end'
 	[../]
  
-	[./Kr_avg_gas_12]
-		block = 1
-		type = ElementAverageValue
-		variable = Kr
-		execute_on = 'initial timestep_end'
-	[../]
- 
 	[./Kr_avg_gas_2]
 		block = 2
 		type = ElementAverageValue
@@ -950,6 +943,48 @@
 		boundary = 'top'
 		variable = Kr
 		execute_on = 'initial timestep_end'
+	[../]
+ 
+ [./N2_enter_1]
+ type = SideAverageValue
+ boundary = 'bottom'
+ variable = N2
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./N2_enter_2]
+ type = SideAverageValue
+ boundary = 'interface_122'
+ variable = N2
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./N2_exit_1]
+ type = SideAverageValue
+ boundary = 'interface_112'
+ variable = N2
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./N2_avg_gas_1]
+ block = 0
+ type = ElementAverageValue
+ variable = N2
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./N2_avg_gas_2]
+ block = 2
+ type = ElementAverageValue
+ variable = N2
+ execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./N2_exit_2]
+ type = SideAverageValue
+ boundary = 'top'
+ variable = N2
+ execute_on = 'initial timestep_end'
 	[../]
  
  [./Xe_enter_1]
@@ -975,13 +1010,6 @@
  
 	[./Xe_avg_gas_1]
 	block = 0
-	type = ElementAverageValue
-	variable = Xe
-	execute_on = 'initial timestep_end'
-	[../]
- 
-	[./Xe_avg_gas_12]
-	block = 1
 	type = ElementAverageValue
 	variable = Xe
 	execute_on = 'initial timestep_end'
@@ -1051,17 +1079,17 @@
 	[../]
  
  [./Xe_solid_1]
- block = 0
- type = ElementAverageValue
- variable = Xe_Adsorbed
- execute_on = 'initial timestep_end'
+		block = 0
+		type = ElementAverageValue
+		variable = Xe_Adsorbed
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./Xe_solid_2]
- block = 2
- type = ElementAverageValue
- variable = Xe_Adsorbed
- execute_on = 'initial timestep_end'
+		block = 2
+		type = ElementAverageValue
+		variable = Xe_Adsorbed
+		execute_on = 'initial timestep_end'
 	[../]
  
  [] #END Postprocessors
@@ -1081,7 +1109,7 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 40.0
+	end_time = 10.0
 	dtmax = 0.5
 	
 	[./TimeStepper]
