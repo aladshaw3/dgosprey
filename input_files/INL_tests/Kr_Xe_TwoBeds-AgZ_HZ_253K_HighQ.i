@@ -21,7 +21,7 @@
 	xmin = 0.0
 	xmax = 0.9525 #cm
 	ymin = 0.0
-	ymax = 102.1 #cm
+	ymax = 81.6 #cm
  
  [] # END Mesh
  
@@ -37,15 +37,15 @@
 	[./conduit_12]
 		type = SubdomainBoundingBox
 		block_id = 1
-		top_right = '0.9525 51.3 0'
+		top_right = '0.9525 51.8 0'
 		bottom_left = '0 50.8 0'
 	[../]
  
 	[./column_2]
 		type = SubdomainBoundingBox
 		block_id = 2
-		top_right = '0.9525 102.1 0'
-		bottom_left = '0 51.3 0'
+		top_right = '0.9525 81.6 0'
+		bottom_left = '0 51.8 0'
 	[../]
  
 	[./interface_112]
@@ -465,9 +465,9 @@
 		main_coupled = Kr
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
-		enthalpies = '-15758 -22684 -3914'
-		entropies = '-5.28 -23.4 11.87'
-		max_capacity = 1.20
+		enthalpies = '-15758 -37630 -20959'
+		entropies = '-5.28 -96.9 -62.9'
+		max_capacity = 1.2
 		index = 0
 		alpha = 15.0
 		beta = 15.0
@@ -480,9 +480,9 @@
 		main_coupled = Xe
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
-		enthalpies = '-15758 -22684 -3914'
-		entropies = '-5.28 -23.4 11.87'
-		max_capacity = 1.37
+		enthalpies = '-15758 -37630 -20959'
+		entropies = '-5.28 -96.9 -62.9'
+		max_capacity = 1.94
 		index = 1
 		alpha = 15.0
 		beta = 15.0
@@ -495,8 +495,8 @@
 		main_coupled = N2
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
-		enthalpies = '-15758 -22684 -3914'
-		entropies = '-5.28 -23.4 11.87'
+		enthalpies = '-15758 -37630 -20959'
+		entropies = '-5.28 -96.9 -62.9'
 		max_capacity = 0.03
 		index = 2
 		alpha = 15.0
@@ -702,7 +702,7 @@
 	[./FlowMaterials_1]
         type = GasFlowProperties
         block = 0
-		flow_rate = 30000.0
+		flow_rate = 1.2e5
 		molecular_weight = '83.8 131.29 28.016 32'
 		comp_heat_capacity = '0.25 0.16 1.04 0.919'
 		comp_ref_viscosity = '0.00023219 0.00021216 0.0001781 0.0002018'
@@ -760,7 +760,7 @@
 	[./BedMaterials_12]
 		type = BedProperties
 		block = 1
-		length = 5.0
+		length = 1.0
 		inner_diameter = 1.905
 		outer_diameter = 2.0828
 		bulk_porosity = 1.0				#not known
@@ -773,7 +773,7 @@
 	[./FlowMaterials_12]
 		type = GasFlowProperties
 		block = 1
-		flow_rate = 30000.0
+		flow_rate = 1.2e5
 		molecular_weight = '83.8 131.29 28.016 32'
 		comp_heat_capacity = '0.25 0.16 1.04 0.919'
 		comp_ref_viscosity = '0.00023219 0.00021216 0.0001781 0.0002018'
@@ -831,10 +831,10 @@
 	[./BedMaterials_2]
         type = BedProperties
         block = 2
-		length = 50.8
+		length = 29.8
 		inner_diameter = 1.905
 		outer_diameter = 2.0828
-		bulk_porosity = 0.905				#not known
+		bulk_porosity = 0.86				#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
@@ -844,7 +844,7 @@
 	[./FlowMaterials_2]
         type = GasFlowProperties
         block = 2
-		flow_rate = 30000.0
+		flow_rate = 1.2e5
 		molecular_weight = '83.8 131.29 28.016 32'
 		comp_heat_capacity = '0.25 0.16 1.04 0.919'
 		comp_ref_viscosity = '0.00023219 0.00021216 0.0001781 0.0002018'
@@ -863,7 +863,7 @@
 		binder_porosity = 0.25				#not known
 		crystal_radius = 0.0				#not known
 		macropore_radius = 1.945e-7			#not Known
-		pellet_density = 2.174				#not Known
+		pellet_density = 2.5				#not Known
 		pellet_heat_capacity = 1.2  		#not known
 		ref_diffusion = '0 0 0 0'
 		activation_energy = '0 0 0 0'
@@ -880,17 +880,17 @@
 		total_pressure = total_pressure
 		coupled_gases = 'Kr Xe N2 O2'
 		number_sites = '1 1 1 0'
-		maximum_capacity = '1.2 1.37 0.03 0' #mol/kg
+		maximum_capacity = '1.2 1.94 0.03 0' #mol/kg
 		molar_volume = '20.785 25.412 15.8 0' #cm^3/mol
  
-		enthalpy_site_1 = '-15758 -22684 -3914 0'
+		enthalpy_site_1 = '-15758 -37630 -20959 0'
 		enthalpy_site_2 = '0 0 0 0'
 		enthalpy_site_3 = '0 0 0 0'
 		enthalpy_site_4 = '0 0 0 0'
 		enthalpy_site_5 = '0 0 0 0'
 		enthalpy_site_6 = '0 0 0 0'
  
-		entropy_site_1 = '-5.28 -23.4 11.87 0'
+		entropy_site_1 = '-5.28 -96.9 -62.9 0'
 		entropy_site_2 = '0 0 0 0'
 		entropy_site_3 = '0 0 0 0'
 		entropy_site_4 = '0 0 0 0'
@@ -1109,7 +1109,7 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 10.0
+	end_time = 2.0
 	dtmax = 0.5
 	
 	[./TimeStepper]
