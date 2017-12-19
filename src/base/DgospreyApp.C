@@ -96,6 +96,8 @@
 #include "CoupledExtendedLangmuirModel.h"
 #include "CoupledLangmuirLDFModel.h"
 #include "CoupledExtendedLangmuirLDFModel.h"
+#include "ShrinkingCoreConstant.h"
+#include "ShrinkingCoreLinear.h"
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -159,6 +161,8 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(CoupledExtendedLangmuirModel);
 	registerKernel(CoupledLangmuirLDFModel);
 	registerKernel(CoupledExtendedLangmuirLDFModel);
+	registerKernel(ShrinkingCoreConstant);
+	registerKernel(ShrinkingCoreLinear);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(WallTemperature);
