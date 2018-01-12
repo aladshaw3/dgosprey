@@ -61,9 +61,9 @@ _rhow(getMaterialProperty< Real >("wall_density")),
 _cw(getMaterialProperty< Real >("wall_heat_capacity"))
 {
 	//Forces specific execution behavior of the auxkernel
-	_exec_flags.clear();
-	_exec_flags.push_back(EXEC_INITIAL);
-	_exec_flags.push_back(EXEC_TIMESTEP_END);
+	//_exec_flags.clear();
+	//_exec_flags.push_back(EXEC_INITIAL);
+	//_exec_flags.push_back(EXEC_TIMESTEP_END);
 }
 
 Real WallTemperature::computeValue()
