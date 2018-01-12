@@ -325,6 +325,7 @@
 		variable = wall_temp
 		column_temp = column_temp
 		ambient_temp = ambient_temp
+		execute_on = 'initial timestep_end'
 	[../]
 
 [] #END AuxKernels

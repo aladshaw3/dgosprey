@@ -359,7 +359,7 @@
 	l_max_its = 100
 	nl_max_its = 100
 
-	solve_type = pjfnk
+	solve_type = jfnk
 	line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 0.02

@@ -58,36 +58,42 @@
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 101.35
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./ambient_temp]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 220.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 220.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./column_temp]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 220.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./Kr_AdsorbedHeat]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./Xe_AdsorbedHeat]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 0.0
+		execute_on = 'initial timestep_end'
 	[../]
 
 [] #END AuxVariables
@@ -444,7 +450,7 @@
 	l_max_its = 100
 	nl_max_its = 20
 
-	solve_type = pjfnk
+	solve_type = jfnk
 	line_search = bt    # Options: default shell none basic l2 bt cp
 	start_time = 0.0
 	end_time = 0.0002

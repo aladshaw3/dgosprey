@@ -266,6 +266,7 @@
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc]
@@ -273,6 +274,7 @@
 		variable = wall_temp
 		column_temp = column_temp
 		ambient_temp = ambient_temp
+		execute_on = 'initial timestep_end'
 	[../]
  
  [] #END AuxKernels

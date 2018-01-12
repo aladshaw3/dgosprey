@@ -82,12 +82,14 @@
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 101.35
+		execute_on = 'initial timestep_end'
 	[../]
 
 	[./ambient_temp]
 		order = FIRST
 		family = MONOMIAL
 		initial_condition = 220.15
+		execute_on = 'initial timestep_end'
 	[../]
 
 [] #END AuxVariables

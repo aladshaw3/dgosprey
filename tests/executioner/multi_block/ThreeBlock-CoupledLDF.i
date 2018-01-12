@@ -71,6 +71,7 @@
 		paired_block = 2
 		new_boundary = 'interface12'
 	[../]
+ []
 
 [Variables]
 
