@@ -100,6 +100,8 @@
 #include "ShrinkingCoreLinear.h"
 #include "ShrinkingCoreLangmuir.h"
 
+#include "CoupledConstChemisorption.h"
+
 template<>
 InputParameters validParams<DgospreyApp>()
 {
@@ -165,6 +167,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(ShrinkingCoreConstant);
 	registerKernel(ShrinkingCoreLinear);
     registerKernel(ShrinkingCoreLangmuir);
+	registerKernel(CoupledConstChemisorption);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(WallTemperature);
