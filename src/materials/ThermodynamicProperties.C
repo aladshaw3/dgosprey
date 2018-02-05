@@ -87,7 +87,6 @@ _entropy_5(getParam<std::vector<Real> >("entropy_site_5")),
 _entropy_6(getParam<std::vector<Real> >("entropy_site_6")),
 
 _magpie_dat(declareProperty< MAGPIE_DATA >("magpie_data")),
-//_magpie_dat_old(declarePropertyOld< MAGPIE_DATA >("magpie_data")),
 _magpie_dat_old(getMaterialPropertyOld< MAGPIE_DATA >("magpie_data")),
 _ads_heat(declareProperty<std::vector<Real> >("adsorption_heat"))
 {

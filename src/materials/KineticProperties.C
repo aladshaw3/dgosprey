@@ -74,10 +74,8 @@ _activation_energy(getMaterialProperty<std::vector<Real> >("activation_energy"))
 _ref_temperature(getMaterialProperty<std::vector<Real> >("ref_temperature")),
 _affinity_coeff(getMaterialProperty<std::vector<Real> >("affinity_coeff")),
 _owl_dat(declareProperty< SCOPSOWL_DATA >("owl_data")),
-//_owl_dat_old(declarePropertyOld< SCOPSOWL_DATA >("owl_data")),
 _owl_dat_old(getMaterialPropertyOld< SCOPSOWL_DATA >("owl_data")),
 _gas_dat(declareProperty< MIXED_GAS >("gas_data")),
-//_gas_dat_old(declarePropertyOld< MIXED_GAS >("gas_data"))
 _gas_dat_old(getMaterialPropertyOld< MIXED_GAS >("gas_data"))
 
 {
