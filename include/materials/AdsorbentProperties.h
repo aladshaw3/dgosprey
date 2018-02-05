@@ -101,7 +101,7 @@ private:
 	MaterialProperty<Real> & _pore_size;				///< MaterialProperty for the macropore radius (cm)
 	
 	MaterialProperty<std::vector<Real> > & _surface_diffusion;		///< MaterialProperty for the surface diffusion (um^2/hr)
-	MaterialProperty<std::vector<Real> > & _surf_diff_old;			///< MaterialProperty for stateful surface diffusion
+	const MaterialProperty<std::vector<Real> > & _surf_diff_old;	///< MaterialProperty for stateful surface diffusion
 	
 	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;			///< Pointer to MAGPIE_DATA material property
 	

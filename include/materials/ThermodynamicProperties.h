@@ -113,7 +113,7 @@ private:
 	/// Old MaterialProperty object to hold the MAGPIE_DATA structure and all relavent information
 	/** This object is required to be created in order to use the stateful properties, which is how
 		we intialize our custom objects in MOOSE correctly. */
-	MaterialProperty< MAGPIE_DATA > & _magpie_dat_old;
+	const MaterialProperty< MAGPIE_DATA > & _magpie_dat_old;
 	
 	MaterialProperty<std::vector<Real> > & _ads_heat;	///< MaterialProperty for each species' heat of adsorption coefficient
 };

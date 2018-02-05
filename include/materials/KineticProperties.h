@@ -107,7 +107,7 @@ private:
 	/// Old MaterialProperty object to hold the SCOPSOWL_DATA structure and all relavent information
 	/** This object is required to be created in order to use the stateful properties, which is how
 		we intialize our custom objects in MOOSE correctly. */
-	MaterialProperty< SCOPSOWL_DATA > & _owl_dat_old;
+	const MaterialProperty< SCOPSOWL_DATA > & _owl_dat_old;
 	
 	/// MaterialProperty object to hold the MIXED_GAS structure and all relavent information
 	/** This is the object that needs to interface with the MAGPIE functions in order to solve for
@@ -118,7 +118,7 @@ private:
 	/// Old MaterialProperty object to hold the MIXED_GAS structure and all relavent information
 	/** This object is required to be created in order to use the stateful properties, which is how
 		we intialize our custom objects in MOOSE correctly. */
-	MaterialProperty< MIXED_GAS > & _gas_dat_old;
+	const MaterialProperty< MIXED_GAS > & _gas_dat_old;
 	
 	std::vector<const VariableValue *> _solid_conc;		///< Pointer list to the coupled adsorption concentrations
 	

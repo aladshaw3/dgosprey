@@ -77,6 +77,7 @@ InputParameters validParams<CoupledConstChemisorption>()
 	
 	params.addRequiredCoupledVar("coupled_gases","List of names of the gas variables being coupled");
 	params.addRequiredCoupledVar("coupled_adsorption","List of names of the adsorbed variables being coupled");
+	params.addRequiredCoupledVar("main_variable","Name of the non-linear variable that this kernel acts on");
 	
 	return params;
 }
@@ -90,7 +91,7 @@ _reverse(getParam<Real>("reverse_rate")),
 _gas_stoich(getParam<std::vector<Real> >("gases_stoichiometry")),
 _ads_sites(getParam<std::vector<Real> >("adsorbed_sites")),
 _ads_stoich(getParam<std::vector<Real> >("adsorbed_stoichiometry")),
-_coupled_var_i(coupled("variable"))
+_coupled_var_i(coupled("main_variable"))
 {
 	unsigned int gas_n = coupledComponents("coupled_gases");
 	_coupled_gas_vars.resize(gas_n);

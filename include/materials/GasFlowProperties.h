@@ -107,7 +107,7 @@ private:
 	MaterialProperty<std::vector<Real> > & _dispersion;				///< MaterialProperty for each species' dispersion coefficient (cm^2/hr)
 	MaterialProperty<Real> & _retardation;							///< MaterialProperty for the retardation coefficient
 	MaterialProperty< MIXED_GAS > & _mixed_gas;						///< MaterialProperty for the MIXED_GAS struct in egret.h
-	MaterialProperty< MIXED_GAS > & _mixed_gas_old;					///< Old MaterialProperty for the MIXED_GAS struct in egret.h
+	const MaterialProperty< MIXED_GAS > & _mixed_gas_old;					///< Old MaterialProperty for the MIXED_GAS struct in egret.h
 	
 	MaterialProperty<std::vector<Real> > & _film_transfer;			///< MaterialProperty for the film mass transfer coeff (cm/hr)
 	MaterialProperty<std::vector<Real> > & _pore_diffusion;			///< MaterialProperty for the pore diffusion (cm^2/hr)
