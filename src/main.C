@@ -120,13 +120,14 @@ int main(int argc, char *argv[])
 	DgospreyApp::registerApps();
 
 	// This creates dynamic memory that we're responsible for deleting
-	MooseApp * app = AppFactory::createApp("DgospreyApp", argc, argv);
+	//MooseApp * app = AppFactory::createApp("DgospreyApp", argc, argv);
+	std::shared_ptr<MooseApp> app = AppFactory::createAppShared("DgospreyApp", argc, argv);
 
 	// Execute the application
 	app->run();
 
 	// Free up the memory we created earlier
-	delete app;
+	//delete app;
 
 	return 0;
 }
