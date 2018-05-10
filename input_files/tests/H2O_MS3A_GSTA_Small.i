@@ -246,20 +246,28 @@
 #		beta = 15
 #	[../]
  
+#	[./H2O_adsorption]
+#		type = CoupledExtendedGSTAisotherm
+#		variable = H2O_Adsorbed
+#		main_coupled = H2O
+#		coupled_list = 'N2 O2 H2O'
+#		coupled_temp = column_temp
+#		max_capacity = 11.67
+#		num_sites = '0 0 4'
+#		gsta_param_1 = '0 0 228357.3949'
+#		gsta_param_2 = '0 0 22688965955'
+#		gsta_param_3 = '0 0 1.93815E+15'
+#		gsta_param_4 = '0 0 1.1268E+18'
+#		gsta_param_5 = '0 0 0'
+#		gsta_param_6 = '0 0 0'
+#	[../]
+ 
 	[./H2O_adsorption]
-		type = CoupledExtendedGSTAisotherm
+		type = CoupledExtendedGSTAmodel
 		variable = H2O_Adsorbed
 		main_coupled = H2O
 		coupled_list = 'N2 O2 H2O'
 		coupled_temp = column_temp
-		max_capacity = 11.67
-		num_sites = '0 0 4'
-		gsta_param_1 = '0 0 228357.3949'
-		gsta_param_2 = '0 0 22688965955'
-		gsta_param_3 = '0 0 1.93815E+15'
-		gsta_param_4 = '0 0 1.1268E+18'
-		gsta_param_5 = '0 0 0'
-		gsta_param_6 = '0 0 0'
 	[../]
  
  [] #END Kernels

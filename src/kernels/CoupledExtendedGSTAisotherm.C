@@ -82,6 +82,13 @@ _coupled_var_temp(coupled("coupled_temp"))
 	_coupled_vars.resize(n);
 	_coupled.resize(n);
 	_gstaparams.resize(n);
+	_num_sites.resize(n);
+	_param_1.resize(n);
+	_param_2.resize(n);
+	_param_3.resize(n);
+	_param_4.resize(n);
+	_param_5.resize(n);
+	_param_6.resize(n);
 	
 	for (unsigned int i = 0; i<_coupled.size(); ++i)
 	{
