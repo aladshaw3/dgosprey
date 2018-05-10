@@ -82,7 +82,7 @@ protected:
 	 cross coupling of the variables. */
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 	
-	Real _maxcap;										///< Manimum Capacity for the primary adsorbed species
+	Real _maxcap;										///< Maximum Capacity for the primary adsorbed species
 	std::vector<Real> _langmuircoef;					///< Langmuir Coefficients for the coupled variables
 	std::vector<const VariableValue *> _coupled;		///< Pointer list to the coupled gases
 	std::vector<unsigned int> _coupled_vars;			///< Indices for the gas species in the system
