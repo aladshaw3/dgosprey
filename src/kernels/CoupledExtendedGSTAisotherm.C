@@ -224,7 +224,7 @@ Real CoupledExtendedGSTAisotherm::computeTopDerivativeConc(int i)
 
 Real CoupledExtendedGSTAisotherm::computeBottomDerivativeConc(int i)
 {
-	double sum = 1.0;
+	double sum = 0.0;
 	double Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
 	
 	for (int n=0; n<_num_sites[i]; n++)
@@ -250,7 +250,7 @@ Real CoupledExtendedGSTAisotherm::computeTopDerivativeTemp()
 
 Real CoupledExtendedGSTAisotherm::computeBottomDerivativeTemp()
 {
-	double sum = 1.0;
+	double sum = 0.0;
 	double Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
 	
 	for (int i=0; i<_coupled.size(); ++i)
