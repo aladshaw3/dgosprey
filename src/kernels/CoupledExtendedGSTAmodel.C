@@ -76,6 +76,44 @@ void CoupledExtendedGSTAmodel::computeGSTAparams()
 	}
 }
 
+Real CoupledExtendedGSTAmodel::computeExtGSTA_TempOffJacobi()
+{
+	double top = computeTopDerivativeTemp()*CoupledExtendedGSTAisotherm::computeBottomExtGSTA() - CoupledExtendedGSTAisotherm::computeTopExtGSTA()*computeBottomDerivativeTemp();
+	double bot = CoupledExtendedGSTAisotherm::computeBottomExtGSTA()*CoupledExtendedGSTAisotherm::computeBottomExtGSTA();
+	return (_maxcap/_num_sites[_main_index]) * _phi[_j][_qp]*(top/bot);
+}
+
+Real CoupledExtendedGSTAmodel::computeTopDerivativeTemp()
+{
+	double sum = 0.0;
+	double Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
+	
+	for (int n=0; n<_num_sites[_main_index]; n++)
+	{
+		sum += (double)(n+1) * (double)(n+1) * _gstaparams[_main_index][n] * std::pow((_coupled_i[_qp]/Co),(double)(n)) * (_coupled_i[_qp]*8.3144621/100.0);
+		sum += (double)(n+1) * _gstaparams[_main_index][n] * std::pow((_coupled_i[_qp]/Co),(double)(n+1)) * _magpie_dat[_qp].gsta_dat[_main_index].dHo[n] / 8.3144621 / std::pow(_coupled_temp[_qp], 2.0);
+	}
+	
+	return sum;
+}
+
+Real CoupledExtendedGSTAmodel::computeBottomDerivativeTemp()
+{
+	double sum = 0.0;
+	double Co = 100.0 / (8.3144621 * _coupled_temp[_qp]);
+	
+	for (int i=0; i<_coupled.size(); ++i)
+	{
+		for (int n=0; n<_num_sites[i]; n++)
+		{
+			sum += (double)(n+1) * _gstaparams[i][n] * std::pow(((*_coupled[i])[_qp]/Co),(double)(n)) * ((*_coupled[i])[_qp]*8.3144621/100.0);
+			sum += _gstaparams[i][n] * std::pow(((*_coupled[i])[_qp]/Co),(double)(n+1)) * _magpie_dat[_qp].gsta_dat[i].dHo[n] / 8.3144621 / std::pow(_coupled_temp[_qp], 2.0);
+		}
+	}
+	
+	return sum;
+}
+
 Real CoupledExtendedGSTAmodel::computeQpResidual()
 {
 	computeGSTAparams();
@@ -109,7 +147,7 @@ Real CoupledExtendedGSTAmodel::computeQpOffDiagJacobian(unsigned int jvar)
 	// Off-diagonal element for coupled temperature
 	if (jvar == _coupled_var_temp)
 	{
-		return -_test[_i][_qp]*CoupledExtendedGSTAisotherm::computeExtGSTA_TempOffJacobi();
+		return -_test[_i][_qp]*computeExtGSTA_TempOffJacobi();
 	}
 	
 	

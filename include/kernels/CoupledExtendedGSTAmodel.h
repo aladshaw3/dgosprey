@@ -66,6 +66,15 @@ public:
 	CoupledExtendedGSTAmodel(const InputParameters & parameters);
 	
 protected:
+	/// Function to compute the off-diagonal Jacobi for the other coupled concentrations
+	Real computeExtGSTA_TempOffJacobi();
+	
+	/// Function to compute derivative of top with respect to temperature
+	Real computeTopDerivativeTemp();
+	
+	/// Function to compute derivative of bottom with respect to temperature
+	Real computeBottomDerivativeTemp();
+	
 	/// Function to compute the isotherm parameters based on temperature
 	void computeGSTAparams();
 	
