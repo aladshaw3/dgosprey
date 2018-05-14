@@ -20,9 +20,9 @@
 
 	type = GeneratedMesh
 	dim = 2
-	nx = 5
- 	ny = 40
- 	xmin = 0.0
+	nx = 3
+ 	ny = 5
+    xmin = 0.0
 	xmax = 1.27 #cm
  	ymin = 0.0
 	ymax = 12.7 #cm
@@ -589,12 +589,11 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt basic
 	start_time = 0.0
-	end_time = 70.0
+	end_time = 0.05
 	dtmax = 1.0
  
 	[./TimeStepper]
-		type = SolutionTimeAdaptiveDT
-#		type = DGOSPREY_TimeStepper
+		type = ConstantDT
 	[../]
  
  [] #END Executioner
