@@ -102,6 +102,9 @@
 
 #include "CoupledConstChemisorption.h"
 
+#include "CoupledExtendedGSTAisotherm.h"
+#include "CoupledExtendedGSTAmodel.h"
+
 template<>
 InputParameters validParams<DgospreyApp>()
 {
@@ -168,6 +171,8 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(ShrinkingCoreLinear);
     registerKernel(ShrinkingCoreLangmuir);
 	registerKernel(CoupledConstChemisorption);
+	registerKernel(CoupledExtendedGSTAisotherm);
+	registerKernel(CoupledExtendedGSTAmodel);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(WallTemperature);

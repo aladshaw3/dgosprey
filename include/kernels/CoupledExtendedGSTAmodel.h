@@ -1,20 +1,27 @@
 /*!
- *  \file CoupledExtendedLangmuirFunction.h
- *	\brief Standard kernel for coupling a vector non-linear variables via an extended langmuir function
+ *  \file CoupledExtendedGSTAmodel.h
+ *	\brief Standard kernel for coupling a vector non-linear variables via an extended gsta model
  *	\details This file creates a standard MOOSE kernel for the coupling of a vector non-linear variables
- *			together via an extended langmuir forcing function, 
- *			i.e., variable = b_i * K_i * coupled_variable_i / 1 + sum(j, K_j * coupled_variable_j).
+ *			together via an extended gsta forcing function and computes gsta parameters as a function
+ *			of temperature by coupling with the Thermodynamic Properties Material property.
+ *
+ *			                                    SUM(n, Kn_i * (coupled_variable_i/Co)^n)
+ *					variable = qmax_i * ----------------------------------------------------
+ *                                       1 + SUM(j, SUM(n, Kn_j * (coupled_variable_j/Co)^n)
+ *
+ *						where Co = 100.0 / (8.3144621 * _coupled_temp)
+ *						and  Kn_i = exp( -dHn_i/RT + dSn_i/R )
  *
  *  \author Austin Ladshaw, Alexander Wiechert
- *	\date 06/21/2017
+ *	\date 05/10/2018
  *	\copyright This kernel was designed and built at the Georgia Institute
- *             of Technology by Alexander Wiechert for PhD research in the area
+ *             of Technology by Austin Ladshaw for research in the area
  *             of adsorption and surface science and was developed for use
  *			   by Idaho National Laboratory and Oak Ridge National Laboratory
- *			   engineers and scientists. Portions Copyright (c) 2017, all
+ *			   engineers and scientists. Portions Copyright (c) 2018, all
  *             rights reserved.
  *
- *			   Alexander Wiechert does not claim any ownership or copyright to the
+ *			   Austin Ladshaw does not claim any ownership or copyright to the
  *			   MOOSE framework in which these kernels are constructed, only
  *			   the kernels themselves. The MOOSE framework copyright is held
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
@@ -34,37 +41,42 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#include "CoupledExtendedGSTAisotherm.h"
+#include "flock.h"
+#include "DataStruct_StoreLoad.h"
 
-#ifndef CoupledExtendedLangmuirFunction_h
-#define CoupledExtendedLangmuirFunction_h
+#ifndef CoupledExtendedGSTAmodel_h
+#define CoupledExtendedGSTAmodel_h
 
-/// CoupledExtendedLangmuirFunction class object forward declarationss
-class CoupledExtendedLangmuirFunction;
+/// CoupledExtendedGSTAmodel class object forward declarationss
+class CoupledExtendedGSTAmodel;
 
 template<>
-InputParameters validParams<CoupledExtendedLangmuirFunction>();
+InputParameters validParams<CoupledExtendedGSTAmodel>();
 
-/// CoupledExtendedLangmuirFunction class object inherits from Kernel object
+/// CoupledExtendedGSTAisotherm class object inherits from Kernel object
 /** This class object inherits from the Kernel object in the MOOSE framework.
 	All public and protected members of this class are required function overrides.
-	The kernel interfaces the set of non-linear variables to couple an extended Langmuir 
+	The kernel interfaces the set of non-linear variables to couple an extended GSTA
 	forcing function between given objects. */
-class CoupledExtendedLangmuirFunction : public Kernel
+class CoupledExtendedGSTAmodel : public CoupledExtendedGSTAisotherm
 {
 public:
 	/// Required constructor for objects in MOOSE
-	CoupledExtendedLangmuirFunction(const InputParameters & parameters);
+	CoupledExtendedGSTAmodel(const InputParameters & parameters);
 	
 protected:
-	/// Function to compute the Extended Langmuir Equilibrium value
-	Real computeExtLangmuirEquilibrium();
-	
-	/// Function to compute the Jacobi for the main coupled concentration
-	Real computeExtLangmuirConcJacobi();
-	
 	/// Function to compute the off-diagonal Jacobi for the other coupled concentrations
-	Real computeExtLangmuirOffJacobi(int i);
+	Real computeExtGSTA_TempOffJacobi();
+	
+	/// Function to compute derivative of top with respect to temperature
+	Real computeTopDerivativeTemp();
+	
+	/// Function to compute derivative of bottom with respect to temperature
+	Real computeBottomDerivativeTemp();
+	
+	/// Function to compute the isotherm parameters based on temperature
+	void computeGSTAparams();
 	
 	/// Required residual function for standard kernels in MOOSE
 	/** This function returns a residual contribution for this object.*/
@@ -82,13 +94,7 @@ protected:
 	 cross coupling of the variables. */
 	virtual Real computeQpOffDiagJacobian(unsigned int jvar);
 	
-	Real _maxcap;										///< Maximum Capacity for the primary adsorbed species
-	std::vector<Real> _langmuircoef;					///< Langmuir Coefficients for the coupled variables
-	std::vector<const VariableValue *> _coupled;		///< Pointer list to the coupled gases
-	std::vector<unsigned int> _coupled_vars;			///< Indices for the gas species in the system
-	const VariableValue & _coupled_i;					///< Primary Coupled variable
-	const unsigned int _coupled_var_i;					///< Variable identification for the primary coupled variable
-	int _lang_index;									///< Index for primary langmuir coefficient
+	const MaterialProperty< MAGPIE_DATA > & _magpie_dat;	///< Material Property holding the MAGPIE data structure
 	
 private:
 	
@@ -96,4 +102,4 @@ private:
 
 
 
-#endif /* CoupledExtendedLangmuirFunction */
+#endif /* CoupledExtendedGSTAmodel */

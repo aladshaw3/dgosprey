@@ -160,6 +160,7 @@ peacock_*.e
 
 #Misc
 *.svn
+*.json
 /include/DgospreyRevision.h
 /include/base/DgospreyRevision.h
 /build/
