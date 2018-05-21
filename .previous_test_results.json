@@ -5,7 +5,7 @@
       "LONG_NAME": "bcs/wall_heating.wall_heating_test", 
       "CAVEATS": [], 
       "NAME": "wall_heating_test", 
-      "TIMING": 1.1050329208374023, 
+      "TIMING": 2.494964122772217, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i TemperatureLDFCouplingTest.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -17,7 +17,7 @@
       "LONG_NAME": "kinetics/GSTA_LDF.GSTA_LDF_Test", 
       "CAVEATS": [], 
       "NAME": "GSTA_LDF_Test", 
-      "TIMING": 3.0175540447235107, 
+      "TIMING": 3.098257064819336, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i H2O_MS3A_GSTA_LDF.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -29,7 +29,7 @@
       "LONG_NAME": "kernels/const_sc.const_sc_test", 
       "CAVEATS": [], 
       "NAME": "const_sc_test", 
-      "TIMING": 1.0963561534881592, 
+      "TIMING": 1.089536190032959, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConstShrinkingCoreTest.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -41,7 +41,7 @@
       "LONG_NAME": "kernels/linear_ldf.linear_ldf_test", 
       "CAVEATS": [], 
       "NAME": "linear_ldf_test", 
-      "TIMING": 1.6644561290740967, 
+      "TIMING": 1.7065050601959229, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConservationLDFCouplingTest.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -53,7 +53,7 @@
       "LONG_NAME": "isotherms/ExtendGSTA.ExtendedGSTA_Test", 
       "CAVEATS": [], 
       "NAME": "ExtendedGSTA_Test", 
-      "TIMING": 2.4105918407440186, 
+      "TIMING": 2.393311023712158, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i H2O_I2_MS3A_GSTA_Small.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -65,7 +65,7 @@
       "LONG_NAME": "coupling/wall_temp.wall_temp_test", 
       "CAVEATS": [], 
       "NAME": "wall_temp_test", 
-      "TIMING": 0.7222819328308105, 
+      "TIMING": 0.7201437950134277, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i wall_temp_test.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -77,7 +77,7 @@
       "LONG_NAME": "executioner/large_mesh.large_mesh_test", 
       "CAVEATS": [], 
       "NAME": "large_mesh_test", 
-      "TIMING": 2.2500979900360107, 
+      "TIMING": 2.22200608253479, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i LargeMesh.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -89,7 +89,7 @@
       "LONG_NAME": "kinetics/ExtLangmuir_LDF.ExtendedLangmuir_LDF_Test", 
       "CAVEATS": [], 
       "NAME": "ExtendedLangmuir_LDF_Test", 
-      "TIMING": 1.980165958404541, 
+      "TIMING": 1.9652209281921387, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i Kr_Xe_HZ_HighQ.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -101,7 +101,7 @@
       "LONG_NAME": "kernels/simple_diffusion.test", 
       "CAVEATS": [], 
       "NAME": "test", 
-      "TIMING": 0.1325538158416748, 
+      "TIMING": 0.13204288482666016, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i simple_diffusion.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -113,7 +113,7 @@
       "LONG_NAME": "kernels/const_ldf.const_ldf_test", 
       "CAVEATS": [], 
       "NAME": "const_ldf_test", 
-      "TIMING": 0.937385082244873, 
+      "TIMING": 0.9312300682067871, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConservationKineticCouplingTest.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -125,44 +125,8 @@
       "LONG_NAME": "dgkernels/particle_settling_2d.settling_2d_test", 
       "CAVEATS": [], 
       "NAME": "settling_2d_test", 
-      "TIMING": 0.2785220146179199, 
+      "TIMING": 0.27588510513305664, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConstantSettling.i --no-gdb-backtrace", 
-      "COLOR": "GREEN", 
-      "FAIL": false
-    }
-  }, 
-  "/Users/aladshaw3/projects/trunk/dgosprey/tests/isotherms/GSTA": {
-    "isotherms/GSTA.GSTA_Test": {
-      "STATUS": "OK", 
-      "LONG_NAME": "isotherms/GSTA.GSTA_Test", 
-      "CAVEATS": [], 
-      "NAME": "GSTA_Test", 
-      "TIMING": 3.1698219776153564, 
-      "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i H2O_MS3A_GSTA_Small.i --no-gdb-backtrace", 
-      "COLOR": "GREEN", 
-      "FAIL": false
-    }
-  }, 
-  "/Users/aladshaw3/projects/trunk/dgosprey/tests/kernels/linear_coupling": {
-    "kernels/linear_coupling.linear_coupling_test": {
-      "STATUS": "OK", 
-      "LONG_NAME": "kernels/linear_coupling.linear_coupling_test", 
-      "CAVEATS": [], 
-      "NAME": "linear_coupling_test", 
-      "TIMING": 1.88362717628479, 
-      "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConservationCouplingTest.i --no-gdb-backtrace", 
-      "COLOR": "GREEN", 
-      "FAIL": false
-    }
-  }, 
-  "/Users/aladshaw3/projects/trunk/dgosprey/tests/kernels/const_chemisorb": {
-    "kernels/const_chemisorb.const_chemisorption_test": {
-      "STATUS": "OK", 
-      "LONG_NAME": "kernels/const_chemisorb.const_chemisorption_test", 
-      "CAVEATS": [], 
-      "NAME": "const_chemisorption_test", 
-      "TIMING": 1.1394050121307373, 
-      "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConstChemisorb_Test.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
     }
@@ -173,8 +137,44 @@
       "LONG_NAME": "dgkernels/advection.dgadvection_test", 
       "CAVEATS": [], 
       "NAME": "dgadvection_test", 
-      "TIMING": 1.420457124710083, 
+      "TIMING": 1.434993028640747, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i dgadvection_test.i --no-gdb-backtrace", 
+      "COLOR": "GREEN", 
+      "FAIL": false
+    }
+  }, 
+  "/Users/aladshaw3/projects/trunk/dgosprey/tests/kernels/linear_coupling": {
+    "kernels/linear_coupling.linear_coupling_test": {
+      "STATUS": "OK", 
+      "LONG_NAME": "kernels/linear_coupling.linear_coupling_test", 
+      "CAVEATS": [], 
+      "NAME": "linear_coupling_test", 
+      "TIMING": 2.058526039123535, 
+      "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConservationCouplingTest.i --no-gdb-backtrace", 
+      "COLOR": "GREEN", 
+      "FAIL": false
+    }
+  }, 
+  "/Users/aladshaw3/projects/trunk/dgosprey/tests/kernels/const_chemisorb": {
+    "kernels/const_chemisorb.const_chemisorption_test": {
+      "STATUS": "FAIL", 
+      "LONG_NAME": "kernels/const_chemisorb.const_chemisorption_test", 
+      "CAVEATS": [], 
+      "NAME": "const_chemisorption_test", 
+      "TIMING": "0.047547", 
+      "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConstChemisorb_Test.i --no-gdb-backtrace", 
+      "COLOR": "RED", 
+      "FAIL": true
+    }
+  }, 
+  "/Users/aladshaw3/projects/trunk/dgosprey/tests/isotherms/GSTA": {
+    "isotherms/GSTA.GSTA_Test": {
+      "STATUS": "OK", 
+      "LONG_NAME": "isotherms/GSTA.GSTA_Test", 
+      "CAVEATS": [], 
+      "NAME": "GSTA_Test", 
+      "TIMING": 3.07072114944458, 
+      "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i H2O_MS3A_GSTA_Small.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
     }
@@ -185,7 +185,7 @@
       "LONG_NAME": "kernels/sc_langmuir.langmuir_sc_test", 
       "CAVEATS": [], 
       "NAME": "langmuir_sc_test", 
-      "TIMING": 3.0006580352783203, 
+      "TIMING": 3.0321741104125977, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ShrinkingCoreLangmuir.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -193,14 +193,14 @@
   }, 
   "/Users/aladshaw3/projects/trunk/dgosprey/tests/kernels/multi_chemisorb": {
     "kernels/multi_chemisorb.multi_chemisorption_test": {
-      "STATUS": "OK", 
+      "STATUS": "FAIL", 
       "LONG_NAME": "kernels/multi_chemisorb.multi_chemisorption_test", 
       "CAVEATS": [], 
       "NAME": "multi_chemisorption_test", 
-      "TIMING": 1.0994629859924316, 
+      "TIMING": "0.076549", 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i MultiChemisorb_Test.i --no-gdb-backtrace", 
-      "COLOR": "GREEN", 
-      "FAIL": false
+      "COLOR": "RED", 
+      "FAIL": true
     }
   }, 
   "/Users/aladshaw3/projects/trunk/dgosprey/tests/kinetics/Langmuir_LDF": {
@@ -209,7 +209,7 @@
       "LONG_NAME": "kinetics/Langmuir_LDF.Langmuir_LDF_Test", 
       "CAVEATS": [], 
       "NAME": "Langmuir_LDF_Test", 
-      "TIMING": 1.9265739917755127, 
+      "TIMING": 1.9254977703094482, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i Kr_Xe_HZ_HighQ.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -221,7 +221,7 @@
       "LONG_NAME": "isotherms/ExtendLangmuir.ExtendedLangmuir_Test", 
       "CAVEATS": [], 
       "NAME": "ExtendedLangmuir_Test", 
-      "TIMING": 3.3082380294799805, 
+      "TIMING": 3.2616779804229736, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i Kr_Xe_HZ_HighQ.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -233,7 +233,7 @@
       "LONG_NAME": "executioner/precond.smp_lu_test", 
       "CAVEATS": [], 
       "NAME": "smp_lu_test", 
-      "TIMING": 0.6957430839538574, 
+      "TIMING": 0.6890091896057129, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i smp_lu_test.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -245,7 +245,7 @@
       "LONG_NAME": "dgkernels/particle_settling_3d.settling_3d_test", 
       "CAVEATS": [], 
       "NAME": "settling_3d_test", 
-      "TIMING": 0.9036951065063477, 
+      "TIMING": 0.9076089859008789, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConstantSettling3D.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -257,7 +257,7 @@
       "LONG_NAME": "coupling/linear_isotherm.linear_isotherm_test", 
       "CAVEATS": [], 
       "NAME": "linear_isotherm_test", 
-      "TIMING": 2.355410099029541, 
+      "TIMING": 2.3517329692840576, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i Kr_Xe_linear_isotherm.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -269,7 +269,7 @@
       "LONG_NAME": "executioner/multi_block.multi_block_test", 
       "CAVEATS": [], 
       "NAME": "multi_block_test", 
-      "TIMING": 1.2102630138397217, 
+      "TIMING": 1.1897339820861816, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ThreeBlock-CoupledLDF.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -281,7 +281,7 @@
       "LONG_NAME": "dgkernels/conservation.conservation_test", 
       "CAVEATS": [], 
       "NAME": "conservation_test", 
-      "TIMING": 1.0210518836975098, 
+      "TIMING": 1.0065088272094727, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i ConservationTest.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
@@ -293,7 +293,7 @@
       "LONG_NAME": "isotherms/Langmuir.Langmuir_Test", 
       "CAVEATS": [], 
       "NAME": "Langmuir_Test", 
-      "TIMING": 3.818011999130249, 
+      "TIMING": 3.7817320823669434, 
       "COMMAND": "/Users/aladshaw3/projects/trunk/dgosprey/dgosprey-opt -i H2O_MS3A_ORNL_LangmuirTest.i --no-gdb-backtrace", 
       "COLOR": "GREEN", 
       "FAIL": false
