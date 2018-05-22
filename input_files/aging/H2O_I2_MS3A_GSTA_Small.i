@@ -3,7 +3,7 @@
 	length = 12.7
 	pellet_diameter = 0.236
 	inner_diameter = 2.54
-	flow_rate = 2116800.0
+	flow_rate = 211680.0
 	dt = 0.01    #NOTE: sometimes you need to increase dt for convergence
 	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
@@ -261,35 +261,35 @@
 	[../]
  
 #	[./H2O_adsorption]
-#		type = CoupledExtendedGSTAisotherm
+#		type = CoupledExtendedGSTAmodel
 #		variable = H2O_Adsorbed
 #		main_coupled = H2O
 #		coupled_list = 'N2 O2 H2O I2'
 #		coupled_temp = column_temp
-#		max_capacity = 11.67
-#		num_sites = '0 0 4 1'
-#		gsta_param_1 = '0 0 228357.3949 1238219.89'
-#		gsta_param_2 = '0 0 22688965955 0'
-#		gsta_param_3 = '0 0 1.93815E+15 0'
-#		gsta_param_4 = '0 0 1.1268E+18 0'
-#		gsta_param_5 = '0 0 0 0'
-#		gsta_param_6 = '0 0 0 0'
+#	[../]
+ 
+#	[./I2_adsorption]
+#		type = CoupledExtendedGSTAmodel
+#		variable = I2_Adsorbed
+#		main_coupled = I2
+#		coupled_list = 'N2 O2 H2O I2'
+#		coupled_temp = column_temp
 #	[../]
  
 	[./H2O_adsorption]
-		type = CoupledExtendedGSTAmodel
+		type = CoupledGSTALDFmodel
 		variable = H2O_Adsorbed
-		main_coupled = H2O
-		coupled_list = 'N2 O2 H2O I2'
+		coupled_gas = H2O
 		coupled_temp = column_temp
+		index = 2
 	[../]
  
 	[./I2_adsorption]
-		type = CoupledExtendedGSTAmodel
+		type = CoupledGSTALDFmodel
 		variable = I2_Adsorbed
-		main_coupled = I2
-		coupled_list = 'N2 O2 H2O I2'
+		coupled_gas = I2
 		coupled_temp = column_temp
+		index = 3
 	[../]
  
  [] #END Kernels
@@ -478,16 +478,16 @@
 		total_pressure = total_pressure
 		coupled_gases = 'N2 O2 H2O I2'
 		number_sites = '0 0 4 1'
-		maximum_capacity = '0 0 11.67 0.222' #mol/kg
+		maximum_capacity = '0 0 11.67 0.0236' #mol/kg
 		molar_volume = '0 0 13.91 41.8' #cm^3/mol
-		enthalpy_site_1 = '0 0 -46597.5 -23781'
+		enthalpy_site_1 = '0 0 -46597.5 -28663'
 		enthalpy_site_2 = '0 0 -125024 0'
 		enthalpy_site_3 = '0 0 -193619 0'
 		enthalpy_site_4 = '0 0 -272228 0'
 		enthalpy_site_5 = '0 0 0 0'
 		enthalpy_site_6 = '0 0 0 0'
 
-		entropy_site_1 = '0 0 -53.6994 -4.94'
+		entropy_site_1 = '0 0 -53.6994 5.15'
 		entropy_site_2 = '0 0 -221.073 0'
 		entropy_site_3 = '0 0 -356.728 0'
 		entropy_site_4 = '0 0 -567.459 0'
@@ -594,7 +594,6 @@
  
 	[./TimeStepper]
 		type = SolutionTimeAdaptiveDT
-#		type = DGOSPREY_TimeStepper
 	[../]
  
  [] #END Executioner

@@ -3,7 +3,7 @@
 	length = 12.7
 	pellet_diameter = 0.16
 	inner_diameter = 2.54
-	flow_rate = 2116800.0
+	flow_rate = 211680.0
 	dt = 0.01    #NOTE: sometimes you need to increase dt for convergence
 	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
@@ -54,7 +54,7 @@
 	[./column_temp]
  		order = FIRST
  		family = MONOMIAL
- 		initial_condition = 423.15
+ 		initial_condition = 373.15
 	[../]
  
 	[./H2O_Adsorbed]
@@ -80,6 +80,18 @@
 		family = MONOMIAL
 		initial_condition = 0.0
 	[../]
+ 
+	[./AgOH]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
+ 
+	[./Ag2O]
+		order = FIRST
+		family = MONOMIAL
+		initial_condition = 0.0
+	[../]
 
  [] #END Variables
 
@@ -94,13 +106,13 @@
  	[./ambient_temp]
  		order = CONSTANT
  		family = MONOMIAL
- 		initial_condition = 423.15
+ 		initial_condition = 373.15
  	[../]
  
 	[./wall_temp]
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = 423.15
+		initial_condition = 373.15
 	[../]
 
  [] #END AuxVariables
@@ -112,7 +124,7 @@
 		variable = N2
 		initial_mole_frac = 0.79
 		initial_press = 101.35
-		initial_temp = 423.15
+		initial_temp = 373.15
 	[../]
 
 	[./O2_IC]
@@ -120,7 +132,7 @@
 		variable = O2
 		initial_mole_frac = 0.21
  		initial_press = 101.35
- 		initial_temp = 423.15
+ 		initial_temp = 373.15
 	[../]
 
 	[./H2O_IC]
@@ -128,7 +140,7 @@
 		variable = H2O
 		initial_mole_frac = 0.0
  		initial_press = 101.35
- 		initial_temp = 423.15
+ 		initial_temp = 373.15
 	[../]
  
 	[./I2_IC]
@@ -136,7 +148,7 @@
 		variable = I2
 		initial_mole_frac = 0.0
 		initial_press = 101.35
-		initial_temp = 423.15
+		initial_temp = 373.15
 	[../]
 
  [] #END ICs
@@ -260,20 +272,78 @@
 		index = 3
 	[../]
  
+#	[./H2O_adsorption]
+#		type = CoupledExtendedGSTAmodel
+#		variable = H2O_Adsorbed
+#		main_coupled = H2O
+#		coupled_list = 'N2 O2 H2O I2'
+#		coupled_temp = column_temp
+#	[../]
+ 
+#	[./I2_adsorption]
+#		type = CoupledExtendedGSTAmodel
+#		variable = I2_Adsorbed
+#		main_coupled = I2
+#		coupled_list = 'N2 O2 H2O I2'
+#		coupled_temp = column_temp
+#	[../]
+ 
 	[./H2O_adsorption]
-		type = CoupledExtendedGSTAmodel
+		type = CoupledGSTALDFmodel
 		variable = H2O_Adsorbed
-		main_coupled = H2O
-		coupled_list = 'N2 O2 H2O I2'
+		coupled_gas = H2O
 		coupled_temp = column_temp
+		index = 2
 	[../]
  
+#	[./I2_adsorption]
+#		type = CoupledGSTALDFmodel
+#		variable = I2_Adsorbed
+#		coupled_gas = I2
+#		coupled_temp = column_temp
+#		index = 3
+#	[../]
+ 
 	[./I2_adsorption]
-		type = CoupledExtendedGSTAmodel
+		type = CoupledConstChemisorption
 		variable = I2_Adsorbed
-		main_coupled = I2
-		coupled_list = 'N2 O2 H2O I2'
-		coupled_temp = column_temp
+		main_variable = I2_Adsorbed
+		coupled_gases = 'I2'
+		gases_stoichiometry = '-1'
+		coupled_adsorption = 'I2_Adsorbed AgOH Ag2O'
+		adsorbed_sites = '2 4 4'
+		adsorbed_stoichiometry = '2 4 2'
+		max_capacity = 0.9764
+		forward_rate = 34000.0
+		reverse_rate = 4.25E-4
+	[../]
+ 
+	[./AgOH_ads]
+		type = CoupledConstChemisorption
+		variable = AgOH
+		main_variable = AgOH
+		coupled_gases = 'O2 H2O'
+		gases_stoichiometry = '-1 -2'
+		coupled_adsorption = 'I2_Adsorbed AgOH Ag2O'
+		adsorbed_sites = '2 4 4'
+		adsorbed_stoichiometry = '2 4 2'
+		max_capacity = 0.9764
+		forward_rate = 1.0E+9
+		reverse_rate = 1.83E-1
+	[../]
+ 
+	[./Ag2O_ads]
+		type = CoupledConstChemisorption
+		variable = Ag2O
+		main_variable = Ag2O
+		coupled_gases = 'O2'
+		gases_stoichiometry = '-1'
+		coupled_adsorption = 'I2_Adsorbed AgOH Ag2O'
+		adsorbed_sites = '2 4 4'
+		adsorbed_stoichiometry = '2 4 2'
+		max_capacity = 0.9764
+		forward_rate = 2.71E-2
+		reverse_rate = 1.43E-2
 	[../]
  
  [] #END Kernels
@@ -360,9 +430,9 @@
 		type = DGMassFluxBC
  		variable = N2
  		boundary = 'top bottom'
- 		input_temperature = 423.15
+ 		input_temperature = 373.15
  		input_pressure = 101.35
- 		input_molefraction = 0.790096611
+ 		input_molefraction = 0.788620587
  		index = 0
  	[../]
 
@@ -370,7 +440,7 @@
 		type = DGMassFluxBC
  		variable = O2
  		boundary = 'top bottom'
- 		input_temperature = 423.15
+ 		input_temperature = 373.15
  		input_pressure = 101.35
  		input_molefraction = 0.20974
  		index = 1
@@ -380,9 +450,9 @@
 		type = DGMassFluxBC
  		variable = H2O
  		boundary = 'top bottom'
- 		input_temperature = 423.15
+ 		input_temperature = 373.15
  		input_pressure = 101.35
- 		input_molefraction = 0.000126589
+ 		input_molefraction = 0.001629413
  		index = 2
  	[../]
  
@@ -390,9 +460,9 @@
 		type = DGMassFluxBC
 		variable = I2
 		boundary = 'top bottom'
-		input_temperature = 423.15
+		input_temperature = 373.15
 		input_pressure = 101.35
-		input_molefraction = 0.0000368
+		input_molefraction = 0.00001
 		index = 3
 	[../]
 
@@ -400,7 +470,7 @@
  		type = DGHeatFluxBC
  		variable = column_temp
  		boundary = 'top bottom'
- 		input_temperature = 423.15
+ 		input_temperature = 373.15
  	[../]
  
 	[./Heat_Wall_Flux]
@@ -550,9 +620,21 @@
 		execute_on = 'initial timestep_end'
 	[../]
  
-	[./I2_solid]
+	[./AgI_solid]
 		type = ElementAverageValue
 		variable = I2_Adsorbed
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./AgOH_solid]
+		type = ElementAverageValue
+		variable = AgOH
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./Ag2O_solid]
+		type = ElementAverageValue
+		variable = Ag2O
 		execute_on = 'initial timestep_end'
 	[../]
  
@@ -573,12 +655,11 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt basic
 	start_time = 0.0
-	end_time = 70.0
-	dtmax = 1.0
+	end_time = 1000.0
+	dtmax = 10.0
  
 	[./TimeStepper]
 		type = SolutionTimeAdaptiveDT
-#		type = DGOSPREY_TimeStepper
 	[../]
  
  [] #END Executioner
