@@ -123,7 +123,6 @@
 		block = '0 1 2'
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = '253.15 222.15 191.15'
 	[../]
  
 	[./Kr_Adsorbed]
@@ -184,7 +183,6 @@
 		block = '0 1 2'
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = '253.15 222.15 191.15'
 	[../]
  
 	[./wall_temp_1]
@@ -247,6 +245,48 @@
 		initial_mole_frac = 1.0
 		initial_press = 101.35
 		initial_temp = 253.15
+	[../]
+ 
+ [./amb_ic_1]
+ type = ConstantIC
+ block = '0'
+ variable = ambient_temp
+ value = 253.15
+	[../]
+ 
+	[./amb_ic_12]
+ type = ConstantIC
+ block = '1'
+ variable = ambient_temp
+ value = 222.15
+	[../]
+ 
+	[./amb_ic_2]
+ type = ConstantIC
+ block = '2'
+ variable = ambient_temp
+ value = 191.15
+	[../]
+ 
+	[./col_ic_1]
+ type = ConstantIC
+ block = '0'
+ variable = column_temp
+ value = 253.15
+	[../]
+ 
+	[./col_ic_12]
+ type = ConstantIC
+ block = '1'
+ variable = column_temp
+ value = 222.15
+	[../]
+ 
+	[./col_ic_2]
+ type = ConstantIC
+ block = '2'
+ variable = column_temp
+ value = 191.15
 	[../]
  
  [] #END ICs
@@ -583,6 +623,7 @@
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'Kr Xe N2 O2'
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_1]
@@ -591,6 +632,7 @@
 		variable = wall_temp_1
 		column_temp = column_temp
 		ambient_temp = 253.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_12]
@@ -599,6 +641,7 @@
 		variable = wall_temp_12
 		column_temp = column_temp
 		ambient_temp = 222.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_2]
@@ -607,6 +650,7 @@
 		variable = wall_temp_2
 		column_temp = column_temp
 		ambient_temp = 191.15
+		execute_on = 'initial timestep_end'
 	[../]
  
  [] #END AuxKernels

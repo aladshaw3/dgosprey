@@ -1,6 +1,6 @@
 [GlobalParams]
 
-	dt = 0.1
+	dt = 0.01
 sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
@@ -255,17 +255,17 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 	[../]
  
 	[./amb_ic_12]
- type = ConstantIC
- block = '1'
- variable = ambient_temp
- value = 222.15
+type = ConstantIC
+block = '1'
+variable = ambient_temp
+value = 222.15
 	[../]
  
 	[./amb_ic_2]
- type = ConstantIC
- block = '2'
- variable = ambient_temp
- value = 191.15
+type = ConstantIC
+block = '2'
+variable = ambient_temp
+value = 191.15
 	[../]
  
 	[./col_ic_1]
@@ -276,17 +276,17 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 	[../]
  
 	[./col_ic_12]
- type = ConstantIC
- block = '1'
- variable = column_temp
- value = 222.15
+type = ConstantIC
+block = '1'
+variable = column_temp
+value = 222.15
 	[../]
  
 	[./col_ic_2]
- type = ConstantIC
- block = '2'
- variable = column_temp
- value = 191.15
+type = ConstantIC
+block = '2'
+variable = column_temp
+value = 191.15
 	[../]
  
  [] #END ICs
@@ -454,7 +454,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  [../]
  
 [./Kr_adsorption_1]
-	type = CoupledExtendedLangmuirModel
+	type = CoupledExtendedLangmuirLDFModel
  	block = '0'
 	variable = Kr_Adsorbed
 	main_coupled = Kr
@@ -463,10 +463,11 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 	enthalpies = '-31773 -23713 -9495'
 	entropies = '-91.8 -22.59 -25.36'
 	max_capacity = 1.35
+	index = 0
  [../]
  
 [./Xe_adsorption_1]
-	type = CoupledExtendedLangmuirModel
+	type = CoupledExtendedLangmuirLDFModel
  	block = '0'
 	variable = Xe_Adsorbed
 	main_coupled = Xe
@@ -475,10 +476,11 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 	enthalpies = '-31773 -23713 -9495'
 	entropies = '-91.8 -22.59 -25.36'
 	max_capacity = 1.07
+	index = 1
  [../]
  
 [./N2_adsorption_1]
-	type = CoupledExtendedLangmuirModel
+	type = CoupledExtendedLangmuirLDFModel
  	block = '0'
 	variable = N2_Adsorbed
 	main_coupled = N2
@@ -487,10 +489,11 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 	enthalpies = '-31773 -23713 -9495'
 	entropies = '-91.8 -22.59 -25.36'
 	max_capacity = 0.096
+	index = 2
  [../]
  
 	[./Kr_adsorption_2]
-		type = CoupledExtendedLangmuirModel
+		type = CoupledExtendedLangmuirLDFModel
 		block = '2'
 		variable = Kr_Adsorbed
 		main_coupled = Kr
@@ -499,10 +502,11 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		enthalpies = '-15758 -37630 -20959'
 		entropies = '-5.28 -96.9 -62.9'
 		max_capacity = 1.2
+		index = 0
 	[../]
  
 	[./Xe_adsorption_2]
-		type = CoupledExtendedLangmuirModel
+		type = CoupledExtendedLangmuirLDFModel
 		block = '2'
 		variable = Xe_Adsorbed
 		main_coupled = Xe
@@ -511,10 +515,11 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		enthalpies = '-15758 -37630 -20959'
 		entropies = '-5.28 -96.9 -62.9'
 		max_capacity = 1.94
+		index = 1
 	[../]
  
 	[./N2_adsorption_2]
-		type = CoupledExtendedLangmuirModel
+		type = CoupledExtendedLangmuirLDFModel
 		block = '2'
 		variable = N2_Adsorbed
 		main_coupled = N2
@@ -523,6 +528,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		enthalpies = '-15758 -37630 -20959'
 		entropies = '-5.28 -96.9 -62.9'
 		max_capacity = 0.03
+		index = 2
 	[../]
 
  
@@ -605,6 +611,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'Kr Xe N2 O2'
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_1]
@@ -613,6 +620,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		variable = wall_temp_1
 		column_temp = column_temp
 		ambient_temp = 253.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_12]
@@ -621,6 +629,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		variable = wall_temp_12
 		column_temp = column_temp
 		ambient_temp = 222.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_2]
@@ -629,6 +638,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		variable = wall_temp_2
 		column_temp = column_temp
 		ambient_temp = 191.15
+		execute_on = 'initial timestep_end'
 	[../]
  
  [] #END AuxKernels
@@ -1119,7 +1129,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 [Executioner]
  
 	type = Transient
-	scheme = implicit-euler
+	scheme = bdf2
  
 	# NOTE: The default tolerances are far to strict and cause the program to crawl
 	nl_rel_tol = 1e-10

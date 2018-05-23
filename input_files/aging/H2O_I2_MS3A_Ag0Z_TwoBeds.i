@@ -123,7 +123,6 @@
 		block = '0 1 2'
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = '303.15 348.15 373.15'
 	[../]
  
 	[./H2O_Adsorbed]
@@ -184,7 +183,6 @@
 		block = '0 1 2'
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = '303.15 348.15 373.15'
 	[../]
  
 	[./wall_temp_1]
@@ -219,7 +217,7 @@
 		variable = N2
 		initial_mole_frac = 0.79
 		initial_press = 101.35
-		initial_temp = 298.15
+		initial_temp = 303.15
 	[../]
  
 	[./O2_IC]
@@ -228,7 +226,7 @@
 		variable = O2
 		initial_mole_frac = 0.21
 		initial_press = 101.35
-		initial_temp = 298.15
+		initial_temp = 303.15
 	[../]
  
 	[./H2O_IC]
@@ -237,7 +235,7 @@
 		variable = H2O
 		initial_mole_frac = 0.0
 		initial_press = 101.35
-		initial_temp = 298.15
+		initial_temp = 303.15
 	[../]
  
 	[./I2_IC]
@@ -246,7 +244,49 @@
 		variable = I2
 		initial_mole_frac = 0.0
 		initial_press = 101.35
-		initial_temp = 373.15
+		initial_temp = 303.15
+	[../]
+ 
+	[./amb_ic_1]
+		type = ConstantIC
+		block = '0'
+		variable = ambient_temp
+		value = 303.15
+	[../]
+ 
+	[./amb_ic_12]
+		type = ConstantIC
+		block = '1'
+		variable = ambient_temp
+		value = 348.15
+	[../]
+ 
+	[./amb_ic_2]
+		type = ConstantIC
+		block = '2'
+		variable = ambient_temp
+		value = 373.15
+	[../]
+ 
+	[./col_ic_1]
+		type = ConstantIC
+		block = '0'
+		variable = column_temp
+		value = 303.15
+	[../]
+ 
+	[./col_ic_12]
+		type = ConstantIC
+		block = '1'
+		variable = column_temp
+		value = 348.15
+	[../]
+ 
+	[./col_ic_2]
+		type = ConstantIC
+		block = '2'
+		variable = column_temp
+		value = 373.15
 	[../]
  
  [] #END ICs
@@ -533,6 +573,7 @@
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'N2 O2 H2O'
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_1]
@@ -541,6 +582,7 @@
 		variable = wall_temp_1
 		column_temp = column_temp
 		ambient_temp = ambient_temp
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_12]
@@ -549,6 +591,7 @@
 		variable = wall_temp_12
 		column_temp = column_temp
 		ambient_temp = ambient_temp
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_2]
@@ -557,6 +600,7 @@
 		variable = wall_temp_2
 		column_temp = column_temp
 		ambient_temp = ambient_temp
+		execute_on = 'initial timestep_end'
 	[../]
  
  [] #END AuxKernels
@@ -897,6 +941,55 @@
 		type = SideAverageValue
 		boundary = 'top'
 		variable = H2O
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./I2_enter_1]
+		type = SideAverageValue
+		boundary = 'bottom'
+		variable = I2
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./I2_enter_2]
+		type = SideAverageValue
+		boundary = 'interface_122'
+		variable = I2
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./I2_exit_1]
+		type = SideAverageValue
+		boundary = 'interface_112'
+		variable = I2
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./I2_avg_gas_1]
+		block = 0
+		type = ElementAverageValue
+		variable = I2
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./I2_avg_gas_12]
+		block = 1
+		type = ElementAverageValue
+		variable = I2
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./I2_avg_gas_2]
+		block = 2
+		type = ElementAverageValue
+		variable = I2
+		execute_on = 'initial timestep_end'
+	[../]
+ 
+	[./I2_exit_2]
+		type = SideAverageValue
+		boundary = 'top'
+		variable = I2
 		execute_on = 'initial timestep_end'
 	[../]
  

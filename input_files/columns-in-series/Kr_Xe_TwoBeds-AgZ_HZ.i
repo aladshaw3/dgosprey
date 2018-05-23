@@ -510,6 +510,7 @@
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'Kr Xe He'
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_1]
@@ -518,6 +519,7 @@
 		variable = wall_temp_1
 		column_temp = column_temp
 		ambient_temp = 253.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_12]
@@ -526,6 +528,7 @@
 		variable = wall_temp_12
 		column_temp = column_temp
 		ambient_temp = 222.15
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc_2]
@@ -534,6 +537,7 @@
 		variable = wall_temp_2
 		column_temp = column_temp
 		ambient_temp = 191.15
+		execute_on = 'initial timestep_end'
 	[../]
  
  [] #END AuxKernels

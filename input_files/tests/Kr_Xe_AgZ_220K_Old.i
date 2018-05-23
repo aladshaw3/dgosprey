@@ -303,10 +303,10 @@
 
 	[./column_pressure]
 		type = TotalColumnPressure
-		execute_on = 'initial timestep_end'
 		variable = total_pressure
 		temperature = column_temp
 		coupled_gases = 'Kr Xe He'
+		execute_on = 'initial timestep_end'
 	[../]
  
 	[./wall_temp_calc]
@@ -314,6 +314,7 @@
 		variable = wall_temp
 		column_temp = column_temp
 		ambient_temp = ambient_temp
+		execute_on = 'initial timestep_end'
 	[../]
 
 [] #END AuxKernels
