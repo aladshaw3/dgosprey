@@ -1,8 +1,8 @@
 [GlobalParams]
 
-	dt = 0.01
-	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
-	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
+	dt = 0.1
+sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
+epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
  [] #END GlobalParams
  
@@ -123,7 +123,6 @@
 		block = '0 1 2'
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = '253.15 222.15 191.15'
 	[../]
  
 	[./Kr_Adsorbed]
@@ -184,7 +183,6 @@
 		block = '0 1 2'
 		order = FIRST
 		family = MONOMIAL
-		initial_condition = '253.15 222.15 191.15'
 	[../]
  
 	[./wall_temp_1]
@@ -247,6 +245,48 @@
 		initial_mole_frac = 1.0
 		initial_press = 101.35
 		initial_temp = 253.15
+	[../]
+ 
+ [./amb_ic_1]
+ type = ConstantIC
+ block = '0'
+ variable = ambient_temp
+ value = 253.15
+	[../]
+ 
+	[./amb_ic_12]
+ type = ConstantIC
+ block = '1'
+ variable = ambient_temp
+ value = 222.15
+	[../]
+ 
+	[./amb_ic_2]
+ type = ConstantIC
+ block = '2'
+ variable = ambient_temp
+ value = 191.15
+	[../]
+ 
+	[./col_ic_1]
+ type = ConstantIC
+ block = '0'
+ variable = column_temp
+ value = 253.15
+	[../]
+ 
+	[./col_ic_12]
+ type = ConstantIC
+ block = '1'
+ variable = column_temp
+ value = 222.15
+	[../]
+ 
+	[./col_ic_2]
+ type = ConstantIC
+ block = '2'
+ variable = column_temp
+ value = 191.15
 	[../]
  
  [] #END ICs
@@ -414,7 +454,7 @@
  [../]
  
 [./Kr_adsorption_1]
-	type = CoupledExtendedLangmuirLDFModel
+	type = CoupledExtendedLangmuirModel
  	block = '0'
 	variable = Kr_Adsorbed
 	main_coupled = Kr
@@ -423,13 +463,10 @@
 	enthalpies = '-31773 -23713 -9495'
 	entropies = '-91.8 -22.59 -25.36'
 	max_capacity = 1.35
-	index = 0
-	alpha = 15.0
-	beta = 15.0
  [../]
  
 [./Xe_adsorption_1]
-	type = CoupledExtendedLangmuirLDFModel
+	type = CoupledExtendedLangmuirModel
  	block = '0'
 	variable = Xe_Adsorbed
 	main_coupled = Xe
@@ -438,13 +475,10 @@
 	enthalpies = '-31773 -23713 -9495'
 	entropies = '-91.8 -22.59 -25.36'
 	max_capacity = 1.07
-	index = 1
-	alpha = 15.0
-	beta = 15.0
  [../]
  
 [./N2_adsorption_1]
-	type = CoupledExtendedLangmuirLDFModel
+	type = CoupledExtendedLangmuirModel
  	block = '0'
 	variable = N2_Adsorbed
 	main_coupled = N2
@@ -453,13 +487,10 @@
 	enthalpies = '-31773 -23713 -9495'
 	entropies = '-91.8 -22.59 -25.36'
 	max_capacity = 0.096
-	index = 2
-	alpha = 15.0
-	beta = 15.0
  [../]
  
 	[./Kr_adsorption_2]
-		type = CoupledExtendedLangmuirLDFModel
+		type = CoupledExtendedLangmuirModel
 		block = '2'
 		variable = Kr_Adsorbed
 		main_coupled = Kr
@@ -468,13 +499,10 @@
 		enthalpies = '-15758 -37630 -20959'
 		entropies = '-5.28 -96.9 -62.9'
 		max_capacity = 1.2
-		index = 0
-		alpha = 15.0
-		beta = 15.0
 	[../]
  
 	[./Xe_adsorption_2]
-		type = CoupledExtendedLangmuirLDFModel
+		type = CoupledExtendedLangmuirModel
 		block = '2'
 		variable = Xe_Adsorbed
 		main_coupled = Xe
@@ -483,13 +511,10 @@
 		enthalpies = '-15758 -37630 -20959'
 		entropies = '-5.28 -96.9 -62.9'
 		max_capacity = 1.94
-		index = 1
-		alpha = 15.0
-		beta = 15.0
 	[../]
  
 	[./N2_adsorption_2]
-		type = CoupledExtendedLangmuirLDFModel
+		type = CoupledExtendedLangmuirModel
 		block = '2'
 		variable = N2_Adsorbed
 		main_coupled = N2
@@ -498,9 +523,6 @@
 		enthalpies = '-15758 -37630 -20959'
 		entropies = '-5.28 -96.9 -62.9'
 		max_capacity = 0.03
-		index = 2
-		alpha = 15.0
-		beta = 15.0
 	[../]
 
  
@@ -1124,8 +1146,8 @@
 		type = SMP
 		full = true
 		petsc_options = '-snes_converged_reason'
-		petsc_options_iname = '-pc_type -ksp_gmres_restart  -snes_max_funcs'
-		petsc_options_value = 'lu 2000 20000'
+		petsc_options_iname = '-pc_type -sub_pc_type -pc_hypre_type -ksp_gmres_restart  -snes_max_funcs'
+		petsc_options_value = 'lu ilu boomeramg 2000 20000'
 	[../]
  
  [] #END Preconditioning
