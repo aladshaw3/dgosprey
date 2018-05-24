@@ -1,6 +1,6 @@
 [GlobalParams]
 
-	dt = 0.01
+	dt = 0.025
 	sigma = 1   # Penalty value:  NIPG = 0   otherwise, > 0  (between 0.1 and 10)
 	epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
  
@@ -16,8 +16,8 @@
  
 	type = GeneratedMesh
 	dim = 2
-	nx = 10
-	ny = 80
+	nx = 3
+	ny = 20
 	xmin = 0.0
 	xmax = 2.54 #cm
 	ymin = 0.0
@@ -1017,11 +1017,11 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 5000.0
+	end_time = 0.05
 	dtmax = 1.0
 	
 	[./TimeStepper]
-		type = SolutionTimeAdaptiveDT
+		type = ConstantDT
 	[../]
  
  [] #END Executioner
