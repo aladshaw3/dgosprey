@@ -163,4 +163,5 @@ peacock_*.e
 /include/DgospreyRevision.h
 /include/base/DgospreyRevision.h
 /build/
+*.previous_test_results.json
 
