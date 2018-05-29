@@ -606,12 +606,12 @@
  [] #END AuxKernels
  
 [BCs]
- 
+#NOTE: Temperature at input does not match because we wanted to represent H2O and I2 at -15 oC (at 100 oC) and 10 ppmv, respectively
 	[./N2_Flux]
 		type = DGMassFluxBC
 		variable = N2
 		boundary = 'top bottom'
-		input_temperature = 303.15
+		input_temperature = 373.15
 		input_pressure = 101.35
 		input_molefraction = 0.788620587
 		index = 0
@@ -621,7 +621,7 @@
 		type = DGMassFluxBC
 		variable = O2
 		boundary = 'top bottom'
-		input_temperature = 303.15
+		input_temperature = 373.15
 		input_pressure = 101.35
 		input_molefraction = 0.20974
 		index = 1
@@ -631,7 +631,7 @@
 		type = DGMassFluxBC
 		variable = H2O
 		boundary = 'top bottom'
-		input_temperature = 303.15
+		input_temperature = 373.15
 		input_pressure = 101.35
 		input_molefraction = 0.001629413
 		index = 2
@@ -641,7 +641,7 @@
 		type = DGMassFluxBC
 		variable = I2
 		boundary = 'top bottom'
-		input_temperature = 303.15
+		input_temperature = 373.15
 		input_pressure = 101.35
 		input_molefraction = 0.00001
 		index = 3
