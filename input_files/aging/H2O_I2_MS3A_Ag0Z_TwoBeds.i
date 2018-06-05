@@ -363,11 +363,26 @@
 		variable = I2
 	[../]
  
-	[./I2_MT]
-		block = '0 2'
+#	[./I2_MT]
+#		block = '0 2'
+#		type = SolidMassTransfer
+#		variable = I2
+#		coupled = I2_Adsorbed
+#	[../]
+ 
+	[./I2_MT_1]
+		block = '0'
 		type = SolidMassTransfer
 		variable = I2
 		coupled = I2_Adsorbed
+	[../]
+ 
+	[./I2_MT_2]
+		block = '2'
+		type = CoupledCoeffTimeDerivative
+		variable = I2
+		coupled = I2_Adsorbed
+		time_coeff = 0.42    #rho_b * 0.5
 	[../]
  
 	[./diffI2]
@@ -979,7 +994,7 @@
 		execute_on = 'initial timestep_end'
 	[../]
  
-	[./AgI]
+	[./2x_AgI]
 		block = 2
 		type = ElementAverageValue
 		variable = I2_Adsorbed
