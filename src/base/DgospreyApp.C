@@ -101,6 +101,7 @@
 #include "ShrinkingCoreLangmuir.h"
 
 #include "CoupledConstChemisorption.h"
+#include "CoupledCatalyst.h"
 
 #include "CoupledExtendedGSTAisotherm.h"
 #include "CoupledExtendedGSTAmodel.h"
@@ -173,6 +174,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(CoupledConstChemisorption);
 	registerKernel(CoupledExtendedGSTAisotherm);
 	registerKernel(CoupledExtendedGSTAmodel);
+    registerKernel(CoupledCatalyst);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(WallTemperature);
