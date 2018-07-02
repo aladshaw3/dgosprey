@@ -74,17 +74,18 @@ protected:
 		computed is the associated diagonal element in the overall Jacobian matrix for the
 		system and is used in preconditioning of the linear sub-problem. */
 	virtual Real computeQpJacobian();
+    
+    /// Value of the column temperature at the inlet of the system
+    Real _input_temperature;
+    /// Value of the column total pressure at the inlet of the system
+    Real _input_pressure;
+    /// Value of the molefraction of the specific species at the inlet of the system
+    Real _input_molefraction;
+    
+    const MaterialProperty<Real> & _vel;								///< Reference to the velocity material property
+    unsigned int _index;												///< Index of the species of interest at the boundary
 	
 private:
-	/// Value of the column temperature at the inlet of the system
-	Real _input_temperature;
-	/// Value of the column total pressure at the inlet of the system
-	Real _input_pressure;
-	/// Value of the molefraction of the specific species at the inlet of the system
-	Real _input_molefraction;
-	
-	const MaterialProperty<Real> & _vel;								///< Reference to the velocity material property
-	unsigned int _index;												///< Index of the species of interest at the boundary
 	
 };
 

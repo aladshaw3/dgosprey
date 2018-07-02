@@ -61,6 +61,7 @@
 #include "DGMassFluxLimitedBC.h"
 #include "GColumnMassAdvection.h"
 #include "GColumnMassDispersion.h"
+#include "DGMassFluxTimeDependentBC.h"
 
 #include "DGColumnHeatAdvection.h"
 #include "GColumnHeatAdvection.h"
@@ -196,6 +197,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerBoundaryCondition(DGMassFluxLimitedBC);
 	registerKernel(GColumnMassAdvection);
 	registerKernel(GColumnMassDispersion);
+    registerBoundaryCondition(DGMassFluxTimeDependentBC);
 
 	registerDGKernel(DGColumnHeatAdvection);
 	registerKernel(GColumnHeatAdvection);
