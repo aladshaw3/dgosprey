@@ -71,20 +71,17 @@ Real DGMassFluxTimeDependentBC::computeQpResidual()
     }
     else
     {
-        return 0.0;
+        _input_molefraction = 0.0;
+        _u_input = (_input_pressure * _input_molefraction) / (8.3144621 * _input_temperature);
+        return DGFluxBC::computeQpResidual();
+        //_u_input = 0.0;
+        //return DGFluxBC::computeQpResidual();
     }
 }
 
 Real
 DGMassFluxTimeDependentBC::computeQpJacobian()
 {
-    if (_t >= _s_time && _t <= _e_time)
-    {
     return DGMassFluxBC::computeQpJacobian();
-    }
-    else
-    {
-    return 0.0;
-    }
 }
 
