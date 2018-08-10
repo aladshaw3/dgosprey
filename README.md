@@ -19,13 +19,13 @@ Currently, this model employs the following adsorption expressions for mass tran
 
 As this model continues to be developed, more and more adsorption expressions will be added. 
 
-This is an unfinished application. Use with caution.
+This is application is still under active development. Use with caution.
 
 Project is authored by Dr. Austin Ladshaw (aladshaw3@gatech.edu). Please contact Dr. Ladshaw for any questions regarding the software.
 
 To cite this application, you may use the following citation format:
 
-Ladshaw, A.P., "DG-OSPREY: A mass and energy transport model for adsorption in fixed-bed columns using Discontinuous Galerkin finite element methods," <Version (#)>, https://github.com/aladshaw3/dgosprey, Access (Month) (Day), (Year). 
+Ladshaw, A.P., "DG-OSPREY: A mass and energy transport modeling platform for adsorption in fixed-bed columns using Discontinuous Galerkin finite element methods," <Version (#)>, https://github.com/aladshaw3/dgosprey, Access (Month) (Day), (Year). 
 
 "Fork Dgosprey" to create a new MOOSE-based application.
 
