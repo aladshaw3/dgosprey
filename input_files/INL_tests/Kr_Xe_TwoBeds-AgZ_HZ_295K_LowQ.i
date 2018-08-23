@@ -217,7 +217,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		variable = Kr
 		initial_mole_frac = 0.0
 		initial_press = 101.35
-		initial_temp = 253.15
+		initial_temp = 295.15
 	[../]
  
 	[./Xe_IC]
@@ -226,32 +226,32 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 		variable = Xe
 		initial_mole_frac = 0.0
 		initial_press = 101.35
-		initial_temp = 253.15
+		initial_temp = 295.15
 	[../]
  
 	[./N2_IC]
 		type = ConcentrationIC
 		block = '0 1 2'
 		variable = N2
-		initial_mole_frac = 0.79
+		initial_mole_frac = 0.0
 		initial_press = 101.35
-		initial_temp = 253.15
+		initial_temp = 295.15
 	[../]
  
 	[./O2_IC]
 		type = ConcentrationIC
 		block = '0 1 2'
 		variable = O2
-		initial_mole_frac = 0.21
+		initial_mole_frac = 1.0
 		initial_press = 101.35
-		initial_temp = 253.15
+		initial_temp = 295.15
 	[../]
  
  [./amb_ic_1]
  type = ConstantIC
  block = '0'
  variable = ambient_temp
- value = 253.15
+ value = 295.15
 	[../]
  
 	[./amb_ic_12]
@@ -272,7 +272,7 @@ value = 191.15
  type = ConstantIC
  block = '0'
  variable = column_temp
- value = 253.15
+ value = 295.15
 	[../]
  
 	[./col_ic_12]
@@ -619,7 +619,7 @@ value = 191.15
 		type = WallTemperature
 		variable = wall_temp_1
 		column_temp = column_temp
-		ambient_temp = 253.15
+		ambient_temp = 295.15
 		execute_on = 'initial timestep_end'
 	[../]
  
@@ -649,9 +649,9 @@ value = 191.15
 	type = DGMassFluxBC
 	variable = Kr
 	boundary = 'top bottom'
-	input_temperature = 253.15
+	input_temperature = 295.15
 	input_pressure = 101.35
-	input_molefraction = 0.000128689
+	input_molefraction = 0.000150122
 	index = 0
  [../]
  
@@ -659,9 +659,9 @@ value = 191.15
 	type = DGMassFluxBC
 	variable = Xe
 	boundary = 'top bottom'
-	input_temperature = 253.15
+	input_temperature = 295.15
 	input_pressure = 101.35
-	input_molefraction = 0.000857934
+	input_molefraction = 0.00099807
 	index = 1
  [../]
  
@@ -669,9 +669,9 @@ value = 191.15
 	type = DGMassFluxBC
 	variable = N2
 	boundary = 'top bottom'
-	input_temperature = 253.15
+	input_temperature = 295.15
 	input_pressure = 101.35
-	input_molefraction = 0.67775
+	input_molefraction = 0.7885
 	index = 2
  [../]
 
@@ -679,9 +679,9 @@ value = 191.15
 	type = DGMassFluxBC
 	variable = O2
 	boundary = 'top bottom'
-	input_temperature = 253.15
+	input_temperature = 295.15
 	input_pressure = 101.35
-	input_molefraction = 0.32126
+	input_molefraction = 0.21035
 	index = 3
  [../]
 
@@ -689,7 +689,7 @@ value = 191.15
 		type = DGHeatFluxBC
 		variable = column_temp
 		boundary = 'top bottom'
-		input_temperature = 253.15
+		input_temperature = 295.15
 	[../]
  
 	[./Heat_Wall_Flux_1]
@@ -1141,7 +1141,7 @@ value = 191.15
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 4.0
+	end_time = 1.5
 	dtmax = 0.5
 	
 	[./TimeStepper]

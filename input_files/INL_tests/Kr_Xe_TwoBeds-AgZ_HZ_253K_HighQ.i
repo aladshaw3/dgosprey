@@ -16,12 +16,12 @@
  
 	type = GeneratedMesh
 	dim = 2
-	nx = 5
-	ny = 81
+	nx = 2
+	ny = 103
 	xmin = 0.0
 	xmax = 0.9525 #cm
 	ymin = 0.0
-	ymax = 81.6 #cm
+	ymax = 102.6 #cm
  
  [] # END Mesh
  
@@ -44,7 +44,7 @@
 	[./column_2]
 		type = SubdomainBoundingBox
 		block_id = 2
-		top_right = '0.9525 81.6 0'
+		top_right = '0.9525 102.6 0'
 		bottom_left = '0 51.8 0'
 	[../]
  
@@ -499,48 +499,39 @@
  [../]
  
 	[./Kr_adsorption_2]
-		type = CoupledExtendedLangmuirLDFModel
+		type = CoupledExtendedLangmuirModel
 		block = '2'
 		variable = Kr_Adsorbed
 		main_coupled = Kr
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
-		enthalpies = '-15758 -37630 -20959'
-		entropies = '-5.28 -96.9 -62.9'
-		max_capacity = 1.2
-		index = 0
-		alpha = 15.0
-		beta = 15.0
+ enthalpies = '-13212.6 -22875.8 -10816.1'
+ entropies = '2.094 -29.866 -21.4657'
+ max_capacity = 1.5965
 	[../]
  
 	[./Xe_adsorption_2]
-		type = CoupledExtendedLangmuirLDFModel
+		type = CoupledExtendedLangmuirModel
 		block = '2'
 		variable = Xe_Adsorbed
 		main_coupled = Xe
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
-		enthalpies = '-15758 -37630 -20959'
-		entropies = '-5.28 -96.9 -62.9'
-		max_capacity = 1.94
-		index = 1
-		alpha = 15.0
-		beta = 15.0
+ enthalpies = '-13212.6 -22875.8 -10816.1'
+ entropies = '2.094 -29.866 -21.4657'
+ max_capacity = 1.95
 	[../]
  
 	[./N2_adsorption_2]
-		type = CoupledExtendedLangmuirLDFModel
+		type = CoupledExtendedLangmuirModel
 		block = '2'
 		variable = N2_Adsorbed
 		main_coupled = N2
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
-		enthalpies = '-15758 -37630 -20959'
-		entropies = '-5.28 -96.9 -62.9'
-		max_capacity = 0.03
-		index = 2
-		alpha = 15.0
-		beta = 15.0
+ enthalpies = '-13212.6 -22875.8 -10816.1'
+ entropies = '2.094 -29.866 -21.4657'
+ max_capacity = 0.03
 	[../]
 
  
@@ -875,10 +866,10 @@
 	[./BedMaterials_2]
         type = BedProperties
         block = 2
-		length = 29.8
+		length = 50.8
 		inner_diameter = 1.905
 		outer_diameter = 2.0828
-		bulk_porosity = 0.86				#not known
+		bulk_porosity = 0.95				#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
@@ -1153,7 +1144,7 @@
 	solve_type = pjfnk
 	line_search = basic    # Options: default none l2 bt
 	start_time = 0.0
-	end_time = 2.0
+	end_time = 1.5
 	dtmax = 0.5
 	
 	[./TimeStepper]
