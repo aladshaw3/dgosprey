@@ -71,11 +71,11 @@ Real DGMassFluxTimeDependentBC::computeQpResidual()
     }
     else
     {
-        _input_molefraction = 0.0;
-        _u_input = (_input_pressure * _input_molefraction) / (8.3144621 * _input_temperature);
-        return DGFluxBC::computeQpResidual();
-        //_u_input = 0.0;
+        //_input_molefraction = 0.0;
+        //_u_input = (_input_pressure * _input_molefraction) / (8.3144621 * _input_temperature);
         //return DGFluxBC::computeQpResidual();
+        _u_input = 0.0;
+        return DGFluxBC::computeQpResidual();
     }
 }
 
