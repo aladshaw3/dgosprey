@@ -543,7 +543,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
     solve_type = pjfnk
     line_search = basic    # Options: default none l2 bt basic
     start_time = 0.0
-    end_time = 5.0
+    end_time = 1.0
     dtmax = 1.0
 
     [./TimeStepper]
