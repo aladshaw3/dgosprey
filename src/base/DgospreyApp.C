@@ -104,6 +104,7 @@
 #include "CoupledConstChemisorption.h"
 #include "CoupledCatalyst.h"
 #include "VariableOrderCoupledCatalyst.h"
+#include "VariableOrderTempDependent.h"
 
 #include "CoupledExtendedGSTAisotherm.h"
 #include "CoupledExtendedGSTAmodel.h"
@@ -178,6 +179,7 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerKernel(CoupledExtendedGSTAmodel);
     registerKernel(CoupledCatalyst);
     registerKernel(VariableOrderCoupledCatalyst);
+    registerKernel(VariableOrderTempDependent);
 	
 	registerAux(TotalColumnPressure);
 	registerAux(WallTemperature);
