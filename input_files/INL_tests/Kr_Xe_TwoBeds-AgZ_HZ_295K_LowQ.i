@@ -19,7 +19,7 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 	nx = 2
 	ny = 103
 	xmin = 0.0
-	xmax = 0.9525 #cm
+	xmax = 0.86995 #cm
 	ymin = 0.0
 	ymax = 102.6 #cm
  
@@ -30,21 +30,21 @@ epsilon = 1  #  -1 = SIPG   0 = IIPG   1 = NIPG
 	[./column_1]
 		type = SubdomainBoundingBox
 		block_id = 0
-		top_right = '0.9525 50.8 0'
+		top_right = '0.86995 50.8 0'
 		bottom_left = '0 0 0'
 	[../]
  
 	[./conduit_12]
 		type = SubdomainBoundingBox
 		block_id = 1
-		top_right = '0.9525 51.8 0'
+		top_right = '0.86995 51.8 0'
 		bottom_left = '0 50.8 0'
 	[../]
  
 	[./column_2]
 		type = SubdomainBoundingBox
 		block_id = 2
-		top_right = '0.9525 102.6 0'
+		top_right = '0.86995 102.6 0'
 		bottom_left = '0 51.8 0'
 	[../]
  
@@ -499,9 +499,9 @@ value = 191.15
 		main_coupled = Kr
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
- enthalpies = '-13212.6 -22875.8 -10816.1'
- entropies = '2.094 -29.866 -21.4657'
- max_capacity = 1.5965
+ enthalpies = '-12291.2 -22875.8 -11360.8'
+ entropies = '3.0 -29.866 -25.97'
+ max_capacity = 1.3
 		index = 0
 	[../]
  
@@ -512,8 +512,8 @@ value = 191.15
 		main_coupled = Xe
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
- enthalpies = '-13212.6 -22875.8 -10816.1'
- entropies = '2.094 -29.866 -21.4657'
+ enthalpies = '-12291.2 -22875.8 -11360.8'
+ entropies = '3.0 -29.866 -25.97'
  max_capacity = 1.95
 		index = 1
 	[../]
@@ -525,8 +525,8 @@ value = 191.15
 		main_coupled = N2
 		coupled_temp = column_temp
 		coupled_list = 'Kr Xe N2'
- enthalpies = '-13212.6 -22875.8 -10816.1'
- entropies = '2.094 -29.866 -21.4657'
+ enthalpies = '-12291.2 -22875.8 -11360.8'
+ entropies = '3.0 -29.866 -25.97'
  max_capacity = 0.03
 		index = 2
 	[../]
@@ -722,9 +722,9 @@ value = 191.15
         type = BedProperties
         block = 0
 		length = 50.8
-		inner_diameter = 1.905
-		outer_diameter = 2.0828
-		bulk_porosity = 0.8772				#not known
+ inner_diameter = 1.7399
+ outer_diameter = 1.905
+ bulk_porosity = 0.691				#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
@@ -748,12 +748,12 @@ value = 191.15
 	[./AdsorbentMaterials_1]
         type = AdsorbentProperties
         block = 0
-		pellet_diameter = 0.045
-		binder_fraction = 0.0				#not known
-		binder_porosity = 0.134				#not known
-		crystal_radius = 0.0				#not known
-		macropore_radius = 1.335e-7			#not Known
-		pellet_density = 2.519				#not Known
+ pellet_diameter = 0.06305
+ binder_fraction = 0.0				#not known
+ binder_porosity = 0.134				#not known
+ crystal_radius = 0.0				#not known
+ macropore_radius = 1.335e-7			#not Known
+ pellet_density = 1.2				#not Known
 		pellet_heat_capacity = 1.2  		#not known
 		ref_diffusion = '0 0 0 0'
 		activation_energy = '0 0 0 0'
@@ -793,8 +793,8 @@ value = 191.15
 		type = BedProperties
 		block = 1
 		length = 1.0
-		inner_diameter = 1.905
-		outer_diameter = 2.0828
+ inner_diameter = 1.7399
+ outer_diameter = 1.905
 		bulk_porosity = 1.0				#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
@@ -864,9 +864,9 @@ value = 191.15
         type = BedProperties
         block = 2
 		length = 50.8
-		inner_diameter = 1.905
-		outer_diameter = 2.0828
-		bulk_porosity = 0.95				#not known
+ inner_diameter = 1.7399
+ outer_diameter = 1.905
+ bulk_porosity = 0.85				#not known
 		wall_density = 7.7
 		wall_heat_capacity = 0.5
 		wall_heat_trans_coef = 9.0
@@ -890,12 +890,12 @@ value = 191.15
 	[./AdsorbentMaterials_2]
         type = AdsorbentProperties
         block = 2
-		pellet_diameter = 0.056
-		binder_fraction = 0.0				#not known
-		binder_porosity = 0.25				#not known
-		crystal_radius = 0.0				#not known
-		macropore_radius = 1.945e-7			#not Known
-		pellet_density = 2.5				#not Known
+ pellet_diameter = 0.06305
+ binder_fraction = 0.0				#not known
+ binder_porosity = 0.134				#not known
+ crystal_radius = 0.0				#not known
+ macropore_radius = 1.335e-7			#not Known
+ pellet_density = 0.97				#not Known
 		pellet_heat_capacity = 1.2  		#not known
 		ref_diffusion = '0 0 0 0'
 		activation_energy = '0 0 0 0'
@@ -915,19 +915,19 @@ value = 191.15
 		maximum_capacity = '1.2 1.94 0.03 0' #mol/kg
 		molar_volume = '20.785 25.412 15.8 0' #cm^3/mol
  
-		enthalpy_site_1 = '-15758 -37630 -20959 0'
-		enthalpy_site_2 = '0 0 0 0'
-		enthalpy_site_3 = '0 0 0 0'
-		enthalpy_site_4 = '0 0 0 0'
-		enthalpy_site_5 = '0 0 0 0'
-		enthalpy_site_6 = '0 0 0 0'
+ enthalpy_site_1 = '-16030.15 -22880 -11321.95 0'
+ enthalpy_site_2 = '0 0 0 0'
+ enthalpy_site_3 = '0 0 0 0'
+ enthalpy_site_4 = '0 0 0 0'
+ enthalpy_site_5 = '0 0 0 0'
+ enthalpy_site_6 = '0 0 0 0'
  
-		entropy_site_1 = '-5.28 -96.9 -62.9 0'
-		entropy_site_2 = '0 0 0 0'
-		entropy_site_3 = '0 0 0 0'
-		entropy_site_4 = '0 0 0 0'
-		entropy_site_5 = '0 0 0 0'
-		entropy_site_6 = '0 0 0 0'
+ entropy_site_1 = '-16.5 -29.87 -25.77 0'
+ entropy_site_2 = '0 0 0 0'
+ entropy_site_3 = '0 0 0 0'
+ entropy_site_4 = '0 0 0 0'
+ entropy_site_5 = '0 0 0 0'
+ entropy_site_6 = '0 0 0 0'
 	[../]
  
 

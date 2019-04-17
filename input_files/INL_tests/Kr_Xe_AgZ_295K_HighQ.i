@@ -5,8 +5,8 @@
  
 	flow_rate = 1.2e5
 	length = 50.8
-	inner_diameter = 1.905
-	pellet_diameter = 0.045
+	inner_diameter = 1.7399
+	pellet_diameter = 0.06305
 	dt = 0.01
  
  [] #END GlobalParams
@@ -24,7 +24,7 @@
 	nx = 5
 	ny = 40
 	xmin = 0.0
-	xmax = 0.9525 #cm
+	xmax = 0.86995 #cm
 	ymin = 0.0
 	ymax = 50.8 #cm
  
@@ -479,8 +479,8 @@
 [./BedMaterials]
 	type = BedProperties
 	block = 0
-	outer_diameter = 2.0828
-	bulk_porosity = 0.8772				#not known
+	outer_diameter = 1.905
+	bulk_porosity = 0.691				#not known
 	wall_density = 7.7
 	wall_heat_capacity = 0.5
 	wall_heat_trans_coef = 9.0
@@ -507,7 +507,7 @@
 	binder_porosity = 0.134			#not known
 	crystal_radius = 0.0				#not known
 	macropore_radius = 1.335e-7		#not Known
-	pellet_density = 2.519				#not Known
+	pellet_density = 1.2				#not Known
 	pellet_heat_capacity = 1.2  		#not known
 	ref_diffusion = '0 0 0 0'
 	activation_energy = '0 0 0 0'
