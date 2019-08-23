@@ -41,6 +41,8 @@
 
 #include <chrono>
 
+registerMooseObject("DgospreyApp", DGOSPREY_TimeStepper);
+
 template <>
 InputParameters
 validParams<DGOSPREY_TimeStepper>()

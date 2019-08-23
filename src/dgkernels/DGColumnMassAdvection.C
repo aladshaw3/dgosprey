@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "DGColumnMassAdvection.h"
+registerMooseObject("DgospreyApp", DGColumnMassAdvection);
 
 template<>
 InputParameters validParams<DGColumnMassAdvection>()

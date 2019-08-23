@@ -63,6 +63,7 @@
 /****************************************************************/
 
 #include "CoupledCatalyst.h"
+registerMooseObject("DgospreyApp", CoupledCatalyst);
 
 template<>
 InputParameters validParams<CoupledCatalyst>()

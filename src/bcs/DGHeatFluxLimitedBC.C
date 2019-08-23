@@ -30,6 +30,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 #include "DGHeatFluxLimitedBC.h"
+registerMooseObject("DgospreyApp", DGHeatFluxLimitedBC);
 
 template<>
 InputParameters validParams<DGHeatFluxLimitedBC>()

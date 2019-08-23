@@ -35,8 +35,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef GCOLUMNMASSDISPERSION_H
-#define GCOLUMNMASSDISPERSION_H
+#pragma once
 
 #include "GAnisotropicDiffusion.h"
 
@@ -74,5 +73,3 @@ private:
 	const MaterialProperty<std::vector<Real> > & _dispersion;			///< Reference to the dispersion material property
 	const MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< Reference to the molecular diffusion material property
 };
-
-#endif //GCOLUMNMASSDISPERSION_H

@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "DGFluxLimitedBC.h"
+registerMooseObject("DgospreyApp", DGFluxLimitedBC);
 
 template<>
 InputParameters validParams<DGFluxLimitedBC>()

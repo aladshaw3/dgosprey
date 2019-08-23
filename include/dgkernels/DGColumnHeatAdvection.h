@@ -41,10 +41,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "DGAdvection.h"
+#pragma once
 
-#ifndef DGCOLUMNHEATADVECTION_H
-#define DGCOLUMNHEATADVECTION_H
+#include "DGAdvection.h"
 
 /// DGColumnHeatAdvection class object forward declarations
 class DGColumnHeatAdvection;
@@ -82,5 +81,3 @@ private:
 	const MaterialProperty<Real> & _gas_density;		///< Reference to the gas density material property
 	const MaterialProperty<Real> & _gas_heat_capacity;	///< Reference to the gas heat capacity material property
 };
-
-#endif

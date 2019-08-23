@@ -33,10 +33,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
 
-#ifndef CoupledLinearForcingFunction_h
-#define CoupledLinearForcingFunction_h
+#include "Kernel.h"
 
 /// CoupledLinearForcingFunction class object forward declarationss
 class CoupledLinearForcingFunction;
@@ -80,7 +79,3 @@ protected:
 private:
 	
 };
-
-
-
-#endif /* CoupledForcingFunction_h */

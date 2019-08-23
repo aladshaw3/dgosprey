@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "BedMassAccumulation.h"
+registerMooseObject("DgospreyApp", BedMassAccumulation);
 
 template<>
 InputParameters validParams<BedMassAccumulation>()

@@ -42,8 +42,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGMASSFLUXBC_H
-#define DGMASSFLUXBC_H
+#pragma once
 
 #include "DGFluxBC.h"
 
@@ -88,5 +87,3 @@ protected:
 private:
 	
 };
-
-#endif //DGMASSFLUXBC_H

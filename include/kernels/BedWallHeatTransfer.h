@@ -36,10 +36,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
 
-#ifndef BEDWALLHEATTRANSFER_H
-#define BEDWALLHEATTRANSFER_H
+#include "Kernel.h"
 
 /// BedWallHeatTransfer class object forward declarations
 class BedWallHeatTransfer;
@@ -77,4 +76,3 @@ private:
 	const VariableValue & _column_temp;								///< Reference to the gas temperature coupled non-linear variable 
   
 };
-#endif //BEDWALLHEATTRANSFER_H

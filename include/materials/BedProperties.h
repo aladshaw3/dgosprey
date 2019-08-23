@@ -36,10 +36,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Material.h"
+#pragma once
 
-#ifndef BEDPROPERTIES_H
-#define BEDPROPERTIES_H
+#include "Material.h"
 
 /// BedProperties class object forward declaration
 class BedProperties;
@@ -83,5 +82,3 @@ private:
 	MaterialProperty<Real> & _wall_exterior_transfer_coeff;		///< MaterialProperty for exterior-wall heat transfer coefficient
 
 };
-
-#endif //BEDPROPERTIESL_H

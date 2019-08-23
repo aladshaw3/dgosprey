@@ -36,10 +36,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "LinearDrivingForce.h"
+#pragma once
 
-#ifndef CoupledLinearLDF_h
-#define CoupledLinearLDF_h
+#include "LinearDrivingForce.h"
 
 /// CoupledLinearLDF class object forward declarations
 class CoupledLinearLDF;
@@ -79,5 +78,3 @@ protected:
 private:
 	
 };
-
-#endif /* CoupledLinearLDF_h */

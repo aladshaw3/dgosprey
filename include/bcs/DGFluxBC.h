@@ -43,8 +43,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGFLUXBC_H
-#define DGFLUXBC_H
+#pragma once
 
 #include "IntegratedBC.h"
 #include "libmesh/vector_value.h"
@@ -89,5 +88,3 @@ protected:
 private:
 	
 };
-
-#endif //DGFLUXBC_H

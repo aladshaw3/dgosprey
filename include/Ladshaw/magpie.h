@@ -29,6 +29,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #ifndef MAGPIE_HPP_
 #define MAGPIE_HPP_
 

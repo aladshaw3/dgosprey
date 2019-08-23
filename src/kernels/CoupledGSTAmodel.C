@@ -56,6 +56,7 @@
 /****************************************************************/
 
 #include "CoupledGSTAmodel.h"
+registerMooseObject("DgospreyApp", CoupledGSTAmodel);
 
 template<>
 InputParameters validParams<CoupledGSTAmodel>()

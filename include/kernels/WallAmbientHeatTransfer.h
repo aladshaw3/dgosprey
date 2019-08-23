@@ -36,10 +36,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
 
-#ifndef WALLAMBIENTHEATTRANSFER_H
-#define WALLAMBIENTHEATTRANSFER_H
+#include "Kernel.h"
 
 /// WallAmbientHeatTransfer class object forward declarations
 class WallAmbientHeatTransfer;
@@ -77,4 +76,3 @@ private:
 	const VariableValue & _ambient_temp;									///< Reference to the outside temperature coupled non-linear variable
   
 };
-#endif //WALLAMBIENTHEATTRANSFER_H

@@ -42,8 +42,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGCOLUMNWALLHEATFLUXBC_H
-#define DGCOLUMNWALLHEATFLUXBC_H
+#pragma once
 
 #include "DGFluxBC.h"
 
@@ -80,5 +79,3 @@ private:
   	const VariableValue & _wall_temp;									///< Reference to the coupled variable for wall temperature of the column
 	const MaterialProperty<Real> & _bed_wall_transfer_coeff;	///< Reference to the bed-wall transfer coefficient material property	
 };
-
-#endif //DGCOLUMNWALLHEATFLUXBC_H

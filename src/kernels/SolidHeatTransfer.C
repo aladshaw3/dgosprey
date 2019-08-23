@@ -35,6 +35,7 @@
 /****************************************************************/
 
 #include "SolidHeatTransfer.h"
+registerMooseObject("DgospreyApp", SolidHeatTransfer);
 
 template<>
 InputParameters validParams<SolidHeatTransfer>()

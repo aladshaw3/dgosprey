@@ -35,11 +35,12 @@
 /****************************************************************/
 
 #include "CoupledExtendedLangmuirFunction.h"
+registerMooseObject("DgospreyApp", CoupledExtendedLangmuirFunction);
 
 template<>
 InputParameters validParams<CoupledExtendedLangmuirFunction>()
 {
-	InputParameters params = validParams<Kernel>();
+	InputParameters params = validParams<TimeDerivative>();
 	params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for Langmuir Function (mol/kg)");
 	params.addParam< std::vector<Real> >("langmuir_coeff","Coefficient for the langmuir function (L/mol)");
 	params.addRequiredCoupledVar("coupled_list","List of names of the variables being coupled");
@@ -48,7 +49,7 @@ InputParameters validParams<CoupledExtendedLangmuirFunction>()
 }
 
 CoupledExtendedLangmuirFunction::CoupledExtendedLangmuirFunction(const InputParameters & parameters)
-: Kernel(parameters),
+: TimeDerivative(parameters),
 _maxcap(getParam<Real>("max_capacity")),
 _langmuircoef(getParam<std::vector<Real> >("langmuir_coeff")),
 _coupled_i(coupledValue("main_coupled")),

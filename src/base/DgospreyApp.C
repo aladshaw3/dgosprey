@@ -36,6 +36,7 @@
 #include "MooseSyntax.h"
 #include "ModulesApp.h"
 
+/*
 #include "LinearDrivingForce.h"
 #include "BedProperties.h"
 #include "AdsorbentProperties.h"
@@ -108,6 +109,7 @@
 
 #include "CoupledExtendedGSTAisotherm.h"
 #include "CoupledExtendedGSTAmodel.h"
+*/
 
 template<>
 InputParameters validParams<DgospreyApp>()
@@ -117,10 +119,15 @@ InputParameters validParams<DgospreyApp>()
   return params;
 }
 
+registerKnownLabel("DgospreyApp");
+
 DgospreyApp::DgospreyApp(InputParameters parameters) :
     MooseApp(parameters)
 {
-
+  srand(processor_id());
+  DgospreyApp::registerAll(_factory, _action_factory, _syntax);
+  
+  /*
   Moose::registerObjects(_factory);
   ModulesApp::registerObjects(_factory);
   DgospreyApp::registerObjects(_factory);
@@ -128,22 +135,34 @@ DgospreyApp::DgospreyApp(InputParameters parameters) :
   Moose::associateSyntax(_syntax, _action_factory);
   ModulesApp::associateSyntax(_syntax, _action_factory);
   DgospreyApp::associateSyntax(_syntax, _action_factory);
+  */
 }
 
-DgospreyApp::~DgospreyApp()
+DgospreyApp::~DgospreyApp() {}
+
+//extern "C" void DgospreyApp__registerApps() { DgospreyApp::registerApps(); }
+
+void
+DgospreyApp::registerAll(Factory & f, ActionFactory & af, Syntax & /*s*/)
 {
+    Registry::registerObjectsTo(f, {"DgospreyApp"});
+    Registry::registerActionsTo(af, {"DgospreyApp"});
 }
 
-extern "C" void DgospreyApp__registerApps() { DgospreyApp::registerApps(); }
 void
 DgospreyApp::registerApps()
 {
 	registerApp(DgospreyApp);
 }
 
+
 void
 DgospreyApp::registerObjects(Factory & factory)
 {
+    mooseDeprecated("use registerAll instead of registerObjects");
+    Registry::registerObjectsTo(factory, {"DgospreyApp"});
+    
+    /*
 	registerMaterial(BedProperties);
 	registerMaterial(AdsorbentProperties);
 	registerMaterial(ThermodynamicProperties);
@@ -213,10 +232,62 @@ DgospreyApp::registerObjects(Factory & factory)
 	registerBoundaryCondition(DGColumnWallHeatFluxLimitedBC);
 	
 	registerExecutioner(DGOSPREY_TimeStepper);
+     */
 }
 
 void
-DgospreyApp::associateSyntax(Syntax & syntax, ActionFactory & action_factory)
+DgospreyApp::associateSyntax(Syntax & /*syntax*/, ActionFactory & action_factory)
 {
-	//Register Actions Here
+    mooseDeprecated("use registerAll instead of associateSyntax");
+    Registry::registerActionsTo(action_factory, {"DgospreyApp"});
+}
+
+void
+DgospreyApp::registerObjectDepends(Factory & /*factory*/)
+{
+    mooseDeprecated("use registerAll instead of registerObjectDepends");
+}
+
+void
+DgospreyApp::associateSyntaxDepends(Syntax & /*syntax*/, ActionFactory & action_factory)
+{
+    mooseDeprecated("use registerAll instead of associateSyntaxDepends");
+}
+
+void
+DgospreyApp::registerExecFlags(Factory & /*factory*/)
+{
+    mooseDeprecated("use registerAll instead of registerExecFlags");
+}
+
+//Dynamic Library Entry Points - DO NOT MODIFY//
+
+extern "C" void
+DgospreyApp_registerApps()
+{
+    DgospreyApp::registerApps();
+}
+
+extern "C" void
+DgospreyApp_registerAll(Factory & f, ActionFactory & af, Syntax & s)
+{
+    DgospreyApp::registerAll(f, af, s);
+}
+
+extern "C" void
+DgospreyApp_registerObjects(Factory & factory)
+{
+    DgospreyApp::registerObjects(factory);
+}
+
+extern "C" void
+DgospreyApp_associateSyntax(Syntax & syntax, ActionFactory & action_factory)
+{
+    DgospreyApp::associateSyntax(syntax, action_factory);
+}
+
+extern "C" void
+DgospreyApp_registerExecFlags(Factory & factory)
+{
+    DgospreyApp::registerExecFlags(factory);
 }

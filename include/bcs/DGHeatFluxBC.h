@@ -42,8 +42,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGHEATFLUXBC_H
-#define DGHEATFLUXBC_H
+#pragma once
 
 #include "DGFluxBC.h"
 
@@ -84,5 +83,3 @@ private:
 	const MaterialProperty<Real> & _gas_heat_capacity;	///< Reference to the gas heat capacity material property
 	
 };
-
-#endif //DGHEATFLUXBC_H

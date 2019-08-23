@@ -35,10 +35,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
 
-#ifndef LINEARDRIVINGFORCE_H
-#define LINEARDRIVINGFORCE_H
+#include "Kernel.h"
 
 /// LinearDrivingForce class object forward declarations
 class LinearDrivingForce;
@@ -80,4 +79,3 @@ protected:
 private:
 
 };
-#endif //LINEARDRIVINGFORCE_H

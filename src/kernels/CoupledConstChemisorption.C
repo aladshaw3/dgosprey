@@ -62,11 +62,12 @@
 /****************************************************************/
 
 #include "CoupledConstChemisorption.h"
+registerMooseObject("DgospreyApp", CoupledConstChemisorption);
 
 template<>
 InputParameters validParams<CoupledConstChemisorption>()
 {
-	InputParameters params = validParams<Kernel>();
+	InputParameters params = validParams<TimeDerivative>();
 	params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for the Rate Function (mol/kg)");
 	params.addParam<Real>("forward_rate",0.0,"Forward reaction rate constant (per hour)");
 	params.addParam<Real>("reverse_rate",0.0,"Reverse reaction rate constant (per hour)");
@@ -83,7 +84,7 @@ InputParameters validParams<CoupledConstChemisorption>()
 }
 
 CoupledConstChemisorption::CoupledConstChemisorption(const InputParameters & parameters)
-: Kernel(parameters),
+: TimeDerivative(parameters),
 _maxcap(getParam<Real>("max_capacity")),
 _forward(getParam<Real>("forward_rate")),
 _reverse(getParam<Real>("reverse_rate")),

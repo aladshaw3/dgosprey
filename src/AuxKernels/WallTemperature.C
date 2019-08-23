@@ -39,6 +39,7 @@
 /****************************************************************/
 
 #include "WallTemperature.h"
+registerMooseObject("DgospreyApp", WallTemperature);
 
 template<>
 InputParameters validParams<WallTemperature>()

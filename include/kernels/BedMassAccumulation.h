@@ -34,8 +34,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef BEDMASSACCUMULATION_H
-#define BEDMASSACCUMULATION_H
+#pragma once
 
 #include "TimeDerivative.h"
 
@@ -70,5 +69,3 @@ protected:
 private:
 	const MaterialProperty<Real> & _retardation;	///< Reference to the mass retardation coefficient material property
 };
-
-#endif //BEDMASSACCUMULATION_H

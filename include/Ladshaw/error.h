@@ -13,6 +13,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #ifndef ERROR_HPP_
 #define ERROR_HPP_
 

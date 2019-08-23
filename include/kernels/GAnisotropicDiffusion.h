@@ -35,8 +35,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef GANISOTROPICDIFFUSION_H
-#define GANISOTROPICDIFFUSION_H
+#pragma once
 
 #include "Kernel.h"
 
@@ -80,5 +79,3 @@ protected:
 private:
 	
 };
-
-#endif //GANISOTROPICDIFFUSION_H

@@ -41,8 +41,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGANISOTROPICDIFFUSION_H
-#define DGANISOTROPICDIFFUSION_H
+#pragma once
 
 #include "DGKernel.h"
 #include "MooseVariable.h"
@@ -91,5 +90,3 @@ protected:
 private:
 	
 };
-
-#endif //DGANISOTROPICDIFFUSION_H

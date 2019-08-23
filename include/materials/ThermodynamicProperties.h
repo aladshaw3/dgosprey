@@ -35,12 +35,11 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "Material.h"
 #include "flock.h"
 #include "DataStruct_StoreLoad.h"
-
-#ifndef THERMODYNAMICPROPERTIES_H
-#define THERMODYNAMICPROPERTIES_H
 
 /// ThermodynamicProperties class object forward declaration
 class ThermodynamicProperties;
@@ -117,5 +116,3 @@ private:
 	
 	MaterialProperty<std::vector<Real> > & _ads_heat;	///< MaterialProperty for each species' heat of adsorption coefficient
 };
-
-#endif //THERMODYNAMICPROPERTIES_H

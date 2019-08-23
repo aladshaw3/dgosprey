@@ -32,6 +32,7 @@
 /****************************************************************/
 
 #include "BedProperties.h"
+registerMooseObject("DgospreyApp", BedProperties);
 
 template<>
 // input parameters are the parameters that are constant and not calculated from other parameters

@@ -10,6 +10,7 @@
  * Homepage: joachimwuttke.de/lmfit
  */
 
+#pragma once
 #include "lmmin.h"
 
 #ifndef LMCURVE_H

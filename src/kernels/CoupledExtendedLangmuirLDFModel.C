@@ -59,6 +59,7 @@
 /****************************************************************/
 
 #include "CoupledExtendedLangmuirLDFModel.h"
+registerMooseObject("DgospreyApp", CoupledExtendedLangmuirLDFModel);
 
 template<>
 InputParameters validParams<CoupledExtendedLangmuirLDFModel>()

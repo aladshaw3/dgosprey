@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "BedHeatAccumulation.h"
+registerMooseObject("DgospreyApp", BedHeatAccumulation);
 
 template<>
 InputParameters validParams<BedHeatAccumulation>()

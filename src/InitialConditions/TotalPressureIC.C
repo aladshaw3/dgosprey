@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "TotalPressureIC.h"
+registerMooseObject("DgospreyApp", TotalPressureIC);
 
 template<> InputParameters validParams<TotalPressureIC>()
 {

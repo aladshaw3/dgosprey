@@ -17,6 +17,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #include "macaw.h"
 
 #ifndef EGRET_HPP_

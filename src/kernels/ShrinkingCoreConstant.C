@@ -37,11 +37,12 @@
 /****************************************************************/
 
 #include "ShrinkingCoreConstant.h"
+registerMooseObject("DgospreyApp", ShrinkingCoreConstant);
 
 template<>
 InputParameters validParams<ShrinkingCoreConstant>()
 {
-	InputParameters params = validParams<Kernel>();
+	InputParameters params = validParams<TimeDerivative>();
 	params.addParam<Real>("max_capacity",1.0,"Equilibrium adsorption capacity (mol/kg)");
 	params.addParam<Real>("filmtrans_coef",1.0,"Time to reach equilibrium if gas film mass transfer is controlling (h)");
 	params.addParam<Real>("porediff_coef",1.0,"Time to reach equilibrium if gas pore diffusion is controlling (h)");
@@ -51,7 +52,7 @@ InputParameters validParams<ShrinkingCoreConstant>()
 
 
 ShrinkingCoreConstant::ShrinkingCoreConstant(const InputParameters & parameters)
-:Kernel(parameters),
+:TimeDerivative(parameters),
 _maxcap(getParam<Real>("max_capacity")),
 _tau1(getParam<Real>("filmtrans_coef")),
 _tau2(getParam<Real>("porediff_coef")),

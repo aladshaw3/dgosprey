@@ -35,11 +35,10 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "CoupledLangmuirForcingFunction.h"
 #include "flock.h"
-
-#ifndef CoupledLangmuirModel_h
-#define CoupledLangmuirModel_h
 
 /// CoupledLangmuirModel class object forward declarationss
 class CoupledLangmuirModel;
@@ -89,7 +88,3 @@ protected:
 private:
 	
 };
-
-
-
-#endif /* CoupledLangmuirModel_h */

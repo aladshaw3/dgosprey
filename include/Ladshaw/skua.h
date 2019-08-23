@@ -29,6 +29,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #include "finch.h"				//FINCH handles the physics solver and discretization of the problem
 #include "magpie.h"				//MAGPIE handles the adsorption equilibria equations
 #include "egret.h"				//EGRET handles the parameter estimation for gas phase properties

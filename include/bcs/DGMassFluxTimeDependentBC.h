@@ -41,8 +41,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGMassFluxTimeDependentBC_h
-#define DGMassFluxTimeDependentBC_h
+#pragma once
 
 #include "DGMassFluxBC.h"
 
@@ -82,5 +81,3 @@ protected:
 private:
 
 };
-
-#endif //DGMassFluxTimeDependentBC_h

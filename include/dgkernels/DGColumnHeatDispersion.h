@@ -41,10 +41,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "DGAnisotropicDiffusion.h"
+#pragma once
 
-#ifndef DGCOLUMNHEATDISPERSION_H
-#define DGCOLUMNHEATDISPERSION_H
+#include "DGAnisotropicDiffusion.h"
 
 /// DGColumnHeatDispersion class object forward declarations
 class DGColumnHeatDispersion;
@@ -80,5 +79,3 @@ protected:
 private:
 	const MaterialProperty<Real> & _conductivity;		///< Reference to the thermal conductivity material property
 };
-
-#endif

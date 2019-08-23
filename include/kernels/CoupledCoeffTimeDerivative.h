@@ -34,10 +34,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
 
-#ifndef CoupledCoeffTimeDerivative_h_
-#define CoupledCoeffTimeDerivative_h_
+#include "Kernel.h"
 
 /// CoupledCoeffTimeDerivative class object forward declarationss
 class CoupledCoeffTimeDerivative;
@@ -81,5 +80,3 @@ protected:
 private:
 
 };
-
-#endif /* CoupledCoeffTimeDerivative */

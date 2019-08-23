@@ -42,10 +42,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "DGAnisotropicDiffusion.h"
+#pragma once
 
-#ifndef DGCOLUMNMASSDISPERSION_H
-#define DGCOLUMNMASSDISPERSION_H
+#include "DGAnisotropicDiffusion.h"
 
 /// DGColumnHeatDispersion class object forward declarations
 class DGColumnMassDispersion;
@@ -83,5 +82,3 @@ private:
 	const MaterialProperty<std::vector<Real> > & _dispersion;			///< Reference to the axial dispersion material property
 	const MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< Reference to the molecular diffusion material property
 };
-
-#endif

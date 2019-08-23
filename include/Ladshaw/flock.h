@@ -17,6 +17,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #ifndef FLOCK_HPP_
 #define FLOCK_HPP_
 

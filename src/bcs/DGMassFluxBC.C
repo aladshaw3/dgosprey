@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "DGMassFluxBC.h"
+registerMooseObject("DgospreyApp", DGMassFluxBC);
 
 template<>
 InputParameters validParams<DGMassFluxBC>()

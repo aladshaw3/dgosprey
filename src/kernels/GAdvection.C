@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "GAdvection.h"
+registerMooseObject("DgospreyApp", GAdvection);
 
 template<>
 InputParameters validParams<GAdvection>()

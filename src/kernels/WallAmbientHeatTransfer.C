@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "WallAmbientHeatTransfer.h"
+registerMooseObject("DgospreyApp", WallAmbientHeatTransfer);
 
 template<>
 InputParameters validParams<WallAmbientHeatTransfer>()

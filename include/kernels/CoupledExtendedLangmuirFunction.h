@@ -34,10 +34,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
 
-#ifndef CoupledExtendedLangmuirFunction_h
-#define CoupledExtendedLangmuirFunction_h
+#include "TimeDerivative.h"
 
 /// CoupledExtendedLangmuirFunction class object forward declarationss
 class CoupledExtendedLangmuirFunction;
@@ -50,7 +49,7 @@ InputParameters validParams<CoupledExtendedLangmuirFunction>();
 	All public and protected members of this class are required function overrides.
 	The kernel interfaces the set of non-linear variables to couple an extended Langmuir 
 	forcing function between given objects. */
-class CoupledExtendedLangmuirFunction : public Kernel
+class CoupledExtendedLangmuirFunction : public TimeDerivative
 {
 public:
 	/// Required constructor for objects in MOOSE
@@ -93,7 +92,3 @@ protected:
 private:
 	
 };
-
-
-
-#endif /* CoupledExtendedLangmuirFunction */

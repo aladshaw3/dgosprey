@@ -36,10 +36,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ShrinkingCoreConstant.h"
+#pragma once
 
-#ifndef ShrinkingCoreLangmuir_h
-#define ShrinkingCoreLangmuir_h
+#include "ShrinkingCoreConstant.h"
 
 /// ShrinkingCoreLangmuir class object forward declarations
 class ShrinkingCoreLangmuir;
@@ -87,5 +86,3 @@ private:
     const unsigned int _coupled_var_conc;	///< Variable identification for the coupled concentration variable
     
 };
-
-#endif /* ShrinkingCoreLangmuir_h */

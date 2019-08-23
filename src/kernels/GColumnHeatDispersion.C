@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "GColumnHeatDispersion.h"
+registerMooseObject("DgospreyApp", GColumnHeatDispersion);
 
 template<>
 InputParameters validParams<GColumnHeatDispersion>()

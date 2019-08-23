@@ -35,6 +35,7 @@
 /****************************************************************/
 
 #include "SolidMassTransfer.h"
+registerMooseObject("DgospreyApp", SolidMassTransfer);
 
 template<>
 InputParameters validParams<SolidMassTransfer>()

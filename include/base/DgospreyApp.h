@@ -64,8 +64,10 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGOSPREYAPP_H
-#define DGOSPREYAPP_H
+#pragma once
+
+//#ifndef DGOSPREYAPP_H
+//#define DGOSPREYAPP_H
 
 #include "MooseApp.h"
 
@@ -94,10 +96,18 @@ public:
 		be used in DGOSPREY. Each time a new kernel or other object is created in DGOSPREY, it must be
 		registered here prior to building and running the application. Otherwise, the new functionallity
 		added will not show up or be utilized. */
+    
+    static void registerAll(Factory & f, ActionFactory & af, Syntax & s);
+    
 	static void registerObjects(Factory & factory);
 	/// Function to associate syntax with the DgospreyApp (required?)
+    
+    static void registerObjectDepends (Factory & factory);
 	/** I don't know what this is or does or what is actually being registered. */
 	static void associateSyntax(Syntax & syntax, ActionFactory & action_factory);
+    static void associateSyntaxDepends(Syntax & syntax, ActionFactory & actio_factory);
+    static void registerExecFlags(Factory & factory);
+    
 };
 
-#endif /* DGOSPREYAPP_H */
+//#endif /* DGOSPREYAPP_H */

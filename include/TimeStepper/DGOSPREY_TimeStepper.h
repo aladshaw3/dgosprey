@@ -35,8 +35,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGOSPREY_TIMESTEPPER_H
-#define DGOSPREY_TIMESTEPPER_H
+#pragma once
 
 #include "SolutionTimeAdaptiveDT.h"
 
@@ -68,5 +67,3 @@ private:
 	Real _din;								///< Column inner diameter (cm)
 	
 };
-
-#endif /* DGOSPREY_TIMESTEPPER_H */

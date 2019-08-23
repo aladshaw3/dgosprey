@@ -41,8 +41,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGADVECTION_H
-#define DGADVECTION_H
+#pragma once
 
 #include "DGKernel.h"
 #include <cmath>
@@ -87,5 +86,3 @@ protected:
 private:
 	
 };
-
-#endif //DGADVECTION_H

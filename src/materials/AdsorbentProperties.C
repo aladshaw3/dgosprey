@@ -32,6 +32,7 @@
 /****************************************************************/
 
 #include "AdsorbentProperties.h"
+registerMooseObject("DgospreyApp", AdsorbentProperties);
 
 template<>
 // input parameters are the parameters that are constant and not calculated from other parameters

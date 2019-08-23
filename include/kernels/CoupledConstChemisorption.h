@@ -61,11 +61,12 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
+
 #include "TimeDerivative.h"
 
-#ifndef CoupledConstChemisorption_h
-#define CoupledConstChemisorption_h
+//#ifndef CoupledConstChemisorption_h
+//#define CoupledConstChemisorption_h
 
 /// CoupledConstChemisorption class object forward declarationss
 class CoupledConstChemisorption;
@@ -78,7 +79,7 @@ InputParameters validParams<CoupledConstChemisorption>();
 	All public and protected members of this class are required function overrides.
 	The kernel interfaces with the non-linear variables for gas concentrations and
 	adsorbed concentrations. */
-class CoupledConstChemisorption : public Kernel
+class CoupledConstChemisorption : public TimeDerivative
 {
 public:
 	/// Required constructor for objects in MOOSE
@@ -138,4 +139,4 @@ private:
 	
 };
 
-#endif /* CoupledConstChemisorption_h */
+//#endif /* CoupledConstChemisorption_h */

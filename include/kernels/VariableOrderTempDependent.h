@@ -74,10 +74,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "VariableOrderCoupledCatalyst.h"
+#pragma once
 
-#ifndef VariableOrderTempDependent_h
-#define VariableOrderTempDependent_h
+#include "VariableOrderCoupledCatalyst.h"
 
 /// CoupledCatalyst class object forward declarationss
 class VariableOrderTempDependent;
@@ -153,5 +152,3 @@ protected:
 private:
 
 };
-
-#endif /* VariableOrderCoupledCatalyst */

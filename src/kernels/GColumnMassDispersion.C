@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "GColumnMassDispersion.h"
+registerMooseObject("DgospreyApp", GColumnMassDispersion);
 
 template<>
 InputParameters validParams<GColumnMassDispersion>()

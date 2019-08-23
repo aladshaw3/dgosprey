@@ -35,8 +35,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef GCOLUMNMASSADVECTION_H
-#define GCOLUMNMASSADVECTION_H
+#pragma once
 
 #include "GAdvection.h"
 
@@ -72,5 +71,3 @@ private:
 	const MaterialProperty<Real> & _vel;		///< Reference to the linear velocity material property
 	
 };
-
-#endif // GCOLUMNMASSADVECTION_H

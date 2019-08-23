@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "DGHeatFluxBC.h"
+registerMooseObject("DgospreyApp", DGHeatFluxBC);
 
 template<>
 InputParameters validParams<DGHeatFluxBC>()

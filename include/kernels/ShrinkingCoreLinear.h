@@ -36,10 +36,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "ShrinkingCoreConstant.h"
+#pragma once
 
-#ifndef ShrinkingCoreLinear_h
-#define ShrinkingCoreLinear_h
+#include "ShrinkingCoreConstant.h"
 
 /// ShrinkingCoreLinear class object forward declarations
 class ShrinkingCoreLinear;
@@ -86,5 +85,3 @@ private:
 	const unsigned int _coupled_var_conc;	///< Variable identification for the coupled concentration variable
 	
 };
-
-#endif /* ShrinkingCoreLinear_h */

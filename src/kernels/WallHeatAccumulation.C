@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "WallHeatAccumulation.h"
+registerMooseObject("DgospreyApp", WallHeatAccumulation);
 
 template<>
 InputParameters validParams<WallHeatAccumulation>()

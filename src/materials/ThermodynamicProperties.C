@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "ThermodynamicProperties.h"
+registerMooseObject("DgospreyApp", ThermodynamicProperties);
 
 template<>
 // input parameters are the parameters that are constant and not calculated from other parameters

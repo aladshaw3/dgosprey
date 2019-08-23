@@ -37,8 +37,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef CONCENTRATIONIC_H
-#define	CONCENTRATIONIC_H
+#pragma once
 
 #include "InitialCondition.h"
 
@@ -71,5 +70,3 @@ private:
   Real _PT_IC;				///< Initial total pressure in the column (kPa)
   Real _T_IC;				///< Initial temperature in the column (K)
 };
-
-#endif //CONCENTRATIONIC_H

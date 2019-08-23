@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "DGColumnWallHeatFluxBC.h"
+registerMooseObject("DgospreyApp", DGColumnWallHeatFluxBC);
 
 template<>
 InputParameters validParams<DGColumnWallHeatFluxBC>()

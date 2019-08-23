@@ -67,6 +67,7 @@
 /****************************************************************/
 
 #include "VariableOrderCoupledCatalyst.h"
+registerMooseObject("DgospreyApp", VariableOrderCoupledCatalyst);
 
 template<>
 InputParameters validParams<VariableOrderCoupledCatalyst>()

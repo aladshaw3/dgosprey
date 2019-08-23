@@ -62,10 +62,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "CoupledConstChemisorption.h"
+#pragma once
 
-#ifndef CoupledCatalyst_h
-#define CoupledCatalyst_h
+#include "CoupledConstChemisorption.h"
 
 /// CoupledCatalyst class object forward declarationss
 class CoupledCatalyst;
@@ -125,5 +124,3 @@ protected:
 private:
 
 };
-
-#endif /* CoupledCatalyst */

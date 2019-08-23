@@ -39,6 +39,7 @@
 /****************************************************************/
 
 #include "HeatofAdsorption.h"
+registerMooseObject("DgospreyApp", HeatofAdsorption);
 
 template<>
 InputParameters validParams<HeatofAdsorption>()

@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "DGAdvection.h"
+registerMooseObject("DgospreyApp", DGAdvection);
 
 template<>
 InputParameters validParams<DGAdvection>()

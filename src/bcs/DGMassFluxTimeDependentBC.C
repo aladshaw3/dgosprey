@@ -43,6 +43,7 @@
 
 
 #include "DGMassFluxTimeDependentBC.h"
+registerMooseObject("DgospreyApp", DGMassFluxTimeDependentBC);
 
 template<>
 InputParameters validParams<DGMassFluxTimeDependentBC>()

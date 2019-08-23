@@ -39,11 +39,10 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "GeneralUserObject.h"
 #include "flock.h"
-
-#ifndef DataStruct_StoreLoad_h
-#define DataStruct_StoreLoad_h
 
 /// dataStore function for MAGPIE_DATA
 /** This function is now REQUIRED by the MOOSE system to utilize the restart and multiapp functionality of
@@ -117,4 +116,3 @@ template<>
 void
 dataLoad(std::istream & stream, MIXED_GAS & data, void * context);
 
-#endif /* DataStruct_StoreLoad_h */

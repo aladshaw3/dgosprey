@@ -67,11 +67,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "CoupledGSTAmodel.h"
-#include "TimeDerivative.h"
+#pragma once
 
-#ifndef CoupledGSTALDFmodel_h
-#define CoupledGSTALDFmodel_h
+#include "CoupledGSTAmodel.h"
 
 /// CoupledGSTALDFmodel class object forward declarationss
 class CoupledGSTALDFmodel;
@@ -139,5 +137,3 @@ protected:
 private:
 	
 };
-
-#endif /* CoupledGSTALDFmodel_h */

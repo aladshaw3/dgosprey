@@ -36,6 +36,7 @@
 /****************************************************************/
 
 #include "CoupledLangmuirModel.h"
+registerMooseObject("DgospreyApp", CoupledLangmuirModel);
 
 template<>
 InputParameters validParams<CoupledLangmuirModel>()

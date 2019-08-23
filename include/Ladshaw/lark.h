@@ -101,6 +101,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #ifndef LARK_HPP_
 #define LARK_HPP_
 

@@ -30,11 +30,10 @@
  *			   by the Battelle Energy Alliance, LLC (c) 2010, all rights reserved.
  */
 
+#pragma once
+
 #include "yaml_wrapper.h"
 #include <cstring>
-
-#ifndef SimpleUI_h
-#define SimpleUI_h
 
 /// Function to return true if the file extension of the given data is .yml
 bool isYamlFile(char argv[]);
@@ -72,5 +71,3 @@ private:
 	YamlWrapper moose_input;				///< YamlWrapper object that will be used to create the moose input file
 	
 };
-
-#endif /* SimpleUI_h */

@@ -34,8 +34,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef SolidMassTransfer_H
-#define SolidMassTransfer_H
+#pragma once
 
 #include "CoupledCoeffTimeDerivative.h"
 
@@ -79,5 +78,3 @@ private:
 	const MaterialProperty<Real> & _pellet_density;		///< Reference to the pellet density material property
 	
 };
-
-#endif /* SolidMassTransfer_H */

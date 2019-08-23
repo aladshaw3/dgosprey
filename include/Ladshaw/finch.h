@@ -52,6 +52,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #ifndef FINCH_HPP_
 #define FINCH_HPP_
 

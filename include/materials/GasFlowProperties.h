@@ -35,12 +35,11 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "Material.h"
 #include "flock.h"
 #include "DataStruct_StoreLoad.h"
-
-#ifndef GASFLOWPROPERTIES_H
-#define GASFLOWPROPERTIES_H
 
 #ifndef _gas_const
 #define _gas_const 8.3144621		///< Gas Law Constant - J/K/mol
@@ -120,6 +119,3 @@ private:
 	std::vector<const VariableValue *> _gas_conc_old;		///< Pointer list to the coupled gases at previous time step
 	
 };
-
-
-#endif //GASFLOWPROPERTIES_H

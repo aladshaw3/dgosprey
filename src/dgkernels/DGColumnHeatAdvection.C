@@ -32,6 +32,7 @@
 
 
 #include "DGColumnHeatAdvection.h"
+registerMooseObject("DgospreyApp", DGColumnHeatAdvection);
 
 template<>
 InputParameters validParams<DGColumnHeatAdvection>()

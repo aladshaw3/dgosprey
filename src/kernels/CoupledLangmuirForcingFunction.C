@@ -35,11 +35,12 @@
 /****************************************************************/
 
 #include "CoupledLangmuirForcingFunction.h"
+registerMooseObject("DgospreyApp", CoupledLangmuirForcingFunction);
 
 template<>
 InputParameters validParams<CoupledLangmuirForcingFunction>()
 {
-    InputParameters params = validParams<Kernel>();
+    InputParameters params = validParams<TimeDerivative>();
     params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for Langmuir Function (mol/kg)");
     params.addParam<Real>("langmuir_coeff",1.0,"Coefficient for the langmuir function (L/mol)");
     params.addRequiredCoupledVar("coupled","Name of the variable being coupled");
@@ -47,7 +48,7 @@ InputParameters validParams<CoupledLangmuirForcingFunction>()
 }
 
 CoupledLangmuirForcingFunction::CoupledLangmuirForcingFunction(const InputParameters & parameters)
-: Kernel(parameters),
+: TimeDerivative(parameters),
 _maxcap(getParam<Real>("max_capacity")),
 _langmuircoef(getParam<Real>("langmuir_coeff")),
 _coupled_u(coupledValue("coupled")),

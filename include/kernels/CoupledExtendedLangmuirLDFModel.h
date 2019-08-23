@@ -58,11 +58,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "CoupledExtendedLangmuirModel.h"
-#include "TimeDerivative.h"
+#pragma once
 
-#ifndef CoupledExtendedLangmuirLDFModel_h
-#define CoupledExtendedLangmuirLDFModel_h
+#include "CoupledExtendedLangmuirModel.h"
 
 /// CoupledExtendedLangmuirLDFModel class object forward declarationss
 class CoupledExtendedLangmuirLDFModel;
@@ -131,6 +129,3 @@ protected:
 private:
 	
 };
-
-
-#endif /* CoupledExtendedLangmuirLDFModel_h */

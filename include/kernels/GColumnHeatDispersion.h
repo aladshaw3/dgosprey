@@ -35,8 +35,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef GCOLUMNHEATDISPERSION_H
-#define GCOLUMNHEATDISPERSION_H
+#pragma once
 
 #include "GAnisotropicDiffusion.h"
 
@@ -72,5 +71,3 @@ protected:
 private:
 	const MaterialProperty<Real> & _conductivity;		///< Reference to the thermal conductivity material property 
 };
-
-#endif //GCOLUMNHEATDISPERSION_H

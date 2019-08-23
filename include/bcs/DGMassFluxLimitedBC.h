@@ -35,8 +35,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGMASSFLUXLIMITEDBC_H
-#define DGMASSFLUXLIMITEDBC_H
+#pragma once
 
 #include "DGFluxLimitedBC.h"
 
@@ -82,5 +81,3 @@ private:
 	const MaterialProperty<std::vector<Real> > & _molecular_diffusion;	///< Reference to the molecular diffusion material property
 	
 };
-
-#endif //DGMASSFLUXLIMITEDBC_H

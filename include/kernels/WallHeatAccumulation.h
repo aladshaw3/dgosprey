@@ -34,8 +34,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef WALLHEATACCUMULATION_H
-#define WALLHEATACCUMULATION_H
+#pragma once
 
 #include "TimeDerivative.h"
 
@@ -71,5 +70,3 @@ private:
 	const MaterialProperty<Real> & _wall_density;			///< Reference to the wall density material property
 	const MaterialProperty<Real> & _wall_heat_capacity;		///< Reference to the wall heat capacity material property
 };
-
-#endif //WALLHEATACCUMULATION_H

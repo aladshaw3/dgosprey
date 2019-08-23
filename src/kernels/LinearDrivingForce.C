@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "LinearDrivingForce.h"
+registerMooseObject("DgospreyApp", LinearDrivingForce);
 
 template<>
 InputParameters validParams<LinearDrivingForce>()

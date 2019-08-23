@@ -36,11 +36,10 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "CoupledExtendedLangmuirFunction.h"
 #include "flock.h"
-
-#ifndef CoupledExtendedLangmuirModel_h
-#define CoupledExtendedLangmuirModel_h
 
 /// CoupledExtendedLangmuirModel class object forward declarationss
 class CoupledExtendedLangmuirModel;
@@ -90,7 +89,3 @@ protected:
 private:
 	
 };
-
-
-
-#endif /* CoupledExtendedLangmuirModel_h */

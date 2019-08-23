@@ -38,12 +38,11 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "CoupledLinearForcingFunction.h"
 #include "flock.h"
 #include "DataStruct_StoreLoad.h"
-
-#ifndef HeatofAdsorption_h
-#define HeatofAdsorption_h
 
 /// HeatofAdsorption class object forward declarationss
 class HeatofAdsorption;
@@ -86,7 +85,3 @@ private:
 	const MaterialProperty<std::vector<Real> > & _ads_heat;	///< Reference to the heat of adsorption coefficient
 	
 };
-
-
-
-#endif /* HeatofAdsorption_h */

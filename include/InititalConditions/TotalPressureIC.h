@@ -37,8 +37,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef TOTALPRESSUREIC_H
-#define	TOTALPRESSUREIC_H
+#pragma once
 
 #include "InitialCondition.h"
 
@@ -69,5 +68,3 @@ public:
 private:
 	Real _PT_IC;			///< Initial condition for the total pressure in the column (kPa)
 };
-
-#endif //TOTALPRESSUREIC_H

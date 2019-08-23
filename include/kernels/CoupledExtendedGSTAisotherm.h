@@ -39,10 +39,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
 
-#ifndef CoupledExtendedGSTAisotherm_h
-#define CoupledExtendedGSTAisotherm_h
+#include "Kernel.h"
 
 /// CoupledExtendedGSTAisotherm class object forward declarationss
 class CoupledExtendedGSTAisotherm;
@@ -128,7 +127,3 @@ protected:
 private:
 	
 };
-
-
-
-#endif /* CoupledExtendedGSTAisotherm */

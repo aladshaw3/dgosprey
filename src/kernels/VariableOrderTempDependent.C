@@ -75,6 +75,7 @@
 /****************************************************************/
 
 #include "VariableOrderTempDependent.h"
+registerMooseObject("DgospreyApp", VariableOrderTempDependent);
 
 template<>
 InputParameters validParams<VariableOrderTempDependent>()

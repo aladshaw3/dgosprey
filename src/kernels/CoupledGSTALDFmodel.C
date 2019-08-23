@@ -68,6 +68,7 @@
 /****************************************************************/
 
 #include "CoupledGSTALDFmodel.h"
+registerMooseObject("DgospreyApp", CoupledGSTALDFmodel);
 
 template<>
 InputParameters validParams<CoupledGSTALDFmodel>()

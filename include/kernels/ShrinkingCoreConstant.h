@@ -36,11 +36,10 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
-#include <float.h>
+#pragma once
 
-#ifndef ShrinkingCoreConstant_h
-#define ShrinkingCoreConstant_h
+#include "TimeDerivative.h"
+#include <float.h>
 
 /// ShrinkingCoreConstant class object forward declarations
 class ShrinkingCoreConstant;
@@ -54,7 +53,7 @@ InputParameters validParams<ShrinkingCoreConstant>();
 	The kernel has all the protected members from Kernel, but also
 	includes coefficients for the shrinking core model.
  */
-class ShrinkingCoreConstant : public Kernel
+class ShrinkingCoreConstant : public TimeDerivative
 {
 public:
 	/// Required constructor for objects in MOOSE
@@ -86,5 +85,3 @@ protected:
 private:
 	
 };
-
-#endif /* ShrinkingCoreConstant_h */

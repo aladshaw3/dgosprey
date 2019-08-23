@@ -45,11 +45,12 @@
 /****************************************************************/
 
 #include "CoupledGSTAisotherm.h"
+registerMooseObject("DgospreyApp", CoupledGSTAisotherm);
 
 template<>
 InputParameters validParams<CoupledGSTAisotherm>()
 {
-	InputParameters params = validParams<Kernel>();
+	InputParameters params = validParams<TimeDerivative>();
 	params.addParam<Real>("max_capacity",0.0,"Maximum Capacity for GSTA isotherm (mol/kg)");
 	params.addParam<Real>("num_sites",1.0,"Number of adsorption sites for GSTA isotherm");
 	params.addParam< std::vector<Real> >("gsta_params","Isotherm parameters for the GSTA isotherm");
@@ -59,7 +60,7 @@ InputParameters validParams<CoupledGSTAisotherm>()
 }
 
 CoupledGSTAisotherm::CoupledGSTAisotherm(const InputParameters & parameters)
-: Kernel(parameters),
+: TimeDerivative(parameters),
 _maxcap(getParam<Real>("max_capacity")),
 _numsites(getParam<Real>("num_sites")),
 _gstaparam(getParam<std::vector<Real> >("gsta_params")),

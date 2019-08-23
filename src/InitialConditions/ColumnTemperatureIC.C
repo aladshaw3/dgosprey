@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "ColumnTemperatureIC.h"
+registerMooseObject("DgospreyApp", ColumnTemperatureIC);
 
 template<> InputParameters validParams<ColumnTemperatureIC>()
 {

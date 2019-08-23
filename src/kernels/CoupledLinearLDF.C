@@ -37,6 +37,7 @@
 /****************************************************************/
 
 #include "CoupledLinearLDF.h"
+registerMooseObject("DgospreyApp", CoupledLinearLDF);
 
 template<>
 InputParameters validParams<CoupledLinearLDF>()

@@ -10,6 +10,8 @@
  * Homepage: joachimwuttke.de/lmfit
  */
 
+#pragma once
+
 #ifndef LMMIN_H
 #define LMMIN_H
 

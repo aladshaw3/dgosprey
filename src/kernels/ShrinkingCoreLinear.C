@@ -37,6 +37,7 @@
 /****************************************************************/
 
 #include "ShrinkingCoreLinear.h"
+registerMooseObject("DgospreyApp", ShrinkingCoreLinear);
 
 template<>
 InputParameters validParams<ShrinkingCoreLinear>()

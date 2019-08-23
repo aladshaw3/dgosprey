@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "ConcentrationIC.h"
+registerMooseObject("DgospreyApp", ConcentrationIC);
 
 template<> InputParameters validParams<ConcentrationIC>()
 {

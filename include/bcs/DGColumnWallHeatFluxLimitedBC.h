@@ -35,8 +35,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGCOLUMNWALLHEATFLUXLIMITEDBC_H
-#define DGCOLUMNWALLHEATFLUXLIMITEDBC_H
+#pragma once
 
 #include "DGFluxLimitedBC.h"
 
@@ -75,5 +74,3 @@ private:
 	const MaterialProperty<Real> & _conductivity;			///< Reference to the thermal conductivity material property
 	
 };
-
-#endif //DGCOLUMNWALLHEATFLUXLIMITEDBC_H

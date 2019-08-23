@@ -34,8 +34,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef TOTALCOLUMNPRESSURE_H
-#define TOTALCOLUMNPRESSURE_H
+#pragma once
 
 #include "AuxKernel.h"
 
@@ -70,5 +69,3 @@ private:
 	std::vector<const VariableValue *> _gas_conc;			///< Pointer list for the non-linear concentration variables
   
 };
-
-#endif //TOTALCOLUMNPRESSURE_H

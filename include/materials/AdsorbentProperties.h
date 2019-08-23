@@ -38,12 +38,11 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "Material.h"
 #include "flock.h"
 #include "DataStruct_StoreLoad.h"
-
-#ifndef ADSORBENTPROPERTIES_H
-#define ADSORBENTPROPERTIES_H
 
 /// AdsorbentProperties class object forward declaration
 class AdsorbentProperties;
@@ -112,6 +111,3 @@ private:
 	std::vector<const VariableValue *> _gas_conc_old;		///< Pointer list for the coupled gases at previous time
 	
 };
-
-
-#endif //ADSORBENTPROPERTIES_H

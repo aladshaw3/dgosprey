@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "GColumnHeatAdvection.h"
+registerMooseObject("DgospreyApp", GColumnHeatAdvection);
 
 template<>
 InputParameters validParams<GColumnHeatAdvection>()

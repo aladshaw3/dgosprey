@@ -34,8 +34,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef BEDHEATACCUMULATION_H
-#define BEDHEATACCUMULATION_H
+#pragma once
 
 #include "TimeDerivative.h"
 
@@ -70,5 +69,3 @@ protected:
 private:
 	const MaterialProperty<Real> & _heat_retardation;		///< Reference to the heat retardation material property
 };
-
-#endif // BEDHEATACCUMULATION_H

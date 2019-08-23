@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "TotalColumnPressure.h"
+registerMooseObject("DgospreyApp", TotalColumnPressure);
 
 template<>
 InputParameters validParams<TotalColumnPressure>()

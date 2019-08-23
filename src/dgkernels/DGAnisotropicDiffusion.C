@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "DGAnisotropicDiffusion.h"
+registerMooseObject("DgospreyApp", DGAnisotropicDiffusion);
 
 template<>
 InputParameters validParams<DGAnisotropicDiffusion>()

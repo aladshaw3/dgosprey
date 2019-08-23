@@ -35,9 +35,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-
-#ifndef GCOLUMNHEATADVECTION_H
-#define GCOLUMNHEATADVECTION_H
+#pragma once
 
 #include "GAdvection.h"
 
@@ -76,5 +74,3 @@ private:
 	const MaterialProperty<Real> & _gas_heat_capacity;	///< Reference to the gas heat capacity material property
 
 };
-
-#endif // GCOLUMNHEATADVECTION_H

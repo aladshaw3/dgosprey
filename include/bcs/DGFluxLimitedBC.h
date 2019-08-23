@@ -37,8 +37,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef DGFLUXLIMITEDBC_H
-#define DGFLUXLIMITEDBC_H
+#pragma once
 
 #include "IntegratedBC.h"
 #include "libmesh/vector_value.h"
@@ -93,5 +92,3 @@ protected:
 private:
 	
 };
-
-#endif //DGFLUXLIMITEDBC_H

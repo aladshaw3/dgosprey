@@ -24,6 +24,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #ifndef MACAW_HPP_
 #define MACAW_HPP_
 

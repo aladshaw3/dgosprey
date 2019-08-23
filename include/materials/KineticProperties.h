@@ -35,12 +35,11 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "Material.h"
 #include "flock.h"
 #include "DataStruct_StoreLoad.h"
-
-#ifndef KINETICPROPERTIES_H
-#define KINETICPROPERTIES_H
 
 /// KineticProperties class object forward declaration
 class KineticProperties;
@@ -123,7 +122,3 @@ private:
 	std::vector<const VariableValue *> _solid_conc;		///< Pointer list to the coupled adsorption concentrations
 	
 };
-
-
-
-#endif /* KINETICPROPERTIES_H */

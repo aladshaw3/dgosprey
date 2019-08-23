@@ -40,10 +40,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "DGAdvection.h"
+#pragma once
 
-#ifndef DGCOLUMNMASSADVECTION_H
-#define DGCOLUMNMASSADVECTION_H
+#include "DGAdvection.h"
 
 /// DGColumnMassAdvection class object forward declarations
 class DGColumnMassAdvection;
@@ -79,5 +78,3 @@ protected:
 private:
 	const MaterialProperty<Real> & _vel;		///< Reference to the velocity material property
 };
-
-#endif

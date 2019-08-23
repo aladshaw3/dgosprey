@@ -55,12 +55,11 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
+#pragma once
+
 #include "CoupledGSTAisotherm.h"
 #include "flock.h"
 #include "DataStruct_StoreLoad.h"
-
-#ifndef CoupledGSTAmodel_h
-#define CoupledGSTAmodel_h
 
 /// CoupledGSTAmodel class object forward declarationss
 class CoupledGSTAmodel;
@@ -109,7 +108,3 @@ protected:
 private:
 	
 };
-
-
-
-#endif /* CoupledGSTAmodel_h */

@@ -44,10 +44,9 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#include "Kernel.h"
+#pragma once
 
-#ifndef CoupledGSTAisotherm_h
-#define CoupledGSTAisotherm_h
+#include "TimeDerivative.h"
 
 /// CoupledGSTAisotherm class object forward declarationss
 class CoupledGSTAisotherm;
@@ -60,7 +59,7 @@ InputParameters validParams<CoupledGSTAisotherm>();
 	All public and protected members of this class are required function overrides.
 	The kernel interfaces the two non-linear variables to couple the GSTA isotherm
 	model between given objects. */
-class CoupledGSTAisotherm : public Kernel
+class CoupledGSTAisotherm : public TimeDerivative
 {
 public:
 	/// Required constructor for objects in MOOSE
@@ -100,7 +99,3 @@ protected:
 private:
 	
 };
-
-
-
-#endif /* CoupledGSTAisotherm_h */

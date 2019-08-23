@@ -38,8 +38,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef WALLTEMPERATURE_H
-#define WALLTEMPERATURE_H
+#pragma once
 
 #include "AuxKernel.h"
 
@@ -78,5 +77,3 @@ private:
 	const MaterialProperty<Real> & _cw;					///< Reference to the heat capacity coefficient material property
 	
 };
-
-#endif //WALLTEMPERATURE_H

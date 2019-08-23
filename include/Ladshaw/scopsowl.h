@@ -19,6 +19,8 @@
  *             rights reserved.
  */
 
+#pragma once
+
 #include "egret.h"							//EGRET handles the estimation of gas-phase properties
 #include "skua.h"							//SKUA couples MAGPIE and Surface kinetics together
 

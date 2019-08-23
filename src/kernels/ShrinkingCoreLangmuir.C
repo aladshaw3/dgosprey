@@ -37,6 +37,7 @@
 /****************************************************************/
 
 #include "ShrinkingCoreLangmuir.h"
+registerMooseObject("DgospreyApp", ShrinkingCoreLangmuir);
 
 template<>
 InputParameters validParams<ShrinkingCoreLangmuir>()

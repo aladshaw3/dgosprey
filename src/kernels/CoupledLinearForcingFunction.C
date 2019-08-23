@@ -34,6 +34,7 @@
 /****************************************************************/
 
 #include "CoupledLinearForcingFunction.h"
+registerMooseObject("DgospreyApp", CoupledLinearForcingFunction);
 
 template<>
 InputParameters validParams<CoupledLinearForcingFunction>()

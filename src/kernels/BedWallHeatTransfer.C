@@ -31,6 +31,7 @@
 /****************************************************************/
 
 #include "BedWallHeatTransfer.h"
+registerMooseObject("DgospreyApp", BedWallHeatTransfer);
 
 template<>
 InputParameters validParams<BedWallHeatTransfer>()

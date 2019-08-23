@@ -37,8 +37,7 @@
 /*            See COPYRIGHT for full restrictions               */
 /****************************************************************/
 
-#ifndef COLUMNTEMPERATUREIC_H
-#define	COLUMNTEMPERATUREIC_H
+#pragma once
 
 #include "InitialCondition.h"
 
@@ -69,5 +68,3 @@ public:
 private:
 	Real _TC_IC;			///< Initial condition value for the column temperature (K)
 };
-
-#endif //COLUMNTEMPERATUREIC_H
