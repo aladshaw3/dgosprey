@@ -2,5 +2,5 @@
 
 #pragma once
 
-#define DGOSPREY_REVISION "git commit ac5440a on 2019-04-17"
-#define DGOSPREY_VERSION "ac5440a"
+#define DGOSPREY_REVISION "git commit 89cf4e6 on 2019-08-23"
+#define DGOSPREY_VERSION "89cf4e6"
